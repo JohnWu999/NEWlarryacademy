@@ -1,0 +1,2520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palace Duel: Harry VS Knight</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a0a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+        }
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        canvas {
+            border: 3px solid #c4a000;
+            background-color: #333;
+            display: block;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        #ui-layer {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .health-bar-container {
+            width: 45%;
+            background-color: #1a1a1a;
+            border: 5px solid #000;
+            height: 55px;
+            position: relative;
+            border-radius: 10px;
+            overflow: visible;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.7), inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .health-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 50%, #16a34a 100%);
+            width: 100%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.8), inset 0 2px 4px rgba(255,255,255,0.3);
+            position: relative;
+            border-radius: 4px;
+        }
+        .health-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        #enemy-health-bar {
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+            float: right;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.8), inset 0 2px 4px rgba(255,255,255,0.3);
+        }
+        .health-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 22px;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.7);
+            z-index: 5;
+            pointer-events: none;
+            letter-spacing: 1px;
+        }
+        .name-tag {
+            position: absolute;
+            top: 70px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px black, 0 0 8px rgba(0,0,0,0.8);
+            font-size: 20px;
+            color: #ffd700;
+        }
+        .play-count-display {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #c4a000;
+            border-radius: 8px;
+            padding: 8px 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px black, 0 0 10px rgba(196, 160, 0, 0.5);
+            z-index: 100;
+            pointer-events: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        #controls-info {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #c4a000;
+            background: rgba(0,0,0,0.5);
+            padding: 15px 30px;
+            border-radius: 10px;
+            border: 2px solid #c4a000;
+        }
+        #controls-info p {
+            margin: 5px 0;
+        }
+        #loading-msg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            z-index: 20;
+            background: rgba(0,0,0,0.8);
+            padding: 20px 40px;
+            border-radius: 10px;
+            border: 2px solid #c4a000;
+        }
+        #start-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 200;
+        }
+        #start-overlay.hidden {
+            display: none;
+        }
+        #start-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(196, 160, 0, 0.3);
+        }
+        #start-content h2 {
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px black;
+        }
+        #start-content p {
+            color: #ddd;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        #start-play-count {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 25px;
+            background: rgba(196, 160, 0, 0.1);
+            border: 2px solid #c4a000;
+            border-radius: 10px;
+            color: #ffd700;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        #start-btn {
+            background: linear-gradient(135deg, #c4a000 0%, #ffd700 100%);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        #start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(196, 160, 0, 0.6);
+        }
+        #game-over-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        #game-over-overlay.active {
+            display: flex;
+        }
+        #game-over-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 30px rgba(196, 160, 0, 0.3);
+        }
+        #game-over-text {
+            font-size: 56px;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 3px 3px 6px black;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        #fight-stats {
+            margin-top: 30px;
+        }
+        .stats-header {
+            font-size: 32px;
+            font-weight: bold;
+            color: #c4a000;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px black;
+            border-bottom: 2px solid #c4a000;
+            padding-bottom: 10px;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .stats-table th {
+            background: linear-gradient(135deg, #c4a000 0%, #ffd700 100%);
+            color: #000;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 18px;
+            border: 1px solid #ffd700;
+        }
+        .stats-table td {
+            padding: 15px;
+            color: #fff;
+            font-size: 20px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .stats-table tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .stat-label {
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .stat-value {
+            text-align: right;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .winner-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: 15px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        }
+        #restart-btn {
+            padding: 18px 50px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #c4a000 0%, #ffd700 100%);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 30px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(196, 160, 0, 0.4);
+        }
+        #restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(196, 160, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+    <div id="ui-layer">
+        <div>
+            <div class="health-bar-container">
+                <div id="player-health" class="health-bar"></div>
+                <div id="player-health-text" class="health-text">100 / 100</div>
+            </div>
+            <div class="name-tag" style="left: 20px;">⚔️ Harry (You)</div>
+            <div id="super-attack-info" style="position: absolute; left: 20px; top: 100px; color: #ffd700; font-weight: bold; font-size: 18px; text-shadow: 2px 2px 4px black;">
+                ⭐ Super: <span id="super-count">3</span>
+            </div>
+        </div>
+        <div>
+            <div class="health-bar-container">
+                <div id="enemy-health" class="health-bar" style="background: linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);"></div>
+                <div id="enemy-health-text" class="health-text">100 / 100</div>
+            </div>
+            <div class="name-tag" style="right: 20px;">🛡️ Royal Knight</div>
+        </div>
+    </div>
+    <div id="loading-msg">Loading resources...</div>
+    <div id="start-overlay">
+        <div id="start-content">
+            <h2>⚔️ Palace Duel ⚔️</h2>
+            <p>Harry VS Royal Knight</p>
+            <p style="font-size: 0.9rem; color: #aaa;">Use Arrow Keys to move, Z to attack, X to block, S for super attack</p>
+            <div id="start-play-count">🎮 游戏次数: <span id="start-count-number">0</span></div>
+            <button id="start-btn">START BATTLE</button>
+        </div>
+    </div>
+    <div id="game-over-overlay">
+        <div id="game-over-content">
+        <div id="game-over-text"></div>
+            <div id="fight-stats"></div>
+        <button id="restart-btn">Restart Game</button>
+        </div>
+    </div>
+</div>
+
+<div id="controls-info">
+        <p><strong>Controls:</strong> [← →] Move | [↑] Jump | [Z] Attack | [S] Super Attack | [X] Block</p>
+    <p>Defeat the Royal Knight before your health runs out!</p>
+</div>
+
+<script>
+    // ================= Configuration & Resources =================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const loadingMsg = document.getElementById('loading-msg');
+    const gameOverOverlay = document.getElementById('game-over-overlay');
+    const gameOverText = document.getElementById('game-over-text');
+    const restartBtn = document.getElementById('restart-btn');
+    const startOverlay = document.getElementById('start-overlay');
+    const startBtn = document.getElementById('start-btn');
+    
+    // 初始化显示游戏次数（确保 DOM 已加载）
+    function initPlayCountDisplay() {
+        try {
+            const playCountKey = 'larryAcademy_palaceDuel_totalPlays';
+            const playCount = parseInt(localStorage.getItem(playCountKey) || '0', 10);
+            
+            // 更新开始页面的游戏次数
+            const startCountElement = document.getElementById('start-count-number');
+            if (startCountElement) {
+                startCountElement.textContent = playCount;
+            }
+            
+            // 更新游戏中的游戏次数（如果存在）
+            const playCountElement = document.getElementById('play-count');
+            if (playCountElement) {
+                playCountElement.textContent = playCount;
+            }
+            
+            console.log('Palace Duel 游戏次数已显示:', playCount);
+        } catch (e) {
+            console.warn('无法读取游戏次数:', e);
+        }
+    }
+    
+    // 立即执行一次，并在 DOMContentLoaded 时再执行一次确保显示
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPlayCountDisplay);
+    } else {
+        initPlayCountDisplay();
+    }
+    
+    // 开始按钮事件
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            if (startOverlay) {
+                startOverlay.classList.add('hidden');
+            }
+            startGame();
+        });
+    }
+
+    const GRAVITY = 0.8;
+    const GROUND_Y = 380;
+    const SPRITE_SIZE = 64;
+    const SCALE = 2.5;
+
+    // Game state
+    let gameState = 'loading'; // loading, playing, gameover
+    let winner = null;
+    
+    // Damage number display system
+    const damageNumbers = [];
+    
+    // Hit effect particles
+    const hitEffects = [];
+    
+    class DamageNumber {
+        constructor(x, y, damage, isPlayer) {
+            this.x = x;
+            this.y = y;
+            this.damage = damage;
+            this.isPlayer = isPlayer; // true if player took damage
+            this.life = 60; // frames to live
+            this.velocityY = -2;
+            this.alpha = 1;
+            this.scale = 1.2; // Start larger
+        }
+        
+        update() {
+            this.y += this.velocityY;
+            this.life--;
+            this.scale = Math.max(0.8, 1.2 - (60 - this.life) / 60 * 0.4);
+            if (this.life < 20) {
+                this.alpha = this.life / 20;
+            }
+        }
+        
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.font = `bold ${32 * this.scale}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Color: red for damage, yellow for block
+            const color = this.damage < 3 ? '#ffd700' : '#ff4444';
+            ctx.fillStyle = color;
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 4 * this.scale;
+            ctx.strokeText(`-${this.damage}`, this.x, this.y);
+            ctx.fillText(`-${this.damage}`, this.x, this.y);
+            
+            ctx.restore();
+        }
+        
+        isAlive() {
+            return this.life > 0;
+        }
+    }
+    
+    class HitEffect {
+        constructor(x, y, isPlayer = false) {
+            this.x = x;
+            this.y = y;
+            this.particles = [];
+            this.life = 30; // 增加持续时间
+            this.isPlayer = isPlayer;
+            
+            // Create blood explosion particles - 更多粒子，更明显的红色
+            const particleCount = 25; // 增加粒子数量
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.5;
+                const speed = 3 + Math.random() * 6;
+                this.particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 30 + Math.random() * 10, // 更长的生命周期
+                    maxLife: 30 + Math.random() * 10,
+                    size: Math.random() * 5 + 3, // 更大的粒子
+                    color: this.getBloodColor(i, particleCount)
+                });
+            }
+        }
+        
+        getBloodColor(index, total) {
+            // 主要使用红色系，偶尔有深红色
+            const rand = Math.random();
+            if (rand < 0.7) {
+                return '#ff0000'; // 鲜红色
+            } else if (rand < 0.9) {
+                return '#cc0000'; // 深红色
+            } else {
+                return '#990000'; // 暗红色
+            }
+        }
+        
+        update() {
+            this.life--;
+            for (let p of this.particles) {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.4; // 重力
+                p.life--;
+                p.vx *= 0.92; // 阻力
+                p.vy *= 0.92;
+            }
+        }
+        
+        draw() {
+            ctx.save();
+            for (let p of this.particles) {
+                if (p.life > 0) {
+                    const alpha = p.life / p.maxLife;
+                    ctx.globalAlpha = alpha;
+                    
+                    // 绘制血滴（椭圆形，更像血）
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    const width = p.size;
+                    const height = p.size * 1.3; // 椭圆形
+                    ctx.ellipse(p.x, p.y, width, height, Math.random() * Math.PI, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // 添加高光效果
+                    ctx.globalAlpha = alpha * 0.5;
+                    ctx.fillStyle = '#ff6666';
+                    ctx.beginPath();
+                    ctx.ellipse(p.x - width * 0.3, p.y - height * 0.3, width * 0.4, height * 0.4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.restore();
+        }
+        
+        isAlive() {
+            return this.life > 0;
+        }
+    }
+    
+    function addDamageNumber(x, y, damage, isPlayer) {
+        damageNumbers.push(new DamageNumber(x, y, damage, isPlayer));
+    }
+    
+    function addHitEffect(x, y, isPlayer = false) {
+        hitEffects.push(new HitEffect(x, y, isPlayer));
+    }
+
+    // Asset loader - using individual sprite images
+    const assets = {
+        player: {
+            idle: [],
+            run: [],
+            attack: [],
+            super: [],  // Super attack frames (super1-4.png)
+            hurt: null,
+            block: []  // Changed to array for defense1-4.png frames
+        },
+        enemy: {
+            idle: [],
+            run: [],
+            attack: [],
+            hurt: null,
+            block: [],  // Changed to array for defense1-4.png frames
+            dead: null
+        },
+        background: new Image(),
+        sounds: {
+            hit: null,
+            miss: null,
+            block: null
+        }
+    };
+
+    let assetsToLoad = 0;
+    let assetsLoaded = 0;
+
+    function checkAllAssetsLoaded() {
+        if (assetsLoaded >= assetsToLoad) {
+            loadingMsg.style.display = 'none';
+            // 显示当前游戏次数
+            initPlayCountDisplay();
+            // 不再自动开始游戏，等待用户点击开始按钮
+        }
+    }
+
+    // Helper function to create placeholder sprites
+    function createPlaceholderSprite(width, height, color) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(5, 5, width - 10, height - 10);
+        // Draw simple face
+        ctx.fillStyle = '#000';
+        ctx.fillRect(width/2 - 10, height/3, 20, 5); // eyes
+        ctx.fillRect(width/2 - 5, height/2, 10, 15); // mouth
+        const img = new Image();
+        img.src = canvas.toDataURL();
+        return img;
+    }
+
+    // Load player sprites (using harry assets) - 玩家使用harry资源
+    let playerSpritesLoaded = 0;
+    let playerSpritesExpected = 0;
+
+    console.log('Loading PLAYER sprites from assets/harry/');
+
+    // Load idle frames (使用 run1.png 作为 idle)
+    for (let i = 0; i < 4; i++) {
+        assetsToLoad++;
+        playerSpritesExpected++;
+        const img = new Image();
+        // Use original run1-4.png files
+        img.src = `assets/harry/run${i + 1}.png`; // run1.png, run2.png, run3.png, run4.png
+        img.onload = () => {
+            console.log(`✓ Loaded PLAYER idle: run${i + 1}.png (size: ${img.width}x${img.height})`);
+            // Verify image has alpha channel by checking in canvas
+            try {
+                const testCanvas = document.createElement('canvas');
+                testCanvas.width = img.width;
+                testCanvas.height = img.height;
+                const testCtx = testCanvas.getContext('2d');
+                testCtx.drawImage(img, 0, 0);
+                const imageData = testCtx.getImageData(0, 0, img.width, img.height);
+                let hasAlpha = false;
+                let transparentPixels = 0;
+                for (let j = 3; j < imageData.data.length; j += 4) {
+                    if (imageData.data[j] < 255) {
+                        hasAlpha = true;
+                        transparentPixels++;
+                    }
+                }
+                console.log(`  → Alpha channel: ${hasAlpha ? 'YES' : 'NO'} (${transparentPixels} transparent pixels)`);
+            } catch (e) {
+                console.warn(`  → Could not check alpha channel: ${e.message}`);
+            }
+            assets.player.idle.push(img);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+        img.onerror = (e) => {
+            console.error(`✗ Failed to load PLAYER idle: assets/harry/run${i + 1}.png`, e);
+            // Use placeholder only as last resort
+            const placeholder = createPlaceholderSprite(150, 200, '#4ade80');
+            assets.player.idle.push(placeholder);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+    }
+
+    // Load run frames (使用 run1.png)
+    for (let i = 0; i < 4; i++) {
+        assetsToLoad++;
+        playerSpritesExpected++;
+        const img = new Image();
+        // Use original run1-4.png files
+        img.src = `assets/harry/run${i + 1}.png`; // run1.png, run2.png, run3.png, run4.png
+        img.onload = () => {
+            console.log(`✓ Loaded PLAYER run: run${i + 1}.png (size: ${img.width}x${img.height})`);
+            // Verify image has alpha channel
+            try {
+                const testCanvas = document.createElement('canvas');
+                testCanvas.width = img.width;
+                testCanvas.height = img.height;
+                const testCtx = testCanvas.getContext('2d');
+                testCtx.drawImage(img, 0, 0);
+                const imageData = testCtx.getImageData(0, 0, img.width, img.height);
+                let hasAlpha = false;
+                let transparentPixels = 0;
+                for (let j = 3; j < imageData.data.length; j += 4) {
+                    if (imageData.data[j] < 255) {
+                        hasAlpha = true;
+                        transparentPixels++;
+                    }
+                }
+                console.log(`  → Alpha channel: ${hasAlpha ? 'YES' : 'NO'} (${transparentPixels} transparent pixels)`);
+            } catch (e) {
+                console.warn(`  → Could not check alpha channel: ${e.message}`);
+            }
+            assets.player.run.push(img);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+        img.onerror = (e) => {
+            console.error(`✗ Failed to load PLAYER run: assets/harry/run${i + 1}.png`, e);
+            // Use placeholder only as last resort
+            const placeholder = createPlaceholderSprite(150, 200, '#4ade80');
+            assets.player.run.push(placeholder);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+    }
+
+    // Load attack frames (attack1.png, attack2.png, attack3.png, attack4.png)
+    for (let i = 1; i <= 4; i++) {
+        assetsToLoad++;
+        playerSpritesExpected++;
+        const img = new Image();
+        img.src = `assets/harry/attack${i}.png`;
+        img.onload = () => {
+            assets.player.attack.push(img);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            console.log(`Loaded PLAYER attack: attack${i}.png`);
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+        img.onerror = () => {
+            console.warn(`Failed to load PLAYER attack: assets/harry/attack${i}.png`);
+            // Fallback to old format (attack0, attack1, attack3, attack4)
+            const fallbackFrames = [0, 1, 3, 4];
+            const fallbackFrame = fallbackFrames[i - 1] || 0;
+            const fallbackImg = new Image();
+            fallbackImg.src = `assets/harry/attack${fallbackFrame}.png`;
+            fallbackImg.onload = () => {
+                assets.player.attack.push(fallbackImg);
+                playerSpritesLoaded++;
+                assetsLoaded++;
+                console.log(`Used fallback: attack${fallbackFrame}.png for attack${i}.png`);
+                checkPlayerSpritesComplete();
+                checkAllAssetsLoaded();
+            };
+            fallbackImg.onerror = () => {
+                const placeholder = createPlaceholderSprite(150, 200, '#4ade80');
+                assets.player.attack.push(placeholder);
+                playerSpritesLoaded++;
+                assetsLoaded++;
+                checkPlayerSpritesComplete();
+                checkAllAssetsLoaded();
+            };
+        };
+    }
+
+    // Load super attack frames (super1.png, super2.png, super3.png, super4.png)
+    for (let i = 1; i <= 4; i++) {
+        assetsToLoad++;
+        playerSpritesExpected++;
+        const img = new Image();
+        img.src = `assets/harry/super${i}.png`;
+        img.onload = () => {
+            assets.player.super.push(img);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            console.log(`Loaded PLAYER super: super${i}.png`);
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+        img.onerror = () => {
+            console.warn(`Failed to load PLAYER super: assets/harry/super${i}.png`);
+            // Fallback: use attack frames as super
+            const fallbackImg = new Image();
+            fallbackImg.src = `assets/harry/attack${i}.png`;
+            fallbackImg.onload = () => {
+                assets.player.super.push(fallbackImg);
+                playerSpritesLoaded++;
+                assetsLoaded++;
+                console.log(`Used attack${i}.png as fallback for super${i}.png`);
+                checkPlayerSpritesComplete();
+                checkAllAssetsLoaded();
+            };
+            fallbackImg.onerror = () => {
+                const placeholder = createPlaceholderSprite(150, 200, '#ff6b6b');
+                assets.player.super.push(placeholder);
+                playerSpritesLoaded++;
+                assetsLoaded++;
+                checkPlayerSpritesComplete();
+                checkAllAssetsLoaded();
+            };
+        };
+    }
+
+    // Load defense/block frames (defense1.png, defense2.png, defense3.png, defense4.png)
+    for (let i = 0; i < 4; i++) {
+        assetsToLoad++;
+        playerSpritesExpected++;
+        const img = new Image();
+        img.src = `assets/harry/defense${i + 1}.png`; // defense1.png, defense2.png, defense3.png, defense4.png
+        img.onload = () => {
+            console.log(`✓ Loaded PLAYER defense: defense${i + 1}.png (size: ${img.width}x${img.height})`);
+            assets.player.block.push(img);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+        img.onerror = (e) => {
+            console.error(`✗ Failed to load PLAYER defense: assets/harry/defense${i + 1}.png`, e);
+            // Use placeholder only as last resort
+            const placeholder = createPlaceholderSprite(150, 200, '#4ade80');
+            assets.player.block.push(placeholder);
+            playerSpritesLoaded++;
+            assetsLoaded++;
+            checkPlayerSpritesComplete();
+            checkAllAssetsLoaded();
+        };
+    }
+
+    function checkPlayerSpritesComplete() {
+        if (playerSpritesLoaded === playerSpritesExpected) {
+            // Use attack frame as hurt placeholder
+            assets.player.hurt = assets.player.attack[0] || assets.player.run[0];
+            // Block is now an array, no need to set it here
+            console.log('All PLAYER sprites loaded (harry)');
+        }
+    }
+
+    // Load enemy (knight) sprites from knight directory - 敌人使用knight资源
+    let enemySpritesLoaded = 0;
+    // run(4) + attack(4) + defense/block(4) + idle(4) = 16 frames
+    const totalEnemySprites = 16;
+
+    console.log('Loading ENEMY (knight) sprites from assets/knight/');
+
+    // 新的文件名格式：run1.png, run2.png, run3.png, run4.png
+    // defense1.png, defense2.png, defense3.png, defense4.png
+    // attack1.png, attack2.png, attack3.png, attack4.png
+    
+    // Load run frames (run1.png, run2.png, run3.png, run4.png)
+    for (let i = 1; i <= 4; i++) {
+            assetsToLoad++;
+            const img = new Image();
+        img.src = `assets/knight/run${i}.png`;
+            img.onload = () => {
+            console.log(`✓ Loaded ENEMY (knight) run: run${i}.png (size: ${img.width}x${img.height})`);
+            // Verify image has alpha channel
+            try {
+                const testCanvas = document.createElement('canvas');
+                testCanvas.width = img.width;
+                testCanvas.height = img.height;
+                const testCtx = testCanvas.getContext('2d');
+                testCtx.drawImage(img, 0, 0);
+                const imageData = testCtx.getImageData(0, 0, img.width, img.height);
+                let hasAlpha = false;
+                let transparentPixels = 0;
+                for (let j = 3; j < imageData.data.length; j += 4) {
+                    if (imageData.data[j] < 255) {
+                        hasAlpha = true;
+                        transparentPixels++;
+                    }
+                }
+                console.log(`  → Alpha channel: ${hasAlpha ? 'YES' : 'NO'} (${transparentPixels} transparent pixels)`);
+            } catch (e) {
+                console.warn(`  → Could not check alpha channel: ${e.message}`);
+            }
+            assets.enemy.run.push(img);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                loadKnightSpecialSprites();
+            }
+            checkAllAssetsLoaded();
+        };
+        img.onerror = () => {
+            console.warn(`Failed to load ENEMY (knight) run: assets/knight/run${i}.png`);
+            // Fallback to old format
+            const img2 = new Image();
+            img2.src = `assets/knight/run_${i-1}.png`;
+            img2.onload = () => {
+                console.log(`✓ Loaded fallback: run_${i-1}.png`);
+                assets.enemy.run.push(img2);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+            img2.onerror = () => {
+                const placeholder = createPlaceholderSprite(150, 200, '#ef4444');
+                assets.enemy.run.push(placeholder);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+        };
+    }
+    
+    // Load attack frames (attack1.png, attack2.png, attack3.png, attack4.png)
+    for (let i = 1; i <= 4; i++) {
+        assetsToLoad++;
+        const img = new Image();
+        img.src = `assets/knight/attack${i}.png`;
+        img.onload = () => {
+            console.log(`✓ Loaded ENEMY (knight) attack: attack${i}.png (size: ${img.width}x${img.height})`);
+            assets.enemy.attack.push(img);
+            enemySpritesLoaded++;
+            assetsLoaded++;
+            if (enemySpritesLoaded === totalEnemySprites) {
+                loadKnightSpecialSprites();
+            }
+            checkAllAssetsLoaded();
+        };
+        img.onerror = () => {
+            console.warn(`Failed to load ENEMY (knight) attack: assets/knight/attack${i}.png`);
+            // Fallback to old format
+            const img2 = new Image();
+            img2.src = `assets/knight/attack_${i-1}.png`;
+            img2.onload = () => {
+                console.log(`✓ Loaded fallback: attack_${i-1}.png`);
+                assets.enemy.attack.push(img2);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+            img2.onerror = () => {
+                const placeholder = createPlaceholderSprite(150, 200, '#ef4444');
+                assets.enemy.attack.push(placeholder);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+        };
+    }
+    
+    // Load defense/block frames (defense1.png, defense2.png, defense3.png, defense4.png)
+    // 注意：defense 动作用于 block 动画
+    for (let i = 1; i <= 4; i++) {
+        assetsToLoad++;
+        const img = new Image();
+        img.src = `assets/knight/defense${i}.png`;
+        img.onload = () => {
+            console.log(`✓ Loaded ENEMY (knight) defense: defense${i}.png (size: ${img.width}x${img.height})`);
+            // 将 defense 动作添加到 block 数组（如果 block 是数组）或作为 block 使用
+            if (Array.isArray(assets.enemy.block)) {
+                assets.enemy.block.push(img);
+            } else {
+                // 如果 block 不是数组，先初始化为数组
+                assets.enemy.block = [img];
+            }
+            enemySpritesLoaded++;
+            assetsLoaded++;
+            if (enemySpritesLoaded === totalEnemySprites) {
+                loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+            img.onerror = () => {
+            console.warn(`Failed to load ENEMY (knight) defense: assets/knight/defense${i}.png`);
+            // Fallback to old format
+            const img2 = new Image();
+            img2.src = `assets/knight/block_${i-1}.png`;
+            img2.onload = () => {
+                console.log(`✓ Loaded fallback: block_${i-1}.png`);
+                if (Array.isArray(assets.enemy.block)) {
+                    assets.enemy.block.push(img2);
+                } else {
+                    assets.enemy.block = [img2];
+                }
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+            img2.onerror = () => {
+                const placeholder = createPlaceholderSprite(150, 200, '#ef4444');
+                if (Array.isArray(assets.enemy.block)) {
+                    assets.enemy.block.push(placeholder);
+                } else {
+                    assets.enemy.block = [placeholder];
+                }
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+        };
+    }
+    
+    // Load idle frames (尝试加载，如果不存在则使用 run 作为 idle)
+    for (let i = 1; i <= 4; i++) {
+        assetsToLoad++;
+        const img = new Image();
+        img.src = `assets/knight/idle${i}.png`;
+        img.onload = () => {
+            console.log(`✓ Loaded ENEMY (knight) idle: idle${i}.png (size: ${img.width}x${img.height})`);
+            assets.enemy.idle.push(img);
+            enemySpritesLoaded++;
+            assetsLoaded++;
+            if (enemySpritesLoaded === totalEnemySprites) {
+                loadKnightSpecialSprites();
+            }
+            checkAllAssetsLoaded();
+        };
+        img.onerror = () => {
+            // Fallback: 使用 run 帧作为 idle
+            console.log(`idle${i}.png not found, using run${i}.png as idle`);
+            const img2 = new Image();
+            img2.src = `assets/knight/run${i}.png`;
+            img2.onload = () => {
+                assets.enemy.idle.push(img2);
+                enemySpritesLoaded++;
+                assetsLoaded++;
+                if (enemySpritesLoaded === totalEnemySprites) {
+                    loadKnightSpecialSprites();
+                }
+                checkAllAssetsLoaded();
+            };
+            img2.onerror = () => {
+                // Fallback to old format
+                const img3 = new Image();
+                img3.src = `assets/knight/idle_${i-1}.png`;
+                img3.onload = () => {
+                    assets.enemy.idle.push(img3);
+                    enemySpritesLoaded++;
+                    assetsLoaded++;
+                    if (enemySpritesLoaded === totalEnemySprites) {
+                        loadKnightSpecialSprites();
+                    }
+                    checkAllAssetsLoaded();
+                };
+                img3.onerror = () => {
+                    const placeholder = createPlaceholderSprite(150, 200, '#ef4444');
+                    assets.enemy.idle.push(placeholder);
+                    enemySpritesLoaded++;
+                    assetsLoaded++;
+                    if (enemySpritesLoaded === totalEnemySprites) {
+                        loadKnightSpecialSprites();
+                    }
+                    checkAllAssetsLoaded();
+                };
+            };
+        };
+    }
+    
+    // Helper function to load special sprites (hurt, block, dead)
+    function loadKnightSpecialSprites() {
+        // Load hurt sprite
+        const hurtImg = new Image();
+        hurtImg.src = 'assets/knight/hurt_0.png';
+        hurtImg.onload = () => {
+            assets.enemy.hurt = hurtImg;
+        };
+        hurtImg.onerror = () => {
+            assets.enemy.hurt = assets.enemy.attack[0] || assets.enemy.run[0];
+        };
+        
+        // Block is already loaded as defense array, but ensure it's set
+        if (!Array.isArray(assets.enemy.block) || assets.enemy.block.length === 0) {
+            // Fallback: use attack frames
+            assets.enemy.block = assets.enemy.attack.slice(0, 4);
+        }
+        
+        // Load dead sprite
+        const deadImg = new Image();
+        deadImg.src = 'assets/knight/dead_0.png';
+        deadImg.onload = () => {
+            assets.enemy.dead = deadImg;
+        };
+        deadImg.onerror = () => {
+            assets.enemy.dead = assets.enemy.hurt || assets.enemy.attack[0];
+        };
+        
+        console.log('All ENEMY (knight) sprites loaded');
+    }
+
+    // Background
+    assetsToLoad++;
+    assets.background.src = 'assets/village-bg.png';
+    assets.background.onload = () => {
+        assetsLoaded++;
+        checkAllAssetsLoaded();
+    };
+    assets.background.onerror = () => {
+        console.warn('Background image not found, using gradient');
+        assetsLoaded++;
+        checkAllAssetsLoaded();
+    };
+
+    // Sound effects - Street Fighter style (hohohaha)
+    let audioContext = null;
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) {
+        console.warn('AudioContext not available');
+    }
+    
+    function playSound(type, isPlayer = true, attackerIsPlayer = null) {
+        if (!audioContext) return;
+        
+        try {
+            switch(type) {
+                case 'hit':
+                    // 打击音效 - 根据攻击者决定音效类型
+                    playHitSound(isPlayer, attackerIsPlayer);
+                    break;
+                case 'miss':
+                    // 挥空音效 - 轻快的"ha"声
+                    playMissSound();
+                    break;
+                case 'block':
+                    // 格挡音效 - 金属碰撞声
+                    playBlockSound();
+                    break;
+                case 'attack':
+                    // 攻击音效 - 出拳"ho"声
+                    playAttackSound(isPlayer);
+                    break;
+            }
+        } catch(e) {
+            console.warn('Sound playback failed:', e);
+        }
+    }
+    
+    function playHitSound(isPlayer, attackerIsPlayer = null) {
+        // 如果指定了攻击者，根据攻击者决定音效
+        if (attackerIsPlayer !== null) {
+            if (attackerIsPlayer) {
+                // Harry打武士 - 金属/刀剑打击盔甲声
+                playMetalArmorHitSound();
+            } else {
+                // 武士打Harry - 轻微猫叫
+                playCatMeowSound();
+            }
+            return;
+        }
+        
+        // 默认音效（向后兼容）
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        
+        filter.type = 'lowpass';
+        filter.frequency.value = 800;
+        
+        osc1.type = 'sawtooth';
+        osc1.frequency.setValueAtTime(80, audioContext.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(60, audioContext.currentTime + 0.15);
+        
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(120, audioContext.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(90, audioContext.currentTime + 0.15);
+        
+        gain.gain.setValueAtTime(0.4, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioContext.currentTime + 0.2);
+        osc2.stop(audioContext.currentTime + 0.2);
+    }
+    
+    function playMetalArmorHitSound() {
+        // Harry打武士 - 金属/刀剑打击盔甲声
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const osc3 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const filter1 = audioContext.createBiquadFilter();
+        const filter2 = audioContext.createBiquadFilter();
+        
+        // 金属碰撞的高频部分
+        filter1.type = 'bandpass';
+        filter1.frequency.value = 2000;
+        filter1.Q.value = 3;
+        
+        // 盔甲的低频共鸣
+        filter2.type = 'lowpass';
+        filter2.frequency.value = 400;
+        
+        // 高频金属声
+        osc1.type = 'square';
+        osc1.frequency.setValueAtTime(800, audioContext.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+        
+        // 中频刀剑声
+        osc2.type = 'sawtooth';
+        osc2.frequency.setValueAtTime(300, audioContext.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.15);
+        
+        // 低频盔甲共鸣
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(150, audioContext.currentTime);
+        osc3.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.2);
+        
+        gain.gain.setValueAtTime(0.5, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+        
+        osc1.connect(filter1);
+        osc2.connect(filter2);
+        osc3.connect(filter2);
+        filter1.connect(gain);
+        filter2.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc1.start();
+        osc2.start();
+        osc3.start();
+        osc1.stop(audioContext.currentTime + 0.25);
+        osc2.stop(audioContext.currentTime + 0.25);
+        osc3.stop(audioContext.currentTime + 0.25);
+    }
+    
+    function playCatMeowSound() {
+        // 武士打Harry - 轻微猫叫（"meow"）
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        
+        // 猫叫的柔和音色（更柔和的高频过滤）
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000;
+        filter.Q.value = 0.8;
+        
+        // 主音调（猫叫的"meow"声，从高到低）
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(450, audioContext.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(380, audioContext.currentTime + 0.06);
+        osc1.frequency.exponentialRampToValueAtTime(320, audioContext.currentTime + 0.12);
+        osc1.frequency.exponentialRampToValueAtTime(280, audioContext.currentTime + 0.18);
+        
+        // 轻微和声（让声音更丰富）
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(550, audioContext.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(450, audioContext.currentTime + 0.12);
+        
+        // 非常轻微的音量（像小猫叫）
+        gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.12, audioContext.currentTime + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.05, audioContext.currentTime + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.22);
+        
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioContext.currentTime + 0.22);
+        osc2.stop(audioContext.currentTime + 0.22);
+    }
+    
+    function playMissSound() {
+        // 挥空 - "HA!" 轻快的声音
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.05);
+        
+        gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.1);
+    }
+    
+    function playBlockSound() {
+        // 格挡 - 金属碰撞"CLANG"
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        
+        filter.type = 'bandpass';
+        filter.frequency.value = 1000;
+        filter.Q.value = 2;
+        
+        osc1.type = 'square';
+        osc1.frequency.value = 200;
+        
+        osc2.type = 'sawtooth';
+        osc2.frequency.value = 300;
+        
+        gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc1.start();
+        osc2.start();
+        osc1.stop(audioContext.currentTime + 0.2);
+        osc2.stop(audioContext.currentTime + 0.2);
+    }
+    
+    function playAttackSound(isPlayer) {
+        // 出拳 - "HO!" 短促有力
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(isPlayer ? 150 : 120, audioContext.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.08);
+        
+        gain.gain.setValueAtTime(0.25, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        
+        osc.start();
+        osc.stop(audioContext.currentTime + 0.1);
+    }
+
+    // ================= Animation Definitions =================
+    const ANIMATIONS = {
+        harry: {
+            idle: { frames: 4, speed: 15 },
+            run:  { frames: 4, speed: 8 },
+            attack: { frames: 4, speed: 10, isAttack: true },
+            super: { frames: 4, speed: 12, isAttack: true },  // Super attack animation
+            hurt: { frames: 1, speed: 10 },
+            block: { frames: 4, speed: 10 }  // Changed to 4 frames for defense1-4.png
+        },
+        knight: {
+            idle: { frames: 4, speed: 15 },
+            run:  { frames: 4, speed: 8 },
+            attack: { frames: 4, speed: 10, isAttack: true }, // 更快攻击速度
+            hurt: { frames: 1, speed: 10 },
+            block: { frames: 4, speed: 10 },  // Changed to 4 frames for defense1-4.png
+            dead: { frames: 1, speed: 10 }
+        }
+    };
+
+    // ================= Fighter Class =================
+    class Fighter {
+        constructor({position, velocity, animData, isPlayer}) {
+            this.position = position;
+            this.velocity = velocity;
+            this.width = SPRITE_SIZE * SCALE / 2;
+            this.height = 140; // Both Harry and Knight are the same size
+            this.isPlayer = isPlayer;
+            this.lastKey = '';
+
+            // State
+            this.health = 100;
+            this.maxHealth = 100;
+            this.isAttacking = false;
+            this.isSuperAttacking = false;  // Super attack state
+            this.isBlocking = false;
+            this.isHurt = false;
+            this.isDead = false;
+            this.facingRight = isPlayer ? true : false;
+            this.lastHitTime = 0; // 防止重复伤害
+            this.attackStartTime = 0; // 攻击开始时间
+            this.superStartTime = 0; // Super 攻击开始时间
+            this.blockStartTime = 0; // 格挡开始时间
+            this.hurtStartTime = 0; // 受伤开始时间
+            
+            // Animation
+            this.animData = animData;
+            this.currentAnim = 'idle';
+            this.frameIndex = 0;
+            this.frameTimer = 0;
+
+            // Attack hitbox
+            this.attackBox = {
+                position: { x: this.position.x, y: this.position.y },
+                offset: { x: isPlayer ? 60 : 50, y: 20 }, // 武士的攻击框offset改为正数，在draw中处理方向
+                width: 100,
+                height: 50
+            };
+        }
+
+        draw() {
+            // Update attack box position
+            if (this.facingRight) {
+                this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+            } else {
+                this.attackBox.position.x = this.position.x - this.attackBox.offset.x - this.attackBox.width;
+            }
+            this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
+
+            const anim = this.animData[this.currentAnim];
+            if (!anim) {
+                console.error(`Animation '${this.currentAnim}' not found in animData:`, Object.keys(this.animData));
+                return;
+            }
+            
+            // 确保正确选择资源：玩家用hero，敌人用knight
+            const spriteSet = this.isPlayer ? assets.player : assets.enemy;
+            
+            // Debug: 检查资源是否正确加载
+            if (!spriteSet) {
+                console.error(`${this.isPlayer ? 'Player' : 'Enemy'} spriteSet is null!`);
+                ctx.fillStyle = this.isPlayer ? '#4ade80' : '#ef4444';
+                ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+                this.animateFrames(anim);
+                return;
+            }
+            
+            // 强制检查：确保使用的是正确的资源集
+            if (this.isPlayer) {
+                if (spriteSet !== assets.player) {
+                    console.error('ERROR: Player should use assets.player but got:', spriteSet);
+                    return;
+                }
+            } else {
+                if (spriteSet !== assets.enemy) {
+                    console.error('ERROR: Enemy should use assets.enemy but got:', spriteSet);
+                    return;
+                }
+            }
+            
+            // Get the current frame image
+            let currentSprite = null;
+            if (this.currentAnim === 'idle' || this.currentAnim === 'run' || this.currentAnim === 'attack' || this.currentAnim === 'super' || this.currentAnim === 'block') {
+                const frames = spriteSet[this.currentAnim];
+                if (frames && frames.length > 0) {
+                    const frameIdx = Math.min(this.frameIndex, frames.length - 1);
+                    currentSprite = frames[frameIdx];
+                    // Debug for super animation
+                    if (this.currentAnim === 'super') {
+                        console.log(`Super draw: frame ${frameIdx + 1}/${frames.length}, frameIndex: ${this.frameIndex}, sprite loaded:`, currentSprite ? 'YES' : 'NO');
+                    }
+                } else {
+                    console.error(`${this.isPlayer ? 'Player' : 'Enemy'} ${this.currentAnim} frames not loaded!`);
+                    console.error(`Available animations:`, Object.keys(spriteSet));
+                    console.error(`spriteSet[${this.currentAnim}]:`, spriteSet[this.currentAnim]);
+                    // Fallback: if super frames not loaded, use attack frames
+                    if (this.currentAnim === 'super' && spriteSet.attack && spriteSet.attack.length > 0) {
+                        const frameIdx = Math.min(this.frameIndex, spriteSet.attack.length - 1);
+                        currentSprite = spriteSet.attack[frameIdx];
+                        console.warn('Using attack frames as fallback for super, frame:', frameIdx + 1);
+                    } else {
+                        console.error('No fallback available for super animation!');
+                    }
+                }
+            } else if (this.currentAnim === 'hurt') {
+                currentSprite = spriteSet.hurt;
+            } else if (this.currentAnim === 'dead') {
+                currentSprite = spriteSet.dead || spriteSet.hurt;
+            }
+
+            if (!currentSprite) {
+                // Fallback: draw a simple rectangle with label
+                console.warn(`No sprite for ${this.isPlayer ? 'Player' : 'Enemy'} ${this.currentAnim}, frameIndex: ${this.frameIndex}`);
+                ctx.fillStyle = this.isPlayer ? '#4ade80' : '#ef4444';
+                ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.fillText(this.isPlayer ? 'H' : 'K', this.position.x + 5, this.position.y + 15);
+                this.animateFrames(anim);
+                return;
+            }
+
+            // Draw the sprite - adjust scale to show full character
+            // Use actual sprite dimensions, scale appropriately
+            const spriteAspectRatio = currentSprite.width / currentSprite.height;
+            let targetHeight = this.height * 2.5; // Make character taller
+            // Both Harry and Knight are displayed at half size
+            targetHeight = targetHeight * 0.5;
+            const targetWidth = targetHeight * spriteAspectRatio;
+            
+            const drawWidth = targetWidth;
+            const drawHeight = targetHeight;
+            const drawX = this.position.x - drawWidth / 2 + this.width / 2;
+            const drawY = this.position.y - drawHeight + this.height; // Bottom align
+
+            ctx.save();
+            
+            // Draw sprite with alpha channel support
+            // Canvas drawImage automatically preserves PNG alpha channel (transparency)
+            // Reset all composite operations to ensure transparency works
+            ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = 'source-over'; // Default composite operation - preserves alpha
+            
+            // Debug: Check if sprite is a placeholder (green background)
+            if (currentSprite.src && currentSprite.src.includes('data:image')) {
+                // This might be a placeholder - log warning
+                console.warn(`Warning: Drawing placeholder sprite for ${this.isPlayer ? 'player' : 'enemy'} ${this.currentAnim}`);
+            }
+            
+            // Ensure we're drawing with proper transparency
+            // Reset all composite operations to ensure transparency works
+            ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = 'source-over'; // Default composite operation - preserves alpha
+            
+            if (!this.facingRight) {
+                ctx.scale(-1, 1);
+                // Draw image - alpha channel will be preserved automatically by Canvas
+                ctx.drawImage(
+                    currentSprite,
+                    0, 0, currentSprite.width, currentSprite.height, // Source: full image with alpha
+                    -drawX - drawWidth, drawY, drawWidth, drawHeight  // Destination: scaled position
+                );
+            } else {
+                // Draw image - alpha channel will be preserved automatically by Canvas
+                ctx.drawImage(
+                    currentSprite,
+                    0, 0, currentSprite.width, currentSprite.height, // Source: full image with alpha
+                    drawX, drawY, drawWidth, drawHeight  // Destination: scaled position
+                );
+            }
+            ctx.restore();
+            
+            this.animateFrames(anim);
+        }
+
+        animateFrames(anim) {
+            if (!anim) {
+                console.error('animateFrames: anim is null for', this.currentAnim);
+                return;
+            }
+            
+            this.frameTimer++;
+            // Only advance frame when timer reaches speed threshold
+            if (this.frameTimer >= anim.speed) {
+                this.frameTimer = 0; // Reset timer
+                
+                // Check if we should advance to next frame
+                // frameIndex starts at 0, so we need to play frames 0, 1, 2, 3 (4 frames total)
+                if (this.frameIndex < anim.frames - 1) {
+                    this.frameIndex++;
+                    console.log(`${this.currentAnim} animation: frame ${this.frameIndex + 1}/${anim.frames}, frameTimer reset`);
+                    // Check attack hit on second frame of attack/super animation (frameIndex 1 = second frame)
+                    if (anim.isAttack && this.frameIndex === 1) {
+                        console.log(`Attack check: ${this.currentAnim}, frame ${this.frameIndex + 1}, isSuperAttacking: ${this.isSuperAttacking}`);
+                        this.checkAttackHit();
+                    }
+                } else {
+                    // Animation finished - all frames played
+                    // frameIndex is now anim.frames - 1 (last frame), so we've played all frames
+                    console.log(`${this.currentAnim} animation finished, frameIndex: ${this.frameIndex}, frames: ${anim.frames}`);
+                    if (this.currentAnim === 'super') {
+                        console.log('Super animation finished, resetting state');
+                        this.isSuperAttacking = false; // Reset super attack state when super animation ends
+                        this.superStartTime = 0;
+                        this.switchAnimation('idle');
+                    } else if (this.currentAnim === 'attack') {
+                        this.isAttacking = false;
+                        this.attackStartTime = 0;
+                        this.switchAnimation('idle');
+                    } else if (this.currentAnim === 'hurt') {
+                        this.isHurt = false;
+                        this.hurtStartTime = 0;
+                        this.switchAnimation('idle');
+                    } else {
+                        // Loop animation (idle, run, block)
+                        this.frameIndex = 0;
+                    }
+                }
+            } else {
+                // Debug: log when timer is counting (only for super to reduce spam)
+                if (this.currentAnim === 'super' && this.frameTimer % 3 === 0) {
+                    console.log(`Super animation: timer ${this.frameTimer}/${anim.speed}, frameIndex: ${this.frameIndex}`);
+                }
+            }
+        }
+
+        update() {
+            if (this.isDead) return;
+
+            // 状态超时保护（防止卡死）
+            if (this.isAttacking && this.attackStartTime) {
+                const attackDuration = Date.now() - this.attackStartTime;
+                // 攻击动画超过1秒，强制结束
+                if (attackDuration > 1000) {
+                    this.isAttacking = false;
+                    this.attackStartTime = 0;
+                    if (this.currentAnim === 'attack') {
+                        this.switchAnimation('idle');
+                    }
+                }
+            }
+            
+            // Super 攻击超时保护
+            if (this.isSuperAttacking && this.superStartTime) {
+                const superDuration = Date.now() - this.superStartTime;
+                // Super 攻击动画超过1.5秒，强制结束
+                if (superDuration > 1500) {
+                    console.log('Super attack timeout, forcing reset');
+                    this.isSuperAttacking = false;
+                    this.superStartTime = 0;
+                    if (this.currentAnim === 'super') {
+                        this.switchAnimation('idle');
+                    }
+                }
+            }
+            
+            // 额外检查：如果不在 super 动画但状态还是 true，强制重置
+            if (this.isSuperAttacking && this.currentAnim !== 'super') {
+                console.log('Super state mismatch detected, resetting');
+                this.isSuperAttacking = false;
+                this.superStartTime = 0;
+            }
+            
+            if (this.isHurt && this.hurtStartTime) {
+                const hurtDuration = Date.now() - this.hurtStartTime;
+                // 受伤状态超过0.6秒，强制结束
+                if (hurtDuration > 600) {
+                    this.isHurt = false;
+                    this.hurtStartTime = 0;
+                    if (this.currentAnim === 'hurt') {
+                        this.switchAnimation('idle');
+                    }
+                }
+            }
+
+            this.draw();
+            this.position.y += this.velocity.y;
+            this.position.x += this.velocity.x;
+
+            // Gravity
+            if (this.position.y + this.height + this.velocity.y >= GROUND_Y) {
+                this.velocity.y = 0;
+                this.position.y = GROUND_Y - this.height;
+            } else {
+                this.velocity.y += GRAVITY;
+            }
+
+            // Boundaries
+            if (this.position.x < 0) this.position.x = 0;
+            if (this.position.x + this.width > canvas.width) this.position.x = canvas.width - this.width;
+        }
+
+        attack() {
+            if (this.isDead) return;
+            // 允许在格挡时攻击（取消格挡）
+            if (this.isBlocking) {
+                this.block(false);
+            }
+            // 如果正在攻击、super攻击或受伤，不允许新攻击
+            if (this.isAttacking || this.isSuperAttacking || this.isHurt) return;
+            
+            this.switchAnimation('attack');
+            this.isAttacking = true;
+            this.attackStartTime = Date.now();
+            playSound('attack', this.isPlayer);
+        }
+
+        super() {
+            if (this.isDead) {
+                console.log('Super: Fighter is dead');
+                return;
+            }
+            
+            // 检查使用次数限制
+            if (this.isPlayer && superAttackUses <= 0) {
+                console.log('Super: No uses left');
+                return;
+            }
+
+            // 允许在格挡时使用 super（取消格挡）
+            if (this.isBlocking) {
+                this.block(false);
+            }
+            // 如果正在攻击、super攻击或受伤，不允许新 super
+            if (this.isAttacking || this.isSuperAttacking || this.isHurt) {
+                console.log('Super: Cannot use super - isAttacking:', this.isAttacking, 'isSuperAttacking:', this.isSuperAttacking, 'isHurt:', this.isHurt);
+                return;
+            }
+
+            console.log('Super attack triggered!');
+            this.switchAnimation('super');
+            this.isSuperAttacking = true;
+            this.isAttacking = false; // 确保普通攻击状态被清除
+            this.superStartTime = Date.now();
+            
+            // 扣除使用次数
+            if (this.isPlayer) {
+                superAttackUses--;
+                updateSuperUI();
+            }
+
+            playSound('attack', this.isPlayer); // 使用攻击音效，可以后续改为 super 音效
+            console.log('Super: Animation switched to super, isSuperAttacking:', this.isSuperAttacking);
+        }
+
+        block(isBlocking) {
+            if (this.isDead) return;
+            // 如果正在受伤，不允许格挡
+            if (this.isHurt) return;
+            
+            this.isBlocking = isBlocking;
+            if (isBlocking) {
+                // 如果正在攻击，取消攻击
+                if (this.isAttacking) {
+                    this.isAttacking = false;
+                }
+                this.switchAnimation('block');
+                this.blockStartTime = Date.now();
+            } else {
+                if (this.currentAnim === 'block') {
+                    this.switchAnimation('idle');
+                    this.blockStartTime = 0;
+                }
+            }
+        }
+
+        takeDamage(damage) {
+            if (this.isDead) return;
+
+            let actualDamage = damage;
+            
+            if (this.isBlocking) {
+                // Block状态：固定伤害 1
+                actualDamage = 1;
+                playSound('block');
+                
+                // 统计有效防御
+                if (this.isPlayer) {
+                    gameStats.playerBlocks++;
+            } else {
+                    gameStats.enemyBlocks++;
+                }
+            } else {
+                // 非格挡状态：使用传入的伤害值
+                actualDamage = damage;
+                
+                this.switchAnimation('hurt');
+                this.isHurt = true;
+                this.hurtStartTime = Date.now();
+                // 取消攻击和格挡状态
+                this.isAttacking = false;
+                this.isSuperAttacking = false;
+                this.superStartTime = 0;
+                this.isBlocking = false;
+                // 注意：音效在checkAttackHit中播放，这里不重复播放
+                
+                // 添加打击特效（溅血效果）
+                const hitX = this.position.x + this.width / 2;
+                const hitY = this.position.y + this.height / 2;
+                addHitEffect(hitX, hitY, this.isPlayer);
+            }
+            
+            // 确保伤害至少为1
+            actualDamage = Math.max(1, actualDamage);
+            
+            this.health -= actualDamage;
+            if (this.health <= 0) {
+                this.health = 0;
+                this.die();
+            }
+            
+            // 显示伤害数字（在角色上方）
+            const damageX = this.position.x + this.width / 2;
+            const damageY = this.position.y - 20;
+            addDamageNumber(damageX, damageY, actualDamage, this.isPlayer);
+            
+            // 更新UI
+            updateUI();
+        }
+
+        die() {
+            this.isDead = true;
+            if (!this.isPlayer && this.animData.dead) {
+                this.switchAnimation('dead');
+            } else {
+                 this.switchAnimation('hurt');
+            }
+            endGame(this.isPlayer ? 'Royal Knight' : 'Harry');
+        }
+
+        switchAnimation(key) {
+            if (this.currentAnim === key) {
+                // Don't log this for every frame, only when it's unexpected
+                if (key !== 'idle' && key !== 'run') {
+                    console.log(`Animation already set to ${key}, skipping switch`);
+                }
+                return;
+            }
+            // 死亡状态不能切换
+            if (this.currentAnim === 'dead') return;
+            // 受伤状态只能切换到idle或dead（动画结束后）
+            if (this.currentAnim === 'hurt' && !this.isDead && key !== 'dead' && key !== 'idle') {
+                // 检查受伤时间，如果超过0.5秒，允许切换
+                if (this.hurtStartTime && Date.now() - this.hurtStartTime < 500) {
+                    return;
+                }
+            }
+            
+            // 防止在 super 攻击进行中切换到其他动画（除非是动画自然结束）
+            if (this.currentAnim === 'super' && this.isSuperAttacking && key !== 'idle') {
+                console.log(`Blocked switch from super to ${key} - super attack in progress`);
+                return;
+            }
+
+            const oldAnim = this.currentAnim;
+            console.log(`Animation switch: ${oldAnim} -> ${key}, old frameIndex: ${this.frameIndex}, old frameTimer: ${this.frameTimer}`);
+            
+            // 如果从 super 动画切换出去，确保重置状态
+            if (oldAnim === 'super' && key !== 'super') {
+                console.log('Switching away from super, resetting isSuperAttacking');
+                this.isSuperAttacking = false;
+                this.superStartTime = 0;
+            }
+
+            this.currentAnim = key;
+            this.frameIndex = 0;
+            this.frameTimer = 0; // Start from 0, will increment to 1 on first call
+            console.log(`Animation switched: ${key}, frameIndex reset to 0, frameTimer reset to 0`);
+        }
+
+        checkAttackHit() {
+            const target = this.isPlayer ? enemy : player;
+            
+            if (!target || target.isDead) return;
+            
+            // 防止重复伤害（添加冷却时间）
+            if (target.lastHitTime && Date.now() - target.lastHitTime < 500) {
+                return; // 500ms内不重复伤害
+            }
+
+            // 计算攻击框的实际位置
+            let attackBoxX, attackBoxY, attackBoxW, attackBoxH;
+            if (this.facingRight) {
+                attackBoxX = this.position.x + this.attackBox.offset.x;
+            } else {
+                attackBoxX = this.position.x - this.attackBox.offset.x - this.attackBox.width;
+            }
+            attackBoxY = this.position.y + this.attackBox.offset.y;
+            attackBoxW = this.attackBox.width;
+            attackBoxH = this.attackBox.height;
+
+            // 检查攻击框与目标碰撞
+            const isColliding = (
+                attackBoxX + attackBoxW >= target.position.x &&
+                attackBoxX <= target.position.x + target.width &&
+                attackBoxY + attackBoxH >= target.position.y &&
+                attackBoxY <= target.position.y + target.height
+            );
+
+            if (isColliding) {
+                // 检查是否是 super 攻击
+                const isSuperAttack = this.currentAnim === 'super' && this.isSuperAttacking;
+                console.log(`Attack hit detected! isSuperAttack: ${isSuperAttack}, currentAnim: ${this.currentAnim}, isSuperAttacking: ${this.isSuperAttacking}`);
+                
+                // 根据攻击类型计算基础伤害
+                let baseDamage;
+                if (isSuperAttack) {
+                    // Super 攻击：20 伤害
+                    baseDamage = 20;
+                    console.log('SUPER ATTACK HIT! Damage: 20');
+                } else {
+                    // 常规攻击：10 伤害
+                    baseDamage = 10;
+                }
+                
+                // 武士打击相对弱 20%（即武士的伤害是 Harry 的 80%）
+                if (!this.isPlayer) {
+                    baseDamage = Math.floor(baseDamage * 0.8);
+                }
+                
+                target.lastHitTime = Date.now();
+                
+                // 统计有效击中
+                if (this.isPlayer) {
+                    gameStats.playerHits++;
+                } else {
+                    gameStats.enemyHits++;
+                }
+                
+                // 播放正确的音效：根据攻击者决定
+                // this.isPlayer 是攻击者，target.isPlayer 是被攻击者
+                if (this.isPlayer) {
+                    // Harry打武士 - 金属/刀剑打击盔甲声
+                    playSound('hit', target.isPlayer, true);
+                } else {
+                    // 武士打Harry - 轻微猫叫
+                    playSound('hit', target.isPlayer, false);
+                }
+                
+                target.takeDamage(baseDamage);
+                
+                // Debug log
+                console.log(`${this.isPlayer ? 'Player' : 'Enemy'} hit ${target.isPlayer ? 'Player' : 'Enemy'} for ${baseDamage} damage! (${isSuperAttack ? 'SUPER' : 'NORMAL'})`);
+            } else {
+                // Debug: log when attack misses
+                if (this.currentAnim === 'super' && this.isSuperAttacking) {
+                    console.log('Super attack missed - no collision detected');
+                }
+            }
+        }
+    }
+
+    // ================= Game Instances & Control =================
+    let player, enemy;
+    let enemyAIInterval;
+
+    function initGame() {
+        // Reset super attack uses
+        superAttackUses = superAttackMaxUses;
+        updateSuperUI();
+        
+        // Reset game statistics
+        gameStats.playerHits = 0;
+        gameStats.playerBlocks = 0;
+        gameStats.enemyHits = 0;
+        gameStats.enemyBlocks = 0;
+        
+        player = new Fighter({
+            position: { x: 100, y: 0 },
+            velocity: { x: 0, y: 0 },
+            animData: ANIMATIONS.harry,
+            isPlayer: true
+        });
+
+        enemy = new Fighter({
+            position: { x: 600, y: 0 },
+            velocity: { x: 0, y: 0 },
+            animData: ANIMATIONS.knight,
+            isPlayer: false
+        });
+    }
+
+    const keys = {
+        ArrowRight: { pressed: false },
+        ArrowLeft: { pressed: false },
+        ArrowUp: { pressed: false },
+        z: { pressed: false },
+        x: { pressed: false },
+        s: { pressed: false }
+    };
+
+    // Game statistics tracking
+    const gameStats = {
+        playerHits: 0,      // 玩家有效击中次数
+        playerBlocks: 0,    // 玩家有效防御次数
+        enemyHits: 0,       // 敌人有效击中次数
+        enemyBlocks: 0      // 敌人有效防御次数
+    };
+
+    // Super attack usage limit
+    let superAttackUses = 3;
+    const superAttackMaxUses = 3;
+
+    // Aggressive and smart enemy AI
+    let enemyAITimer = 0;
+    let enemyNextAction = 0;
+    let enemyAttackCooldown = 0;
+    let enemyLastAttackTime = 0;
+    let enemyComboCount = 0;
+    let enemyAggressionLevel = 0.7; // 0-1, higher = more aggressive
+    let enemyBlockStartTime = 0;
+    let enemyBlockDuration = 0;
+    let enemyStateChangeTimer = 0; // 防止状态死循环
+    
+    function startEnemyAI() {
+        enemyAIInterval = setInterval(() => {
+            if (gameState !== 'playing' || enemy.isDead || player.isDead) return;
+
+            const distanceX = Math.abs(player.position.x - enemy.position.x);
+            const playerDirection = player.position.x > enemy.position.x ? 1 : -1;
+            enemyAITimer++;
+            enemyAttackCooldown = Math.max(0, enemyAttackCooldown - 1);
+
+            // 如果敌人正在攻击或受伤，不执行新动作
+            if (enemy.isAttacking || enemy.isHurt) {
+                // 确保面向玩家
+                if (!enemy.isHurt) {
+                    enemy.facingRight = player.position.x > enemy.position.x;
+                }
+                return;
+            }
+            
+            // 格挡超时机制：格挡最多持续1-2秒，然后自动取消
+            if (enemy.isBlocking) {
+                const blockTime = enemyAITimer - enemyBlockStartTime;
+                if (blockTime > enemyBlockDuration) {
+                    // 格挡超时，自动取消
+                    enemy.block(false);
+                    enemyBlockStartTime = 0;
+                    enemyBlockDuration = 0;
+                } else {
+                    // 格挡中，确保面向玩家
+                    enemy.facingRight = player.position.x > enemy.position.x;
+                    // 如果玩家停止攻击，有50%概率取消格挡
+                    if (!player.isAttacking && Math.random() < 0.3) {
+                        enemy.block(false);
+                        enemyBlockStartTime = 0;
+                        enemyBlockDuration = 0;
+                    }
+                    return;
+                }
+            }
+
+            enemy.velocity.x = 0;
+
+            // 动态调整攻击性（根据血量）
+            const healthPercent = enemy.health / enemy.maxHealth;
+            enemyAggressionLevel = 0.5 + (1 - healthPercent) * 0.5; // 血量越低越激进
+
+            // 防止状态死循环：如果同一个状态持续太久，强制改变
+            enemyStateChangeTimer++;
+            const maxStateDuration = 60 + Math.random() * 40; // 1-1.7秒
+            if (enemyStateChangeTimer > maxStateDuration) {
+                // 强制改变状态
+                if (enemy.currentAnim === 'idle' || enemy.currentAnim === 'run') {
+                    enemyStateChangeTimer = 0;
+                }
+            }
+            
+            // 决策频率：更频繁（每0.3-0.8秒）
+            if (enemyAITimer >= enemyNextAction) {
+                const action = Math.random();
+                const canAttack = enemyAttackCooldown === 0;
+                enemyStateChangeTimer = 0; // 重置状态计时器
+                
+                // === 远距离（>250px）：主动接近 ===
+                if (distanceX > 250) {
+                    // 80%概率快速接近玩家
+                    if (action < 0.8) {
+                        enemy.velocity.x = playerDirection * (3.5 + Math.random() * 1.5); // 更快速度
+                        enemy.facingRight = playerDirection > 0;
+                        enemy.switchAnimation('run');
+                    } else {
+                        // 20%概率随机移动（迷惑玩家）
+                        const randomDir = Math.random() < 0.5 ? -1 : 1;
+                        enemy.velocity.x = randomDir * 2;
+                        enemy.facingRight = randomDir > 0;
+                        enemy.switchAnimation('run');
+                    }
+                    enemyNextAction = enemyAITimer + 10 + Math.random() * 15; // 快速决策
+                }
+                // === 中距离（120-250px）：接近并准备攻击 ===
+                else if (distanceX > 120) {
+                    // 60%概率接近，40%概率直接攻击（如果冷却完成）
+                    if (action < 0.6 || !canAttack) {
+                        // 接近玩家
+                        enemy.velocity.x = playerDirection * (3 + Math.random() * 1);
+                        enemy.facingRight = playerDirection > 0;
+                        enemy.switchAnimation('run');
+                    } else {
+                        // 直接攻击（即使距离稍远）
+                        enemy.attack();
+                        enemyAttackCooldown = 15 + Math.random() * 10;
+                        enemyLastAttackTime = enemyAITimer;
+                    }
+                    enemyNextAction = enemyAITimer + 8 + Math.random() * 12; // 更快决策
+                }
+                // === 近距离（<120px）：积极攻击 ===
+                else {
+                    // 根据攻击性等级决定行为
+                    const attackChance = 0.4 + enemyAggressionLevel * 0.3; // 40%-70%攻击概率
+                    const blockChance = 0.15;
+                    const moveChance = 0.15;
+                    
+                    if (action < attackChance && canAttack) {
+                        // 攻击！
+                        enemy.attack();
+                        enemyAttackCooldown = 12 + Math.random() * 8;
+                        enemyLastAttackTime = enemyAITimer;
+                        enemyComboCount++;
+                        
+                        // 连击系统：如果刚攻击过，有30%概率立即再次攻击
+                        if (enemyComboCount > 0 && Math.random() < 0.3 && enemyAITimer - enemyLastAttackTime < 20) {
+                            setTimeout(() => {
+                                if (!enemy.isDead && !enemy.isHurt && distanceX < 150) {
+                                    enemy.attack();
+                                }
+                            }, 300 + Math.random() * 200);
+                        }
+                    } else if (action < attackChance + blockChance && player.isAttacking) {
+                        // 预判玩家攻击并格挡（随机应变：不一定总是格挡）
+                        if (Math.random() < 0.6) { // 60%概率格挡，40%概率闪避或攻击
+                            enemy.block(true);
+                            enemyBlockStartTime = enemyAITimer;
+                            enemyBlockDuration = 20 + Math.random() * 30; // 0.3-0.8秒格挡时间
+                            // 格挡后立即反击
+                            setTimeout(() => {
+                                if (!enemy.isDead && !enemy.isHurt && distanceX < 150) {
+                                    enemy.block(false);
+                                    enemyBlockStartTime = 0;
+                                    enemyBlockDuration = 0;
+                                    if (Math.random() < 0.7) { // 70%概率反击
+                                        enemy.attack();
+                                    }
+                                }
+                            }, 200 + Math.random() * 200);
+                        } else {
+                            // 40%概率：闪避或直接攻击
+                            if (Math.random() < 0.5) {
+                                // 闪避
+                                const sideDir = Math.random() < 0.5 ? -1 : 1;
+                                enemy.velocity.x = sideDir * 3;
+                                enemy.facingRight = playerDirection > 0;
+                                enemy.switchAnimation('run');
+                            } else {
+                                // 直接攻击
+                                enemy.attack();
+                                enemyAttackCooldown = 12 + Math.random() * 8;
+                                enemyLastAttackTime = enemyAITimer;
+                            }
+                        }
+                    } else if (action < attackChance + blockChance + moveChance) {
+                        // 随机移动（侧移或后退）
+                        const moveType = Math.random();
+                        if (moveType < 0.5) {
+                            // 侧移（保持距离）
+                            const sideDir = Math.random() < 0.5 ? -1 : 1;
+                            enemy.velocity.x = sideDir * 2.5;
+                            enemy.facingRight = playerDirection > 0;
+                            enemy.switchAnimation('run');
+                        } else {
+                            // 短暂后退然后攻击
+                            enemy.velocity.x = -playerDirection * 2;
+                            enemy.facingRight = playerDirection > 0;
+                            enemy.switchAnimation('run');
+                            setTimeout(() => {
+                                if (!enemy.isDead && !enemy.isHurt && distanceX < 180) {
+                                    enemy.attack();
+                                }
+                            }, 200 + Math.random() * 300);
+                        }
+                    } else {
+                        // 待机但保持面向玩家
+                        enemy.switchAnimation('idle');
+                    }
+                    
+                    enemyNextAction = enemyAITimer + 5 + Math.random() * 10; // 非常快的决策
+                }
+                
+                // 确保面向玩家
+                enemy.facingRight = player.position.x > enemy.position.x;
+                
+                // 重置连击计数（如果太久没攻击）
+                if (enemyAITimer - enemyLastAttackTime > 60) {
+                    enemyComboCount = 0;
+                }
+            }
+            
+            // 持续接近玩家（如果距离较远且不在执行其他动作）
+            // 注意：这里不再检查isBlocking，因为格挡已经在上面处理了
+            if (distanceX > 150 && !enemy.isAttacking && !enemy.isHurt && !enemy.isBlocking) {
+                if (Math.abs(enemy.velocity.x) < 0.5) {
+                    enemy.velocity.x = playerDirection * 2.5;
+                    enemy.facingRight = playerDirection > 0;
+                    if (enemy.currentAnim !== 'run') {
+                        enemy.switchAnimation('run');
+                    }
+                }
+            }
+            
+            // 额外的随机应变：即使不在决策周期，也有小概率改变行为
+            if (Math.random() < 0.02 && !enemy.isAttacking && !enemy.isHurt && !enemy.isBlocking) {
+                // 2%概率随机改变行为
+                const randomAction = Math.random();
+                if (randomAction < 0.3 && distanceX < 200) {
+                    // 随机攻击
+                    if (enemyAttackCooldown === 0) {
+                        enemy.attack();
+                        enemyAttackCooldown = 12 + Math.random() * 8;
+                        enemyLastAttackTime = enemyAITimer;
+                    }
+                } else if (randomAction < 0.6) {
+                    // 随机移动
+                    const randomDir = Math.random() < 0.5 ? -1 : 1;
+                    enemy.velocity.x = randomDir * 2;
+                    enemy.facingRight = randomDir > 0;
+                    enemy.switchAnimation('run');
+                }
+            }
+
+        }, 16); // 约60fps
+    }
+
+    function updateSuperUI() {
+        const superCountElement = document.getElementById('super-count');
+        if (superCountElement) {
+            superCountElement.textContent = superAttackUses;
+            if (superAttackUses > 0) {
+                superCountElement.style.color = '#ffd700';
+            } else {
+                superCountElement.style.color = '#555'; // 灰色表示用完
+            }
+        }
+    }
+
+    function updateUI() {
+        if (!player || !enemy) return;
+        
+        // 更新血条宽度
+        const playerHealthPercent = Math.max(0, Math.min(100, player.health));
+        const enemyHealthPercent = Math.max(0, Math.min(100, enemy.health));
+        
+        document.getElementById('player-health').style.width = playerHealthPercent + '%';
+        document.getElementById('enemy-health').style.width = enemyHealthPercent + '%';
+        
+        // 更新血条文字
+        const playerHealthText = document.getElementById('player-health-text');
+        const enemyHealthText = document.getElementById('enemy-health-text');
+        
+        if (playerHealthText) {
+            playerHealthText.textContent = `${Math.ceil(player.health)} / 100`;
+            // 根据血量改变颜色
+            if (playerHealthPercent > 60) {
+                playerHealthText.style.color = '#ffffff';
+            } else if (playerHealthPercent > 30) {
+                playerHealthText.style.color = '#ffd700';
+            } else {
+                playerHealthText.style.color = '#ff6b6b';
+            }
+        }
+        
+        if (enemyHealthText) {
+            enemyHealthText.textContent = `${Math.ceil(enemy.health)} / 100`;
+            // 根据血量改变颜色
+            if (enemyHealthPercent > 60) {
+                enemyHealthText.style.color = '#ffffff';
+            } else if (enemyHealthPercent > 30) {
+                enemyHealthText.style.color = '#ffd700';
+            } else {
+                enemyHealthText.style.color = '#ff6b6b';
+            }
+        }
+        
+        // 根据血量改变血条颜色（低血量时变红）
+        const playerHealthBar = document.getElementById('player-health');
+        const enemyHealthBar = document.getElementById('enemy-health');
+        
+        if (playerHealthBar) {
+            if (playerHealthPercent > 60) {
+                playerHealthBar.style.background = 'linear-gradient(90deg, #4ade80 0%, #22c55e 50%, #16a34a 100%)';
+            } else if (playerHealthPercent > 30) {
+                playerHealthBar.style.background = 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%)';
+            } else {
+                playerHealthBar.style.background = 'linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)';
+            }
+        }
+        
+        if (enemyHealthBar) {
+            if (enemyHealthPercent > 60) {
+                enemyHealthBar.style.background = 'linear-gradient(90deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%)';
+            } else if (enemyHealthPercent > 30) {
+                enemyHealthBar.style.background = 'linear-gradient(90deg, #f97316 0%, #ea580c 50%, #c2410c 100%)';
+            } else {
+                enemyHealthBar.style.background = 'linear-gradient(90deg, #991b1b 0%, #7f1d1d 50%, #450a0a 100%)';
+            }
+        }
+    }
+
+    function endGame(winName) {
+        gameState = 'gameover';
+        winner = winName;
+        clearInterval(enemyAIInterval);
+        
+        // Display winner with HTML
+        gameOverText.innerHTML = winner + ' Wins!' + '<span class="winner-badge">🏆 VICTORY</span>';
+        
+        // Generate fight statistics report
+        const statsHTML = `
+            <div class="stats-header">📊 FIGHT STATISTICS</div>
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Fighter</th>
+                        <th>Effective Hits</th>
+                        <th>Successful Blocks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="stat-label">⚔️ Harry</td>
+                        <td class="stat-value">${gameStats.playerHits}</td>
+                        <td class="stat-value">${gameStats.playerBlocks}</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-label">🛡️ Royal Knight</td>
+                        <td class="stat-value">${gameStats.enemyHits}</td>
+                        <td class="stat-value">${gameStats.enemyBlocks}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center; margin-top: 20px; color: #c4a000; font-size: 18px;">
+                <strong>Total Exchanges:</strong> ${gameStats.playerHits + gameStats.enemyHits} hits | 
+                <strong>Total Defenses:</strong> ${gameStats.playerBlocks + gameStats.enemyBlocks} blocks
+            </div>
+        `;
+        
+        const fightStatsDiv = document.getElementById('fight-stats');
+        if (fightStatsDiv) {
+            fightStatsDiv.innerHTML = statsHTML;
+        }
+        
+        gameOverOverlay.classList.add('active');
+    }
+
+    function restartGame() {
+        gameOverOverlay.classList.remove('active');
+        // 显示开始页面而不是直接开始游戏
+        if (startOverlay) {
+            startOverlay.classList.remove('hidden');
+        }
+        initPlayCountDisplay();
+        // 不立即开始游戏，等待用户点击开始按钮
+        gameState = 'loading';
+        initGame();
+        updateUI(); // 重启时更新UI显示
+        startEnemyAI();
+    }
+
+    restartBtn.addEventListener('click', restartGame);
+
+    // ================= Main Game Loop =================
+    function gameLoop() {
+        window.requestAnimationFrame(gameLoop);
+        // Clear canvas with transparent background
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Ensure no background color is set
+        ctx.globalCompositeOperation = 'source-over';
+
+        // Draw background - only show bottom half (palace hall)
+        if (assets.background.complete && assets.background.naturalWidth > 0) {
+            // Calculate source coordinates for bottom half
+            const bgHeight = assets.background.height;
+            const sourceY = bgHeight / 2; // Start from middle (bottom half)
+            const sourceHeight = bgHeight / 2; // Use bottom half
+            
+            // Draw only the bottom half, stretched to fill canvas
+            ctx.drawImage(
+                assets.background,
+                0, sourceY, assets.background.width, sourceHeight,  // Source: bottom half
+                0, 0, canvas.width, canvas.height  // Destination: full canvas
+            );
+            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            ctx.fillRect(0,0,canvas.width, canvas.height);
+        } else {
+            // Gradient background fallback (palace-like colors)
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#3e2723');
+            gradient.addColorStop(0.5, '#5d4037');
+            gradient.addColorStop(1, '#4e342e');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        if (gameState !== 'playing' && gameState !== 'gameover') return;
+
+        // Update player state - 允许在大部分状态下响应移动
+        if (player && !player.isDead) {
+            // 移动控制：即使在攻击或格挡时，也允许移动（取消状态）
+            if (keys.ArrowLeft.pressed || keys.ArrowRight.pressed) {
+                // 如果正在攻击，移动可以取消攻击
+                if (player.isAttacking && (keys.ArrowLeft.pressed || keys.ArrowRight.pressed)) {
+                    // 移动时取消攻击（但保持攻击动画直到结束）
+                    // 不立即取消，让攻击动画自然结束
+                }
+                // 如果正在格挡，移动可以取消格挡
+                if (player.isBlocking && (keys.ArrowLeft.pressed || keys.ArrowRight.pressed)) {
+                    player.block(false);
+                }
+            }
+            
+            // 只有在非受伤状态下才允许移动
+            if (!player.isHurt) {
+                player.velocity.x = 0;
+                if (keys.ArrowLeft.pressed && keys.ArrowRight.pressed) {
+                    player.velocity.x = 0;
+                    if (!player.isAttacking && !player.isBlocking && !player.isSuperAttacking) {
+                        player.switchAnimation('idle');
+                    }
+                } else if (keys.ArrowLeft.pressed) {
+                    player.velocity.x = -5;
+                    player.facingRight = false;
+                    if (!player.isAttacking && !player.isBlocking && !player.isSuperAttacking) {
+                        player.switchAnimation('run');
+                    }
+                } else if (keys.ArrowRight.pressed) {
+                    player.velocity.x = 5;
+                    player.facingRight = true;
+                    if (!player.isAttacking && !player.isBlocking && !player.isSuperAttacking) {
+                        player.switchAnimation('run');
+                    }
+                } else {
+                    // 没有按键时，如果不在攻击/格挡状态，切换到idle
+                    if (!player.isAttacking && !player.isBlocking && !player.isSuperAttacking) {
+                        player.switchAnimation('idle');
+                    }
+                }
+            }
+        }
+
+        // Update characters
+        if (player) player.update();
+        if (enemy) enemy.update();
+        
+        // Update and draw hit effects (draw before damage numbers so they appear behind)
+        for (let i = hitEffects.length - 1; i >= 0; i--) {
+            const effect = hitEffects[i];
+            effect.update();
+            effect.draw();
+            if (!effect.isAlive()) {
+                hitEffects.splice(i, 1);
+            }
+        }
+        
+        // Update and draw damage numbers (draw on top)
+        for (let i = damageNumbers.length - 1; i >= 0; i--) {
+            const dmg = damageNumbers[i];
+            dmg.update();
+            dmg.draw();
+            if (!dmg.isAlive()) {
+                damageNumbers.splice(i, 1);
+            }
+        }
+    }
+
+    function startGame() {
+        // 增加游戏次数计数器
+        try {
+            const playCountKey = 'larryAcademy_palaceDuel_totalPlays';
+            let playCount = parseInt(localStorage.getItem(playCountKey) || '0', 10);
+            playCount++;
+            localStorage.setItem(playCountKey, playCount.toString());
+            console.log(`Palace Duel 游戏次数: ${playCount}`);
+        } catch (e) {
+            console.warn('无法更新游戏次数:', e);
+        }
+        
+        // 更新界面显示
+        initPlayCountDisplay();
+        
+        gameState = 'playing';
+        initGame();
+        updateUI(); // 初始化时更新UI显示
+        startEnemyAI();
+        gameLoop();
+    }
+
+    // ================= Event Listeners =================
+    window.addEventListener('keydown', (event) => {
+        if (gameState !== 'playing' || !player || player.isDead) return;
+        switch (event.key) {
+            case 'ArrowRight': keys.ArrowRight.pressed = true; break;
+            case 'ArrowLeft': keys.ArrowLeft.pressed = true; break;
+            case 'ArrowUp':
+                keys.ArrowUp.pressed = true;
+                // 跳跃：只要在地面就可以跳（不限制攻击/格挡状态）
+                if (player.velocity.y === 0) {
+                    player.velocity.y = -15;
+                    // 如果正在格挡，取消格挡
+                    if (player.isBlocking) {
+                        player.block(false);
+                    }
+                }
+                break;
+            case 'z': case 'Z': 
+                keys.z.pressed = true;
+                player.attack(); 
+                break;
+            case 's': case 'S':
+                keys.s.pressed = true;
+                console.log('S key pressed, calling player.super()');
+                if (player) {
+                    player.super();
+                } else {
+                    console.error('Player is null!');
+                }
+                break;
+            case 'x': case 'X': 
+                player.block(true); 
+                break;
+        }
+    });
+
+    window.addEventListener('keyup', (event) => {
+        switch (event.key) {
+            case 'ArrowRight': keys.ArrowRight.pressed = false; break;
+            case 'ArrowLeft': keys.ArrowLeft.pressed = false; break;
+            case 'ArrowUp': keys.ArrowUp.pressed = false; break;
+            case 'z': case 'Z': keys.z.pressed = false; break;
+            case 's': case 'S': keys.s.pressed = false; break;
+            case 'x': case 'X': if (player) player.block(false); break;
+        }
+    });
+
+</script>
+</body>
+</html>
+

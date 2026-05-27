@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乘法转盘大挑战 - Larry Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated background */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 100%;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5),
+                         0 4px 0 #e84545;
+            letter-spacing: 2px;
+            animation: titlePulse 2s infinite ease-in-out;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Lives display */
+        .lives-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .life-heart {
+            font-size: 2rem;
+            transition: all 0.3s;
+            filter: drop-shadow(0 0 8px rgba(255, 100, 100, 0.6));
+        }
+
+        .life-heart.lost {
+            filter: grayscale(1) opacity(0.3);
+            transform: scale(0.8);
+        }
+
+        .life-heart.losing {
+            animation: heartBreak 0.5s ease-out;
+        }
+
+        @keyframes heartBreak {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3) rotate(-10deg); }
+            50% { transform: scale(0.8) rotate(10deg); }
+            75% { transform: scale(1.1); }
+            100% { transform: scale(0.8); filter: grayscale(1) opacity(0.3); }
+        }
+
+        /* Music toggle button */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+
+        .music-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .music-toggle.playing {
+            animation: musicPulse 1s infinite ease-in-out;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Streak indicator */
+        .streak-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .streak-star {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .streak-star.active {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            transform: scale(1.1);
+            animation: starPop 0.5s ease-out;
+        }
+
+        @keyframes starPop {
+            0% { transform: scale(0.5); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1.1); }
+        }
+
+        /* Wheel Container */
+        .wheel-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .wheel-frame {
+            position: relative;
+            width: 350px;
+            height: 350px;
+        }
+
+        #wheelCanvas {
+            border-radius: 50%;
+            box-shadow: 0 0 0 15px #2d2d44,
+                        0 0 0 20px #1a1a2e,
+                        0 0 50px rgba(0, 0, 0, 0.5),
+                        inset 0 0 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid #ff6b6b;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+            z-index: 10;
+        }
+
+        .wheel-pointer::after {
+            content: '';
+            position: absolute;
+            top: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3),
+                        inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 5;
+        }
+
+        .wheel-center:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .wheel-center:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        /* Spin Button */
+        .spin-btn {
+            margin-top: 20px;
+            padding: 18px 60px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #c44545,
+                        0 15px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 11px 0 #c44545,
+                        0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .spin-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #c44545,
+                        0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .spin-btn:disabled {
+            background: #666;
+            box-shadow: 0 8px 0 #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Question Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #2d2d44, #1a1a2e);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            transform: scale(0.8);
+            transition: all 0.3s;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .question-text {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .answer-input {
+            width: 200px;
+            padding: 15px 25px;
+            font-size: 2rem;
+            font-family: 'Fredoka One', cursive;
+            text-align: center;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .answer-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn {
+            margin-top: 25px;
+            padding: 15px 50px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            color: white;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #2d8a7e;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #2d8a7e;
+        }
+
+        /* Feedback */
+        .feedback {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Fredoka One', cursive;
+            font-size: 4rem;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            text-shadow: 0 0 50px currentColor;
+        }
+
+        .feedback.correct {
+            color: #4ecdc4;
+            animation: feedbackPop 1s ease-out forwards;
+        }
+
+        .feedback.wrong {
+            color: #ff6b6b;
+            animation: feedbackShake 0.5s ease-out forwards;
+        }
+
+        @keyframes feedbackPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1) translateY(-50px); }
+        }
+
+        @keyframes feedbackShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
+            25% { transform: translate(-50%, -50%) rotate(-10deg); }
+            75% { transform: translate(-50%, -50%) rotate(10deg); }
+            100% { opacity: 0; }
+        }
+
+        /* Mini Game Overlay */
+        .minigame-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+
+        .minigame-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .minigame-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .minigame-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+        }
+
+        /* Plane Game Canvas */
+        #planeGameCanvas {
+            border-radius: 15px;
+            background: linear-gradient(180deg, #1a1a3e 0%, #2d2d5a 50%, #1a1a3e 100%);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            cursor: crosshair;
+        }
+
+        .minigame-hud {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 15px;
+        }
+
+        .minigame-timer {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: #ff6b6b;
+        }
+
+        .minigame-health {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: #4ecdc4;
+        }
+
+        .minigame-status {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.8rem;
+            color: #ffd700;
+            margin-top: 15px;
+            min-height: 40px;
+        }
+
+        .minigame-close {
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 400;
+            pointer-events: none;
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 25px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        /* Bonus message */
+        .bonus-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: #ffd700;
+            text-align: center;
+            z-index: 250;
+            opacity: 0;
+            visibility: hidden;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            animation: none;
+        }
+
+        .bonus-message.active {
+            opacity: 1;
+            visibility: visible;
+            animation: bonusPop 2s ease-out forwards;
+        }
+
+        @keyframes bonusPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* Game Over overlay */
+        .gameover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s;
+        }
+
+        .gameover-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .gameover-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 4rem;
+            color: #ff6b6b;
+            text-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
+            margin-bottom: 20px;
+            animation: gameoverShake 0.5s ease-out;
+        }
+
+        @keyframes gameoverShake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .gameover-score {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .gameover-stats {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .gameover-btn {
+            padding: 18px 60px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #2d8a7e;
+            transition: all 0.2s;
+        }
+
+        .gameover-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .gameover-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #2d8a7e;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .title { font-size: 1.8rem; }
+            .wheel-frame { width: 280px; height: 280px; }
+            .stat-item { padding: 8px 15px; }
+            .streak-star { width: 40px; height: 40px; font-size: 1.4rem; }
+            .question-text { font-size: 2.2rem; }
+            .mole-hole { width: 80px; height: 80px; }
+            .mole { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background shapes -->
+    <div class="bg-shapes" id="bgShapes"></div>
+
+    <!-- Back button -->
+    <a href="/games" class="back-btn">← 返回游戏大厅</a>
+
+    <!-- Music toggle -->
+    <button class="music-toggle" id="musicToggle" title="开启/关闭音乐">🎵</button>
+
+    <!-- Main container -->
+    <div class="game-container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">🎡 乘法转盘大挑战</h1>
+        </div>
+
+        <!-- Lives display -->
+        <div class="lives-container" id="livesContainer">
+            <span class="life-heart" id="life1">❤️</span>
+            <span class="life-heart" id="life2">❤️</span>
+            <span class="life-heart" id="life3">❤️</span>
+            <span class="life-heart" id="life4">❤️</span>
+            <span class="life-heart" id="life5">❤️</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-icon">🏆</span>
+                <div>
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">得分</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">✅</span>
+                <div>
+                    <div class="stat-value" id="correct">0</div>
+                    <div class="stat-label">答对</div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🎮</span>
+                <div>
+                    <div class="stat-value" id="bonusGames">0</div>
+                    <div class="stat-label">小游戏</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streak indicator -->
+        <div class="streak-container">
+            <div class="streak-star" id="star1">⭐</div>
+            <div class="streak-star" id="star2">⭐</div>
+            <div class="streak-star" id="star3">⭐</div>
+        </div>
+
+        <!-- Wheel -->
+        <div class="wheel-container">
+            <div class="wheel-frame">
+                <canvas id="wheelCanvas" width="350" height="350"></canvas>
+                <div class="wheel-pointer"></div>
+                <div class="wheel-center" id="wheelCenter">🎯</div>
+            </div>
+        </div>
+
+        <!-- Spin button -->
+        <button class="spin-btn" id="spinBtn">转动转盘！</button>
+    </div>
+
+    <!-- Question Modal -->
+    <div class="modal-overlay" id="questionModal">
+        <div class="modal">
+            <div class="question-text" id="questionText">5 + 3 = ?</div>
+            <input type="number" class="answer-input" id="answerInput" placeholder="?" autocomplete="off">
+            <br>
+            <button class="submit-btn" id="submitBtn">确认答案</button>
+        </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback" id="feedback"></div>
+
+    <!-- Bonus message -->
+    <div class="bonus-message" id="bonusMessage">
+        🎉 太棒了！连续答对3题！<br>
+        🎮 解锁小游戏！
+    </div>
+
+    <!-- Mini Game Overlay -->
+    <div class="minigame-overlay" id="minigameOverlay">
+        <h2 class="minigame-title">✈️ 空战英雄！</h2>
+        <p class="minigame-subtitle">鼠标控制飞机，点击射击！击落红色敌机获胜！</p>
+        <div class="minigame-hud">
+            <div class="minigame-timer">⏱️ <span id="planeTimer">30</span></div>
+            <div class="minigame-health">❤️ <span id="playerHealth">3</span></div>
+        </div>
+        <canvas id="planeGameCanvas" width="600" height="400"></canvas>
+        <div class="minigame-status" id="gameStatus"></div>
+        <button class="minigame-close" id="minigameClose">继续转盘！</button>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="gameover-overlay" id="gameoverOverlay">
+        <div class="gameover-title">💔 游戏结束</div>
+        <div class="gameover-score">最终得分: <span id="finalScore">0</span></div>
+        <div class="gameover-stats">答对 <span id="finalCorrect">0</span> 题 | 玩了 <span id="finalGames">0</span> 个小游戏</div>
+        <button class="gameover-btn" id="restartBtn">🔄 再玩一次</button>
+    </div>
+
+    <script>
+        // ============ 游戏配置 ============
+        const CONFIG = {
+            wheelSegments: 10,
+            spinDuration: 4000,
+            minSpins: 3,
+            maxSpins: 5,
+            planeGameDuration: 30
+        };
+
+        // ============ 游戏状态 ============
+        const game = {
+            score: 0,
+            correctCount: 0,
+            streak: 0,
+            lives: 5,
+            maxLives: 5,
+            bonusGamesPlayed: 0,
+            isSpinning: false,
+            isGameOver: false,
+            currentQuestion: null,
+            currentAnswer: null,
+            questions: [],
+            wheelRotation: 0
+        };
+
+        // ============ 颜色配置 ============
+        const WHEEL_COLORS = [
+            '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3',
+            '#F38181', '#AA96DA', '#FCBAD3', '#A8D8EA',
+            '#FF9FF3', '#54A0FF'
+        ];
+
+        // ============ 音频系统 ============
+        let audioContext = null;
+        let musicPlaying = false;
+        let musicInterval = null;
+        let currentBeat = 0;
+
+        // 背景音乐旋律 (简单的循环旋律)
+        const MUSIC_MELODY = [
+            { note: 392, duration: 0.2 },  // G4
+            { note: 440, duration: 0.2 },  // A4
+            { note: 494, duration: 0.2 },  // B4
+            { note: 523, duration: 0.4 },  // C5
+            { note: 494, duration: 0.2 },  // B4
+            { note: 440, duration: 0.2 },  // A4
+            { note: 392, duration: 0.4 },  // G4
+            { note: 0, duration: 0.2 },    // 休止符
+            { note: 523, duration: 0.2 },  // C5
+            { note: 494, duration: 0.2 },  // B4
+            { note: 440, duration: 0.2 },  // A4
+            { note: 392, duration: 0.4 },  // G4
+            { note: 330, duration: 0.2 },  // E4
+            { note: 392, duration: 0.4 },  // G4
+            { note: 0, duration: 0.2 },    // 休止符
+        ];
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
+        function playMusicNote(frequency, duration, volume = 0.08) {
+            if (!audioContext || frequency === 0) return;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.frequency.value = frequency;
+            osc.type = 'triangle'; // 柔和的音色
+            
+            gain.gain.setValueAtTime(volume, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration * 0.9);
+            
+            osc.start();
+            osc.stop(audioContext.currentTime + duration);
+        }
+
+        function startBackgroundMusic() {
+            if (musicPlaying) return;
+            
+            initAudio();
+            musicPlaying = true;
+            currentBeat = 0;
+            
+            document.getElementById('musicToggle').classList.add('playing');
+            document.getElementById('musicToggle').textContent = '🎶';
+            
+            function playNextNote() {
+                if (!musicPlaying) return;
+                
+                const note = MUSIC_MELODY[currentBeat];
+                playMusicNote(note.note, note.duration);
+                
+                currentBeat = (currentBeat + 1) % MUSIC_MELODY.length;
+                
+                musicInterval = setTimeout(playNextNote, note.duration * 1000);
+            }
+            
+            playNextNote();
+        }
+
+        function stopBackgroundMusic() {
+            musicPlaying = false;
+            if (musicInterval) {
+                clearTimeout(musicInterval);
+                musicInterval = null;
+            }
+            document.getElementById('musicToggle').classList.remove('playing');
+            document.getElementById('musicToggle').textContent = '🎵';
+        }
+
+        function toggleMusic() {
+            initAudio();
+            if (musicPlaying) {
+                stopBackgroundMusic();
+            } else {
+                startBackgroundMusic();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch(type) {
+                case 'spin':
+                    oscillator.frequency.value = 400;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                    break;
+                case 'tick':
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'square';
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.05);
+                    break;
+                case 'correct':
+                    playMelody([523, 659, 784], 0.15);
+                    break;
+                case 'wrong':
+                    playMelody([300, 250], 0.2);
+                    break;
+                case 'loseLife':
+                    playMelody([400, 300, 200], 0.15);
+                    break;
+                case 'gameOver':
+                    playMelody([400, 350, 300, 250, 200], 0.25);
+                    break;
+                case 'bonus':
+                    playMelody([523, 659, 784, 1047], 0.15);
+                    break;
+                case 'moleHit':
+                    oscillator.frequency.value = 600;
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.15);
+                    break;
+            }
+        }
+
+        function playMelody(frequencies, noteDuration) {
+            frequencies.forEach((freq, i) => {
+                setTimeout(() => {
+                    if (!audioContext) return;
+                    const osc = audioContext.createOscillator();
+                    const gain = audioContext.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioContext.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + noteDuration);
+                    osc.start();
+                    osc.stop(audioContext.currentTime + noteDuration);
+                }, i * noteDuration * 1000);
+            });
+        }
+
+        // ============ 题目生成 ============
+        function generateQuestions() {
+            game.questions = [];
+            
+            for (let i = 0; i < CONFIG.wheelSegments; i++) {
+                const difficulty = Math.random();
+                let a, b, answer;
+                
+                if (difficulty < 0.3) {
+                    // 中等难度: 一位数 × 两位数
+                    a = Math.floor(Math.random() * 9) + 2;  // 2-10
+                    b = Math.floor(Math.random() * 10) + 11; // 11-20
+                } else if (difficulty < 0.6) {
+                    // 较难: 两位数 × 一位数
+                    a = Math.floor(Math.random() * 15) + 12; // 12-26
+                    b = Math.floor(Math.random() * 8) + 3;   // 3-10
+                } else if (difficulty < 0.85) {
+                    // 困难: 两位数 × 两位数 (较小)
+                    a = Math.floor(Math.random() * 8) + 11;  // 11-18
+                    b = Math.floor(Math.random() * 8) + 11;  // 11-18
+                } else {
+                    // 挑战: 两位数 × 两位数 (较大)
+                    a = Math.floor(Math.random() * 15) + 15; // 15-29
+                    b = Math.floor(Math.random() * 10) + 12; // 12-21
+                }
+                
+                // 随机交换顺序让题目看起来更多样
+                if (Math.random() > 0.5) {
+                    [a, b] = [b, a];
+                }
+                
+                answer = a * b;
+                
+                game.questions.push({
+                    text: `${a} × ${b}`,
+                    answer: answer,
+                    displayText: `${a} × ${b} = ?`
+                });
+            }
+        }
+
+        // ============ 转盘绘制 ============
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = canvas.width / 2 - 10;
+
+        function drawWheel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const segmentAngle = (2 * Math.PI) / CONFIG.wheelSegments;
+            // 偏移量：让第一个扇区从顶部开始（-90度 = -π/2）
+            const offsetAngle = -Math.PI / 2;
+            
+            for (let i = 0; i < CONFIG.wheelSegments; i++) {
+                const startAngle = offsetAngle + game.wheelRotation + i * segmentAngle;
+                const endAngle = startAngle + segmentAngle;
+                
+                // 绘制扇形
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                
+                ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length];
+                ctx.fill();
+                
+                // 绘制边框
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // 绘制题目文字
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                const textAngle = startAngle + segmentAngle / 2;
+                ctx.rotate(textAngle);
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px Nunito';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                ctx.shadowBlur = 4;
+                
+                const question = game.questions[i];
+                if (question) {
+                    ctx.fillText(question.text, radius - 25, 0);
+                }
+                
+                ctx.restore();
+            }
+            
+            // 绘制外圈装饰
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius + 5, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        // ============ 转盘动画 ============
+        function spinWheel() {
+            if (game.isSpinning || game.isGameOver) return;
+            
+            initAudio();
+            // 首次点击自动开启音乐
+            if (!musicPlaying) {
+                startBackgroundMusic();
+            }
+            game.isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            
+            const spins = CONFIG.minSpins + Math.random() * (CONFIG.maxSpins - CONFIG.minSpins);
+            const targetRotation = game.wheelRotation + spins * 2 * Math.PI;
+            const startRotation = game.wheelRotation;
+            const startTime = performance.now();
+            
+            let lastTickAngle = 0;
+            
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / CONFIG.spinDuration, 1);
+                
+                // Easing function (ease out)
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                
+                game.wheelRotation = startRotation + (targetRotation - startRotation) * easeProgress;
+                
+                // 播放tick音效
+                const segmentAngle = (2 * Math.PI) / CONFIG.wheelSegments;
+                const currentAngle = game.wheelRotation % (2 * Math.PI);
+                if (Math.floor(currentAngle / segmentAngle) !== Math.floor(lastTickAngle / segmentAngle)) {
+                    playSound('tick');
+                }
+                lastTickAngle = currentAngle;
+                
+                drawWheel();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    // 转盘停止，确定题目
+                    game.isSpinning = false;
+                    determineQuestion();
+                }
+            }
+            
+            playSound('spin');
+            requestAnimationFrame(animate);
+        }
+
+        function determineQuestion() {
+            const segmentAngle = (2 * Math.PI) / CONFIG.wheelSegments;
+            
+            // 指针在顶部，计算哪个扇区在指针下方
+            // 由于我们在绘制时添加了 -π/2 的偏移，第一个扇区从顶部开始
+            // 所以当 wheelRotation = 0 时，指针指向第一个扇区（索引0）
+            // wheelRotation 增加时，转盘顺时针旋转，指针指向的扇区索引减少
+            
+            // 将旋转角度转换为扇区索引
+            let normalizedRotation = (-game.wheelRotation % (2 * Math.PI));
+            if (normalizedRotation < 0) {
+                normalizedRotation += 2 * Math.PI;
+            }
+            
+            const segmentIndex = Math.floor(normalizedRotation / segmentAngle) % CONFIG.wheelSegments;
+            
+            game.currentQuestion = game.questions[segmentIndex];
+            game.currentAnswer = game.currentQuestion.answer;
+            
+            showQuestionModal();
+        }
+
+        // ============ 题目弹窗 ============
+        function showQuestionModal() {
+            const modal = document.getElementById('questionModal');
+            const questionText = document.getElementById('questionText');
+            const answerInput = document.getElementById('answerInput');
+            
+            questionText.textContent = game.currentQuestion.displayText;
+            answerInput.value = '';
+            
+            modal.classList.add('active');
+            setTimeout(() => answerInput.focus(), 300);
+        }
+
+        function hideQuestionModal() {
+            document.getElementById('questionModal').classList.remove('active');
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const feedback = document.getElementById('feedback');
+            
+            hideQuestionModal();
+            
+            if (userAnswer === game.currentAnswer) {
+                // 正确
+                feedback.textContent = '✅ 正确！';
+                feedback.className = 'feedback correct';
+                playSound('correct');
+                
+                game.score += 10 + game.streak * 5;
+                game.correctCount++;
+                game.streak++;
+                
+                updateStreakStars();
+                
+                // 检查是否达成3连胜
+                if (game.streak >= 3) {
+                    setTimeout(() => {
+                        showBonusMessage();
+                    }, 800);
+                }
+            } else {
+                // 错误
+                feedback.textContent = `❌ 答案是 ${game.currentAnswer}`;
+                feedback.className = 'feedback wrong';
+                playSound('loseLife');
+                game.streak = 0;
+                updateStreakStars();
+                
+                // 扣除生命
+                loseLife();
+            }
+            
+            // 触发动画
+            feedback.style.animation = 'none';
+            feedback.offsetHeight; // 重置动画
+            feedback.style.animation = '';
+            
+            updateStats();
+            
+            // 检查游戏是否结束
+            if (game.isGameOver) return;
+            
+            // 生成新题目并重新绘制
+            setTimeout(() => {
+                generateQuestions();
+                drawWheel();
+                document.getElementById('spinBtn').disabled = false;
+            }, 1500);
+        }
+
+        // ============ 生命系统 ============
+        function updateLivesDisplay() {
+            for (let i = 1; i <= game.maxLives; i++) {
+                const heart = document.getElementById(`life${i}`);
+                if (i > game.lives) {
+                    heart.classList.add('lost');
+                } else {
+                    heart.classList.remove('lost');
+                }
+            }
+        }
+
+        function loseLife() {
+            if (game.lives <= 0) return;
+            
+            const heart = document.getElementById(`life${game.lives}`);
+            heart.classList.add('losing');
+            
+            setTimeout(() => {
+                game.lives--;
+                updateLivesDisplay();
+                
+                if (game.lives <= 0) {
+                    gameOver();
+                }
+            }, 500);
+        }
+
+        function gameOver() {
+            game.isGameOver = true;
+            stopBackgroundMusic();
+            playSound('gameOver');
+            
+            // 显示游戏结束界面
+            document.getElementById('finalScore').textContent = game.score;
+            document.getElementById('finalCorrect').textContent = game.correctCount;
+            document.getElementById('finalGames').textContent = game.bonusGamesPlayed;
+            document.getElementById('gameoverOverlay').classList.add('active');
+        }
+
+        function restartGame() {
+            // 重置游戏状态
+            game.score = 0;
+            game.correctCount = 0;
+            game.streak = 0;
+            game.lives = game.maxLives;
+            game.bonusGamesPlayed = 0;
+            game.isGameOver = false;
+            game.wheelRotation = 0;
+            
+            // 重置UI
+            for (let i = 1; i <= game.maxLives; i++) {
+                const heart = document.getElementById(`life${i}`);
+                heart.classList.remove('lost', 'losing');
+            }
+            
+            updateStats();
+            updateStreakStars();
+            updateLivesDisplay();
+            generateQuestions();
+            drawWheel();
+            
+            document.getElementById('gameoverOverlay').classList.remove('active');
+            document.getElementById('spinBtn').disabled = false;
+            
+            // 记录新一局
+            DataManager.increment('totalPlays');
+        }
+
+        // ============ 连胜星星 ============
+        function updateStreakStars() {
+            for (let i = 1; i <= 3; i++) {
+                const star = document.getElementById(`star${i}`);
+                if (i <= game.streak) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            }
+        }
+
+        // ============ 更新统计 ============
+        function updateStats() {
+            document.getElementById('score').textContent = game.score;
+            document.getElementById('correct').textContent = game.correctCount;
+            document.getElementById('bonusGames').textContent = game.bonusGamesPlayed;
+        }
+
+        // ============ 奖励消息 ============
+        function showBonusMessage() {
+            const bonus = document.getElementById('bonusMessage');
+            bonus.classList.add('active');
+            playSound('bonus');
+            
+            createConfetti();
+            
+            setTimeout(() => {
+                bonus.classList.remove('active');
+                startMiniGame();
+            }, 2500);
+        }
+
+        // ============ 飞机射击小游戏 ============
+        let planeGame = {
+            canvas: null,
+            ctx: null,
+            isRunning: false,
+            timer: 30,
+            timerInterval: null,
+            animationId: null,
+            player: null,
+            targetEnemy: null,
+            enemies: [],
+            playerBullets: [],
+            enemyBullets: [],
+            explosions: [],
+            playerHealth: 3,
+            mouseX: 300,
+            mouseY: 350,
+            gameWon: false
+        };
+
+        function startMiniGame() {
+            game.streak = 0;
+            updateStreakStars();
+            game.bonusGamesPlayed++;
+            updateStats();
+            
+            const overlay = document.getElementById('minigameOverlay');
+            const closeBtn = document.getElementById('minigameClose');
+            
+            // 初始化画布
+            planeGame.canvas = document.getElementById('planeGameCanvas');
+            planeGame.ctx = planeGame.canvas.getContext('2d');
+            
+            // 重置游戏状态
+            planeGame.timer = 30;
+            planeGame.playerHealth = 3;
+            planeGame.isRunning = true;
+            planeGame.gameWon = false;
+            planeGame.enemies = [];
+            planeGame.playerBullets = [];
+            planeGame.enemyBullets = [];
+            planeGame.explosions = [];
+            planeGame.mouseX = planeGame.canvas.width / 2;
+            planeGame.mouseY = planeGame.canvas.height - 50;
+            
+            // 玩家飞机
+            planeGame.player = {
+                x: planeGame.canvas.width / 2,
+                y: planeGame.canvas.height - 50,
+                width: 40,
+                height: 40,
+                speed: 8
+            };
+            
+            // 目标敌机（红色，需要击落）
+            planeGame.targetEnemy = {
+                x: planeGame.canvas.width / 2,
+                y: 60,
+                width: 45,
+                height: 45,
+                health: 3,
+                vx: 2,
+                shootTimer: 0
+            };
+            
+            // 创建普通敌机
+            for (let i = 0; i < 3; i++) {
+                spawnEnemy();
+            }
+            
+            // 更新UI
+            document.getElementById('planeTimer').textContent = planeGame.timer;
+            document.getElementById('playerHealth').textContent = planeGame.playerHealth;
+            document.getElementById('gameStatus').textContent = '击落红色敌机！';
+            closeBtn.style.display = 'none';
+            
+            overlay.classList.add('active');
+            
+            // 添加事件监听
+            planeGame.canvas.addEventListener('mousemove', handlePlaneMouseMove);
+            planeGame.canvas.addEventListener('click', handlePlaneShoot);
+            
+            // 开始游戏循环
+            planeGameLoop();
+            
+            // 开始计时
+            planeGame.timerInterval = setInterval(() => {
+                if (!planeGame.isRunning) return;
+                planeGame.timer--;
+                document.getElementById('planeTimer').textContent = planeGame.timer;
+                
+                if (planeGame.timer <= 0) {
+                    endMiniGame(false);
+                }
+            }, 1000);
+        }
+
+        function handlePlaneMouseMove(e) {
+            const rect = planeGame.canvas.getBoundingClientRect();
+            planeGame.mouseX = e.clientX - rect.left;
+            planeGame.mouseY = e.clientY - rect.top;
+        }
+
+        function handlePlaneShoot(e) {
+            if (!planeGame.isRunning) return;
+            
+            playSound('tick');
+            planeGame.playerBullets.push({
+                x: planeGame.player.x,
+                y: planeGame.player.y - 20,
+                width: 6,
+                height: 15,
+                speed: 12
+            });
+        }
+
+        function spawnEnemy() {
+            planeGame.enemies.push({
+                x: Math.random() * (planeGame.canvas.width - 40) + 20,
+                y: Math.random() * 150 + 30,
+                width: 35,
+                height: 35,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 1.5,
+                shootTimer: Math.random() * 60
+            });
+        }
+
+        function planeGameLoop() {
+            if (!planeGame.isRunning) return;
+            
+            const ctx = planeGame.ctx;
+            const canvas = planeGame.canvas;
+            
+            // 清空画布
+            ctx.fillStyle = '#1a1a3e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制星星背景
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            for (let i = 0; i < 30; i++) {
+                const x = (i * 73 + planeGame.timer * 2) % canvas.width;
+                const y = (i * 47) % canvas.height;
+                ctx.fillRect(x, y, 2, 2);
+            }
+            
+            // 更新玩家位置（跟随鼠标）
+            const dx = planeGame.mouseX - planeGame.player.x;
+            const dy = planeGame.mouseY - planeGame.player.y;
+            planeGame.player.x += dx * 0.15;
+            planeGame.player.y += dy * 0.15;
+            
+            // 限制玩家在画布内
+            planeGame.player.x = Math.max(20, Math.min(canvas.width - 20, planeGame.player.x));
+            planeGame.player.y = Math.max(canvas.height / 2, Math.min(canvas.height - 20, planeGame.player.y));
+            
+            // 绘制玩家飞机
+            drawPlane(planeGame.player.x, planeGame.player.y, '#4ecdc4', false);
+            
+            // 更新和绘制目标敌机
+            if (planeGame.targetEnemy) {
+                const te = planeGame.targetEnemy;
+                te.x += te.vx;
+                if (te.x < 30 || te.x > canvas.width - 30) te.vx *= -1;
+                
+                // 目标敌机射击
+                te.shootTimer++;
+                if (te.shootTimer > 40) {
+                    te.shootTimer = 0;
+                    planeGame.enemyBullets.push({
+                        x: te.x,
+                        y: te.y + 25,
+                        width: 6,
+                        height: 12,
+                        speed: 6
+                    });
+                }
+                
+                // 绘制目标敌机（红色，更大）
+                drawPlane(te.x, te.y, '#ff4444', true, true);
+                
+                // 绘制血量条
+                ctx.fillStyle = '#333';
+                ctx.fillRect(te.x - 25, te.y - 35, 50, 8);
+                ctx.fillStyle = '#ff4444';
+                ctx.fillRect(te.x - 25, te.y - 35, (te.health / 3) * 50, 8);
+            }
+            
+            // 更新和绘制普通敌机
+            planeGame.enemies.forEach((enemy, index) => {
+                enemy.x += enemy.vx;
+                enemy.y += enemy.vy;
+                
+                // 边界反弹
+                if (enemy.x < 20 || enemy.x > canvas.width - 20) enemy.vx *= -1;
+                if (enemy.y < 20 || enemy.y > 180) enemy.vy *= -1;
+                
+                // 敌机射击
+                enemy.shootTimer++;
+                if (enemy.shootTimer > 80) {
+                    enemy.shootTimer = 0;
+                    planeGame.enemyBullets.push({
+                        x: enemy.x,
+                        y: enemy.y + 20,
+                        width: 5,
+                        height: 10,
+                        speed: 5
+                    });
+                }
+                
+                drawPlane(enemy.x, enemy.y, '#ff9f43', true);
+            });
+            
+            // 更新和绘制玩家子弹
+            for (let i = planeGame.playerBullets.length - 1; i >= 0; i--) {
+                const bullet = planeGame.playerBullets[i];
+                bullet.y -= bullet.speed;
+                
+                // 绘制子弹
+                ctx.fillStyle = '#4ecdc4';
+                ctx.shadowColor = '#4ecdc4';
+                ctx.shadowBlur = 10;
+                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
+                ctx.shadowBlur = 0;
+                
+                // 移除出界子弹
+                if (bullet.y < -20) {
+                    planeGame.playerBullets.splice(i, 1);
+                    continue;
+                }
+                
+                // 检测与目标敌机碰撞
+                if (planeGame.targetEnemy && checkCollision(bullet, planeGame.targetEnemy)) {
+                    planeGame.playerBullets.splice(i, 1);
+                    planeGame.targetEnemy.health--;
+                    createExplosion(planeGame.targetEnemy.x, planeGame.targetEnemy.y, '#ff4444');
+                    playSound('moleHit');
+                    
+                    if (planeGame.targetEnemy.health <= 0) {
+                        createExplosion(planeGame.targetEnemy.x, planeGame.targetEnemy.y, '#ffd700', true);
+                        planeGame.targetEnemy = null;
+                        game.score += 50;
+                        endMiniGame(true);
+                    }
+                    continue;
+                }
+                
+                // 检测与普通敌机碰撞
+                for (let j = planeGame.enemies.length - 1; j >= 0; j--) {
+                    if (checkCollision(bullet, planeGame.enemies[j])) {
+                        createExplosion(planeGame.enemies[j].x, planeGame.enemies[j].y, '#ff9f43');
+                        planeGame.playerBullets.splice(i, 1);
+                        planeGame.enemies.splice(j, 1);
+                        game.score += 10;
+                        playSound('moleHit');
+                        
+                        // 补充新敌机
+                        setTimeout(spawnEnemy, 1000);
+                        break;
+                    }
+                }
+            }
+            
+            // 更新和绘制敌机子弹
+            for (let i = planeGame.enemyBullets.length - 1; i >= 0; i--) {
+                const bullet = planeGame.enemyBullets[i];
+                bullet.y += bullet.speed;
+                
+                // 绘制子弹
+                ctx.fillStyle = '#ff6b6b';
+                ctx.shadowColor = '#ff6b6b';
+                ctx.shadowBlur = 8;
+                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
+                ctx.shadowBlur = 0;
+                
+                // 移除出界子弹
+                if (bullet.y > canvas.height + 20) {
+                    planeGame.enemyBullets.splice(i, 1);
+                    continue;
+                }
+                
+                // 检测与玩家碰撞
+                if (checkCollision(bullet, planeGame.player)) {
+                    planeGame.enemyBullets.splice(i, 1);
+                    planeGame.playerHealth--;
+                    document.getElementById('playerHealth').textContent = planeGame.playerHealth;
+                    createExplosion(planeGame.player.x, planeGame.player.y, '#4ecdc4');
+                    playSound('wrong');
+                    
+                    if (planeGame.playerHealth <= 0) {
+                        endMiniGame(false);
+                    }
+                }
+            }
+            
+            // 更新和绘制爆炸效果
+            for (let i = planeGame.explosions.length - 1; i >= 0; i--) {
+                const exp = planeGame.explosions[i];
+                exp.life -= 0.05;
+                exp.radius += 2;
+                
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${exp.r}, ${exp.g}, ${exp.b}, ${exp.life})`;
+                ctx.fill();
+                
+                if (exp.life <= 0) {
+                    planeGame.explosions.splice(i, 1);
+                }
+            }
+            
+            planeGame.animationId = requestAnimationFrame(planeGameLoop);
+        }
+
+        function drawPlane(x, y, color, isEnemy, isTarget = false) {
+            const ctx = planeGame.ctx;
+            const size = isTarget ? 1.3 : 1;
+            
+            ctx.save();
+            ctx.translate(x, y);
+            if (isEnemy) ctx.rotate(Math.PI);
+            
+            // 机身
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(0, -20 * size);
+            ctx.lineTo(-12 * size, 15 * size);
+            ctx.lineTo(0, 10 * size);
+            ctx.lineTo(12 * size, 15 * size);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 机翼
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(-25 * size, 5 * size);
+            ctx.lineTo(-5 * size, 0);
+            ctx.lineTo(-5 * size, 10 * size);
+            ctx.lineTo(-20 * size, 12 * size);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(25 * size, 5 * size);
+            ctx.lineTo(5 * size, 0);
+            ctx.lineTo(5 * size, 10 * size);
+            ctx.lineTo(20 * size, 12 * size);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 目标敌机发光效果
+            if (isTarget) {
+                ctx.shadowColor = '#ff0000';
+                ctx.shadowBlur = 20;
+                ctx.strokeStyle = '#ff0000';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, 0, 30, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+            
+            ctx.restore();
+        }
+
+        function checkCollision(a, b) {
+            return Math.abs(a.x - b.x) < (a.width + b.width) / 2 &&
+                   Math.abs(a.y - b.y) < (a.height + b.height) / 2;
+        }
+
+        function createExplosion(x, y, color, big = false) {
+            const rgb = hexToRgb(color);
+            for (let i = 0; i < (big ? 8 : 4); i++) {
+                planeGame.explosions.push({
+                    x: x + (Math.random() - 0.5) * 20,
+                    y: y + (Math.random() - 0.5) * 20,
+                    radius: big ? 10 : 5,
+                    life: 1,
+                    r: rgb.r,
+                    g: rgb.g,
+                    b: rgb.b
+                });
+            }
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 255, g: 255, b: 255 };
+        }
+
+        function endMiniGame(won) {
+            planeGame.isRunning = false;
+            planeGame.gameWon = won;
+            
+            cancelAnimationFrame(planeGame.animationId);
+            clearInterval(planeGame.timerInterval);
+            
+            // 移除事件监听
+            planeGame.canvas.removeEventListener('mousemove', handlePlaneMouseMove);
+            planeGame.canvas.removeEventListener('click', handlePlaneShoot);
+            
+            if (won) {
+                document.getElementById('gameStatus').textContent = '🎉 胜利！成功击落敌机！+50分';
+                playSound('bonus');
+            } else {
+                document.getElementById('gameStatus').textContent = '💥 任务失败...';
+                playSound('wrong');
+            }
+            
+            document.getElementById('minigameClose').style.display = 'block';
+            updateStats();
+        }
+
+        function closeMiniGame() {
+            document.getElementById('minigameOverlay').classList.remove('active');
+            document.getElementById('spinBtn').disabled = false;
+        }
+
+        // ============ 彩带效果 ============
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#ff9ff3', '#54a0ff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-20px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                document.body.appendChild(confetti);
+                
+                const duration = Math.random() * 2 + 2;
+                const xMove = (Math.random() - 0.5) * 200;
+                
+                confetti.animate([
+                    { transform: `translateY(0) translateX(0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translateY(100vh) translateX(${xMove}px) rotate(720deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                }).onfinish = () => confetti.remove();
+            }
+        }
+
+        // ============ 背景装饰 ============
+        function createBackgroundShapes() {
+            const container = document.getElementById('bgShapes');
+            const shapes = ['○', '△', '□', '◇', '★'];
+            
+            for (let i = 0; i < 15; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'bg-shape';
+                shape.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.top = Math.random() * 100 + '%';
+                shape.style.fontSize = (Math.random() * 40 + 20) + 'px';
+                shape.style.animationDelay = Math.random() * 5 + 's';
+                shape.style.color = WHEEL_COLORS[Math.floor(Math.random() * WHEEL_COLORS.length)];
+                container.appendChild(shape);
+            }
+        }
+
+        // ============ 事件监听 ============
+        document.getElementById('spinBtn').addEventListener('click', spinWheel);
+        document.getElementById('wheelCenter').addEventListener('click', spinWheel);
+        document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+        document.getElementById('minigameClose').addEventListener('click', closeMiniGame);
+        document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+        document.getElementById('restartBtn').addEventListener('click', restartGame);
+
+        document.getElementById('answerInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // ============ 数据持久化 ============
+        const DataManager = {
+            storageKey: 'larryAcademy_mathSpinWheel',
+            
+            save(key, value) {
+                try {
+                    localStorage.setItem(`${this.storageKey}_${key}`, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.warn('数据保存失败:', e);
+                    return false;
+                }
+            },
+            
+            load(key, defaultValue = null) {
+                try {
+                    const stored = localStorage.getItem(`${this.storageKey}_${key}`);
+                    return stored ? JSON.parse(stored) : defaultValue;
+                } catch (e) {
+                    console.warn('数据读取失败:', e);
+                    return defaultValue;
+                }
+            },
+            
+            increment(key) {
+                const current = this.load(key, 0);
+                const newValue = current + 1;
+                this.save(key, newValue);
+                return newValue;
+            }
+        };
+
+        // ============ 初始化 ============
+        function init() {
+            createBackgroundShapes();
+            generateQuestions();
+            drawWheel();
+            updateStats();
+            updateStreakStars();
+            updateLivesDisplay();
+            
+            // 记录游戏次数
+            const playCount = DataManager.increment('totalPlays');
+            console.log(`🎡 数学转盘大挑战已加载！这是第 ${playCount} 次游玩`);
+            console.log('🎵 点击右上角音乐按钮开启背景音乐！');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,157 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useLanguage } from '@/context/LanguageContext'
+
+export default function GamesPage() {
+  const { t, locale } = useLanguage()
+  const [games, setGames] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        const res = await fetch('/api/games')
+        if (res.ok) {
+          const data = await res.json()
+          setGames(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch games:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGames()
+  }, [])
+
+  // 映射数据库中的原始标题到翻译词条
+  const getGameTranslation = (game: any) => {
+    const title = game.title;
+    if (title.includes('乘法表')) return { title: t('game.multiplication.title'), desc: t('game.multiplication.desc') };
+    if (title.includes('加法速算')) return { title: t('game.addition.title'), desc: t('game.addition.desc') };
+    if (title.includes('几何图形')) return { title: t('game.geometry.title'), desc: t('game.geometry.desc') };
+    if (title.includes('泡泡')) return { title: t('game.even_bubble.title'), desc: t('game.even_bubble.desc') };
+    if (title.includes('赛车')) return { title: t('game.math_race.title'), desc: t('game.math_race.desc') };
+    if (title.includes('转盘')) return { title: t('game.spin_wheel.title'), desc: t('game.spin_wheel.desc') };
+    if (title.includes('宝藏')) return { title: t('game.treasure.title'), desc: t('game.treasure.desc') };
+    if (title.includes('宫殿')) return { title: t('game.palace.title'), desc: t('game.palace.desc') };
+    if (title.includes('革命')) return { title: t('game.rescue.title'), desc: t('game.rescue.desc') };
+    return { title: game.title, desc: game.description };
+  }
+
+  return (
+    <div className="relative min-h-dvh w-full max-w-full bg-[#050505] text-white overflow-x-clip">
+      {/* Background Ambient Glows */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 py-16 sm:py-24 lg:py-28">
+        {/* Header */}
+        <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-8 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 uppercase px-1">
+            {t('games.title')}
+          </h1>
+          <p className="text-gray-400 text-base sm:text-lg md:text-xl font-light max-w-2xl mx-auto mb-8 sm:mb-12 px-2">
+            {t('games.subtitle')}
+          </p>
+
+          {/* AI Game Generator CTA */}
+          <Link
+            href="/games/create"
+            className="group relative inline-flex items-center justify-center gap-2 sm:gap-3 px-6 py-3.5 sm:px-10 sm:py-5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold shadow-2xl shadow-purple-600/20 overflow-hidden transition-all hover:scale-[1.02] sm:hover:scale-105 active:scale-95 w-full max-w-sm sm:w-auto sm:max-w-none mx-auto"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+            <span className="text-2xl">✨</span>
+            {t('games.create')}
+          </Link>
+        </div>
+
+        {/* Games Grid */}
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="text-blue-400 animate-pulse text-xl">{t('common.loading')}</div>
+          </div>
+        ) : games.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {games.map((game) => {
+              const translation = getGameTranslation(game);
+              return (
+                <div
+                  key={game.id}
+                  className="group relative rounded-[32px] bg-white/[0.02] border border-white/[0.08] overflow-hidden hover:bg-white/[0.04] hover:border-white/20 transition-all duration-500"
+                >
+                  {/* Game Icon / Thumbnail */}
+                  <div
+                    className={`aspect-video flex items-center justify-center relative overflow-hidden ${
+                      game.gameType === 'multiplication'
+                        ? 'bg-gradient-to-br from-blue-500/20 to-indigo-600/20'
+                        : game.gameType === 'addition'
+                        ? 'bg-gradient-to-br from-emerald-500/20 to-teal-600/20'
+                        : game.gameType === 'geometry'
+                        ? 'bg-gradient-to-br from-purple-500/20 to-pink-600/20'
+                        : 'bg-gradient-to-br from-orange-500/20 to-red-600/20'
+                    }`}
+                  >
+                    <div className="text-white text-5xl sm:text-7xl md:text-8xl group-hover:scale-110 transition-transform duration-700">
+                      {game.gameType === 'multiplication'
+                        ? '✖️'
+                        : game.gameType === 'addition'
+                        ? '➕'
+                        : game.gameType === 'geometry'
+                        ? '📐'
+                        : '🎯'}
+                    </div>
+                    
+                    {game.featured && (
+                      <div className="absolute top-6 left-6 px-4 py-1 rounded-full bg-yellow-500 text-black text-[10px] font-black uppercase tracking-widest">
+                        {t('games.featured')}
+                      </div>
+                    )}
+                    {game.isAiGenerated && (
+                      <div className="absolute top-6 right-6 px-4 py-1 rounded-full bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest">
+                        {t('games.ai_generated')}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-8">
+                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-purple-400 transition-colors">
+                      {translation.title}
+                    </h3>
+                    <p className="text-gray-500 font-light leading-relaxed mb-8 line-clamp-2">
+                      {translation.desc}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs font-medium text-gray-600 uppercase tracking-widest">
+                        <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                        {game.playCount} {t('games.plays')}
+                      </div>
+                      <Link
+                        href={`/games/${game.id}`}
+                        className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all active:scale-95"
+                      >
+                        {t('games.play')}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-16 sm:py-24 lg:py-32 px-4 bg-white/[0.02] rounded-2xl sm:rounded-[40px] border border-dashed border-white/10">
+            <div className="text-4xl sm:text-5xl mb-4 sm:mb-6 opacity-20">🎮</div>
+            <h3 className="text-2xl font-bold text-gray-400">{t('common.no_content')}</h3>
+            <p className="text-gray-600 mt-2">New challenges are being developed.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}

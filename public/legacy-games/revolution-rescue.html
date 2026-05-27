@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>革命救援 - Revolution Rescue</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #1a0a2e;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 800px;
+            background: #000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+        
+        #phaser-game {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #phaser-game canvas {
+            display: block;
+        }
+
+        /* HUD 界面 */
+        .hud-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .status-panel {
+            background: rgba(42, 26, 74, 0.8);
+            border: 2px solid #c4a000;
+            border-radius: 15px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 20px;
+            color: #ffd700;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            pointer-events: auto;
+        }
+
+        .people-slots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .people-slot {
+            width: 60px;
+            height: 60px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #5a4a3a;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .people-slot.filled {
+            border-color: #ffd700;
+            background: rgba(76, 29, 149, 0.6);
+            box-shadow: 0 0 10px #ffd700;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .people-slot .label {
+            font-size: 0.6rem;
+            margin-top: 2px;
+            color: #ffd700;
+        }
+
+        .controls-layer {
+            pointer-events: auto;
+        }
+
+        .controls-layer div {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            pointer-events: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #2a1a4a, #1a0a2e);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .math-question {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #4c1d95, #321068);
+            border: 2px solid #7c3aed;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:hover { transform: translateY(-2px); background: #5b21b6; border-color: #ffd700; }
+        .btn:active { transform: translateY(1px); }
+        .btn.correct { background: #059669; border-color: #34d399; }
+        .btn.wrong { background: #dc2626; border-color: #f87171; }
+
+        .progress-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; border: 1px solid #6b7280; }
+        .dot.active { background: #ffd700; box-shadow: 0 0 10px #ffd700; border-color: #fff; }
+        .dot.success { background: #10b981; border-color: #34d399; }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+        /* 分数显示 */
+        .fraction {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .fraction .num {
+            display: block;
+            border-bottom: 2px solid currentColor;
+            padding: 0 5px;
+        }
+        .fraction .den {
+            display: block;
+            padding: 0 5px;
+        }
+
+        /* 加载页 */
+        #loading-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0a2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            color: #ffd700;
+        }
+
+        /* 帮助按钮 */
+        .help-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(42, 26, 74, 0.9);
+            border: 2px solid #c4a000;
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: #ffd700;
+            cursor: pointer;
+            pointer-events: auto;
+            font-size: 1rem;
+            z-index: 150;
+        }
+
+        .help-btn:hover {
+            background: rgba(76, 29, 149, 0.9);
+        }
+
+        /* 帮助弹窗 */
+        #help-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 250;
+            pointer-events: auto;
+        }
+
+        #help-modal.active {
+            display: flex;
+        }
+
+        .help-content {
+            background: linear-gradient(145deg, #2a1a4a, #1a0a2e);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #fff;
+        }
+
+        .help-content h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .help-example {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .help-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Phaser Game Canvas -->
+    <div id="phaser-game"></div>
+
+    <!-- HUD 层 -->
+    <div class="hud-layer">
+        <div class="top-bar">
+            <div class="status-panel">
+                <div class="stat"><i class="fas fa-compass"></i> EXPLORE</div>
+                <div class="stat"><i class="fas fa-check-circle"></i> <span id="score-val">0</span> QUESTIONS</div>
+            </div>
+            <div class="people-slots" id="people-bar">
+                <div class="people-slot" data-index="0">
+                    <div class="icon">👨‍🌾</div>
+                    <div class="label">FARMER</div>
+                </div>
+                <div class="people-slot" data-index="1">
+                    <div class="icon">👨‍🔧</div>
+                    <div class="label">WORKER</div>
+                </div>
+                <div class="people-slot" data-index="2">
+                    <div class="icon">👨‍🎓</div>
+                    <div class="label">SCHOLAR</div>
+                </div>
+                <div class="people-slot" data-index="3">
+                    <div class="icon">👨‍⚕️</div>
+                    <div class="label">DOCTOR</div>
+                </div>
+                <div class="people-slot" data-index="4">
+                    <div class="icon">👨‍💼</div>
+                    <div class="label">MERCHANT</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-layer">
+            <div>WASD / ARROW KEYS / TOUCH DRAG TO MOVE</div>
+        </div>
+    </div>
+
+    <!-- 加载页 -->
+    <div id="loading-screen">
+        <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+        <p style="margin-top: 20px;">Loading Resources...</p>
+        <small style="color: #888; margin-top: 10px;" id="loading-text">Preparing...</small>
+    </div>
+
+    <!-- 游戏开始弹窗 -->
+    <div id="start-modal" class="modal-overlay active">
+        <div class="modal-content">
+            <h2>⚔️ REVOLUTION RESCUE ⚔️</h2>
+            <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+                The tyrant has imprisoned the people!<br>
+                Explore the land, find the people, and use your wisdom to free them!<br>
+                Answer 3 questions correctly to rescue each person.
+            </p>
+            <button class="btn" style="width: 100%;" onclick="GameApp.start()">START RESCUE</button>
+        </div>
+    </div>
+
+    <!-- 数学题弹窗 -->
+    <div id="math-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="progress-dots" id="math-dots">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <div id="math-question-container" class="math-question">
+                <!-- 题目将通过 JS 插入 -->
+            </div>
+            <div id="math-options" class="options-grid">
+                <!-- 选项 -->
+            </div>
+            <button class="help-btn" style="position: relative; margin-top: 25px; width: 100%;" onclick="GameApp.showQuestionHelp()">💡 NEED HELP?</button>
+        </div>
+    </div>
+
+    <!-- 胜利弹窗 -->
+    <div id="win-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="font-size: 3rem;">🏆 VICTORY!</h2>
+            <p style="color: #ffd700; font-size: 1.2rem; margin-bottom: 20px;">
+                You've rescued all the people!<br>The revolution army is ready!
+            </p>
+            <div id="final-people-display" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; font-size: 2rem;"></div>
+            <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+            <button class="btn" style="background: #4b5563; margin-top: 10px;" onclick="location.href='../games.html'">BACK TO LOBBY</button>
+        </div>
+    </div>
+
+    <!-- 帮助弹窗 -->
+    <div id="help-modal" class="modal-overlay">
+        <div class="help-content">
+            <h3>📚 FRACTION OPERATIONS HELP</h3>
+            <div id="help-dynamic-content">
+                <!-- 动态内容 -->
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="GameApp.hideHelp()">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- 帮助按钮 -->
+    <button class="help-btn" id="help-btn" onclick="GameApp.showHelp()">❓ HELP</button>
+</div>
+
+<!-- Phaser.js 库 -->
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js" 
+        onerror="console.error('Failed to load Phaser.js from CDN'); document.getElementById('loading-text').innerText = 'Error: Failed to load Phaser.js';"
+        onload="console.log('Phaser.js script loaded'); if(typeof Phaser !== 'undefined') { console.log('Phaser version:', Phaser.VERSION); } else { console.error('Phaser object not found after script load'); }">
+</script>
+<script>
+// 延迟检查 Phaser 是否加载
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        if (typeof Phaser === 'undefined') {
+            console.error('Phaser.js failed to load from CDN');
+            const loadingText = document.getElementById('loading-text');
+            if (loadingText) {
+                loadingText.innerText = 'Error: Phaser.js not loaded. Please check internet connection.';
+            }
+        } else {
+            console.log('Phaser.js loaded successfully, version:', Phaser.VERSION);
+        }
+    }, 500);
+});
+</script>
+
+<script>
+/**
+ * ==========================================
+ *  Game Configuration
+ * ==========================================
+ */
+const GameConfig = {
+    mapWidth: 2000,
+    mapHeight: 1500,
+    heroSpeed: 250,
+    peopleCount: 5
+};
+
+const PeopleTypes = [
+    { icon: '👨‍🌾', name: 'FARMER', emoji: '👨‍🌾', color: 0x8B4513 },
+    { icon: '👨‍🔧', name: 'WORKER', emoji: '👨‍🔧', color: 0x696969 },
+    { icon: '👨‍🎓', name: 'SCHOLAR', emoji: '👨‍🎓', color: 0x4169E1 },
+    { icon: '👨‍⚕️', name: 'DOCTOR', emoji: '👨‍⚕️', color: 0xFF6347 },
+    { icon: '👨‍💼', name: 'MERCHANT', emoji: '👨‍💼', color: 0xFFD700 }
+];
+
+/**
+ * ==========================================
+ *  Audio System
+ * ==========================================
+ */
+class AudioSystem {
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.init();
+    }
+    
+    init() {
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {
+            console.warn('Audio not supported');
+            this.enabled = false;
+        }
+    }
+    
+    playRescueSound() {
+        if (!this.enabled || !this.ctx) return;
+        const ctx = this.ctx;
+        const duration = 1.5;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 440 + (t / duration) * 440;
+            const wave1 = Math.sin(2 * Math.PI * freq * t);
+            const wave2 = Math.sin(2 * Math.PI * freq * 2 * t) * 0.5;
+            const wave3 = Math.sin(2 * Math.PI * freq * 3 * t) * 0.25;
+            const envelope = Math.sin(Math.PI * t / duration);
+            const vibrato = 1 + Math.sin(2 * Math.PI * 5 * t) * 0.1;
+            data[i] = (wave1 + wave2 + wave3) * envelope * vibrato * 0.3;
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        source.start();
+    }
+    
+    playSuccessSound() {
+        if (!this.enabled || !this.ctx) return;
+        const ctx = this.ctx;
+        const duration = 0.5;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 523.25;
+            const envelope = Math.exp(-t * 5);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * envelope * 0.2;
+        }
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start();
+    }
+}
+
+/**
+ * ==========================================
+ *  Phaser Game Implementation
+ * ==========================================
+ */
+let game = null;
+let gameScene = null;
+
+// Phaser 游戏配置
+const phaserConfig = {
+    type: Phaser.AUTO,
+    parent: 'phaser-game',
+    width: 1200,
+    height: 800,
+    backgroundColor: '#1a0a2e',
+    // 优化渲染质量
+    render: {
+        antialias: false,  // 关闭抗锯齿，保持像素清晰
+        pixelArt: true,     // 像素艺术模式，保持清晰度
+        roundPixels: true   // 像素对齐，避免模糊
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            gravity: { y: 0 },
+            debug: false
+        }
+    },
+    scene: {
+        preload: function() {
+            console.log('=== Preload started ===');
+            
+            // 加载背景
+            this.load.image('bg', 'assets/village-bg.png');
+            console.log('Loading bg: assets/village-bg.png');
+            
+            // 加载主角动画帧
+            const actions = ['idle', 'run', 'attack'];
+            actions.forEach(act => {
+                for(let i = 0; i < 4; i++) {
+                    const path = `assets/hero/${act}_${i}.png`;
+                    this.load.image(`hero_${act}_${i}`, path);
+                    console.log(`Loading: hero_${act}_${i} from ${path}`);
+                }
+            });
+            
+            // 更新加载进度
+            this.load.on('progress', (value) => {
+                const loadingText = document.getElementById('loading-text');
+                if (loadingText) {
+                    loadingText.innerText = `Loading: ${Math.floor(value * 100)}%`;
+                }
+                console.log('Load progress:', Math.floor(value * 100) + '%');
+            });
+            
+            // 加载完成（即使有错误也会触发）
+            this.load.on('complete', () => {
+                console.log('=== All resources loaded (some may have failed) ===');
+                // 延迟隐藏加载屏幕，给场景创建时间
+                setTimeout(() => {
+                    const loadingScreen = document.getElementById('loading-screen');
+                    if (loadingScreen) {
+                        loadingScreen.style.display = 'none';
+                    }
+                }, 500);
+            });
+            
+            // 加载错误处理
+            this.load.on('loaderror', (file) => {
+                console.error('Failed to load:', file.key, 'from', file.src);
+                // 检查是否是 CORS 错误
+                if (file.src && file.src.startsWith('file://')) {
+                    console.error('CORS ERROR: Please use HTTP server!');
+                    console.error('Run: python3 -m http.server 8888');
+                    console.error('Then visit: http://localhost:8888/games/revolution-rescue.html');
+                    const loadingText = document.getElementById('loading-text');
+                    if (loadingText) {
+                        loadingText.innerHTML = 'CORS Error!<br>Please use HTTP server:<br>python3 -m http.server 8888<br>Then visit: http://localhost:8888/games/revolution-rescue.html';
+                    }
+                }
+            });
+            
+            // 文件加载成功
+            this.load.on('filecomplete', (key, type, data) => {
+                console.log('Loaded:', key);
+            });
+        },
+        
+        create: function() {
+            gameScene = this;
+            console.log('=== Creating game scene ===');
+            
+            // 隐藏加载屏幕
+            const loadingScreenEl = document.getElementById('loading-screen');
+            if (loadingScreenEl) {
+                loadingScreenEl.style.display = 'none';
+            }
+            
+            // 创建背景 - 先尝试图片，失败则用颜色
+            console.log('Creating background...');
+            let bg;
+            try {
+                if (this.textures.exists('bg')) {
+                    console.log('Using background image');
+                    bg = this.add.tileSprite(0, 0, GameConfig.mapWidth, GameConfig.mapHeight, 'bg');
+                    bg.setOrigin(0, 0);
+                    bg.setDepth(-100);
+                } else {
+                    throw new Error('Background texture not found');
+                }
+            } catch (e) {
+                console.warn('Background image failed, using color:', e);
+                bg = this.add.rectangle(GameConfig.mapWidth / 2, GameConfig.mapHeight / 2, GameConfig.mapWidth, GameConfig.mapHeight, 0x3e2723);
+                bg.setDepth(-100);
+            }
+            
+            // 设置世界边界
+            this.physics.world.setBounds(0, 0, GameConfig.mapWidth, GameConfig.mapHeight);
+            console.log('World bounds set:', GameConfig.mapWidth, GameConfig.mapHeight);
+            
+            // 设置相机
+            this.cameras.main.setBounds(0, 0, GameConfig.mapWidth, GameConfig.mapHeight);
+            const centerX = GameConfig.mapWidth / 2;
+            const centerY = GameConfig.mapHeight / 2;
+            this.cameras.main.centerOn(centerX, centerY);
+            console.log('Camera centered at:', centerX, centerY);
+            
+            // 创建主角
+            console.log('Creating hero...');
+            const heroX = centerX;
+            const heroY = centerY;
+            const heroKey = 'hero_idle_0';
+            
+            // 直接创建动画（避免方法调用问题）
+            try {
+                // 创建 idle 动画
+                if (!this.anims.exists('idle')) {
+                    this.anims.create({
+                        key: 'idle',
+                        frames: [
+                            { key: 'hero_idle_0' },
+                            { key: 'hero_idle_1' },
+                            { key: 'hero_idle_2' },
+                            { key: 'hero_idle_3' }
+                        ],
+                        frameRate: 5,
+                        repeat: -1
+                    });
+                }
+                
+                // 创建 run 动画
+                if (!this.anims.exists('run')) {
+                    this.anims.create({
+                        key: 'run',
+                        frames: [
+                            { key: 'hero_run_0' },
+                            { key: 'hero_run_1' },
+                            { key: 'hero_run_2' },
+                            { key: 'hero_run_3' }
+                        ],
+                        frameRate: 10,
+                        repeat: -1
+                    });
+                }
+                
+                // 创建 attack 动画
+                if (!this.anims.exists('attack')) {
+                    this.anims.create({
+                        key: 'attack',
+                        frames: [
+                            { key: 'hero_attack_0' },
+                            { key: 'hero_attack_1' },
+                            { key: 'hero_attack_2' },
+                            { key: 'hero_attack_3' }
+                        ],
+                        frameRate: 8,
+                        repeat: 0
+                    });
+                }
+                console.log('Animations created');
+            } catch (e) {
+                console.warn('Failed to create animations:', e);
+            }
+            
+            try {
+                if (this.textures.exists(heroKey)) {
+                    console.log('Using hero sprite');
+                    this.hero = this.physics.add.sprite(heroX, heroY, heroKey);
+                    // 增大主角尺寸，从 0.5 增加到 1.0
+                    this.hero.setScale(1.0);
+                    // 优化渲染质量，使用像素完美模式
+                    this.hero.setTint(0xffffff); // 确保没有颜色偏移
+                    this.hero.setAlpha(1.0); // 确保完全不透明
+                    // 设置纹理过滤为最近邻，保持像素清晰
+                    if (this.hero.texture && this.hero.texture.source) {
+                        this.hero.texture.source[0].setFilter(Phaser.Textures.FilterMode.NEAREST);
+                    }
+                    // 确保精灵使用整数坐标，避免模糊
+                    this.hero.setPosition(Math.round(heroX), Math.round(heroY));
+                    this.hero.setCollideWorldBounds(true);
+                    this.hero.setDepth(10);
+                    if (this.hero.anims) {
+                        this.hero.anims.play('idle', true);
+                    }
+                } else {
+                    throw new Error('Hero texture not found');
+                }
+            } catch (e) {
+                console.warn('Hero sprite failed, using rectangle:', e);
+                // 使用 add.rectangle 创建矩形，然后添加物理体
+                this.hero = this.add.rectangle(heroX, heroY, 75, 100, 0x00ff00);
+                this.hero.setDepth(10);
+                // 添加物理体
+                this.physics.add.existing(this.hero);
+                this.hero.body.setCollideWorldBounds(true);
+                this.hero.body.setSize(75, 100);
+            }
+            
+            console.log('Hero created at:', this.hero.x, this.hero.y);
+            
+            // 相机跟随主角
+            this.time.delayedCall(200, () => {
+                if (this.hero) {
+                    console.log('Setting camera to follow hero');
+                    this.cameras.main.startFollow(this.hero, true, 0.1, 0.1);
+                    this.cameras.main.setDeadzone(50, 50);
+                }
+            });
+            
+            // 创建需要救援的人
+            console.log('Spawning people...');
+            this.people = this.add.group();
+            
+            // 直接在这里生成人员，避免方法调用问题
+            for (let i = 0; i < GameConfig.peopleCount; i++) {
+                const x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+                const y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+                
+                try {
+                    const person = this.add.container(x, y);
+                    
+                    const circle = this.add.circle(0, 0, 40, PeopleTypes[i].color, 0.8);
+                    person.add(circle);
+                    
+                    const text = this.add.text(0, 0, PeopleTypes[i].emoji, {
+                        fontSize: '40px',
+                        fontFamily: 'Arial'
+                    });
+                    text.setOrigin(0.5);
+                    person.add(text);
+                    
+                    this.tweens.add({
+                        targets: person,
+                        alpha: { from: 0.5, to: 1 },
+                        duration: 1000,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    
+                    this.tweens.add({
+                        targets: circle,
+                        scaleX: { from: 1, to: 1.2 },
+                        scaleY: { from: 1, to: 1.2 },
+                        duration: 800,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    
+                    person.peopleIndex = i;
+                    person.setDepth(5);
+                    this.people.add(person);
+                    
+                    console.log(`Person ${i} created at:`, x, y);
+                } catch (e) {
+                    console.error('Failed to create person', i, ':', e);
+                }
+            }
+            console.log('People spawned:', this.people.children.entries.length);
+            
+            // 输入处理
+            this.cursors = this.input.keyboard.createCursorKeys();
+            this.wasd = this.input.keyboard.addKeys('W,S,A,D');
+            console.log('Input handlers created');
+            
+            // 游戏状态
+            this.collectedCount = 0;
+            this.isRescuing = false;
+            
+            // 粒子管理器（可选）
+            try {
+                const particleKey = this.textures.exists('hero_idle_0') ? 'hero_idle_0' : null;
+                if (particleKey) {
+                    this.particles = this.add.particles(0, 0, particleKey, {
+                        scale: { start: 0.5, end: 0 },
+                        speed: { min: 50, max: 150 },
+                        lifespan: 1000,
+                        quantity: 50,
+                        tint: [0xffd700, 0xff6b6b, 0x4ecdc4]
+                    });
+                    this.particles.stop();
+                }
+            } catch (e) {
+                console.warn('Particles not available:', e);
+            }
+            
+            console.log('=== Game scene created successfully ===');
+            console.log('Hero position:', this.hero.x, this.hero.y);
+            console.log('Camera position:', this.cameras.main.x, this.cameras.main.y);
+            console.log('Camera bounds:', this.cameras.main.getBounds());
+            
+            // 测试：确保至少显示一些内容
+            const testText = this.add.text(centerX, centerY - 100, 'GAME LOADED - Use WASD to move', {
+                fontSize: '24px',
+                fill: '#ffd700',
+                fontFamily: 'Arial',
+                stroke: '#000',
+                strokeThickness: 4
+            });
+            testText.setOrigin(0.5);
+            testText.setDepth(100);
+            testText.setScrollFactor(0); // 固定在屏幕上
+            
+            // 添加一个测试矩形确保渲染正常
+            const testRect = this.add.rectangle(centerX, centerY + 50, 200, 50, 0xff0000, 0.5);
+            testRect.setDepth(99);
+            
+            // 3秒后隐藏测试内容
+            this.time.delayedCall(3000, () => {
+                if (testText) testText.destroy();
+                if (testRect) testRect.destroy();
+            });
+            
+            // 强制刷新相机
+            this.cameras.main.update();
+            
+            // 确保相机可见
+            this.cameras.main.setVisible(true);
+            console.log('Camera visible:', this.cameras.main.visible);
+        },
+        
+        update: function() {
+            if (!this.hero) return;
+            if (this.isRescuing) return;
+            
+            const speed = GameConfig.heroSpeed;
+            let dx = 0;
+            let dy = 0;
+            
+            if (this.cursors && this.cursors.up && (this.cursors.up.isDown || (this.wasd && this.wasd.W && this.wasd.W.isDown))) dy = -1;
+            if (this.cursors && this.cursors.down && (this.cursors.down.isDown || (this.wasd && this.wasd.S && this.wasd.S.isDown))) dy = 1;
+            if (this.cursors && this.cursors.left && (this.cursors.left.isDown || (this.wasd && this.wasd.A && this.wasd.A.isDown))) dx = -1;
+            if (this.cursors && this.cursors.right && (this.cursors.right.isDown || (this.wasd && this.wasd.D && this.wasd.D.isDown))) dx = 1;
+            
+            if (dx !== 0 || dy !== 0) {
+                if (dx !== 0 && dy !== 0) {
+                    dx *= 0.707;
+                    dy *= 0.707;
+                }
+                
+                if (this.hero.setVelocity) {
+                    this.hero.setVelocity(dx * speed, dy * speed);
+                }
+                
+                if (this.hero.setFlipX) {
+                    if (dx < 0) {
+                        this.hero.setFlipX(true);
+                    } else if (dx > 0) {
+                        this.hero.setFlipX(false);
+                    }
+                }
+                
+                if (this.hero.anims && this.hero.anims.currentAnim && this.hero.anims.currentAnim.key !== 'run') {
+                    this.hero.anims.play('run', true);
+                }
+            } else {
+                if (this.hero.setVelocity) {
+                    this.hero.setVelocity(0, 0);
+                }
+                if (this.hero.anims && this.hero.anims.currentAnim && this.hero.anims.currentAnim.key !== 'idle') {
+                    this.hero.anims.play('idle', true);
+                }
+            }
+            
+            // 检查是否接近需要救援的人
+            if (this.people && this.people.children && this.people.children.entries) {
+                this.people.children.entries.forEach(person => {
+                    if (!person || !person.x || !person.y) return;
+                    
+                    const dist = Phaser.Math.Distance.Between(
+                        this.hero.x, this.hero.y,
+                        person.x, person.y
+                    );
+                    
+                    if (dist < 60 && !this.isRescuing) {
+                        // 直接内联 startRescue 逻辑
+                        this.isRescuing = true;
+                        if (this.hero.setVelocity) {
+                            this.hero.setVelocity(0, 0);
+                        }
+                        if (this.hero.anims) {
+                            this.hero.anims.play('attack', false);
+                        }
+                        
+                        // 保存 person 引用以便在回调中使用
+                        const scene = this;
+                        const personToRescue = person;
+                        
+                        GameApp.showMathChallenge(() => {
+                            // 成功回调
+                            scene.isRescuing = false;
+                            // 内联 rescuePerson 逻辑
+                            if (GameApp.audioSystem) {
+                                GameApp.audioSystem.playRescueSound();
+                            }
+                            
+                            if (scene.particles) {
+                                scene.particles.setPosition(personToRescue.x, personToRescue.y);
+                                scene.particles.explode();
+                            }
+                            
+                            scene.tweens.add({
+                                targets: personToRescue,
+                                scaleX: 1.5,
+                                scaleY: 1.5,
+                                alpha: 0,
+                                duration: 500,
+                                onComplete: () => {
+                                    personToRescue.destroy();
+                                }
+                            });
+                            
+                            GameApp.collectPerson(personToRescue.peopleIndex);
+                            scene.collectedCount++;
+                            
+                            if (scene.collectedCount >= 5) {
+                                setTimeout(() => GameApp.win(), 500);
+                            }
+                        }, () => {
+                            // 失败回调
+                            scene.isRescuing = false;
+                            // 内联 relocatePerson 逻辑
+                            personToRescue.x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+                            personToRescue.y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+                            alert('The person moved to another location!');
+                        }, personToRescue.peopleIndex);
+                    }
+                });
+            }
+        },
+        
+        createHeroAnimations: function() {
+            this.anims.create({
+                key: 'idle',
+                frames: [
+                    { key: 'hero_idle_0' },
+                    { key: 'hero_idle_1' },
+                    { key: 'hero_idle_2' },
+                    { key: 'hero_idle_3' }
+                ],
+                frameRate: 5,
+                repeat: -1
+            });
+            
+            this.anims.create({
+                key: 'run',
+                frames: [
+                    { key: 'hero_run_0' },
+                    { key: 'hero_run_1' },
+                    { key: 'hero_run_2' },
+                    { key: 'hero_run_3' }
+                ],
+                frameRate: 10,
+                repeat: -1
+            });
+            
+            this.anims.create({
+                key: 'attack',
+                frames: [
+                    { key: 'hero_attack_0' },
+                    { key: 'hero_attack_1' },
+                    { key: 'hero_attack_2' },
+                    { key: 'hero_attack_3' }
+                ],
+                frameRate: 8,
+                repeat: 0
+            });
+        },
+        
+        spawnPeople: function() {
+            for (let i = 0; i < GameConfig.peopleCount; i++) {
+                const x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+                const y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+                
+                try {
+                    const person = this.add.container(x, y);
+                    
+                    const circle = this.add.circle(0, 0, 40, PeopleTypes[i].color, 0.8);
+                    person.add(circle);
+                    
+                    const text = this.add.text(0, 0, PeopleTypes[i].emoji, {
+                        fontSize: '40px',
+                        fontFamily: 'Arial'
+                    });
+                    text.setOrigin(0.5);
+                    person.add(text);
+                    
+                    this.tweens.add({
+                        targets: person,
+                        alpha: { from: 0.5, to: 1 },
+                        duration: 1000,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    
+                    this.tweens.add({
+                        targets: circle,
+                        scaleX: { from: 1, to: 1.2 },
+                        scaleY: { from: 1, to: 1.2 },
+                        duration: 800,
+                        yoyo: true,
+                        repeat: -1,
+                        ease: 'Sine.easeInOut'
+                    });
+                    
+                    person.peopleIndex = i;
+                    person.setDepth(5);
+                    this.people.add(person);
+                    
+                    console.log(`Person ${i} created at:`, x, y);
+                } catch (e) {
+                    console.error('Failed to create person', i, ':', e);
+                }
+            }
+            console.log(`Total people spawned: ${this.people.children.entries.length}`);
+        },
+        
+        startRescue: function(person) {
+            this.isRescuing = true;
+            this.hero.setVelocity(0, 0);
+            if (this.hero.anims) {
+                this.hero.anims.play('attack', false);
+            }
+            
+            GameApp.showMathChallenge(() => {
+                this.isRescuing = false;
+                this.rescuePerson(person);
+            }, () => {
+                this.isRescuing = false;
+                this.relocatePerson(person);
+            }, person.peopleIndex);
+        },
+        
+        rescuePerson: function(person) {
+            if (GameApp.audioSystem) {
+                GameApp.audioSystem.playRescueSound();
+            }
+            
+            if (this.particles) {
+                this.particles.setPosition(person.x, person.y);
+                this.particles.explode();
+            }
+            
+            this.tweens.add({
+                targets: person,
+                scaleX: 1.5,
+                scaleY: 1.5,
+                alpha: 0,
+                duration: 500,
+                onComplete: () => {
+                    person.destroy();
+                }
+            });
+            
+            GameApp.collectPerson(person.peopleIndex);
+            this.collectedCount++;
+            
+            if (this.collectedCount >= 5) {
+                setTimeout(() => GameApp.win(), 500);
+            }
+        },
+        
+        relocatePerson: function(person) {
+            person.x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+            person.y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+            alert('The person moved to another location!');
+        }
+    },
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    }
+};
+
+
+/**
+ * ==========================================
+ *  Math Question System
+ * ==========================================
+ */
+const GameApp = {
+    mathProgress: 0,
+    audioSystem: null,
+    currentQuestion: null,
+    
+    init() {
+        this.audioSystem = new AudioSystem();
+        
+        // 检查 Phaser 是否加载
+        if (typeof Phaser === 'undefined') {
+            console.error('Phaser.js not loaded!');
+            document.getElementById('loading-text').innerText = 'Error: Phaser.js failed to load. Please refresh.';
+            return;
+        }
+        
+        console.log('Phaser version:', Phaser.VERSION);
+        
+        // 启动 Phaser 游戏
+        try {
+            console.log('Initializing Phaser game...');
+            console.log('Config:', phaserConfig);
+            
+            game = new Phaser.Game(phaserConfig);
+            console.log('Phaser game instance created');
+            
+            // 监听游戏就绪
+            if (game.events) {
+                game.events.once('ready', () => {
+                    console.log('Phaser game is ready');
+                });
+            }
+            
+            // 延迟检查游戏状态
+            setTimeout(() => {
+                if (game && game.scene && game.scene.scenes && game.scene.scenes.length > 0) {
+                    console.log('Game scene exists:', game.scene.scenes[0].scene.key);
+                } else {
+                    console.warn('Game scene not found after initialization');
+                }
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Failed to initialize Phaser:', error);
+            console.error('Error stack:', error.stack);
+            const loadingText = document.getElementById('loading-text');
+            if (loadingText) {
+                loadingText.innerText = 'Error: ' + error.message;
+            }
+            alert('Game initialization failed: ' + error.message + '\nPlease check console for details.');
+        }
+    },
+    
+    start() {
+        document.getElementById('start-modal').classList.remove('active');
+    },
+    
+    showMathChallenge(onSuccess, onFail, peopleIndex = 0) {
+        const modal = document.getElementById('math-modal');
+        modal.classList.add('active');
+        this.mathProgress = 0;
+        this.updateDots();
+        
+        const difficulty = peopleIndex === 4 ? 'hard' : 'normal';
+
+        const nextQuestion = () => {
+            if (this.mathProgress >= 3) {
+                modal.classList.remove('active');
+                onSuccess();
+                return;
+            }
+            const q = this.generateQuestion(difficulty);
+            this.renderQuestion(q, (isCorrect) => {
+                if (isCorrect) {
+                    this.mathProgress++;
+                    this.updateDots();
+                    setTimeout(nextQuestion, 500);
+                } else {
+                    document.querySelectorAll('.btn').forEach(b => b.classList.add('wrong'));
+                    setTimeout(() => {
+                        modal.classList.remove('active');
+                        onFail();
+                    }, 1000);
+                }
+            });
+        };
+        nextQuestion();
+    },
+    
+    updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((d, i) => {
+            d.className = 'dot';
+            if (i < this.mathProgress) d.classList.add('success');
+            else if (i === this.mathProgress) d.classList.add('active');
+        });
+    },
+    
+    gcd(a, b) {
+        return b === 0 ? a : this.gcd(b, a % b);
+    },
+    
+    simplify(num, den) {
+        const g = this.gcd(Math.abs(num), Math.abs(den));
+        return { num: num / g, den: den / g };
+    },
+    
+    generateQuestion(difficulty = 'normal') {
+        const isHard = difficulty === 'hard';
+        
+        // Randomly select problem type
+        const problemTypes = ['fraction', 'percentage', 'ratio', 'geometry', 'speed', 'number'];
+        const problemType = problemTypes[Math.floor(Math.random() * problemTypes.length)];
+        
+        let question, correct, options;
+        
+        switch(problemType) {
+            case 'fraction':
+                question = this.generateFractionProblem(isHard);
+                break;
+            case 'percentage':
+                question = this.generatePercentageProblem(isHard);
+                break;
+            case 'ratio':
+                question = this.generateRatioProblem(isHard);
+                break;
+            case 'geometry':
+                question = this.generateGeometryProblem(isHard);
+                break;
+            case 'speed':
+                question = this.generateSpeedProblem(isHard);
+                break;
+            case 'number':
+                question = this.generateNumberTheoryProblem(isHard);
+                break;
+            default:
+                question = this.generateFractionProblem(isHard);
+        }
+        
+        this.currentQuestion = question;
+        return question;
+    },
+    
+    generateFractionProblem(isHard) {
+        const operations = ['+', '-', '×', '÷'];
+        const op = operations[Math.floor(Math.random() * operations.length)];
+        let num1, den1, num2, den2, ansNum, ansDen;
+        
+        const denRange = isHard ? [10, 12, 15, 16, 18, 20, 24, 25, 30, 32, 36, 40, 48, 50] : [2, 3, 4, 5, 6, 8, 10, 12];
+        
+        let attempts = 0;
+        do {
+            if (op === '+' || op === '-') {
+                den1 = den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                const maxNum = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                
+                if (op === '+') {
+                    ansNum = num1 + num2;
+                } else {
+                    ansNum = num1 - num2;
+                    if (ansNum <= 0) {
+                        [num1, num2] = [num2, num1];
+                        ansNum = num1 - num2;
+                    }
+                }
+                ansDen = den1;
+            } else if (op === '×') {
+                den1 = denRange[Math.floor(Math.random() * denRange.length)];
+                den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                const maxNum1 = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                const maxNum2 = isHard ? Math.min(den2 - 1, 50) : den2 - 1;
+                num1 = Math.floor(Math.random() * maxNum1) + 1;
+                num2 = Math.floor(Math.random() * maxNum2) + 1;
+                ansNum = num1 * num2;
+                ansDen = den1 * den2;
+            } else {
+                den1 = denRange[Math.floor(Math.random() * denRange.length)];
+                den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                do {
+                    const maxNum2 = isHard ? Math.min(den2 - 1, 50) : den2 - 1;
+                    num2 = Math.floor(Math.random() * maxNum2) + 1;
+                } while (num2 === den2);
+                const maxNum1 = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                num1 = Math.floor(Math.random() * maxNum1) + 1;
+                ansNum = num1 * den2;
+                ansDen = den1 * num2;
+            }
+            
+            attempts++;
+            if (attempts > 50) break;
+        } while (this.simplify(ansNum, ansDen).den === 1);
+        
+        const correctFrac = this.simplify(ansNum, ansDen);
+        correct = `${correctFrac.num}/${correctFrac.den}`;
+        
+        const scenarios = {
+            '+': [
+                `Sarah baked a cake and cut it into ${den1} equal slices. She gave ${num1} slice${num1 > 1 ? 's' : ''} to her friend and ate ${num2} slice${num2 > 1 ? 's' : ''} herself. What fraction of the cake did they eat together?`,
+                `A pizza was divided into ${den1} equal pieces. Tom ate ${num1} piece${num1 > 1 ? 's' : ''} and Lisa ate ${num2} piece${num2 > 1 ? 's' : ''}. What fraction of the pizza did they eat in total?`
+            ],
+            '-': [
+                `Emma had <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div> of a chocolate bar. She gave <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div> of it to her brother. What fraction of the chocolate bar does Emma have left?`,
+                `A container was <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div> full. After using <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div> of its contents, what fraction remains?`
+            ],
+            '×': [
+                `If <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div> of the students in a class are girls, and <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div> of the girls wear glasses, what fraction of the entire class are girls who wear glasses?`,
+                `A recipe calls for <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div> cup of flour. If you want to make <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div> of the recipe, how many cups of flour do you need?`
+            ],
+            '÷': [
+                `How many times does <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div> go into <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div>?`,
+                `If you have <div class="fraction" style="display:inline-block"><span class="num">${num1}</span><span class="den">${den1}</span></div> of a pizza and want to share it equally among portions of size <div class="fraction" style="display:inline-block"><span class="num">${num2}</span><span class="den">${den2}</span></div>, how many portions can you make?`
+            ]
+        };
+        
+        const wordProblem = scenarios[op][Math.floor(Math.random() * scenarios[op].length)];
+        options = this.generateFractionOptions(correct, denRange, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: correct,
+            type: 'fraction'
+        };
+    },
+    
+    generatePercentageProblem(isHard) {
+        const numRange = isHard ? [10, 15, 20, 25, 30, 40, 50, 60, 75, 80] : [5, 10, 15, 20, 25, 30, 40, 50];
+        const percentRange = isHard ? [10, 15, 20, 25, 30, 40, 50, 60, 75] : [10, 20, 25, 30, 40, 50];
+        
+        const num = numRange[Math.floor(Math.random() * numRange.length)];
+        const percent = percentRange[Math.floor(Math.random() * percentRange.length)];
+        const answer = Math.round((num * percent) / 100);
+        
+        const problems = [
+            `A store has ${num} apples. If ${percent}% of them are red, how many red apples are there?`,
+            `In a class of ${num} students, ${percent}% passed the test. How many students passed?`,
+            `A shirt originally costs $${num}. During a sale, it is ${percent}% off. What is the discount amount in dollars?`,
+            `Out of ${num} books on a shelf, ${percent}% are fiction books. How many fiction books are there?`
+        ];
+        
+        const wordProblem = problems[Math.floor(Math.random() * problems.length)];
+        const options = this.generateIntegerOptions(answer, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: answer.toString(),
+            type: 'percentage'
+        };
+    },
+    
+    generateRatioProblem(isHard) {
+        const ratioA = isHard ? Math.floor(Math.random() * 8) + 2 : Math.floor(Math.random() * 5) + 2;
+        const ratioB = isHard ? Math.floor(Math.random() * 8) + 2 : Math.floor(Math.random() * 5) + 2;
+        const total = (ratioA + ratioB) * (isHard ? Math.floor(Math.random() * 5) + 2 : Math.floor(Math.random() * 4) + 2);
+        const partA = (total * ratioA) / (ratioA + ratioB);
+        const partB = total - partA;
+        
+        const problems = [
+            `The ratio of boys to girls in a class is ${ratioA}:${ratioB}. If there are ${total} students in total, how many boys are there?`,
+            `A mixture contains water and juice in the ratio ${ratioA}:${ratioB}. If the total volume is ${total} liters, how many liters of water are there?`,
+            `In a bag, there are red and blue marbles in the ratio ${ratioA}:${ratioB}. If there are ${total} marbles total, how many red marbles are there?`
+        ];
+        
+        const wordProblem = problems[Math.floor(Math.random() * problems.length)];
+        const answer = Math.round(partA);
+        const options = this.generateIntegerOptions(answer, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: answer.toString(),
+            type: 'ratio'
+        };
+    },
+    
+    generateGeometryProblem(isHard) {
+        const length = isHard ? Math.floor(Math.random() * 15) + 6 : Math.floor(Math.random() * 10) + 3;
+        const width = isHard ? Math.floor(Math.random() * 15) + 6 : Math.floor(Math.random() * 10) + 3;
+        const area = length * width;
+        const perimeter = 2 * (length + width);
+        
+        const problemType = Math.random() < 0.5 ? 'area' : 'perimeter';
+        let wordProblem, answer;
+        
+        if (problemType === 'area') {
+            wordProblem = `A rectangle has a length of ${length} meters and a width of ${width} meters. What is its area in square meters?`;
+            answer = area;
+        } else {
+            wordProblem = `A rectangle has a length of ${length} meters and a width of ${width} meters. What is its perimeter in meters?`;
+            answer = perimeter;
+        }
+        
+        const options = this.generateIntegerOptions(answer, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: answer.toString(),
+            type: 'geometry'
+        };
+    },
+    
+    generateSpeedProblem(isHard) {
+        const distance = isHard ? (Math.floor(Math.random() * 8) + 2) * 10 : (Math.floor(Math.random() * 5) + 2) * 5;
+        const time = isHard ? Math.floor(Math.random() * 4) + 2 : Math.floor(Math.random() * 3) + 1;
+        const speed = distance / time;
+        
+        const problems = [
+            `A car travels ${distance} miles in ${time} hour${time > 1 ? 's' : ''}. What is its average speed in miles per hour?`,
+            `If a train covers ${distance} kilometers in ${time} hour${time > 1 ? 's' : ''}, what is its speed in kilometers per hour?`,
+            `A cyclist rides ${distance} miles in ${time} hour${time > 1 ? 's' : ''}. What is the cyclist's average speed?`
+        ];
+        
+        const wordProblem = problems[Math.floor(Math.random() * problems.length)];
+        const options = this.generateIntegerOptions(speed, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: speed.toString(),
+            type: 'speed'
+        };
+    },
+    
+    generateNumberTheoryProblem(isHard) {
+        const num1 = isHard ? Math.floor(Math.random() * 40) + 20 : Math.floor(Math.random() * 20) + 10;
+        const num2 = isHard ? Math.floor(Math.random() * 40) + 20 : Math.floor(Math.random() * 20) + 10;
+        
+        const problemType = Math.random() < 0.5 ? 'sum' : 'product';
+        let wordProblem, answer;
+        
+        if (problemType === 'sum') {
+            answer = num1 + num2;
+            wordProblem = `What is the sum of ${num1} and ${num2}?`;
+        } else {
+            answer = num1 * num2;
+            wordProblem = `What is the product of ${num1} and ${num2}?`;
+        }
+        
+        const options = this.generateIntegerOptions(answer, isHard);
+        
+        return {
+            text: wordProblem,
+            options: options,
+            correct: answer.toString(),
+            type: 'number'
+        };
+    },
+    
+    generateFractionOptions(correct, denRange, isHard) {
+        const options = [correct];
+        while(options.length < 4) {
+            let rDen = denRange[Math.floor(Math.random() * denRange.length)];
+            let rNum = Math.floor(Math.random() * (isHard ? Math.min(rDen * 3, 99) : rDen * 2 - 1)) + 1;
+            const simplified = this.simplify(rNum, rDen);
+            const opt = `${simplified.num}/${simplified.den}`;
+            if (simplified.den !== 1 && !options.includes(opt)) {
+                options.push(opt);
+            }
+        }
+        options.sort(() => Math.random() - 0.5);
+        return options;
+    },
+    
+    generateIntegerOptions(correct, isHard) {
+        const correctNum = parseInt(correct);
+        const options = [correctNum];
+        const range = isHard ? 30 : 15;
+        
+        while(options.length < 4) {
+            const offset = Math.floor(Math.random() * range * 2) - range;
+            const wrong = correctNum + offset;
+            if (wrong > 0 && wrong !== correctNum && !options.includes(wrong)) {
+                options.push(wrong);
+            }
+        }
+        options.sort(() => Math.random() - 0.5);
+        return options.map(o => o.toString());
+    },
+    
+    renderQuestion(q, callback) {
+        const container = document.getElementById('math-question-container');
+        const optsContainer = document.getElementById('math-options');
+        container.innerHTML = q.text;
+        optsContainer.innerHTML = '';
+
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            
+            // Check if it's a fraction or integer
+            if (opt.includes('/')) {
+                const [n, d] = opt.split('/');
+                btn.innerHTML = `<div class="fraction" style="font-size:0.8em"><span class="num">${n}</span><span class="den">${d}</span></div>`;
+            } else {
+                btn.innerHTML = opt;
+            }
+            
+            btn.onclick = () => {
+                if (opt === q.correct) {
+                    btn.classList.add('correct');
+                    if (this.audioSystem) {
+                        this.audioSystem.playSuccessSound();
+                    }
+                    callback(true);
+                } else {
+                    btn.classList.add('wrong');
+                    callback(false);
+                }
+            };
+            optsContainer.appendChild(btn);
+        });
+    },
+    
+    collectPerson(index) {
+        const slot = document.querySelector(`.people-slot[data-index="${index}"]`);
+        if (slot) {
+            slot.classList.add('filled');
+        }
+        const scoreVal = document.getElementById('score-val');
+        scoreVal.innerText = parseInt(scoreVal.innerText) + 3;
+    },
+    
+    win() {
+        const modal = document.getElementById('win-modal');
+        const display = document.getElementById('final-people-display');
+        display.innerHTML = PeopleTypes.map(p => p.emoji).join(' ');
+        modal.classList.add('active');
+    },
+    
+    showQuestionHelp() {
+        if (!this.currentQuestion) return;
+        const q = this.currentQuestion;
+        const helpContent = document.getElementById('help-dynamic-content');
+        let explanation = '';
+        
+        if (q.operation === '+') {
+            explanation = `<div class="help-example"><h4>Addition:</h4><p>When denominators are the same, add numerators, keep denominator.</p><div class="help-visual"><div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div><span>+</span><div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div><span>=</span><div class="fraction"><span class="num">${q.num1 + q.num2}</span><span class="den">${q.den1}</span></div></div><p>Then simplify: ${q.num1 + q.num2}/${q.den1} = ${q.correct}</p></div>`;
+        } else if (q.operation === '-') {
+            explanation = `<div class="help-example"><h4>Subtraction:</h4><p>When denominators are the same, subtract numerators, keep denominator.</p><div class="help-visual"><div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div><span>-</span><div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div><span>=</span><div class="fraction"><span class="num">${q.num1 - q.num2}</span><span class="den">${q.den1}</span></div></div><p>Then simplify: ${q.num1 - q.num2}/${q.den1} = ${q.correct}</p></div>`;
+        } else if (q.operation === '×') {
+            explanation = `<div class="help-example"><h4>Multiplication:</h4><p>Multiply numerators, multiply denominators.</p><div class="help-visual"><div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div><span>×</span><div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div><span>=</span><div class="fraction"><span class="num">${q.ansNum}</span><span class="den">${q.ansDen}</span></div></div><p>Then simplify: ${q.ansNum}/${q.ansDen} = ${q.correct}</p></div>`;
+        } else {
+            explanation = `<div class="help-example"><h4>Division:</h4><p>Dividing by a fraction equals multiplying by its reciprocal (flip it).</p><div class="help-visual"><div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div><span>÷</span><div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div><span>=</span><div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div><span>×</span><div class="fraction"><span class="num">${q.den2}</span><span class="den">${q.num2}</span></div><span>=</span><div class="fraction"><span class="num">${q.ansNum}</span><span class="den">${q.ansDen}</span></div></div><p>Then simplify: ${q.ansNum}/${q.ansDen} = ${q.correct}</p></div>`;
+        }
+        
+        helpContent.innerHTML = explanation;
+        document.getElementById('help-modal').classList.add('active');
+    },
+    
+    showHelp() {
+        const helpContent = document.getElementById('help-dynamic-content');
+        helpContent.innerHTML = `<div class="help-example"><h4>📖 Fraction Basics</h4><p><strong>Fractions</strong> have two parts: numerator (top) and denominator (bottom).</p><div class="help-visual"><div class="fraction"><span class="num">3</span><span class="den">4</span></div><p style="margin-top: 10px;">Numerator = 3, Denominator = 4</p></div></div><div class="help-example"><h4>➕ Addition:</h4><p>Same denominator: add numerators, keep denominator.</p><p>Example: 1/4 + 2/4 = 3/4</p></div><div class="help-example"><h4>➖ Subtraction:</h4><p>Same denominator: subtract numerators, keep denominator.</p><p>Example: 3/4 - 1/4 = 2/4 = 1/2</p></div><div class="help-example"><h4>✖️ Multiplication:</h4><p>Multiply numerators, multiply denominators.</p><p>Example: 1/2 × 2/3 = 2/6 = 1/3</p></div><div class="help-example"><h4>➗ Division:</h4><p>Dividing by a fraction equals multiplying by its reciprocal (flip it).</p><p>Example: 1/2 ÷ 1/4 = 1/2 × 4/1 = 4/2 = 2</p></div>`;
+        document.getElementById('help-modal').classList.add('active');
+    },
+    
+    hideHelp() {
+        document.getElementById('help-modal').classList.remove('active');
+    }
+};
+
+window.onload = () => GameApp.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学赛车 - Math Race - Larry Academy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 90vw;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .game-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item i {
+            font-size: 1.3rem;
+        }
+
+        .fuel-bar-container {
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 5px;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .fuel-bar {
+            height: 20px;
+            background: linear-gradient(90deg, #4ed1a1, #a1d14e);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(78, 209, 161, 0.5);
+        }
+
+        .fuel-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 20px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: #87CEEB;
+            overflow: hidden;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 600px;
+            max-height: 70vh;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #667eea;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 数学题目弹窗 */
+        .math-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            min-width: 300px;
+            animation: modalBounce 0.3s ease;
+        }
+
+        @keyframes modalBounce {
+            0% { transform: translate(-50%, -50%) scale(0.7); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .math-modal.active {
+            display: block;
+        }
+
+        .math-question {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .math-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .math-option {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .math-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .math-option:active {
+            transform: translateY(0);
+        }
+
+        .math-option.correct {
+            background: linear-gradient(135deg, #4ed1a1, #a1d14e);
+            animation: correctPulse 0.5s ease;
+        }
+
+        .math-option.wrong {
+            background: linear-gradient(135deg, #ff6b6b, #ff8fab);
+            animation: wrongShake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes rewardBounce {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(0.9); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        @keyframes crownGlow {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* 游戏结束弹窗 */
+        .game-over-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            text-align: center;
+            min-width: 350px;
+        }
+
+        .game-over-modal.active {
+            display: block;
+            animation: modalBounce 0.3s ease;
+        }
+
+        .game-over-modal h2 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .game-over-modal .final-stats {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .game-over-modal .stat-line {
+            font-size: 1.3rem;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .visitor-count {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        /* 控制说明 */
+        .controls-hint {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .control-key {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-width: 35px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .game-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stat-item {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .math-question {
+                font-size: 2rem;
+            }
+
+            .math-option {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+
+            .controls-hint {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 10px 15px;
+                margin-top: 10px;
+            }
+            
+            .control-item {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1><i class="fas fa-car"></i> 数学赛车 Math Race</h1>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>距离: <span id="distance">0</span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-star"></i>
+                    <span>⭐ <span id="stars">0</span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-gem"></i>
+                    <span>💎 <span id="gems">0</span></span>
+                </div>
+                <div class="stat-item" id="crownStat" style="display: none;">
+                    <i class="fas fa-crown"></i>
+                    <span>👑 <span id="crowns">0</span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span>❤️ <span id="lives">3</span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-fire"></i>
+                    <span>连胜: <span id="streak">0</span></span>
+                </div>
+            </div>
+            <div class="fuel-bar-container">
+                <div class="fuel-text">燃料 <span id="fuelText">100</span>%</div>
+                <div class="fuel-bar" id="fuelBar" style="width: 100%;"></div>
+            </div>
+            <div class="visitor-count">
+                <i class="fas fa-users"></i>
+                总游戏次数：<span id="visitorCount">0</span>
+            </div>
+            <div class="controls-hint">
+                <div class="control-item">
+                    <span class="control-key">←</span>
+                    <span>左</span>
+                </div>
+                <div class="control-item">
+                    <span class="control-key">→</span>
+                    <span>右</span>
+                </div>
+                <div class="control-item">
+                    <i class="fas fa-hand-pointer"></i>
+                    <span>点击移动</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <a href="/games" class="back-btn">
+                <i class="fas fa-arrow-left"></i> 返回游戏大厅
+            </a>
+
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- 数学题目弹窗 -->
+            <div class="math-modal" id="mathModal">
+                <div class="math-question" id="mathQuestion">5 + 3 = ?</div>
+                <div class="math-options" id="mathOptions">
+                    <button class="math-option">7</button>
+                    <button class="math-option">8</button>
+                    <button class="math-option">9</button>
+                    <button class="math-option">10</button>
+                </div>
+            </div>
+
+            <!-- 游戏结束弹窗 -->
+            <div class="game-over-modal" id="gameOverModal">
+                <h2 id="gameOverTitle">🏁 到达终点！</h2>
+                <div class="final-stats">
+                    <div class="stat-line">
+                        <i class="fas fa-trophy"></i> 行驶距离: <strong id="finalDistance">0</strong>
+                    </div>
+                    <div class="stat-line">
+                        ⭐ 星星: <strong id="finalStars">0</strong>
+                    </div>
+                    <div class="stat-line">
+                        💎 宝石: <strong id="finalGems">0</strong>
+                    </div>
+                    <div class="stat-line">
+                        👑 皇冠: <strong id="finalCrowns">0</strong>
+                    </div>
+                    <div class="stat-line">
+                        <i class="fas fa-check-circle"></i> 答对题目: <strong id="finalCorrect">0</strong>
+                    </div>
+                    <div class="stat-line">
+                        <i class="fas fa-percentage"></i> 正确率: <strong id="accuracy">0</strong>%
+                    </div>
+                </div>
+                <button class="restart-btn" onclick="location.reload()">
+                    <i class="fas fa-redo"></i> 再玩一次
+                </button>
+                <button class="restart-btn" onclick="location.href='../games.html'" style="background: linear-gradient(135deg, #f093fb, #f5576c); margin-left: 10px;">
+                    <i class="fas fa-home"></i> 返回大厅
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 游戏配置 ============
+        const CONFIG = {
+            canvas: { width: 900, height: 600 },
+            car: { 
+                width: 45, 
+                height: 75, 
+                speed: 5,
+                startY: 400  // 向上移动，确保整辆车可见
+            },
+            road: { 
+                laneCount: 5, 
+                laneWidth: 120 
+            },
+            fuel: {
+                max: 100,
+                consumeRate: 0.08, // 每帧消耗（增加消耗速度）
+                gainCorrect: 35, // 答对获得（从25提高到35）
+                loseWrong: 10, // 答错损失（从15降到10）
+                lowThreshold: 30
+            },
+            difficulty: {
+                finishDistance: 100000, // 终点距离（从1000改到100000）
+                starChance: 0.015, // 星星生成概率（增加更多对象）
+                obstacleChance: 0.025 // 障碍物生成概率（大幅增加数量）
+            }
+        };
+
+        // ============ 游戏状态 ============
+        const game = {
+            isRunning: false,
+            isPaused: false,
+            canvas: null,
+            ctx: null,
+            lastTime: 0,
+            distance: 0,
+            stars: 0,
+            gems: 0, // 宝石数量
+            crowns: 0, // 皇冠数量
+            lives: 3,
+            fuel: 100,
+            correctAnswers: 0,
+            totalQuestions: 0,
+            correctStreak: 0, // 连续答对计数
+            speed: 5, // 增加移动速度
+            currentQuestionDifficulty: null, // 当前题目的难度等级
+            car: {
+                x: 0,
+                y: 0,
+                lane: 1, // 0, 1, 2 (左中右)
+                targetX: 0
+            },
+            items: [], // 星星和障碍物
+            particles: [],
+            exhaustSmoke: [], // 尾气烟雾
+            roadOffset: 0,
+            audioContext: null,
+            playCount: 0,
+            engineOscillator: null,
+            engineOscillator2: null, // 第二个引擎振荡器（高频）
+            engineGain: null,
+            engineGain2: null,
+            musicOscillators: [], // 多个音乐振荡器（和弦）
+            musicGain: null,
+            musicNoteIndex: 0,
+            musicInterval: null
+        };
+
+        // ============ 访客计数器 ============
+        const VisitorCounter = {
+            storageKey: 'larryAcademy_mathRace_totalPlays',
+            
+            increment() {
+                const count = this.getCount();
+                const newCount = count + 1;
+                localStorage.setItem(this.storageKey, newCount.toString());
+                return newCount;
+            },
+            
+            getCount() {
+                const stored = localStorage.getItem(this.storageKey);
+                return stored ? parseInt(stored, 10) : 0;
+            },
+            
+            formatCount(count) {
+                if (count >= 1000000) {
+                    return (count / 1000000).toFixed(1) + 'M';
+                } else if (count >= 1000) {
+                    return (count / 1000).toFixed(1) + 'K';
+                }
+                return count.toString();
+            }
+        };
+
+        function updateVisitorCount() {
+            const countElement = document.getElementById('visitorCount');
+            if (countElement) {
+                countElement.textContent = VisitorCounter.formatCount(game.playCount);
+            }
+        }
+
+        // ============ 音效系统 ============
+        function initAudio() {
+            try {
+                if (!game.audioContext) {
+                    game.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            } catch (e) {
+                console.warn('音频初始化失败:', e);
+            }
+        }
+
+        function enableAudio() {
+            try {
+                initAudio();
+                if (game.audioContext && game.audioContext.state === 'suspended') {
+                    game.audioContext.resume();
+                }
+            } catch (e) {
+                console.warn('音频启用失败:', e);
+            }
+        }
+
+        function playSound(frequency, duration, type = 'sine') {
+            if (!game.audioContext) return;
+            
+            try {
+                const oscillator = game.audioContext.createOscillator();
+                const gainNode = game.audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(game.audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.2, game.audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, game.audioContext.currentTime + duration);
+                
+                oscillator.start();
+                oscillator.stop(game.audioContext.currentTime + duration);
+            } catch (e) {
+                console.warn('音效播放失败:', e);
+            }
+        }
+
+        // 引擎声音 - 更真实的引擎声效
+        function startEngineSound() {
+            if (!game.audioContext || game.engineOscillator) return;
+            
+            try {
+                // 创建低频引擎声（基础隆隆声）
+                game.engineOscillator = game.audioContext.createOscillator();
+                game.engineGain = game.audioContext.createGain();
+                
+                game.engineOscillator.connect(game.engineGain);
+                game.engineGain.connect(game.audioContext.destination);
+                
+                game.engineOscillator.type = 'sawtooth';
+                game.engineOscillator.frequency.value = 60; // 基础低频
+                game.engineGain.gain.value = 0.12;
+                
+                // 创建高频排气声（更真实的引擎声）
+                game.engineOscillator2 = game.audioContext.createOscillator();
+                game.engineGain2 = game.audioContext.createGain();
+                
+                game.engineOscillator2.connect(game.engineGain2);
+                game.engineGain2.connect(game.audioContext.destination);
+                
+                game.engineOscillator2.type = 'square';
+                game.engineOscillator2.frequency.value = 120; // 高频排气
+                game.engineGain2.gain.value = 0.06;
+                
+                // 添加轻微的颤音效果（模拟真实引擎）
+                const lfo = game.audioContext.createOscillator();
+                const lfoGain = game.audioContext.createGain();
+                lfo.type = 'sine';
+                lfo.frequency.value = 4; // 4Hz 颤音
+                lfoGain.gain.value = 2; // 轻微的音调变化
+                lfo.connect(lfoGain);
+                lfoGain.connect(game.engineOscillator.frequency);
+                lfo.start();
+                
+                game.engineOscillator.start();
+                game.engineOscillator2.start();
+                console.log('🚗 引擎声启动（真实引擎声效）');
+            } catch (e) {
+                console.warn('引擎声启动失败:', e);
+            }
+        }
+
+        function updateEngineSound() {
+            if (!game.engineOscillator || !game.engineOscillator2) return;
+            
+            try {
+                const currentTime = game.audioContext.currentTime;
+                
+                // 根据速度调整引擎频率（更真实的转速变化）
+                // 基础频率随速度增加
+                const baseFreq = 60 + (game.speed * 6);
+                const exhaustFreq = 120 + (game.speed * 10);
+                
+                // 使用平滑过渡，避免突然变化
+                game.engineOscillator.frequency.exponentialRampToValueAtTime(
+                    baseFreq, 
+                    currentTime + 0.1
+                );
+                game.engineOscillator2.frequency.exponentialRampToValueAtTime(
+                    exhaustFreq,
+                    currentTime + 0.1
+                );
+                
+                // 速度越快，高频排气声越大
+                const exhaustVolume = 0.04 + (game.speed * 0.01);
+                game.engineGain2.gain.exponentialRampToValueAtTime(
+                    exhaustVolume,
+                    currentTime + 0.1
+                );
+            } catch (e) {
+                console.warn('引擎声更新失败:', e);
+            }
+        }
+
+        function stopEngineSound() {
+            if (game.engineOscillator) {
+                try {
+                    game.engineOscillator.stop();
+                    game.engineOscillator = null;
+                    game.engineGain = null;
+                } catch (e) {
+                    console.warn('引擎声停止失败:', e);
+                }
+            }
+            if (game.engineOscillator2) {
+                try {
+                    game.engineOscillator2.stop();
+                    game.engineOscillator2 = null;
+                    game.engineGain2 = null;
+                    console.log('🚗 引擎声停止');
+                } catch (e) {
+                    console.warn('引擎声停止失败:', e);
+                }
+            }
+        }
+
+        // 背景音乐 - 经典游戏风格音乐
+        function startBackgroundMusic() {
+            if (!game.audioContext || game.musicInterval) return;
+            
+            try {
+                // 创建主增益节点
+                game.musicGain = game.audioContext.createGain();
+                game.musicGain.connect(game.audioContext.destination);
+                game.musicGain.gain.value = 0.12; // 背景音乐音量
+                
+                // 经典游戏风格旋律 - 类似超级马里奥、塞尔达等
+                // 使用C大调，欢快明朗的旋律
+                const melody = [
+                    // 第一小节 - 上升旋律
+                    { note: 523.25, duration: 0.15 },  // C5
+                    { note: 659.25, duration: 0.15 },  // E5
+                    { note: 783.99, duration: 0.15 },  // G5
+                    { note: 1046.50, duration: 0.3 },  // C6
+                    
+                    // 第二小节 - 下降旋律
+                    { note: 783.99, duration: 0.15 },  // G5
+                    { note: 659.25, duration: 0.15 },  // E5
+                    { note: 523.25, duration: 0.3 },   // C5
+                    
+                    // 第三小节 - 跳跃旋律
+                    { note: 587.33, duration: 0.15 },  // D5
+                    { note: 698.46, duration: 0.15 },  // F5
+                    { note: 783.99, duration: 0.15 },  // G5
+                    { note: 880.00, duration: 0.3 },   // A5
+                    
+                    // 第四小节 - 回归主音
+                    { note: 783.99, duration: 0.15 },  // G5
+                    { note: 659.25, duration: 0.15 },  // E5
+                    { note: 587.33, duration: 0.15 },  // D5
+                    { note: 523.25, duration: 0.3 },   // C5
+                ];
+                
+                game.musicNoteIndex = 0;
+                
+                // 播放单个音符
+                function playNote() {
+                    if (!game.isRunning || !game.musicGain) return;
+                    
+                    const noteData = melody[game.musicNoteIndex % melody.length];
+                    const currentTime = game.audioContext.currentTime;
+                    
+                    // 主旋律（方波，经典8-bit音色）
+                    const melodyOsc = game.audioContext.createOscillator();
+                    const melodyGain = game.audioContext.createGain();
+                    
+                    melodyOsc.connect(melodyGain);
+                    melodyGain.connect(game.musicGain);
+                    
+                    melodyOsc.type = 'square'; // 方波 - 经典游戏音色
+                    melodyOsc.frequency.value = noteData.note;
+                    
+                    // 经典游戏音效的包络
+                    melodyGain.gain.setValueAtTime(0, currentTime);
+                    melodyGain.gain.linearRampToValueAtTime(0.3, currentTime + 0.01); // 快速起音
+                    melodyGain.gain.linearRampToValueAtTime(0.25, currentTime + 0.05);
+                    melodyGain.gain.linearRampToValueAtTime(0.15, currentTime + noteData.duration * 0.8);
+                    melodyGain.gain.linearRampToValueAtTime(0, currentTime + noteData.duration);
+                    
+                    melodyOsc.start(currentTime);
+                    melodyOsc.stop(currentTime + noteData.duration);
+                    
+                    // 和声层（三角波，更柔和）
+                    const harmonyOsc = game.audioContext.createOscillator();
+                    const harmonyGain = game.audioContext.createGain();
+                    
+                    harmonyOsc.connect(harmonyGain);
+                    harmonyGain.connect(game.musicGain);
+                    
+                    harmonyOsc.type = 'triangle';
+                    harmonyOsc.frequency.value = noteData.note * 0.5; // 低八度和声
+                    
+                    harmonyGain.gain.setValueAtTime(0, currentTime);
+                    harmonyGain.gain.linearRampToValueAtTime(0.15, currentTime + 0.01);
+                    harmonyGain.gain.linearRampToValueAtTime(0, currentTime + noteData.duration);
+                    
+                    harmonyOsc.start(currentTime);
+                    harmonyOsc.stop(currentTime + noteData.duration);
+                    
+                    // 每个小节的第一拍添加低音鼓点
+                    if (game.musicNoteIndex % 4 === 0) {
+                        const drumOsc = game.audioContext.createOscillator();
+                        const drumGain = game.audioContext.createGain();
+                        
+                        drumOsc.connect(drumGain);
+                        drumGain.connect(game.musicGain);
+                        
+                        drumOsc.type = 'sine';
+                        drumOsc.frequency.value = 55; // 低频鼓点
+                        
+                        drumGain.gain.setValueAtTime(0.2, currentTime);
+                        drumGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.1);
+                        
+                        drumOsc.start(currentTime);
+                        drumOsc.stop(currentTime + 0.1);
+                    }
+                    
+                    game.musicNoteIndex++;
+                    
+                    // 安排下一个音符
+                    game.musicInterval = setTimeout(() => {
+                        if (game.isRunning) {
+                            playNote();
+                        }
+                    }, noteData.duration * 1000);
+                }
+                
+                // 立即开始播放
+                playNote();
+                
+                console.log('🎵 背景音乐启动（经典游戏风格）');
+            } catch (e) {
+                console.warn('背景音乐启动失败:', e);
+            }
+        }
+
+        function stopBackgroundMusic() {
+            if (game.musicInterval) {
+                clearTimeout(game.musicInterval);
+                game.musicInterval = null;
+            }
+            
+            game.musicOscillators.forEach(osc => {
+                try {
+                    osc.stop();
+                } catch (e) {
+                    // 振荡器可能已经停止
+                }
+            });
+            game.musicOscillators = [];
+            
+            if (game.musicGain) {
+                game.musicGain = null;
+                console.log('🎵 背景音乐停止');
+            }
+        }
+
+        // ============ 数学题目系统 ============
+        function generateMathQuestion() {
+            // 难度随距离渐进增加（更平滑的曲线，但难度提升更快）
+            const difficulty = Math.min(Math.floor(game.distance / 3000) + 1, 15); // 更频繁地提升难度
+            const maxNum = 10 + (difficulty * 8); // 从10开始，每级+8（更难）
+            
+            // 根据难度添加乘法和除法
+            const operations = difficulty < 5 ? ['+', '-'] : 
+                               difficulty < 10 ? ['+', '-', '*'] : 
+                               ['+', '-', '*', '/'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let num1, num2, correctAnswer;
+            
+            if (operation === '+') {
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                correctAnswer = num1 + num2;
+            } else if (operation === '-') {
+                num1 = Math.floor(Math.random() * maxNum) + maxNum;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                if (num2 > num1) {
+                    [num1, num2] = [num2, num1];
+                }
+                correctAnswer = num1 - num2;
+            } else if (operation === '*') {
+                // 乘法：使用较小的数字，但结果会更大
+                const factor1 = Math.floor(Math.random() * Math.min(maxNum / 3, 12)) + 2;
+                const factor2 = Math.floor(Math.random() * Math.min(maxNum / 3, 12)) + 2;
+                num1 = factor1;
+                num2 = factor2;
+                correctAnswer = num1 * num2;
+            } else { // 除法
+                // 确保能整除
+                const divisor = Math.floor(Math.random() * Math.min(maxNum / 3, 10)) + 2;
+                const quotient = Math.floor(Math.random() * Math.min(maxNum / 3, 10)) + 1;
+                num1 = divisor * quotient;
+                num2 = divisor;
+                correctAnswer = quotient;
+            }
+            
+            // 生成选项（根据难度调整干扰项范围）
+            const options = [correctAnswer];
+            const offsetRange = Math.max(5, Math.floor(correctAnswer * 0.3)); // 干扰项范围随答案增大
+            while (options.length < 4) {
+                const offset = Math.floor(Math.random() * offsetRange * 2) - offsetRange;
+                const wrongAnswer = correctAnswer + offset;
+                if (wrongAnswer > 0 && !options.includes(wrongAnswer)) {
+                    options.push(wrongAnswer);
+                }
+            }
+            
+            // 随机打乱选项
+            options.sort(() => Math.random() - 0.5);
+            
+            // 计算难度等级（用于燃料消耗）
+            const difficultyLevel = Math.min(difficulty, 15);
+            
+            return {
+                question: `${num1} ${operation} ${num2} = ?`,
+                correctAnswer: correctAnswer,
+                options: options,
+                difficultyLevel: difficultyLevel // 返回难度等级
+            };
+        }
+
+        function showMathQuestion() {
+            if (game.isPaused) return;
+            
+            game.isPaused = true;
+            const questionData = generateMathQuestion();
+            
+            // 存储当前题目的难度等级
+            game.currentQuestionDifficulty = questionData.difficultyLevel;
+            
+            const modal = document.getElementById('mathModal');
+            const questionEl = document.getElementById('mathQuestion');
+            const optionsContainer = document.getElementById('mathOptions');
+            
+            questionEl.textContent = questionData.question;
+            optionsContainer.innerHTML = '';
+            
+            questionData.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'math-option';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option, questionData.correctAnswer, btn);
+                optionsContainer.appendChild(btn);
+            });
+            
+            modal.classList.add('active');
+            playSound(600, 0.2, 'sine');
+        }
+
+        function checkAnswer(selected, correct, btnElement) {
+            game.totalQuestions++;
+            const allButtons = document.querySelectorAll('.math-option');
+            
+            // 根据题目难度计算燃料消耗/奖励
+            const difficultyLevel = game.currentQuestionDifficulty || 1;
+            // 难度越高，答对奖励越多，答错惩罚也越多
+            const difficultyMultiplier = 1 + (difficultyLevel * 0.1); // 每级难度增加10%
+            const fuelGain = Math.floor(CONFIG.fuel.gainCorrect * difficultyMultiplier);
+            const fuelLoss = Math.floor(CONFIG.fuel.loseWrong * difficultyMultiplier);
+            
+            if (selected === correct) {
+                // 答对了
+                game.correctAnswers++;
+                game.correctStreak++;
+                game.fuel = Math.min(game.fuel + fuelGain, CONFIG.fuel.max);
+                btnElement.classList.add('correct');
+                playSound(800, 0.3, 'sine');
+                setTimeout(() => playSound(1000, 0.2, 'sine'), 100);
+                
+                // 创建成功粒子
+                createParticles(game.canvas.width / 2, game.canvas.height / 2, '#4ed1a1', 20);
+                
+                // 检查连续答对3题，奖励1条生命
+                if (game.correctStreak >= 3) {
+                    game.correctStreak = 0;
+                    game.lives++;
+                    showLifeReward();
+                    playSound(1200, 0.4, 'sine');
+                    setTimeout(() => playSound(1400, 0.3, 'sine'), 150);
+                }
+            } else {
+                // 答错了 - 根据难度消耗更多燃料
+                game.correctStreak = 0; // 重置连胜
+                game.fuel = Math.max(game.fuel - fuelLoss, 0);
+                btnElement.classList.add('wrong');
+                playSound(200, 0.4, 'sawtooth');
+                
+                // 创建失败粒子
+                createParticles(game.canvas.width / 2, game.canvas.height / 2, '#ff6b6b', 20);
+                
+                // 高亮正确答案
+                allButtons.forEach(btn => {
+                    if (parseInt(btn.textContent) === correct) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+            
+            // 清除当前题目难度
+            game.currentQuestionDifficulty = null;
+            
+            // 禁用所有按钮
+            allButtons.forEach(btn => btn.disabled = true);
+            
+            updateUI();
+            
+            // 1秒后关闭弹窗
+            setTimeout(() => {
+                document.getElementById('mathModal').classList.remove('active');
+                game.isPaused = false;
+                
+                // 检查燃料是否耗尽
+                if (game.fuel <= 0) {
+                    gameOver(false);
+                }
+            }, 1000);
+        }
+
+        // ============ 奖励视觉效果 ============
+        function showLifeReward() {
+            // 显示生命奖励的大型动画
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.fontSize = '5rem';
+            modal.style.zIndex = '1000';
+            modal.style.animation = 'rewardBounce 1s ease';
+            modal.textContent = '❤️ +1 生命！';
+            document.body.appendChild(modal);
+            
+            createParticles(game.canvas.width / 2, game.canvas.height / 2, '#ff6b9d', 50);
+            
+            setTimeout(() => {
+                modal.remove();
+            }, 1000);
+        }
+        
+        function showGemReward() {
+            // 显示宝石奖励动画
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '50%';
+            modal.style.left = '50%';
+            modal.style.transform = 'translate(-50%, -50%)';
+            modal.style.fontSize = '6rem';
+            modal.style.zIndex = '1000';
+            modal.style.animation = 'rewardBounce 1.5s ease';
+            modal.style.textShadow = '0 0 20px rgba(0, 255, 255, 0.8)';
+            modal.textContent = '💎 获得宝石！';
+            document.body.appendChild(modal);
+            
+            // 更绚丽的粒子效果
+            createParticles(game.canvas.width / 2, game.canvas.height / 2, '#00ffff', 80);
+            createParticles(game.canvas.width / 2, game.canvas.height / 2, '#0080ff', 60);
+            
+            playSound(1000, 0.5, 'sine');
+            setTimeout(() => playSound(1200, 0.4, 'sine'), 100);
+            setTimeout(() => playSound(1500, 0.3, 'sine'), 200);
+            
+            setTimeout(() => {
+                modal.remove();
+            }, 1500);
+        }
+        
+        function showCrownReward() {
+            // 皇冠奖励 - 终极视觉效果
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.background = 'radial-gradient(circle, rgba(255,215,0,0.3), transparent)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.flexDirection = 'column';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.animation = 'crownGlow 2s ease';
+            
+            const crownText = document.createElement('div');
+            crownText.style.fontSize = '8rem';
+            crownText.style.animation = 'rewardBounce 2s ease';
+            crownText.style.textShadow = '0 0 40px rgba(255,215,0,1), 0 0 80px rgba(255,215,0,0.6)';
+            crownText.textContent = '👑';
+            
+            const text = document.createElement('div');
+            text.style.fontSize = '3rem';
+            text.style.color = '#FFD700';
+            text.style.fontWeight = 'bold';
+            text.style.marginTop = '20px';
+            text.style.textShadow = '0 0 20px rgba(255,215,0,0.8)';
+            text.textContent = '获得皇冠！太棒了！';
+            
+            modal.appendChild(crownText);
+            modal.appendChild(text);
+            document.body.appendChild(modal);
+            
+            // 超级绚丽的粒子爆炸
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createParticles(game.canvas.width / 2, game.canvas.height / 2, '#FFD700', 100);
+                    createParticles(game.canvas.width / 2, game.canvas.height / 2, '#FFA500', 80);
+                    createParticles(game.canvas.width / 2, game.canvas.height / 2, '#FF8C00', 60);
+                }, i * 200);
+            }
+            
+            // 胜利音效序列
+            const victoryMelody = [523, 659, 784, 1047];
+            victoryMelody.forEach((freq, index) => {
+                setTimeout(() => playSound(freq, 0.3, 'sine'), index * 150);
+            });
+            
+            setTimeout(() => {
+                modal.remove();
+            }, 2500);
+        }
+        
+        // ============ 粒子系统 ============
+        function createParticles(x, y, color, count = 15) {
+            for (let i = 0; i < count; i++) {
+                game.particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8 - 2,
+                    life: 1.0,
+                    decay: Math.random() * 0.02 + 0.015,
+                    color: color,
+                    size: Math.random() * 6 + 3
+                });
+            }
+        }
+
+        function updateParticles() {
+            for (let i = game.particles.length - 1; i >= 0; i--) {
+                const p = game.particles[i];
+                
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.4; // 重力
+                p.life -= p.decay;
+                
+                if (p.life <= 0) {
+                    game.particles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawParticles() {
+            game.particles.forEach(p => {
+                game.ctx.globalAlpha = p.life;
+                game.ctx.fillStyle = p.color;
+                game.ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            game.ctx.globalAlpha = 1;
+        }
+
+        // ============ 尾气效果 ============
+        function createExhaustSmoke() {
+            const carX = game.car.x;
+            const carY = game.car.y + CONFIG.car.height; // 车尾位置
+            
+            // 左边排气管
+            game.exhaustSmoke.push({
+                x: carX - 15,
+                y: carY - 5,
+                vx: (Math.random() - 0.5) * 2,
+                vy: Math.random() * 2 + 1, // 向下飘
+                size: Math.random() * 8 + 5,
+                life: 1.0,
+                decay: 0.02,
+                color: `rgba(150, 150, 150, ${0.6})`
+            });
+            
+            // 右边排气管
+            game.exhaustSmoke.push({
+                x: carX + 15,
+                y: carY - 5,
+                vx: (Math.random() - 0.5) * 2,
+                vy: Math.random() * 2 + 1,
+                size: Math.random() * 8 + 5,
+                life: 1.0,
+                decay: 0.02,
+                color: `rgba(150, 150, 150, ${0.6})`
+            });
+        }
+
+        function updateExhaustSmoke() {
+            for (let i = game.exhaustSmoke.length - 1; i >= 0; i--) {
+                const smoke = game.exhaustSmoke[i];
+                
+                smoke.x += smoke.vx;
+                smoke.y += smoke.vy;
+                smoke.size += 0.3; // 逐渐扩散
+                smoke.life -= smoke.decay;
+                
+                if (smoke.life <= 0) {
+                    game.exhaustSmoke.splice(i, 1);
+                }
+            }
+        }
+
+        function drawExhaustSmoke() {
+            const ctx = game.ctx;
+            
+            game.exhaustSmoke.forEach(smoke => {
+                ctx.save();
+                ctx.globalAlpha = smoke.life * 0.4; // 半透明
+                ctx.fillStyle = smoke.color;
+                ctx.beginPath();
+                ctx.arc(smoke.x, smoke.y, smoke.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        // ============ 游戏对象 ============
+        function getLaneX(lane) {
+            const startX = (game.canvas.width - CONFIG.road.laneWidth * 5) / 2; // 改成5条车道
+            return startX + CONFIG.road.laneWidth * lane + CONFIG.road.laneWidth / 2;
+        }
+
+        // 障碍物类型定义
+        const OBSTACLE_TYPES = [
+            { type: 'cone', emoji: '🚧', color: '#FF6600', width: 50, height: 50 },
+            { type: 'banana', emoji: '🍌', color: '#FFD700', width: 40, height: 40 },
+            { type: 'hole', emoji: '🕳️', color: '#000000', width: 60, height: 40 },
+            { type: 'rock', emoji: '🪨', color: '#808080', width: 55, height: 55 },
+            { type: 'oil', emoji: '💧', color: '#8B4513', width: 50, height: 50 }
+        ];
+
+        function spawnItem(type) {
+            const lane = Math.floor(Math.random() * 5); // 改成5条车道
+            
+            // 检查是否与现有物体重叠（防止重叠）
+            const tooClose = game.items.some(item => 
+                item.lane === lane && Math.abs(item.y - (-50)) < 200
+            );
+            
+            if (tooClose) return; // 如果太近就不生成
+            
+            if (type === 'star') {
+                game.items.push({
+                    type: 'star',
+                    x: getLaneX(lane),
+                    y: -50,
+                    lane: lane,
+                    width: 30,
+                    height: 30,
+                    rotation: 0
+                });
+            } else {
+                // 随机选择障碍物类型
+                const obstacleType = OBSTACLE_TYPES[Math.floor(Math.random() * OBSTACLE_TYPES.length)];
+                game.items.push({
+                    type: 'obstacle',
+                    obstacleType: obstacleType.type,
+                    emoji: obstacleType.emoji,
+                    color: obstacleType.color,
+                    x: getLaneX(lane),
+                    y: -50,
+                    lane: lane,
+                    width: obstacleType.width,
+                    height: obstacleType.height,
+                    rotation: 0
+                });
+            }
+        }
+
+        function updateItems() {
+            // 生成新物体
+            if (Math.random() < CONFIG.difficulty.starChance) {
+                spawnItem('star');
+            }
+            if (Math.random() < CONFIG.difficulty.obstacleChance) {
+                spawnItem('obstacle');
+            }
+            
+            // 更新位置
+            for (let i = game.items.length - 1; i >= 0; i--) {
+                const item = game.items[i];
+                item.y += game.speed;
+                item.rotation += 0.05;
+                
+                // 检测碰撞
+                if (item.lane === game.car.lane) {
+                    const carCenterY = game.car.y + CONFIG.car.height / 2;
+                    const itemCenterY = item.y + item.height / 2;
+                    const distance = Math.abs(carCenterY - itemCenterY);
+                    
+                    if (distance < (CONFIG.car.height + item.height) / 2 - 10) {
+                        if (item.type === 'star') {
+                            // 收集星星
+                            game.stars++;
+                            playSound(800, 0.2, 'sine');
+                            createParticles(item.x, item.y, '#FFD700', 15);
+                            game.items.splice(i, 1);
+                            
+                            // 检查是否达到25颗星星，转换为宝石
+                            if (game.stars >= 25) {
+                                game.stars -= 25;
+                                game.gems++;
+                                showGemReward();
+                                
+                                // 检查是否达到5个宝石，转换为皇冠
+                                if (game.gems >= 5) {
+                                    game.gems -= 5;
+                                    game.crowns++;
+                                    showCrownReward();
+                                }
+                            }
+                            
+                            updateUI();
+                            continue;
+                        } else if (item.type === 'obstacle') {
+                            // 撞到障碍物
+                            game.lives--;
+                            playSound(150, 0.5, 'sawtooth');
+                            createParticles(item.x, item.y, '#ff6b6b', 30);
+                            game.items.splice(i, 1);
+                            updateUI();
+                            
+                            // 震动效果
+                            const originalY = game.car.y;
+                            game.car.y += 10;
+                            setTimeout(() => { game.car.y = originalY; }, 100);
+                            
+                            if (game.lives <= 0) {
+                                gameOver(false);
+                            }
+                            continue;
+                        }
+                    }
+                }
+                
+                // 移除屏幕外的物体
+                if (item.y > game.canvas.height + 50) {
+                    game.items.splice(i, 1);
+                }
+            }
+        }
+
+        // ============ 汽车控制 ============
+        function updateCar() {
+            // 平滑移动到目标位置
+            const targetX = getLaneX(game.car.lane);
+            const diff = targetX - game.car.x;
+            
+            if (Math.abs(diff) > 1) {
+                game.car.x += diff * 0.15;
+            } else {
+                game.car.x = targetX;
+            }
+        }
+
+        function moveCar(direction) {
+            if (direction === 'left' && game.car.lane > 0) {
+                game.car.lane--;
+                playSound(400, 0.1, 'sine');
+            } else if (direction === 'right' && game.car.lane < 4) { // 改成4（5条车道：0,1,2,3,4）
+                game.car.lane++;
+                playSound(400, 0.1, 'sine');
+            }
+        }
+
+        // ============ 输入处理 ============
+        function setupInput() {
+            // 键盘控制
+            document.addEventListener('keydown', (e) => {
+                if (game.isPaused || !game.isRunning) return;
+                
+                if (e.key === 'ArrowLeft') {
+                    moveCar('left');
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight') {
+                    moveCar('right');
+                    e.preventDefault();
+                }
+                
+                enableAudio();
+            });
+            
+            // 触摸/点击控制
+            game.canvas.addEventListener('pointerdown', (e) => {
+                if (game.isPaused || !game.isRunning) return;
+                
+                const rect = game.canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const canvasWidth = rect.width;
+                
+                if (x < canvasWidth / 2) {
+                    moveCar('left');
+                } else {
+                    moveCar('right');
+                }
+                
+                enableAudio();
+            });
+        }
+
+        // ============ UI 更新 ============
+        function updateUI() {
+            // 格式化距离显示
+            const distanceText = game.distance >= 1000 
+                ? (game.distance / 1000).toFixed(1) + 'km' 
+                : Math.floor(game.distance) + 'm';
+            document.getElementById('distance').textContent = distanceText;
+            document.getElementById('stars').textContent = game.stars;
+            document.getElementById('gems').textContent = game.gems;
+            document.getElementById('crowns').textContent = game.crowns;
+            document.getElementById('lives').textContent = game.lives;
+            document.getElementById('streak').textContent = game.correctStreak;
+            
+            // 显示/隐藏皇冠统计
+            if (game.crowns > 0) {
+                document.getElementById('crownStat').style.display = 'flex';
+            }
+            
+            const fuelPercent = Math.max(0, Math.min(100, game.fuel));
+            document.getElementById('fuelText').textContent = Math.floor(fuelPercent);
+            document.getElementById('fuelBar').style.width = fuelPercent + '%';
+            
+            // 燃料颜色变化
+            if (fuelPercent < 30) {
+                document.getElementById('fuelBar').style.background = 'linear-gradient(90deg, #ff6b6b, #ff8fab)';
+            } else if (fuelPercent < 60) {
+                document.getElementById('fuelBar').style.background = 'linear-gradient(90deg, #ff9f1c, #ffcd3c)';
+            } else {
+                document.getElementById('fuelBar').style.background = 'linear-gradient(90deg, #4ed1a1, #a1d14e)';
+            }
+        }
+
+        // ============ 绘制函数 ============
+        function drawRoad() {
+            const ctx = game.ctx;
+            
+            // 草地背景
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(0, 0, game.canvas.width, game.canvas.height);
+            
+            // 道路
+            const roadStart = (game.canvas.width - CONFIG.road.laneWidth * 5) / 2; // 改成5条车道
+            const roadWidth = CONFIG.road.laneWidth * 5;
+            
+            ctx.fillStyle = '#404040';
+            ctx.fillRect(roadStart, 0, roadWidth, game.canvas.height);
+            
+            // 车道线
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 3;
+            ctx.setLineDash([20, 15]);
+            
+            for (let i = 1; i < 5; i++) { // 改成5条车道，需要4条分隔线
+                const x = roadStart + CONFIG.road.laneWidth * i;
+                ctx.beginPath();
+                ctx.moveTo(x, -game.roadOffset);
+                ctx.lineTo(x, game.canvas.height);
+                ctx.stroke();
+            }
+            
+            ctx.setLineDash([]);
+            
+            // 路边线
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(roadStart, 0);
+            ctx.lineTo(roadStart, game.canvas.height);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(roadStart + roadWidth, 0);
+            ctx.lineTo(roadStart + roadWidth, game.canvas.height);
+            ctx.stroke();
+        }
+
+        function drawCar() {
+            const ctx = game.ctx;
+            const x = game.car.x - CONFIG.car.width / 2;
+            const y = game.car.y;
+            
+            // 车身
+            ctx.fillStyle = '#FF4444';
+            ctx.fillRect(x, y, CONFIG.car.width, CONFIG.car.height);
+            
+            // 车窗
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(x + 10, y + 10, CONFIG.car.width - 20, 25);
+            
+            // 车轮
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x - 5, y + 15, 8, 15);
+            ctx.fillRect(x + CONFIG.car.width - 3, y + 15, 8, 15);
+            ctx.fillRect(x - 5, y + CONFIG.car.height - 30, 8, 15);
+            ctx.fillRect(x + CONFIG.car.width - 3, y + CONFIG.car.height - 30, 8, 15);
+            
+            // 车灯
+            ctx.fillStyle = '#FFFF00';
+            ctx.beginPath();
+            ctx.arc(x + 15, y + CONFIG.car.height - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(x + CONFIG.car.width - 15, y + CONFIG.car.height - 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawItems() {
+            const ctx = game.ctx;
+            
+            game.items.forEach(item => {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+                ctx.rotate(item.rotation);
+                
+                if (item.type === 'star') {
+                    // 绘制星星
+                    drawStar(ctx, 0, 0, 5, item.width / 2, item.width / 4, '#FFD700');
+                } else {
+                    // 绘制不同类型的障碍物
+                    if (item.obstacleType === 'cone') {
+                        // 三角锥
+                        ctx.fillStyle = '#FF6600';
+                        ctx.beginPath();
+                        ctx.moveTo(0, -item.height / 2);
+                        ctx.lineTo(-item.width / 2, item.height / 2);
+                        ctx.lineTo(item.width / 2, item.height / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(-item.width / 4, 0);
+                        ctx.lineTo(item.width / 4, 0);
+                        ctx.stroke();
+                    } else if (item.obstacleType === 'banana') {
+                        // 香蕉 - 用emoji
+                        ctx.font = `${item.width}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🍌', 0, 0);
+                    } else if (item.obstacleType === 'hole') {
+                        // 坑洞
+                        ctx.fillStyle = '#000000';
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, item.width / 2, item.height / 2, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // 内部阴影效果
+                        ctx.fillStyle = '#333333';
+                        ctx.beginPath();
+                        ctx.ellipse(-5, -5, item.width / 3, item.height / 3, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (item.obstacleType === 'rock') {
+                        // 石头
+                        ctx.font = `${item.width}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('🪨', 0, 0);
+                    } else if (item.obstacleType === 'oil') {
+                        // 油渍
+                        ctx.fillStyle = '#8B4513';
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, item.width / 2, item.height / 2.5, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // 反光效果
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.beginPath();
+                        ctx.ellipse(-8, -5, item.width / 4, item.height / 4, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // 油滴emoji
+                        ctx.font = `${item.width * 0.6}px Arial`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('💧', 0, 0);
+                    }
+                }
+                
+                ctx.restore();
+            });
+        }
+
+        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius, color) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            const step = Math.PI / spikes;
+            
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+                
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.fill();
+            
+            // 发光效果
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = color;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+
+        // ============ 游戏循环 ============
+        function update(deltaTime) {
+            if (game.isPaused) return;
+            
+            // 更新距离
+            game.distance += game.speed * 0.5;
+            game.roadOffset += game.speed;
+            if (game.roadOffset > 35) {
+                game.roadOffset = 0;
+            }
+            
+            // 消耗燃料（随距离渐进增加消耗速度）
+            const fuelConsumption = CONFIG.fuel.consumeRate * (1 + game.distance / 50000);
+            game.fuel -= fuelConsumption;
+            
+            // 燃料不足时弹出题目
+            if (game.fuel <= CONFIG.fuel.lowThreshold && !game.isPaused) {
+                showMathQuestion();
+            }
+            
+            // 燃料耗尽
+            if (game.fuel <= 0) {
+                gameOver(false);
+                return;
+            }
+            
+            // 检查是否到达终点
+            if (game.distance >= CONFIG.difficulty.finishDistance) {
+                gameOver(true);
+                return;
+            }
+            
+            // 更新游戏对象
+            updateCar();
+            updateItems();
+            updateParticles();
+            updateExhaustSmoke();
+            
+            // 生成尾气（每帧生成一次）
+            if (Math.random() < 0.3) {
+                createExhaustSmoke();
+            }
+            
+            updateUI();
+        }
+
+        function draw() {
+            // 清空画布
+            game.ctx.clearRect(0, 0, game.canvas.width, game.canvas.height);
+            
+            // 绘制游戏元素（顺序很重要！）
+            drawRoad();
+            drawExhaustSmoke(); // 尾气在车后面
+            drawItems();
+            drawCar();
+            drawParticles();
+            
+            // 绘制进度
+            drawProgress();
+        }
+
+        function drawProgress() {
+            const ctx = game.ctx;
+            const progress = game.distance / CONFIG.difficulty.finishDistance;
+            const barWidth = 200;
+            const barHeight = 20;
+            const x = game.canvas.width - barWidth - 20;
+            const y = 20;
+            
+            // 背景
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(x, y, barWidth, barHeight);
+            
+            // 进度条
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(x, y, barWidth * progress, barHeight);
+            
+            // 边框
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, barWidth, barHeight);
+            
+            // 终点标记
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🏁', x + barWidth + 15, y + 15);
+            
+            // 距离文字（格式化显示）
+            const distanceText = game.distance >= 1000 
+                ? `${(game.distance / 1000).toFixed(1)}K` 
+                : Math.floor(game.distance);
+            const finishText = `${(CONFIG.difficulty.finishDistance / 1000).toFixed(0)}K`;
+            ctx.fillText(`${distanceText}/${finishText}m`, x + barWidth / 2, y + 15);
+        }
+
+        function gameLoop(timestamp) {
+            if (!game.isRunning) return;
+            
+            const deltaTime = timestamp - game.lastTime;
+            game.lastTime = timestamp;
+            
+            update(deltaTime);
+            draw();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ============ 游戏控制 ============
+        function startGame() {
+            game.isRunning = true;
+            game.distance = 0;
+            game.stars = 0;
+            game.gems = 0;
+            game.crowns = 0;
+            game.lives = 3;
+            game.fuel = 100;
+            game.correctAnswers = 0;
+            game.totalQuestions = 0;
+            game.correctStreak = 0;
+            game.speed = 5; // 增加移动速度（从3增加到5）
+            game.car.lane = 2; // 中间车道（5条车道的中间是2）
+            game.car.x = getLaneX(2);
+            // 根据画布高度动态调整车辆位置
+            const carYPosition = game.canvas.height - 150;
+            game.car.y = Math.min(carYPosition, CONFIG.car.startY);
+            game.items = [];
+            game.particles = [];
+            game.exhaustSmoke = [];
+            game.roadOffset = 0;
+            game.isPaused = false;
+            
+            // 增加访客计数
+            game.playCount = VisitorCounter.increment();
+            updateVisitorCount();
+            
+            updateUI();
+            initAudio();
+            
+            // 启动背景音乐（移除引擎声）
+            setTimeout(() => {
+                startBackgroundMusic();
+            }, 100);
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameOver(reachedFinish) {
+            game.isRunning = false;
+            
+            // 停止音乐
+            stopBackgroundMusic();
+            
+            const modal = document.getElementById('gameOverModal');
+            const title = document.getElementById('gameOverTitle');
+            
+            if (reachedFinish) {
+                title.innerHTML = '🏁 成功到达终点！';
+                playSound(800, 0.3, 'sine');
+                setTimeout(() => playSound(1000, 0.3, 'sine'), 150);
+                setTimeout(() => playSound(1200, 0.4, 'sine'), 300);
+            } else {
+                title.innerHTML = '💥 游戏结束';
+                playSound(150, 0.6, 'sawtooth');
+            }
+            
+            // 显示最终统计（格式化距离）
+            const finalDistanceText = game.distance >= 1000 
+                ? (game.distance / 1000).toFixed(2) + ' km' 
+                : Math.floor(game.distance) + ' m';
+            document.getElementById('finalDistance').textContent = finalDistanceText;
+            document.getElementById('finalStars').textContent = game.stars;
+            document.getElementById('finalGems').textContent = game.gems;
+            document.getElementById('finalCrowns').textContent = game.crowns;
+            document.getElementById('finalCorrect').textContent = game.correctAnswers;
+            
+            const accuracy = game.totalQuestions > 0 
+                ? Math.floor((game.correctAnswers / game.totalQuestions) * 100) 
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy;
+            
+            modal.classList.add('active');
+        }
+
+        // ============ 初始化 ============
+        function init() {
+            try {
+                game.canvas = document.getElementById('gameCanvas');
+                if (!game.canvas) {
+                    throw new Error('Canvas 元素未找到');
+                }
+                
+                game.ctx = game.canvas.getContext('2d');
+                if (!game.ctx) {
+                    throw new Error('无法获取 Canvas 上下文');
+                }
+                
+                // 设置画布尺寸
+                const container = game.canvas.parentElement;
+                game.canvas.width = CONFIG.canvas.width;
+                game.canvas.height = Math.min(CONFIG.canvas.height, window.innerHeight * 0.7);
+                
+                // 初始化汽车位置（相对于实际画布高度调整）
+                const actualCanvasHeight = game.canvas.height;
+                const carYPosition = actualCanvasHeight - 150; // 距离底部150px，确保车辆完全可见
+                game.car.x = getLaneX(2); // 中间车道
+                game.car.y = Math.min(carYPosition, CONFIG.car.startY);
+                
+                setupInput();
+                
+                // 显示历史访客计数
+                const currentCount = VisitorCounter.getCount();
+                const countElement = document.getElementById('visitorCount');
+                if (countElement && currentCount > 0) {
+                    countElement.textContent = VisitorCounter.formatCount(currentCount);
+                }
+                
+                startGame();
+            } catch (e) {
+                console.error('游戏初始化失败:', e);
+                alert('游戏加载失败，请刷新页面重试');
+            }
+        }
+
+        // ============ 启动游戏 ============
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
+

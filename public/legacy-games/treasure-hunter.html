@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>宝藏猎人 - Treasure Hunter (Engine Remastered)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Noto+Sans+SC:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #1a0a2e;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* UI 层覆盖在 Canvas 之上 */
+        #game-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 800px;
+            background: #000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* HUD 界面 */
+        .hud-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* 让点击穿透到 Canvas */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .status-panel {
+            background: rgba(42, 26, 74, 0.8);
+            border: 2px solid #c4a000;
+            border-radius: 15px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 20px;
+            color: #ffd700;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            pointer-events: auto;
+        }
+
+        .weapon-slots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .weapon-slot {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #5a4a3a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            transition: all 0.3s;
+        }
+
+        .weapon-slot.filled {
+            border-color: #ffd700;
+            background: rgba(76, 29, 149, 0.6);
+            box-shadow: 0 0 10px #ffd700;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 虚拟摇杆区域 */
+        .controls-layer {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            pointer-events: auto;
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            pointer-events: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #2a1a4a, #1a0a2e);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(196, 160, 0, 0.3);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        h2 { color: #ffd700; font-family: 'MedievalSharp', cursive; margin-bottom: 15px; }
+        
+        /* 数学题样式 */
+        .math-question {
+            font-size: 2rem;
+            color: white;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .fraction { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; margin: 0 5px; }
+        .fraction .num { border-bottom: 2px solid white; padding-bottom: 2px; display: block; }
+        .fraction .den { padding-top: 2px; display: block; }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #4c1d95, #321068);
+            border: 2px solid #7c3aed;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'MedievalSharp', cursive;
+        }
+
+        .btn:hover { transform: translateY(-2px); background: #5b21b6; border-color: #ffd700; }
+        .btn:active { transform: translateY(1px); }
+
+        .btn.correct { background: #059669; border-color: #34d399; }
+        .btn.wrong { background: #dc2626; border-color: #f87171; }
+
+        /* 进度点 */
+        .progress-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; border: 1px solid #6b7280; }
+        .dot.active { background: #ffd700; box-shadow: 0 0 10px #ffd700; border-color: #fff; }
+        .dot.success { background: #10b981; border-color: #34d399; }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        /* 小地图样式 */
+        #minimap {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #c4a000;
+            border-radius: 10px;
+            pointer-events: auto;
+            z-index: 50;
+        }
+        
+        #minimap-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        
+        .minimap-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(42, 26, 74, 0.9);
+            border: 2px solid #c4a000;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #ffd700;
+            cursor: pointer;
+            pointer-events: auto;
+            font-size: 0.9rem;
+            z-index: 51;
+        }
+        
+        .minimap-toggle:hover {
+            background: rgba(76, 29, 149, 0.9);
+        }
+        
+        /* 帮助按钮 */
+        .help-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(42, 26, 74, 0.9);
+            border: 2px solid #c4a000;
+            border-radius: 8px;
+            padding: 8px 15px;
+            color: #ffd700;
+            cursor: pointer;
+            pointer-events: auto;
+            font-size: 1rem;
+            z-index: 100;
+        }
+        
+        /* 确保左下角按钮不遮挡控制提示 */
+        .controls-layer {
+            padding-bottom: 50px;
+        }
+        
+        .help-btn:hover {
+            background: rgba(76, 29, 149, 0.9);
+        }
+        
+        /* 帮助弹窗 */
+        #help-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            pointer-events: auto;
+        }
+        
+        #help-modal.active {
+            display: flex;
+        }
+        
+        .help-content {
+            background: linear-gradient(145deg, #2a1a4a, #1a0a2e);
+            border: 3px solid #c4a000;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #fff;
+        }
+        
+        .help-content h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .help-example {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .help-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 1.2rem;
+        }
+        
+        /* 宝物获得特效 */
+        @keyframes treasureGlow {
+            0%, 100% { 
+                transform: scale(1);
+                filter: brightness(1) drop-shadow(0 0 10px #ffd700);
+            }
+            50% { 
+                transform: scale(1.2);
+                filter: brightness(1.5) drop-shadow(0 0 30px #ffd700);
+            }
+        }
+        
+        .treasure-effect {
+            animation: treasureGlow 0.6s ease-out;
+        }
+
+        /* 加载页 */
+        #loading-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a0a2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- 游戏画布 -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD 层 -->
+    <div class="hud-layer">
+        <div class="top-bar">
+            <div class="status-panel">
+                <div class="stat"><i class="fas fa-compass"></i> 探索</div>
+                <div class="stat"><i class="fas fa-check-circle"></i> <span id="score-val">0</span> 题</div>
+                <div class="stat"><i class="fas fa-gamepad"></i> <span id="play-count">0</span> 次</div>
+            </div>
+            <div class="weapon-slots" id="weapon-bar">
+                <div class="weapon-slot" data-index="0"></div>
+                <div class="weapon-slot" data-index="1"></div>
+                <div class="weapon-slot" data-index="2"></div>
+                <div class="weapon-slot" data-index="3"></div>
+                <div class="weapon-slot" data-index="4"></div>
+            </div>
+        </div>
+        
+        <!-- 小地图 -->
+        <button class="minimap-toggle" id="minimap-toggle" onclick="GameApp.toggleMinimap()">🗺️ MAP</button>
+        <div id="minimap" style="display: none;">
+            <canvas id="minimap-canvas"></canvas>
+        </div>
+        
+        <!-- 帮助按钮 -->
+        <button class="help-btn" id="help-btn" onclick="GameApp.showHelp()">❓ HELP</button>
+        
+        <div class="controls-layer">
+            <!-- 虚拟摇杆将通过 JS 动态渲染，或者这里放提示 -->
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+                WASD / 方向键 / 触摸拖动移动
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载页 -->
+    <div id="loading-screen">
+        <i class="fas fa-circle-notch fa-spin fa-3x"></i>
+        <p style="margin-top: 20px;">加载资源中...</p>
+        <small style="color: #888; margin-top: 10px;" id="loading-text">准备中...</small>
+    </div>
+
+    <!-- 游戏开始弹窗 -->
+    <div id="start-modal" class="modal-overlay active">
+        <div class="modal-content">
+            <h2>⚔️ 宝藏猎人 ⚔️</h2>
+            <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+                暴君统治了王国，唯有集齐五件传说武器才能反抗。<br>
+                探索荒野，找到宝藏，用智慧解开封印！
+            </p>
+            <div style="text-align: center; margin: 15px 0; padding: 10px; background: rgba(196, 160, 0, 0.1); border-radius: 8px; border: 1px solid #c4a000;">
+                <span style="color: #ffd700; font-size: 1.1rem;">🎮 游戏次数: <span id="start-play-count">0</span></span>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="GameApp.start()">START ADVENTURE</button>
+        </div>
+    </div>
+
+    <!-- 数学题弹窗 -->
+    <div id="math-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="progress-dots" id="math-dots">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <div id="math-question-container" class="math-question">
+                <!-- 题目将通过 JS 插入 -->
+            </div>
+            <div id="math-options" class="options-grid">
+                <!-- 选项 -->
+            </div>
+            <button class="help-btn" style="position: relative; margin-top: 25px; width: 100%;" onclick="GameApp.showQuestionHelp()">💡 NEED HELP?</button>
+        </div>
+    </div>
+    
+    <!-- 帮助弹窗 -->
+    <div id="help-modal" class="modal-overlay">
+        <div class="help-content">
+            <h3>📚 分数运算帮助</h3>
+            <div id="help-dynamic-content">
+                <!-- 动态内容 -->
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="GameApp.hideHelp()">关闭</button>
+        </div>
+    </div>
+
+    <!-- 胜利弹窗 -->
+    <div id="win-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="font-size: 3rem;">🏆 胜利！</h2>
+            <p style="color: #ffd700; font-size: 1.2rem; margin-bottom: 20px;">
+                你集齐了所有武器！<br>反抗军已整装待发！
+            </p>
+            <div id="final-weapons-display" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; font-size: 2rem;"></div>
+            <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+            <button class="btn" style="background: #4b5563; margin-top: 10px;" onclick="location.href='../games.html'">BACK TO LOBBY</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/**
+ * ==========================================
+ *  Cocos-Lite Engine (Mini 2D Engine)
+ * ==========================================
+ */
+const Engine = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    lastTime: 0,
+    scenes: [],
+    currentScene: null,
+    input: { keys: {}, touch: { x: 0, y: 0, active: false, dx: 0, dy: 0 } },
+    resources: {},
+
+    init(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.setupInput();
+        requestAnimationFrame(t => this.loop(t));
+    },
+
+    resize() {
+        const container = this.canvas.parentElement;
+        this.width = container.clientWidth;
+        this.height = container.clientHeight;
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+    },
+
+    load(resources, callback) {
+        let loaded = 0;
+        const total = Object.keys(resources).length;
+        if (total === 0) return callback();
+
+        const loadingText = document.getElementById('loading-text');
+
+        for (let key in resources) {
+            const img = new Image();
+            img.src = resources[key];
+            img.onload = () => {
+                this.resources[key] = img;
+                loaded++;
+                if (loadingText) loadingText.innerText = `Loading: ${Math.floor(loaded/total*100)}%`;
+                if (loaded === total) callback();
+            };
+            img.onerror = () => {
+                console.warn(`Failed to load ${resources[key]}, using placeholder.`);
+                this.resources[key] = null; // Mark as missing
+                loaded++;
+                if (loaded === total) callback();
+            };
+        }
+    },
+
+    setupInput() {
+        window.addEventListener('keydown', e => this.input.keys[e.code] = true);
+        window.addEventListener('keyup', e => this.input.keys[e.code] = false);
+        
+        const startTouch = (x, y) => {
+            this.input.touch.active = true;
+            this.input.touch.startX = x;
+            this.input.touch.startY = y;
+            this.input.touch.x = x;
+            this.input.touch.y = y;
+        };
+        
+        const moveTouch = (x, y) => {
+            if (!this.input.touch.active) return;
+            this.input.touch.x = x;
+            this.input.touch.y = y;
+            this.input.touch.dx = x - this.input.touch.startX;
+            this.input.touch.dy = y - this.input.touch.startY;
+        };
+
+        const endTouch = () => {
+            this.input.touch.active = false;
+            this.input.touch.dx = 0;
+            this.input.touch.dy = 0;
+        };
+
+        this.canvas.addEventListener('mousedown', e => startTouch(e.offsetX, e.offsetY));
+        this.canvas.addEventListener('mousemove', e => moveTouch(e.offsetX, e.offsetY));
+        window.addEventListener('mouseup', endTouch);
+        
+        this.canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const rect = this.canvas.getBoundingClientRect();
+            startTouch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+        }, {passive: false});
+        this.canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            const rect = this.canvas.getBoundingClientRect();
+            moveTouch(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+        }, {passive: false});
+        this.canvas.addEventListener('touchend', endTouch);
+    },
+
+    loop(timestamp) {
+        const dt = (timestamp - this.lastTime) / 1000;
+        this.lastTime = timestamp;
+
+        if (this.currentScene) {
+            this.currentScene.update(dt);
+            this.ctx.clearRect(0, 0, this.width, this.height);
+            this.ctx.save();
+            this.currentScene.draw(this.ctx);
+            this.ctx.restore();
+            // 更新小地图
+            if (this.currentScene.postUpdate) {
+                this.currentScene.postUpdate();
+            }
+        }
+        requestAnimationFrame(t => this.loop(t));
+    },
+
+    runScene(scene) {
+        if (this.currentScene) this.currentScene.exit();
+        this.currentScene = scene;
+        this.currentScene.enter();
+    }
+};
+
+// 基类：节点
+class Node {
+    constructor() {
+        this.x = 0; this.y = 0;
+        this.width = 0; this.height = 0;
+        this.scaleX = 1; this.scaleY = 1;
+        this.rotation = 0;
+        this.anchorX = 0.5; this.anchorY = 0.5;
+        this.alpha = 1;
+        this.visible = true;
+        this.parent = null;
+        this.children = [];
+        this.components = [];
+        this.zIndex = 0;
+    }
+
+    addChild(child, zIndex = 0) {
+        child.parent = this;
+        child.zIndex = zIndex;
+        this.children.push(child);
+        this.children.sort((a, b) => a.zIndex - b.zIndex);
+    }
+
+    removeChild(child) {
+        const idx = this.children.indexOf(child);
+        if (idx > -1) this.children.splice(idx, 1);
+    }
+
+    addComponent(comp) {
+        comp.node = this;
+        this.components.push(comp);
+        if (comp.start) comp.start();
+        return comp;
+    }
+
+    getComponent(type) {
+        return this.components.find(c => c instanceof type);
+    }
+
+    update(dt) {
+        this.components.forEach(c => c.update && c.update(dt));
+        this.children.forEach(c => c.update(dt));
+    }
+
+    draw(ctx) {
+        if (!this.visible || this.alpha <= 0) return;
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.scaleX, this.scaleY);
+        ctx.globalAlpha *= this.alpha;
+
+        // 绘制组件 (如 Sprite)
+        this.components.forEach(c => c.draw && c.draw(ctx));
+
+        // 绘制子节点
+        this.children.forEach(c => c.draw(ctx));
+
+        ctx.restore();
+    }
+}
+
+class Scene extends Node {
+    constructor() { super(); this.anchorX = 0; this.anchorY = 0; }
+    enter() {}
+    exit() {}
+    update(dt) { super.update(dt); }
+    draw(ctx) { super.draw(ctx); }
+}
+
+// 组件：精灵 (修改版，支持直接设置 Image)
+class Sprite {
+    constructor(imageKey = null) {
+        this.image = imageKey ? Engine.resources[imageKey] : null;
+    }
+
+    draw(ctx) {
+        if (!this.image) {
+            // Fallback: draw rect if image missing
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            ctx.fillRect(-this.node.width * this.node.anchorX, -this.node.height * this.node.anchorY, this.node.width, this.node.height);
+            return;
+        }
+
+        const w = this.image.width;
+        const h = this.image.height;
+
+        // 如果节点没有设置尺寸，使用图片尺寸
+        // 如果设置了尺寸，进行缩放绘制（Cocos默认行为是拉伸，或者保持图片尺寸）
+        // 这里我们让绘制尺寸 = 节点尺寸
+        
+        // 如果节点尺寸未初始化，默认设为图片尺寸
+        if (this.node.width === 0) this.node.width = w;
+        if (this.node.height === 0) this.node.height = h;
+
+        ctx.drawImage(
+            this.image,
+            0, 0, w, h, // Source rect
+            -this.node.width * this.node.anchorX,
+            -this.node.height * this.node.anchorY,
+            this.node.width,
+            this.node.height
+        );
+    }
+}
+
+// 组件：动画机 (修改版，支持图片序列)
+class Animation {
+    constructor(sprite) {
+        this.sprite = sprite;
+        this.clips = {};
+        this.currentClip = null;
+        this.timer = 0;
+        this.frameIndex = 0;
+        this.isPlaying = false;
+    }
+
+    // 添加动画片段
+    // name: 动作名 (idle, run)
+    // prefix: 资源键前缀 (hero_idle)
+    // count: 帧数
+    addClip(name, prefix, count, speed = 0.1, loop = true) {
+        const frames = [];
+        for (let i = 0; i < count; i++) {
+            const key = `${prefix}_${i}`;
+            frames.push(key);
+        }
+        this.clips[name] = { frames, speed, loop };
+    }
+
+    play(name) {
+        if (this.currentClip === this.clips[name] && this.isPlaying) return;
+        this.currentClip = this.clips[name];
+        this.frameIndex = 0;
+        this.timer = 0;
+        this.isPlaying = true;
+        this.updateSpriteFrame();
+    }
+
+    update(dt) {
+        if (!this.isPlaying || !this.currentClip) return;
+
+        this.timer += dt;
+        if (this.timer >= this.currentClip.speed) {
+            this.timer = 0;
+            this.frameIndex++;
+            if (this.frameIndex >= this.currentClip.frames.length) {
+                if (this.currentClip.loop) {
+                    this.frameIndex = 0;
+                } else {
+                    this.frameIndex = this.currentClip.frames.length - 1;
+                    this.isPlaying = false;
+                }
+            }
+            this.updateSpriteFrame();
+        }
+    }
+
+    updateSpriteFrame() {
+        if (this.currentClip && this.sprite) {
+            const imgKey = this.currentClip.frames[this.frameIndex];
+            const img = Engine.resources[imgKey];
+            if (img) {
+                this.sprite.image = img;
+                // 自动调整节点尺寸以匹配当前帧（如果需要）
+                // this.sprite.node.width = img.width;
+                // this.sprite.node.height = img.height;
+            }
+        }
+    }
+}
+
+/**
+ * ==========================================
+ *  Game Logic
+ * ==========================================
+ */
+const GameConfig = {
+    mapWidth: 2000,
+    mapHeight: 1500,
+    heroSpeed: 250,
+    treasures: 5
+};
+
+const Weapons = [
+    { icon: '⚔️', name: '正义之剑' },
+    { icon: '🏹', name: '自由之弓' },
+    { icon: '🛡️', name: '守护之盾' },
+    { icon: '🔱', name: '勇气三叉戟' },
+    { icon: '🪓', name: '人民战斧' }
+];
+
+class MainScene extends Scene {
+    enter() {
+        // 1. World Root (Camera Target)
+        this.world = new Node();
+        this.addChild(this.world);
+
+        // 2. Background (Tiled)
+        this.createBackground();
+
+        // 3. Treasures
+        this.treasures = [];
+        this.spawnTreasures();
+
+        // 4. Hero
+        this.hero = new Node();
+        this.hero.x = GameConfig.mapWidth / 2;
+        this.hero.y = GameConfig.mapHeight / 2;
+        // 切割后帧尺寸是 150x200
+        this.hero.width = 150;
+        this.hero.height = 200; 
+        this.world.addChild(this.hero, 10);
+
+        const sprite = new Sprite(); // 初始为空，由动画控制
+        this.hero.addComponent(sprite);
+        
+        const anim = new Animation(sprite);
+        this.hero.addComponent(anim);
+        
+        // 定义动画：直接使用切割后的文件名
+        // 资源键名在 GameApp.init 中定义
+        anim.addClip('idle', 'hero_idle', 4, 0.2, true);
+        anim.addClip('run', 'hero_run', 4, 0.1, true);
+        anim.addClip('dig', 'hero_attack', 4, 0.15, false); // 使用 attack 动作作为挖掘
+        
+        anim.play('idle');
+
+        // 5. Hero Logic
+        this.hero.addComponent({
+            update: (dt) => this.updateHero(dt)
+        });
+
+        // UI State
+        this.collectedCount = 0;
+        this.isDigging = false;
+        
+        // 粒子系统
+        this.particleSystem = new ParticleSystem();
+        
+        // 小地图
+        this.minimapVisible = false;
+        this.minimapCanvas = document.getElementById('minimap-canvas');
+        if (this.minimapCanvas) {
+            this.minimapCanvas.width = 200;
+            this.minimapCanvas.height = 150;
+        }
+    }
+    
+    update(dt) {
+        super.update(dt);
+        // 更新粒子系统
+        if (this.particleSystem) {
+            this.particleSystem.update(dt);
+        }
+    }
+    
+    draw(ctx) {
+        super.draw(ctx);
+        // 绘制粒子特效
+        if (this.particleSystem) {
+            this.particleSystem.draw(ctx, this.world.x, this.world.y);
+        }
+    }
+    
+    // 在场景更新后调用，用于更新小地图
+    postUpdate() {
+        if (this.minimapVisible) {
+            this.drawMinimap();
+        }
+    }
+    
+    drawMinimap() {
+        if (!this.minimapVisible || !this.minimapCanvas) return;
+        
+        const ctx = this.minimapCanvas.getContext('2d');
+        const scaleX = this.minimapCanvas.width / GameConfig.mapWidth;
+        const scaleY = this.minimapCanvas.height / GameConfig.mapHeight;
+        
+        // 清空
+        ctx.clearRect(0, 0, this.minimapCanvas.width, this.minimapCanvas.height);
+        ctx.fillStyle = '#3e2723';
+        ctx.fillRect(0, 0, this.minimapCanvas.width, this.minimapCanvas.height);
+        
+        // 绘制宝藏位置
+        ctx.fillStyle = '#ffd700';
+        for (const t of this.treasures) {
+            ctx.beginPath();
+            ctx.arc(t.x * scaleX, t.y * scaleY, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // 绘制主角位置
+        ctx.fillStyle = '#00ff00';
+        ctx.beginPath();
+        ctx.arc(this.hero.x * scaleX, this.hero.y * scaleY, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 绘制视野框
+        const viewX = (-this.world.x) * scaleX;
+        const viewY = (-this.world.y) * scaleY;
+        const viewW = Engine.width * scaleX;
+        const viewH = Engine.height * scaleY;
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(viewX, viewY, viewW, viewH);
+    }
+
+    createBackground() {
+        const bgNode = new Node();
+        this.world.addChild(bgNode, -1);
+        const bgImg = Engine.resources['bg'];
+        
+        bgNode.addComponent({
+            draw: (ctx) => {
+                if (!bgImg) {
+                    ctx.fillStyle = '#3e2723';
+                    ctx.fillRect(0, 0, GameConfig.mapWidth, GameConfig.mapHeight);
+                    return;
+                }
+                // 背景图是 2752x1536，包含两个场景叠加
+                // 只使用上半部分（村庄场景: 0-768像素高度）
+                const srcW = bgImg.width;
+                const srcH = bgImg.height / 2; // 只取上半部分
+                
+                // 绘制背景，拉伸覆盖整个地图
+                ctx.drawImage(
+                    bgImg,
+                    0, 0, srcW, srcH,      // 源：只取上半部分
+                    0, 0, GameConfig.mapWidth, GameConfig.mapHeight // 目标：整个地图
+                );
+            }
+        });
+    }
+
+    spawnTreasures() {
+        for (let i = 0; i < GameConfig.treasures; i++) {
+            const t = new Node();
+            t.x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+            t.y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+            t.weaponIndex = i;
+            this.world.addChild(t);
+            this.treasures.push(t);
+
+            t.addComponent({
+                time: Math.random() * 10,
+                draw: (ctx) => {
+                    this.time = (this.time || 0) + 0.05;
+                    const glow = 10 + Math.sin(this.time) * 5;
+                    ctx.shadowBlur = glow;
+                    ctx.shadowColor = '#ffd700';
+                    ctx.fillStyle = '#8d6e63';
+                    ctx.fillRect(-20, -20, 40, 40);
+                    ctx.fillStyle = '#ffd700';
+                    ctx.fillRect(-20, -5, 40, 10);
+                    ctx.fillRect(-5, -20, 10, 40);
+                    ctx.shadowBlur = 0;
+                }
+            });
+        }
+    }
+
+    updateHero(dt) {
+        if (this.isDigging) return;
+
+        const speed = GameConfig.heroSpeed;
+        let dx = 0;
+        let dy = 0;
+        const keys = Engine.input.keys;
+        const touch = Engine.input.touch;
+
+        if (keys['ArrowUp'] || keys['KeyW']) dy = -1;
+        if (keys['ArrowDown'] || keys['KeyS']) dy = 1;
+        if (keys['ArrowLeft'] || keys['KeyA']) dx = -1;
+        if (keys['ArrowRight'] || keys['KeyD']) dx = 1;
+
+        if (touch.active) {
+            if (Math.abs(touch.dx) > 10) dx = touch.dx > 0 ? 1 : -1;
+            if (Math.abs(touch.dy) > 10) dy = touch.dy > 0 ? 1 : -1;
+        }
+
+        const anim = this.hero.getComponent(Animation);
+
+        if (dx !== 0 || dy !== 0) {
+            if (dx !== 0 && dy !== 0) { dx *= 0.707; dy *= 0.707; }
+            
+            this.hero.x += dx * speed * dt;
+            this.hero.y += dy * speed * dt;
+            this.hero.x = Math.max(30, Math.min(GameConfig.mapWidth - 30, this.hero.x));
+            this.hero.y = Math.max(30, Math.min(GameConfig.mapHeight - 30, this.hero.y));
+
+            anim.play('run');
+            if (dx < 0) this.hero.scaleX = -1;
+            if (dx > 0) this.hero.scaleX = 1;
+        } else {
+            anim.play('idle');
+        }
+
+        // Camera
+        this.world.x = Engine.width / 2 - this.hero.x;
+        this.world.y = Engine.height / 2 - this.hero.y;
+        this.world.x = Math.min(0, Math.max(Engine.width - GameConfig.mapWidth, this.world.x));
+        this.world.y = Math.min(0, Math.max(Engine.height - GameConfig.mapHeight, this.world.y));
+
+        this.checkTreasures();
+    }
+
+    checkTreasures() {
+        for (let i = this.treasures.length - 1; i >= 0; i--) {
+            const t = this.treasures[i];
+            const dist = Math.hypot(t.x - this.hero.x, t.y - this.hero.y);
+            if (dist < 60) {
+                this.startDigging(t);
+                break;
+            }
+        }
+    }
+
+    startDigging(treasureNode) {
+        this.isDigging = true;
+        const anim = this.hero.getComponent(Animation);
+        anim.play('dig');
+        
+        GameApp.showMathChallenge(() => {
+            this.isDigging = false;
+            this.collectTreasure(treasureNode);
+        }, () => {
+            this.isDigging = false;
+            this.relocateTreasure(treasureNode);
+        }, treasureNode.weaponIndex);
+    }
+
+    collectTreasure(t) {
+        // 播放音效
+        if (GameApp.audioSystem) {
+            GameApp.audioSystem.playTreasureSound();
+        }
+        
+        // 创建粒子特效
+        const worldX = t.x + this.world.x;
+        const worldY = t.y + this.world.y;
+        if (this.particleSystem) {
+            this.particleSystem.createTreasureEffect(worldX, worldY);
+        }
+        
+        // 移除宝藏
+        this.world.removeChild(t);
+        const idx = this.treasures.indexOf(t);
+        if (idx > -1) this.treasures.splice(idx, 1);
+        
+        // 收集武器（带特效）
+        GameApp.collectWeapon(t.weaponIndex);
+        this.collectedCount++;
+        
+        if (this.collectedCount >= 5) setTimeout(() => GameApp.win(), 500);
+    }
+
+    relocateTreasure(t) {
+        t.x = 100 + Math.random() * (GameConfig.mapWidth - 200);
+        t.y = 100 + Math.random() * (GameConfig.mapHeight - 200);
+        alert('封印太强了！宝藏转移到了别处！');
+    }
+}
+
+/**
+ * ==========================================
+ *  Audio System (梦幻音效)
+ * ==========================================
+ */
+class AudioSystem {
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+        this.init();
+    }
+    
+    init() {
+        try {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch(e) {
+            console.warn('Audio not supported');
+            this.enabled = false;
+        }
+    }
+    
+    playTreasureSound() {
+        if (!this.enabled || !this.ctx) return;
+        
+        const ctx = this.ctx;
+        const duration = 1.5;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        // 创建梦幻的上升音调（类似魔法获得音效）
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            // 基础频率从 440Hz 上升到 880Hz
+            const freq = 440 + (t / duration) * 440;
+            // 添加和声
+            const wave1 = Math.sin(2 * Math.PI * freq * t);
+            const wave2 = Math.sin(2 * Math.PI * freq * 2 * t) * 0.5;
+            const wave3 = Math.sin(2 * Math.PI * freq * 3 * t) * 0.25;
+            // 包络（淡入淡出）
+            const envelope = Math.sin(Math.PI * t / duration);
+            // 添加颤音效果
+            const vibrato = 1 + Math.sin(2 * Math.PI * 5 * t) * 0.1;
+            data[i] = (wave1 + wave2 + wave3) * envelope * vibrato * 0.3;
+        }
+        
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        
+        // 添加混响效果
+        const gainNode = ctx.createGain();
+        gainNode.gain.setValueAtTime(0.5, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+        
+        source.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        source.start();
+    }
+    
+    playSuccessSound() {
+        if (!this.enabled || !this.ctx) return;
+        
+        const ctx = this.ctx;
+        const duration = 0.5;
+        const sampleRate = ctx.sampleRate;
+        const buffer = ctx.createBuffer(1, sampleRate * duration, sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        // 短促的成功音效
+        for (let i = 0; i < data.length; i++) {
+            const t = i / sampleRate;
+            const freq = 523.25; // C5
+            const envelope = Math.exp(-t * 5);
+            data[i] = Math.sin(2 * Math.PI * freq * t) * envelope * 0.2;
+        }
+        
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start();
+    }
+}
+
+/**
+ * ==========================================
+ *  Particle System (粒子特效)
+ * ==========================================
+ */
+class ParticleSystem {
+    constructor() {
+        this.particles = [];
+    }
+    
+    createTreasureEffect(x, y) {
+        // 创建大量粒子
+        for (let i = 0; i < 50; i++) {
+            this.particles.push({
+                x: x,
+                y: y,
+                vx: (Math.random() - 0.5) * 300,
+                vy: (Math.random() - 0.5) * 300 - 50, // 向上偏
+                life: 1.0,
+                decay: 0.02 + Math.random() * 0.03,
+                size: 5 + Math.random() * 10,
+                color: `hsl(${30 + Math.random() * 30}, 100%, ${50 + Math.random() * 50}%)`
+            });
+        }
+    }
+    
+    update(dt) {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.vy += 200 * dt; // 重力
+            p.life -= p.decay;
+            if (p.life <= 0) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
+    
+    draw(ctx, cameraX, cameraY) {
+        ctx.save();
+        for (const p of this.particles) {
+            ctx.globalAlpha = p.life;
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x - cameraX, p.y - cameraY, p.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+}
+
+/**
+ * ==========================================
+ *  App Logic (UI & Math)
+ * ==========================================
+ */
+const GameApp = {
+    mathProgress: 0,
+    audioSystem: null,
+    currentQuestion: null,
+    
+    init() {
+        // 初始化音效系统
+        this.audioSystem = new AudioSystem();
+        
+        const assets = { 'bg': 'assets/village-bg.png' };
+        
+        // 预加载序列帧（使用新切割的图片）
+        // 动作: attack, kick, idle, run, fall
+        const actions = ['idle', 'run', 'attack', 'kick', 'fall'];
+        actions.forEach(act => {
+            for(let i=0; i<4; i++) {
+                // 资源键名: hero_idle_0
+                // 文件路径: assets/hero/idle_0.png
+                assets[`hero_${act}_${i}`] = `assets/hero/${act}_${i}.png`;
+            }
+        });
+        
+        Engine.init('gameCanvas');
+        Engine.load(assets, () => {
+            document.getElementById('loading-screen').style.display = 'none';
+            // 显示当前游戏次数
+            initTreasureHunterPlayCount();
+        });
+    },
+
+    start() {
+        // 增加游戏次数计数器
+        try {
+            const playCountKey = 'larryAcademy_treasureHunter_totalPlays';
+            let playCount = parseInt(localStorage.getItem(playCountKey) || '0', 10);
+            playCount++;
+            localStorage.setItem(playCountKey, playCount.toString());
+            console.log(`Treasure Hunter 游戏次数: ${playCount}`);
+        } catch (e) {
+            console.warn('无法更新游戏次数:', e);
+        }
+        
+        // 更新界面显示
+        initTreasureHunterPlayCount();
+        
+        document.getElementById('start-modal').classList.remove('active');
+        Engine.runScene(new MainScene());
+    },
+
+    showMathChallenge(onSuccess, onFail, treasureIndex = 0) {
+        const modal = document.getElementById('math-modal');
+        modal.classList.add('active');
+        this.mathProgress = 0;
+        this.updateDots();
+        
+        // 第五个宝物（索引4）难度更高
+        const difficulty = treasureIndex === 4 ? 'hard' : 'normal';
+
+        const nextQuestion = () => {
+            if (this.mathProgress >= 3) {
+                modal.classList.remove('active');
+                onSuccess();
+                return;
+            }
+            const q = this.generateQuestion(difficulty);
+            this.renderQuestion(q, (isCorrect) => {
+                if (isCorrect) {
+                    this.mathProgress++;
+                    this.updateDots();
+                    setTimeout(nextQuestion, 500);
+                } else {
+                    document.querySelectorAll('.btn').forEach(b => b.classList.add('wrong'));
+                    setTimeout(() => {
+                        modal.classList.remove('active');
+                        onFail();
+                    }, 1000);
+                }
+            });
+        };
+        nextQuestion();
+    },
+
+    updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((d, i) => {
+            d.className = 'dot';
+            if (i < this.mathProgress) d.classList.add('success');
+            else if (i === this.mathProgress) d.classList.add('active');
+        });
+    },
+
+    // 最大公约数
+    gcd(a, b) {
+        return b === 0 ? a : this.gcd(b, a % b);
+    },
+    
+    // 约分
+    simplify(num, den) {
+        const g = this.gcd(Math.abs(num), Math.abs(den));
+        return { num: num / g, den: den / g };
+    },
+    
+    // 格式化分数（确保不是整数）
+    formatFraction(num, den) {
+        const simplified = this.simplify(num, den);
+        // 如果约分后是整数，重新生成
+        if (simplified.den === 1) {
+            return null; // 标记为无效
+        }
+        return `${simplified.num}/${simplified.den}`;
+    },
+    
+    generateQuestion(difficulty = 'normal') {
+        const operations = ['+', '-', '×', '÷'];
+        const op = operations[Math.floor(Math.random() * operations.length)];
+        let num1, den1, num2, den2, ansNum, ansDen, question;
+        
+        // 根据难度选择数字范围
+        const isHard = difficulty === 'hard';
+        const denRange = isHard ? [10, 12, 15, 16, 18, 20, 24, 25, 30, 32, 36, 40, 48, 50] : [2, 3, 4, 5, 6, 8, 10, 12];
+        const numMax = isHard ? 99 : 12;
+        
+        // 生成题目，确保答案不是整数
+        let attempts = 0;
+        do {
+            if (op === '+' || op === '-') {
+                // 加减法：确保同分母
+                den1 = den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                const maxNum = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                num1 = Math.floor(Math.random() * maxNum) + 1;
+                num2 = Math.floor(Math.random() * maxNum) + 1;
+                
+                if (op === '+') {
+                    ansNum = num1 + num2;
+                } else {
+                    ansNum = num1 - num2;
+                    if (ansNum <= 0) {
+                        // 确保结果为正
+                        [num1, num2] = [num2, num1];
+                        ansNum = num1 - num2;
+                    }
+                }
+                ansDen = den1;
+            } else if (op === '×') {
+                // 乘法
+                den1 = denRange[Math.floor(Math.random() * denRange.length)];
+                den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                const maxNum1 = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                const maxNum2 = isHard ? Math.min(den2 - 1, 50) : den2 - 1;
+                num1 = Math.floor(Math.random() * maxNum1) + 1;
+                num2 = Math.floor(Math.random() * maxNum2) + 1;
+                ansNum = num1 * num2;
+                ansDen = den1 * den2;
+            } else { // ÷
+                // 除法：修复逻辑，确保除数不是1
+                den1 = denRange[Math.floor(Math.random() * denRange.length)];
+                den2 = denRange[Math.floor(Math.random() * denRange.length)];
+                
+                // 确保 num2/den2 不等于 1（即 num2 !== den2）
+                do {
+                    const maxNum2 = isHard ? Math.min(den2 - 1, 50) : den2 - 1;
+                    num2 = Math.floor(Math.random() * maxNum2) + 1;
+                } while (num2 === den2); // 避免 num2/den2 = 1
+                
+                const maxNum1 = isHard ? Math.min(den1 - 1, 50) : den1 - 1;
+                num1 = Math.floor(Math.random() * maxNum1) + 1;
+                
+                // a/b ÷ c/d = a/b × d/c
+                ansNum = num1 * den2;
+                ansDen = den1 * num2;
+            }
+            
+            attempts++;
+            if (attempts > 50) break; // 防止无限循环
+        } while (this.simplify(ansNum, ansDen).den === 1);
+        
+        const correctFrac = this.simplify(ansNum, ansDen);
+        const correct = `${correctFrac.num}/${correctFrac.den}`;
+        
+        // 生成错误选项
+        const options = [correct];
+        while(options.length < 4) {
+            let rDen = denRange[Math.floor(Math.random() * denRange.length)];
+            let rNum = Math.floor(Math.random() * (isHard ? Math.min(rDen * 3, 99) : rDen * 2 - 1)) + 1;
+            const simplified = this.simplify(rNum, rDen);
+            const opt = `${simplified.num}/${simplified.den}`;
+            // 确保不是整数且不重复
+            if (simplified.den !== 1 && !options.includes(opt)) {
+                options.push(opt);
+            }
+        }
+        options.sort(() => Math.random() - 0.5);
+        
+        // 构建题目文本
+        const opSymbol = op === '×' ? '×' : op === '÷' ? '÷' : op;
+        question = {
+            text: `<div class="fraction"><span class="num">${num1}</span><span class="den">${den1}</span></div> ${opSymbol} 
+                   <div class="fraction"><span class="num">${num2}</span><span class="den">${den2}</span></div> = ?`,
+            options: options,
+            correct: correct,
+            operation: op,
+            num1, den1, num2, den2, ansNum, ansDen
+        };
+        
+        this.currentQuestion = question;
+        return question;
+    },
+
+    renderQuestion(q, callback) {
+        const container = document.getElementById('math-question-container');
+        const optsContainer = document.getElementById('math-options');
+        container.innerHTML = q.text;
+        optsContainer.innerHTML = '';
+
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            const [n, d] = opt.split('/');
+            btn.innerHTML = `<div class="fraction" style="font-size:0.8em"><span class="num">${n}</span><span class="den">${d}</span></div>`;
+            btn.onclick = () => {
+                if (opt === q.correct) {
+                    btn.classList.add('correct');
+                    if (this.audioSystem) {
+                        this.audioSystem.playSuccessSound();
+                    }
+                    callback(true);
+                } else {
+                    btn.classList.add('wrong');
+                    callback(false);
+                }
+            };
+            optsContainer.appendChild(btn);
+        });
+    },
+    
+    showQuestionHelp() {
+        if (!this.currentQuestion) return;
+        
+        const q = this.currentQuestion;
+        const helpContent = document.getElementById('help-dynamic-content');
+        let explanation = '';
+        
+        if (q.operation === '+') {
+            explanation = `
+                <div class="help-example">
+                    <h4>分数加法：</h4>
+                    <p>当分母相同时，直接将分子相加，分母不变。</p>
+                    <div class="help-visual">
+                        <div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div>
+                        <span>+</span>
+                        <div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.num1 + q.num2}</span><span class="den">${q.den1}</span></div>
+                    </div>
+                    <p>然后约分：${q.num1 + q.num2}/${q.den1} = ${q.correct}</p>
+                </div>
+            `;
+        } else if (q.operation === '-') {
+            explanation = `
+                <div class="help-example">
+                    <h4>分数减法：</h4>
+                    <p>当分母相同时，直接将分子相减，分母不变。</p>
+                    <div class="help-visual">
+                        <div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div>
+                        <span>-</span>
+                        <div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.num1 - q.num2}</span><span class="den">${q.den1}</span></div>
+                    </div>
+                    <p>然后约分：${q.num1 - q.num2}/${q.den1} = ${q.correct}</p>
+                </div>
+            `;
+        } else if (q.operation === '×') {
+            explanation = `
+                <div class="help-example">
+                    <h4>分数乘法：</h4>
+                    <p>分子乘分子，分母乘分母。</p>
+                    <div class="help-visual">
+                        <div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div>
+                        <span>×</span>
+                        <div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.num1}×${q.num2}</span><span class="den">${q.den1}×${q.den2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.ansNum}</span><span class="den">${q.ansDen}</span></div>
+                    </div>
+                    <p>然后约分：${q.ansNum}/${q.ansDen} = ${q.correct}</p>
+                </div>
+            `;
+        } else { // ÷
+            explanation = `
+                <div class="help-example">
+                    <h4>分数除法：</h4>
+                    <p>除以一个分数等于乘以它的倒数（上下颠倒）。</p>
+                    <div class="help-visual">
+                        <div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div>
+                        <span>÷</span>
+                        <div class="fraction"><span class="num">${q.num2}</span><span class="den">${q.den2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.num1}</span><span class="den">${q.den1}</span></div>
+                        <span>×</span>
+                        <div class="fraction"><span class="num">${q.den2}</span><span class="den">${q.num2}</span></div>
+                        <span>=</span>
+                        <div class="fraction"><span class="num">${q.ansNum}</span><span class="den">${q.ansDen}</span></div>
+                    </div>
+                    <p>然后约分：${q.ansNum}/${q.ansDen} = ${q.correct}</p>
+                </div>
+            `;
+        }
+        
+        helpContent.innerHTML = explanation;
+        document.getElementById('help-modal').classList.add('active');
+    },
+    
+    showHelp() {
+        const helpContent = document.getElementById('help-dynamic-content');
+        helpContent.innerHTML = `
+            <div class="help-example">
+                <h4>📖 分数运算基础</h4>
+                <p><strong>分数</strong>由两部分组成：分子（上面的数字）和分母（下面的数字）。</p>
+                <div class="help-visual">
+                    <div class="fraction"><span class="num">3</span><span class="den">4</span></div>
+                    <p style="margin-top: 10px;">分子 = 3，分母 = 4</p>
+                </div>
+            </div>
+            <div class="help-example">
+                <h4>➕ 加法：</h4>
+                <p>分母相同时，分子相加，分母不变。</p>
+                <p>例如：1/4 + 2/4 = 3/4</p>
+            </div>
+            <div class="help-example">
+                <h4>➖ 减法：</h4>
+                <p>分母相同时，分子相减，分母不变。</p>
+                <p>例如：3/4 - 1/4 = 2/4 = 1/2</p>
+            </div>
+            <div class="help-example">
+                <h4>✖️ 乘法：</h4>
+                <p>分子乘分子，分母乘分母。</p>
+                <p>例如：1/2 × 2/3 = 2/6 = 1/3</p>
+            </div>
+            <div class="help-example">
+                <h4>➗ 除法：</h4>
+                <p>除以一个分数等于乘以它的倒数（上下颠倒）。</p>
+                <p>例如：1/2 ÷ 1/4 = 1/2 × 4/1 = 4/2 = 2</p>
+            </div>
+        `;
+        document.getElementById('help-modal').classList.add('active');
+    },
+    
+    hideHelp() {
+        document.getElementById('help-modal').classList.remove('active');
+    },
+    
+    toggleMinimap() {
+        const minimap = document.getElementById('minimap');
+        const scene = Engine.currentScene;
+        if (scene && scene instanceof MainScene) {
+            scene.minimapVisible = !scene.minimapVisible;
+            minimap.style.display = scene.minimapVisible ? 'block' : 'none';
+        }
+    },
+
+    collectWeapon(index) {
+        const slot = document.querySelector(`.weapon-slot[data-index="${index}"]`);
+        if (slot) {
+            slot.textContent = Weapons[index].icon;
+            slot.classList.add('filled');
+            slot.classList.add('treasure-effect');
+            setTimeout(() => slot.classList.remove('treasure-effect'), 600);
+        }
+        const scoreVal = document.getElementById('score-val');
+        scoreVal.innerText = parseInt(scoreVal.innerText) + 3;
+    },
+
+    win() {
+        const modal = document.getElementById('win-modal');
+        const display = document.getElementById('final-weapons-display');
+        display.innerHTML = Weapons.map(w => w.icon).join(' ');
+        modal.classList.add('active');
+    }
+};
+
+// 初始化显示游戏次数（确保 DOM 已加载）
+function initTreasureHunterPlayCount() {
+    try {
+        const playCountKey = 'larryAcademy_treasureHunter_totalPlays';
+        const playCount = parseInt(localStorage.getItem(playCountKey) || '0', 10);
+        
+        // 更新开始页面的游戏次数
+        const startPlayCountElement = document.getElementById('start-play-count');
+        if (startPlayCountElement) {
+            startPlayCountElement.textContent = playCount;
+        }
+        
+        // 更新游戏中的游戏次数（如果存在）
+        const playCountElement = document.getElementById('play-count');
+        if (playCountElement) {
+            playCountElement.textContent = playCount;
+        }
+        
+        console.log('Treasure Hunter 游戏次数已显示:', playCount);
+    } catch (e) {
+        console.warn('无法读取游戏次数:', e);
+    }
+}
+
+// 立即执行一次，并在 DOMContentLoaded 时再执行一次确保显示
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTreasureHunterPlayCount);
+} else {
+    initTreasureHunterPlayCount();
+}
+
+window.onload = () => GameApp.init();
+</script>
+</body>
+</html>
