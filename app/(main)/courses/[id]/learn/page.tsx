@@ -3,16 +3,34 @@
 import { useEffect, useState, useRef, use } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
 
 interface Lesson {
   id: string
   title: string
   description: string | null
   videoUrl: string | null
+  videoProvider?: string | null
+  youtubeVideoId?: string | null
+  tencentVodFileId?: string | null
   order: number
   duration: number | null
+  isPreview?: boolean
+  hasPractice?: boolean
+  hasGame?: boolean
+  rewardsPoints?: number
+  rewardsGems?: number
+  viewCount?: number
   gradeLevel?: string | null
   difficulty?: string | null
+  activities?: Array<{
+    id: string
+    type: string
+    title: string
+    description: string | null
+    rewardsPoints: number
+    rewardsGems: number
+  }>
 }
 
 interface Course {
@@ -21,6 +39,7 @@ interface Course {
   description: string
   lessons: Lesson[]
   hasAccess: boolean
+  accessReason?: string
   progress: {
     progressPercentage: number
     lastWatchedPosition: number
@@ -151,36 +170,37 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     <div className="min-h-screen bg-[#0a0a0c] text-white">
       {/* Video Player Section */}
       <div className="w-full bg-black aspect-video lg:max-h-[70vh] relative shadow-2xl shadow-blue-500/10">
-        {currentLessonData?.videoUrl ? (
-          (() => {
-            const url = currentLessonData.videoUrl
-            const vid = url.includes('youtube.com') && url.includes('v=')
-              ? new URL(url).searchParams.get('v')
-              : url.includes('youtu.be/')
-              ? url.split('youtu.be/')[1]?.split('?')[0]
-              : null
-            return vid ? (
+        {(() => {
+          const embedUrl = getVideoEmbedUrl(currentLessonData)
+          if (embedUrl) {
+            return (
               <iframe
                 className="w-full h-full"
-                src={`https://www.youtube.com/embed/${vid}?rel=0&autoplay=1`}
+                src={`${embedUrl}&autoplay=1`}
                 title={currentLessonData.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
-            ) : (
+            )
+          }
+
+          if (currentLessonData?.videoUrl) {
+            return (
               <div className="w-full h-full flex items-center justify-center">
-                <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Open Video in New Window</a>
+                <a href={currentLessonData.videoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Open Video in New Window</a>
               </div>
             )
-          })()
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          }
+
+          return (
+            <div className="w-full h-full flex items-center justify-center">
             <div className="text-center">
               <div className="text-6xl mb-4 opacity-20">🎬</div>
-              <p className="text-gray-500">Video content coming soon</p>
+              <p className="text-gray-500">{getVideoSourceLabel(currentLessonData)}</p>
             </div>
           </div>
-        )}
+          )
+        })()}
       </div>
 
       {/* Content Area */}
@@ -191,7 +211,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl">
               <div className="flex items-center gap-3 mb-6">
                 <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold tracking-widest uppercase">
-                  {currentLessonData?.gradeLevel || 'Advanced'}
+                  {currentLessonData?.gradeLevel || 'Lesson'}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-white/5 text-gray-400 text-xs font-bold uppercase tracking-widest">
+                  {getVideoSourceLabel(currentLessonData)}
                 </span>
                 {currentLessonData?.difficulty && (
                   <div className="flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full border border-white/10">
@@ -217,9 +240,43 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
               <div className="prose prose-invert max-w-none">
                 <p className="text-gray-400 leading-relaxed text-lg font-light">
-                  {currentLessonData?.description || "In this lesson, we explore advanced mathematical concepts through problem-solving and logical reasoning. Follow along with the video to master these techniques."}
+                  {currentLessonData?.description || "本节课会围绕视频讲解、互动练习和游戏化挑战逐步展开。"}
                 </p>
               </div>
+
+              <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  ['访问', currentLessonData?.viewCount || 0],
+                  ['Practice', currentLessonData?.hasPractice ? '有' : '待开放'],
+                  ['小游戏', currentLessonData?.hasGame ? '有' : '待开放'],
+                  ['奖励', `${currentLessonData?.rewardsPoints || 0} pts / ${currentLessonData?.rewardsGems || 0} gems`],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl bg-white/[0.04] border border-white/[0.06] p-4">
+                    <div className="text-xs font-bold uppercase tracking-widest text-gray-600">{label}</div>
+                    <div className="mt-2 text-sm font-bold text-white">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {currentLessonData?.activities && currentLessonData.activities.length > 0 && (
+                <div className="mt-8 grid gap-3">
+                  {currentLessonData.activities.map((activity) => (
+                    <div key={activity.id} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xs font-bold uppercase tracking-widest text-blue-300">{activity.type}</div>
+                          <h3 className="mt-1 font-bold text-white">{activity.title}</h3>
+                          {activity.description && <p className="mt-1 text-sm text-gray-500">{activity.description}</p>}
+                        </div>
+                        <div className="shrink-0 text-right text-xs font-bold text-gray-400">
+                          +{activity.rewardsPoints} pts<br />
+                          +{activity.rewardsGems} gems
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Navigation Controls */}
               <div className="mt-12 flex items-center justify-between pt-8 border-t border-white/10">

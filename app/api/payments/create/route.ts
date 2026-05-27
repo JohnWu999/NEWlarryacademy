@@ -58,6 +58,20 @@ export async function POST(request: NextRequest) {
           )
         }
 
+        if (course.status === 'coming-soon') {
+          return NextResponse.json(
+            { error: `课程「${course.title}」尚未开放购买` },
+            { status: 400 }
+          )
+        }
+
+        if (course.isFree || course.price <= 0 || course.accessLevel !== 'paid') {
+          return NextResponse.json(
+            { error: `课程「${course.title}」无需购买` },
+            { status: 400 }
+          )
+        }
+
         totalAmount += course.price
         orderItems.push({
           type: 'course',

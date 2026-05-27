@@ -1,45 +1,44 @@
 'use client'
 
-import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
 
 const subjects = [
   {
     id: 'math',
-    title: 'Math',
-    chineseTitle: '数学',
+    title: 'Larry Math',
+    chineseTitle: 'Larry 数学',
     description: {
-      en: 'Explore the beauty of numbers and logic through interactive 3D models.',
-      zh: '通过互动 3D 模型探索数字和逻辑的美感。'
+      en: 'Larry video lessons with mini games and practice for confident math thinking.',
+      zh: 'Larry 讲课、小游戏和 Practice 练习组成的数学主课程。'
     },
     icon: '📐',
     color: 'from-blue-500 to-cyan-400',
-    path: '/subjects/math'
+    path: '/courses?category=math'
   },
   {
-    id: 'science',
-    title: 'Science',
-    chineseTitle: '科学',
+    id: 'ib-big-math',
+    title: 'IB Big Math',
+    chineseTitle: 'IB 大数学',
     description: {
-      en: 'Discover the laws of nature and the universe with immersive simulations.',
-      zh: '通过沉浸式模拟发现自然和宇宙的规律。'
+      en: 'A coming course track with video, interactive questions, and lesson games.',
+      zh: '即将发布的视频课程，每节课配互动答题和小游戏。'
+    },
+    icon: '🌐',
+    color: 'from-purple-500 to-pink-400',
+    path: '/courses?category=ib-big-math'
+  },
+  {
+    id: 'ngss-science',
+    title: 'NGSS Science',
+    chineseTitle: 'NGSS 科学',
+    description: {
+      en: 'NGSS-aligned science lessons with inquiry, practice, and simulations.',
+      zh: '围绕 NGSS 标准设计的科学探究、互动练习和模拟小游戏。'
     },
     icon: '🧪',
-    color: 'from-purple-500 to-pink-400',
-    path: '/courses?category=Science'
-  },
-  {
-    id: 'history',
-    title: 'History',
-    chineseTitle: '历史',
-    description: {
-      en: 'Travel through time and witness the pivotal moments of human civilization.',
-      zh: '穿越时空，见证人类文明的关键时刻。'
-    },
-    icon: '🏛️',
-    color: 'from-amber-500 to-orange-400',
-    path: '/courses?category=History'
+    color: 'from-emerald-500 to-teal-400',
+    path: '/courses?category=ngss-science'
   },
   {
     id: 'ai-coding',
@@ -47,7 +46,7 @@ const subjects = [
     chineseTitle: 'AI 编程',
     description: {
       en: 'Master the future of technology with AI-assisted programming and logic.',
-      zh: '通过 AI 辅助编程和逻辑掌握未来的技术。'
+      zh: '预留课程方向：AI 辅助编程、逻辑和项目实践。'
     },
     icon: '🤖',
     color: 'from-indigo-600 to-blue-500',
@@ -59,7 +58,7 @@ const subjects = [
     chineseTitle: 'STEM',
     description: {
       en: 'Integrated learning in Science, Technology, Engineering, and Mathematics.',
-      zh: '科学、技术、工程和数学的综合学习。'
+      zh: '预留课程方向：科学、技术、工程和数学的综合项目。'
     },
     icon: '🚀',
     color: 'from-emerald-500 to-teal-400',

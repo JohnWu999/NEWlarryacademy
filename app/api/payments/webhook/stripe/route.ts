@@ -40,13 +40,42 @@ export async function POST(request: NextRequest) {
           const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items as any[]
           for (const item of items) {
             if (item.type === 'course') {
-              await prisma.userPurchasedCourse.create({
-                data: {
+              const existingGrant = await prisma.userPurchasedCourse.findUnique({
+                where: {
+                  userId_courseId: {
+                    userId: order.userId,
+                    courseId: item.id,
+                  },
+                },
+                select: { id: true, status: true },
+              })
+              await prisma.userPurchasedCourse.upsert({
+                where: {
+                  userId_courseId: {
+                    userId: order.userId,
+                    courseId: item.id,
+                  },
+                },
+                update: {
+                  status: 'active',
+                  source: 'purchase',
+                  orderId: order.id,
+                  purchasedAt: new Date(),
+                },
+                create: {
                   userId: order.userId,
                   courseId: item.id,
                   orderId: order.id,
+                  status: 'active',
+                  source: 'purchase',
                 },
               })
+              if (!existingGrant || existingGrant.status !== 'active') {
+                await prisma.course.update({
+                  where: { id: item.id },
+                  data: { enrollmentCount: { increment: 1 } },
+                })
+              }
             }
           }
 

@@ -44,6 +44,8 @@ export async function GET(request: NextRequest) {
       coursesCompleted,
       gamesPlayed,
       totalLearningTime: Math.round(totalLearningTime / 60), // Convert to minutes
+      points: user.points,
+      gems: user.gems,
     })
   } catch (error) {
     console.error('Error fetching user stats:', error)

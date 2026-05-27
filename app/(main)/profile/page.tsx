@@ -11,6 +11,8 @@ interface UserStats {
   coursesCompleted: number
   gamesPlayed: number
   totalLearningTime: number
+  points: number
+  gems: number
 }
 
 export default function ProfilePage() {
@@ -22,6 +24,8 @@ export default function ProfilePage() {
     coursesCompleted: 0,
     gamesPlayed: 0,
     totalLearningTime: 0,
+    points: 0,
+    gems: 0,
   })
 
   useEffect(() => {
@@ -104,12 +108,14 @@ export default function ProfilePage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8 sm:mb-12">
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-6 mb-8 sm:mb-12">
           {[
             { label: t('profile.stats.enrolled'), value: stats.coursesEnrolled, color: 'text-blue-400' },
             { label: t('profile.stats.completed'), value: stats.coursesCompleted, color: 'text-emerald-400' },
             { label: t('profile.stats.games'), value: stats.gamesPlayed, color: 'text-purple-400' },
-            { label: t('profile.stats.time'), value: Math.round(stats.totalLearningTime / 60), color: 'text-orange-400' },
+            { label: t('profile.stats.time'), value: stats.totalLearningTime, color: 'text-orange-400' },
+            { label: t('locale') === 'zh' ? '积分' : 'Points', value: stats.points, color: 'text-cyan-400' },
+            { label: t('locale') === 'zh' ? '宝石' : 'Gems', value: stats.gems, color: 'text-pink-400' },
           ].map((item, i) => (
             <div key={i} className="p-3 sm:p-5 lg:p-6 rounded-xl sm:rounded-[32px] bg-white/[0.02] border border-white/[0.05] text-center min-w-0">
               <div className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-600 mb-1 sm:mb-2 truncate">{item.label}</div>

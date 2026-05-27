@@ -7,8 +7,11 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const game = await prisma.game.findUnique({
+    const game = await prisma.game.update({
       where: { id },
+      data: {
+        viewCount: { increment: 1 },
+      },
       include: {
         creator: {
           select: {

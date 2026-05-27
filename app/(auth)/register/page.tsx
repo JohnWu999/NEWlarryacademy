@@ -13,6 +13,7 @@ export default function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    marketingConsent: false,
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -26,8 +27,8 @@ export default function RegisterPage() {
       return
     }
 
-    if (formData.password.length < 6) {
-      setError(locale === 'zh' ? '密码至少需要6个字符' : 'Password must be at least 6 characters')
+    if (formData.password.length < 8) {
+      setError(locale === 'zh' ? '密码至少需要8个字符' : 'Password must be at least 8 characters')
       return
     }
 
@@ -43,6 +44,7 @@ export default function RegisterPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          marketingConsent: formData.marketingConsent,
         }),
       })
 
@@ -64,7 +66,7 @@ export default function RegisterPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value,
     })
   }
 
@@ -143,6 +145,9 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-light"
               />
+              <p className="mt-2 ml-1 text-xs text-gray-600">
+                {locale === 'zh' ? '至少 8 个字符。' : 'At least 8 characters.'}
+              </p>
             </div>
 
             <div>
@@ -159,6 +164,19 @@ export default function RegisterPage() {
                 className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-light"
               />
             </div>
+
+            <label className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-gray-400">
+              <input
+                name="marketingConsent"
+                type="checkbox"
+                checked={formData.marketingConsent}
+                onChange={handleChange}
+                className="mt-1"
+              />
+              <span>
+                {locale === 'zh' ? '接收课程上线、学习活动和优惠通知。' : 'Receive course launch, activity, and offer updates.'}
+              </span>
+            </label>
 
             <button
               type="submit"

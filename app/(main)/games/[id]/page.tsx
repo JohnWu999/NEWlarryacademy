@@ -148,6 +148,10 @@ export default function GameDetailPage({
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
+                <div className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Views</div>
+                <div className="text-xl font-black text-white">{game.viewCount || 0}</div>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
                 <div className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">{t('games.plays')}</div>
                 <div className="text-xl font-black text-white">{game.playCount}</div>
               </div>

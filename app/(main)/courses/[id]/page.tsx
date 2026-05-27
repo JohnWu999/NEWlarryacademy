@@ -1,8 +1,27 @@
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
+import PurchaseCourseButton from '@/components/courses/PurchaseCourseButton'
 import { authOptions } from '@/lib/auth'
+import { resolveCourseAccess } from '@/lib/course-access'
+import { prisma } from '@/lib/prisma'
+import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
+import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+
+function difficultyLabel(level: string) {
+  if (level === 'beginner') return '初级'
+  if (level === 'intermediate') return '中级'
+  if (level === 'advanced') return '高级'
+  return level
+}
+
+function accessCopy(reason: string, price: number) {
+  if (reason === 'public') return '公开免费，任何人都可以学习。'
+  if (reason === 'registered') return '注册登录后即可学习。'
+  if (reason === 'purchased') return '你已经拥有这门课的学习权限。'
+  if (reason === 'coming-soon') return '课程内容正在制作中，当前开放介绍页。'
+  if (reason === 'login-required') return '请先登录，再继续学习这门课。'
+  return `付费课程，开通后即可学习。当前价格 ¥${price}。`
+}
 
 export default async function CourseDetailPage({
   params,
@@ -11,186 +30,185 @@ export default async function CourseDetailPage({
 }) {
   const { id } = await params
   const session = await getServerSession(authOptions)
-  
-  const course = await prisma.course.findUnique({
+
+  const existingCourse = await prisma.course.findUnique({ where: { id }, select: { id: true } })
+  if (!existingCourse) redirect('/courses')
+
+  const course = await prisma.course.update({
     where: { id },
+    data: { viewCount: { increment: 1 } },
     include: {
       lessons: {
+        include: {
+          activities: {
+            orderBy: { order: 'asc' },
+          },
+        },
+        orderBy: { order: 'asc' },
+      },
+      activities: {
+        where: { lessonId: null },
         orderBy: { order: 'asc' },
       },
     },
   })
 
-  if (!course) {
-    redirect('/courses')
-  }
-
-  // Check if user has access
-  let hasAccess = course.isFree
-  let progress = null
-
-  if (session?.user?.email) {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        purchasedCourses: {
-          where: { courseId: id },
+  const access = await resolveCourseAccess(course, session?.user?.email)
+  const progress = session?.user?.email
+    ? await prisma.userCourseProgress.findUnique({
+        where: {
+          userId_courseId: {
+            userId: (await prisma.user.findUnique({ where: { email: session.user.email }, select: { id: true } }))?.id || '',
+            courseId: id,
+          },
         },
-        courseProgress: {
-          where: { courseId: id },
-        },
-      },
-    })
+      }).catch(() => null)
+    : null
 
-    if (user) {
-      hasAccess = hasAccess || user.purchasedCourses.length > 0
-      progress = user.courseProgress[0] || null
-    }
-  }
+  const heroEmbed = getVideoEmbedUrl(course)
+  const featureCards = course.expectedFeatures
+    ? JSON.parse(course.expectedFeatures) as string[]
+    : ['视频课程', '互动答题', 'Practice 练习', '小游戏挑战']
 
   return (
-    <div className="py-12 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              {/* Video Placeholder */}
-              <div className="bg-gradient-to-br from-blue-400 to-purple-600 aspect-video flex items-center justify-center">
-                <div className="text-white text-8xl">📹</div>
-              </div>
+    <div className="relative min-h-dvh overflow-hidden bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-24 top-0 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
+        <div className="absolute -right-24 top-40 h-96 w-96 rounded-full bg-purple-600/10 blur-[120px]" />
+      </div>
 
-              <div className="p-8">
-                <div className="flex items-center gap-2 mb-4">
-                  {course.featured && (
-                    <span className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded-full font-semibold">
-                      精选
-                    </span>
-                  )}
-                  {course.isFree ? (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      免费
-                    </span>
-                  ) : (
-                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      付费
-                    </span>
-                  )}
-                  <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                    {course.category}
-                  </span>
-                </div>
+      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-20">
+        <Link href="/courses" className="mb-8 inline-flex text-sm font-bold text-blue-300 hover:text-blue-200">
+          返回课程列表
+        </Link>
 
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  {course.title}
-                </h1>
-
-                {progress && (
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">学习进度</span>
-                      <span className="text-sm font-semibold text-blue-600">
-                        {Math.round(progress.progressPercentage)}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-blue-600 h-3 rounded-full transition-all duration-300"
-                        style={{ width: `${progress.progressPercentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-
-                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  {course.description}
-                </p>
-
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <span>⏱️</span>
-                    <span>{course.duration ? `${course.duration}分钟` : '待定'}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <span>📚</span>
-                    <span>{course.lessons.length} 节课</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <span>🎓</span>
-                    <span>
-                      {course.difficultyLevel === 'beginner'
-                        ? '初级'
-                        : course.difficultyLevel === 'intermediate'
-                        ? '中级'
-                        : '高级'}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
-                    <span>💰</span>
-                    <span>{course.isFree ? '免费' : `¥${course.price}`}</span>
+        <div className="grid gap-8 lg:grid-cols-[1.7fr_1fr]">
+          <main className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025]">
+            <div className="aspect-video bg-black">
+              {heroEmbed ? (
+                <iframe
+                  className="h-full w-full"
+                  src={heroEmbed}
+                  title={course.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-500/20 to-violet-500/10 text-center">
+                  <div>
+                    <div className="text-6xl opacity-40">📹</div>
+                    <p className="mt-4 text-sm font-bold uppercase tracking-[0.25em] text-white/50">
+                      {getVideoSourceLabel(course)}
+                    </p>
                   </div>
                 </div>
-
-                {hasAccess ? (
-                  <Link
-                    href={`/courses/${course.id}/learn`}
-                    className="block text-center bg-blue-600 text-white py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-200"
-                  >
-                    {progress ? '继续学习' : '开始学习'}
-                  </Link>
-                ) : (
-                  <button className="w-full bg-green-600 text-white py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition duration-200">
-                    购买课程 - ¥{course.price}
-                  </button>
-                )}
-              </div>
+              )}
             </div>
-          </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                课程内容
-              </h2>
-              
-              {course.lessons.length > 0 ? (
-                <div className="space-y-3">
-                  {course.lessons.map((lesson, index) => (
-                    <div
-                      key={lesson.id}
-                      className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-200"
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
-                          {index + 1}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900 mb-1">
-                            {lesson.title}
-                          </h3>
-                          {lesson.description && (
-                            <p className="text-sm text-gray-600 line-clamp-2">
-                              {lesson.description}
-                            </p>
-                          )}
-                          {lesson.duration && (
-                            <div className="text-sm text-gray-500 mt-1">
-                              ⏱️ {Math.round(lesson.duration / 60)}分钟
-                            </div>
-                          )}
-                        </div>
-                      </div>
+            <div className="p-6 sm:p-8">
+              <div className="mb-5 flex flex-wrap gap-2">
+                <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs font-bold text-blue-200">
+                  {course.courseTrack}
+                </span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70">
+                  {difficultyLabel(course.difficultyLevel)}
+                </span>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70">
+                  {getVideoSourceLabel(course)}
+                </span>
+              </div>
+
+              <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{course.title}</h1>
+              <p className="mt-6 text-lg leading-8 text-gray-400">{course.description}</p>
+
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {[
+                  ['课节', course.lessons.length],
+                  ['访问', course.viewCount],
+                  ['报名', course.enrollmentCount],
+                  ['时长', course.duration ? `${course.duration} 分钟` : '待定'],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl bg-white/[0.04] p-4">
+                    <div className="text-2xl font-black">{value}</div>
+                    <div className="mt-1 text-xs font-bold text-gray-500">{label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {course.status === 'coming-soon' && (
+                <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                  {featureCards.map((feature) => (
+                    <div key={feature} className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-4 text-sm text-gray-300">
+                      {feature}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-gray-500 text-center py-8">
-                  课程内容即将上线
-                </p>
               )}
             </div>
-          </div>
+          </main>
+
+          <aside className="space-y-6">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.025] p-6">
+              <h2 className="text-2xl font-black">学习权限</h2>
+              <p className="mt-3 text-sm leading-7 text-gray-400">{accessCopy(access.reason, course.price)}</p>
+
+              <div className="mt-6">
+                {access.hasAccess ? (
+                  <Link
+                    href={`/courses/${course.id}/learn`}
+                    className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-black text-white transition hover:bg-blue-500"
+                  >
+                    {progress ? '继续学习' : '开始学习'}
+                  </Link>
+                ) : access.reason === 'coming-soon' ? (
+                  <Link
+                    href="/courses"
+                    className="block rounded-2xl bg-white/10 px-6 py-4 text-center text-lg font-black text-white/70"
+                  >
+                    查看其他课程
+                  </Link>
+                ) : access.reason === 'login-required' ? (
+                  <Link
+                    href={`/login?callbackUrl=/courses/${course.id}`}
+                    className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-black text-white transition hover:bg-blue-500"
+                  >
+                    登录后学习
+                  </Link>
+                ) : (
+                  <PurchaseCourseButton courseId={course.id} price={course.price} />
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/[0.025] p-6">
+              <h2 className="text-2xl font-black">课程内容</h2>
+              <div className="mt-5 space-y-3">
+                {course.lessons.length > 0 ? course.lessons.map((lesson, index) => (
+                  <div key={lesson.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-sm font-black text-blue-200">
+                        {index + 1}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-white">{lesson.title}</h3>
+                        <p className="mt-1 line-clamp-2 text-sm text-gray-500">{lesson.description || '课节说明待补充'}</p>
+                        <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold text-gray-400">
+                          {lesson.isPreview && <span>试看</span>}
+                          {lesson.hasPractice && <span>Practice</span>}
+                          {lesson.hasGame && <span>小游戏</span>}
+                          <span>{lesson.viewCount} 访问</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )) : (
+                  <p className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-5 text-sm text-gray-500">
+                    正在制作课节内容。
+                  </p>
+                )}
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>

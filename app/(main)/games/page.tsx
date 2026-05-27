@@ -128,9 +128,9 @@ export default function GamesPage() {
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs font-medium text-gray-600 uppercase tracking-widest">
-                        <span className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
-                        {game.playCount} {t('games.plays')}
+                      <div className="flex flex-col gap-1 text-xs font-medium text-gray-600 uppercase tracking-widest">
+                        <span>{game.playCount} {t('games.plays')}</span>
+                        <span>{game.viewCount || 0} views</span>
                       </div>
                       <Link
                         href={`/games/${game.id}`}

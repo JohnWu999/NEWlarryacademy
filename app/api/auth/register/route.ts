@@ -5,8 +5,9 @@ import { z } from 'zod'
 
 const registerSchema = z.object({
   email: z.string().email('请输入有效的邮箱地址'),
-  password: z.string().min(6, '密码至少需要6个字符'),
-  name: z.string().min(1, '请输入您的姓名'),
+  password: z.string().min(8, '密码至少需要8个字符'),
+  name: z.string().trim().min(1, '请输入您的姓名'),
+  marketingConsent: z.boolean().optional(),
 })
 
 export async function POST(request: NextRequest) {
@@ -15,7 +16,8 @@ export async function POST(request: NextRequest) {
     
     // Validate input
     const validatedData = registerSchema.parse(body)
-    const { email, password, name } = validatedData
+    const email = validatedData.email.trim().toLowerCase()
+    const { password, name } = validatedData
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
         email,
         password: hashedPassword,
         name,
+        marketingConsent: validatedData.marketingConsent ?? false,
         subscriptionStatus: 'free',
       },
       select: {

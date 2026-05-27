@@ -20,6 +20,14 @@ model User {
   emailVerified     DateTime?
   image             String?
   avatar            String?
+  role              String    @default("student")
+  phone             String?
+  country           String?
+  timezone          String?
+  points            Int       @default(0)
+  gems              Int       @default(0)
+  marketingConsent  Boolean   @default(false)
+  onboardingCompleted Boolean @default(false)
   subscriptionStatus String   @default("free")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -31,6 +39,9 @@ model User {
   createdGames      Game[]    @relation("CreatedGames")
   gameHistory       UserGameHistory[]
   purchasedCourses  UserPurchasedCourse[]
+  rewardTransactions RewardTransaction[]
+  lessonProgress    UserLessonProgress[]
+  activityAttempts  UserActivityAttempt[]
 }
 
 model Account {
@@ -76,11 +87,21 @@ model Course {
   description     String
   price           Float     @default(0)
   isFree          Boolean   @default(false)
+  accessLevel     String    @default("public") // public, registered, paid
   category        String
+  courseTrack     String    @default("other") // larry-math, ib-big-math, ngss-science, other
+  status          String    @default("active") // active, coming-soon, archived
+  expectedFeatures String?  // JSON stored as string for coming-soon course feature cards
   difficultyLevel String
   videoUrl        String?
+  videoProvider   String?   // youtube, tencent-vod, external
+  youtubeVideoId  String?
+  tencentVodFileId String?
+  stripePriceId   String?
   thumbnailUrl    String?
   duration        Int?
+  viewCount       Int       @default(0)
+  enrollmentCount Int       @default(0)
   featured        Boolean   @default(false)
   published       Boolean   @default(false)
   gradeLevel      String?   // CCSS Grade Level: G1, G2, G3, G4, G5
@@ -91,6 +112,7 @@ model Course {
   userProgress    UserCourseProgress[]
   purchasedBy     UserPurchasedCourse[]
   lessons         Lesson[]
+  activities      LessonActivity[]
 }
 
 model Lesson {
@@ -99,14 +121,79 @@ model Lesson {
   title       String
   description String?
   videoUrl    String?
+  videoProvider String? // youtube, tencent-vod, external
+  youtubeVideoId String?
+  tencentVodFileId String?
   order       Int
   duration    Int?
+  isPreview   Boolean  @default(false)
+  hasPractice  Boolean @default(false)
+  hasGame      Boolean @default(false)
+  rewardsPoints Int    @default(0)
+  rewardsGems   Int    @default(0)
+  viewCount   Int      @default(0)
   gradeLevel  String?  // CCSS Grade Level: G1, G2, G3, G4, G5, etc.
   difficulty  String?  // Difficulty Level: Easy, Medium, Hard
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress UserLessonProgress[]
+  activities LessonActivity[]
+}
+
+model LessonActivity {
+  id          String   @id @default(cuid())
+  courseId    String
+  lessonId    String?
+  type        String   // video, quiz, practice, game
+  title       String
+  description String?
+  config      String?  // JSON stored as string for quizzes/games
+  provider    String?  // youtube, tencent-vod, internal-game, internal-quiz
+  order       Int      @default(0)
+  isRequired  Boolean  @default(true)
+  rewardsPoints Int    @default(0)
+  rewardsGems   Int    @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attempts UserActivityAttempt[]
+}
+
+model UserLessonProgress {
+  id                  String    @id @default(cuid())
+  userId              String
+  lessonId            String
+  progressPercentage  Float     @default(0)
+  lastWatchedPosition Int       @default(0)
+  completedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model UserActivityAttempt {
+  id          String   @id @default(cuid())
+  userId      String
+  activityId  String
+  score       Int?
+  maxScore    Int?
+  completed   Boolean  @default(false)
+  earnedPoints Int     @default(0)
+  earnedGems   Int     @default(0)
+  data        String?  // JSON stored as string
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity LessonActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
 }
 
 model UserCourseProgress {
@@ -130,7 +217,11 @@ model UserPurchasedCourse {
   userId     String
   courseId   String
   orderId    String?
+  status      String   @default("active")
+  source      String   @default("purchase") // purchase, manual, promo
+  grantedBy   String?
   purchasedAt DateTime @default(now())
+  expiresAt   DateTime?
 
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -170,6 +261,7 @@ model Game {
   gameConfig    String    // JSON stored as string for SQLite
   thumbnailUrl  String?
   playCount     Int       @default(0)
+  viewCount     Int       @default(0)
   published     Boolean   @default(true)
   featured      Boolean   @default(false)
   createdAt     DateTime  @default(now())
@@ -191,6 +283,20 @@ model UserGameHistory {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model RewardTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // points, gems
+  amount      Int
+  reason      String
+  sourceType  String?  // lesson, quiz, game, purchase, manual
+  sourceId    String?
+  metadata    String?  // JSON stored as string
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ============ Shop & Product Models ============

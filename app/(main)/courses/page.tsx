@@ -1,6 +1,36 @@
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 
+const trackLabels: Record<string, { title: string; eyebrow: string; accent: string }> = {
+  'larry-math': {
+    title: 'Larry Math',
+    eyebrow: 'Larry 讲课 + Practice + 小游戏',
+    accent: 'from-blue-500/25 to-cyan-400/15',
+  },
+  'ib-big-math': {
+    title: 'IB Big Math',
+    eyebrow: '视频 + 互动答题 + 每节课小游戏',
+    accent: 'from-violet-500/25 to-fuchsia-400/15',
+  },
+  'ngss-science': {
+    title: 'NGSS Science',
+    eyebrow: '科学探究 + 实验模拟 + 游戏化练习',
+    accent: 'from-emerald-500/25 to-teal-400/15',
+  },
+  other: {
+    title: 'Future Courses',
+    eyebrow: '课程介绍已开放，内容陆续上线',
+    accent: 'from-slate-500/25 to-indigo-400/15',
+  },
+}
+
+function accessLabel(course: { status: string; accessLevel: string; isFree: boolean; price: number }) {
+  if (course.status === 'coming-soon') return '即将开放'
+  if (course.isFree || course.price <= 0 || course.accessLevel === 'public') return '公开免费'
+  if (course.accessLevel === 'registered') return '注册可学'
+  return `付费课程 ¥${course.price}`
+}
+
 export default async function CoursesPage({
   searchParams,
 }: {
@@ -13,102 +43,116 @@ export default async function CoursesPage({
       published: true,
       ...(category ? { category: { equals: category } } : {}),
     },
+    include: {
+      _count: {
+        select: { lessons: true, activities: true },
+      },
+    },
     orderBy: [
       { featured: 'desc' },
       { createdAt: 'desc' },
     ],
   })
 
+  const tracks = ['larry-math', 'ib-big-math', 'ngss-science', 'other'].map((track) => ({
+    key: track,
+    ...trackLabels[track],
+    courses: courses.filter((course) => (course.courseTrack || 'other') === track),
+  }))
+
   return (
-    <div className="py-12 bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            {category ? `📚 ${category} 课程` : '📚 所有课程'}
+    <div className="relative min-h-dvh overflow-hidden bg-[#050505] text-white">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-24 top-0 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
+        <div className="absolute -right-24 top-48 h-96 w-96 rounded-full bg-violet-600/10 blur-[120px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mb-12 max-w-4xl">
+          <p className="mb-4 text-xs font-black uppercase tracking-[0.35em] text-blue-400">Courses</p>
+          <h1 className="text-4xl font-black tracking-tight sm:text-6xl">
+            {category ? `${category} 课程` : '三大主课程体系'}
           </h1>
-          <p className="text-xl text-gray-600">
-            {category 
-              ? `探索 ${category} 领域的专业知识，开启您的学习之旅`
-              : '系统化的学科学习课程，帮助您深入理解每个知识点'}
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-gray-400">
+            Larry Academy 目前以 Larry Math、IB Big Math、NGSS Science 为主线。每门主课都会围绕视频、互动答题、Practice 和小游戏来组织；其他方向先保留精美介绍，等内容准备好再开放学习。
           </p>
         </div>
 
-        {/* Courses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300"
+        <div className="grid gap-5 md:grid-cols-3">
+          {tracks.slice(0, 3).map((track) => (
+            <a
+              key={track.key}
+              href={`#${track.key}`}
+              className={`rounded-3xl border border-white/10 bg-gradient-to-br ${track.accent} p-6 transition hover:border-white/25 hover:bg-white/[0.04]`}
             >
-              {/* Thumbnail */}
-              <div className="bg-gradient-to-br from-blue-400 to-purple-600 h-48 flex items-center justify-center">
-                <div className="text-white text-6xl">📖</div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-3">
-                  {course.featured && (
-                    <span className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded-full font-semibold">
-                      精选
-                    </span>
-                  )}
-                  {course.isFree ? (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      免费
-                    </span>
-                  ) : (
-                    <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
-                      付费
-                    </span>
-                  )}
-                  <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                    {course.difficultyLevel === 'beginner'
-                      ? '初级'
-                      : course.difficultyLevel === 'intermediate'
-                      ? '中级'
-                      : '高级'}
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {course.title}
-                </h3>
-                <p className="text-gray-600 mb-4 line-clamp-2">
-                  {course.description}
-                </p>
-
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-gray-500 text-sm">
-                    ⏱️ {course.duration ? `${course.duration}分钟` : '待定'}
-                  </div>
-                  {!course.isFree && (
-                    <div className="text-2xl font-bold text-blue-600">
-                      ¥{course.price}
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  href={`/courses/${course.id}`}
-                  className="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200"
-                >
-                  查看课程
-                </Link>
-              </div>
-            </div>
+              <p className="text-sm font-bold text-gray-400">{track.eyebrow}</p>
+              <h2 className="mt-3 text-2xl font-black">{track.title}</h2>
+              <p className="mt-5 text-sm text-gray-400">{track.courses.length} 个课程单元</p>
+            </a>
           ))}
         </div>
 
-        {courses.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-xl">暂无课程</p>
-            <Link href="/subjects" className="text-blue-600 hover:underline mt-4 inline-block">
-              返回学科选择
-            </Link>
-          </div>
-        )}
+        <div className="mt-14 space-y-14">
+          {tracks.map((track) => (
+            <section key={track.key} id={track.key}>
+              <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-sm font-bold text-blue-300">{track.eyebrow}</p>
+                  <h2 className="mt-2 text-3xl font-black">{track.title}</h2>
+                </div>
+                <span className="text-sm text-gray-500">{track.courses.length} courses</span>
+              </div>
+
+              {track.courses.length > 0 ? (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {track.courses.map((course) => (
+                    <Link
+                      key={course.id}
+                      href={`/courses/${course.id}`}
+                      className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025] transition hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.05]"
+                    >
+                      <div className={`relative aspect-video bg-gradient-to-br ${track.accent} p-6`}>
+                        <div className="absolute left-5 top-5 rounded-full bg-black/30 px-3 py-1 text-xs font-bold text-white/80 backdrop-blur">
+                          {accessLabel(course)}
+                        </div>
+                        <div className="absolute bottom-5 left-5 right-5">
+                          <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/50">
+                            {course.category}
+                          </p>
+                          <h3 className="mt-2 text-2xl font-black leading-tight">{course.title}</h3>
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        <p className="line-clamp-3 min-h-20 text-sm leading-7 text-gray-400">
+                          {course.description}
+                        </p>
+                        <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
+                          <div className="rounded-2xl bg-white/[0.04] p-3">
+                            <div className="text-lg font-black text-white">{course._count.lessons}</div>
+                            课节
+                          </div>
+                          <div className="rounded-2xl bg-white/[0.04] p-3">
+                            <div className="text-lg font-black text-white">{course._count.activities}</div>
+                            活动
+                          </div>
+                          <div className="rounded-2xl bg-white/[0.04] p-3">
+                            <div className="text-lg font-black text-white">{course.viewCount}</div>
+                            访问
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-gray-400">
+                  这一组课程正在整理中，当前只保留入口结构。
+                </div>
+              )}
+            </section>
+          ))}
+        </div>
       </div>
     </div>
   )
