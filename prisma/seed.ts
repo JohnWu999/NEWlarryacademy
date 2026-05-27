@@ -205,6 +205,18 @@ async function main() {
     })
   }
 
+  await prisma.course.updateMany({
+    where: {
+      category: 'math',
+      courseTrack: 'other',
+    },
+    data: {
+      courseTrack: 'larry-math',
+      status: 'active',
+      videoProvider: 'youtube',
+    },
+  })
+
   const lessons = [
     {
       id: 'lesson-larry-numbers',
