@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
@@ -14,6 +14,22 @@ const grades = [
 ]
 
 export default function MathGradesPage() {
+  return (
+    <Suspense fallback={<MathGradesLoading />}>
+      <MathGradesContent />
+    </Suspense>
+  )
+}
+
+function MathGradesLoading() {
+  return (
+    <div className="min-h-dvh w-full bg-[#050505] text-white flex items-center justify-center">
+      <div className="text-blue-400 animate-pulse text-xl">Loading...</div>
+    </div>
+  )
+}
+
+function MathGradesContent() {
   const { locale, t } = useLanguage()
   const searchParams = useSearchParams()
   const grade = searchParams.get('grade')

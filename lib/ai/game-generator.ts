@@ -1,10 +1,16 @@
 import OpenAI from 'openai'
 import { GameConfig } from '@/types'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  baseURL: process.env.OPENAI_BASE_URL,
-})
+function createOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY is not configured')
+  }
+
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: process.env.OPENAI_BASE_URL,
+  })
+}
 
 const GAME_GENERATION_SYSTEM_PROMPT = `你是一个专业的数学游戏设计助手。你的任务是根据用户的自然语言描述，生成结构化的数学游戏配置。
 
@@ -54,7 +60,7 @@ export async function generateGame(params: GenerateGameParams) {
     if (ageGroup) enhancedPrompt += `\n年龄组：${ageGroup}`
     if (topic) enhancedPrompt += `\n主题：${topic}`
 
-    const completion = await openai.chat.completions.create({
+    const completion = await createOpenAIClient().chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4',
       messages: [
         {
