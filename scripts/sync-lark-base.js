@@ -87,8 +87,13 @@ async function main() {
   const lessons = await prisma.lesson.findMany({
     where: {
       course: {
-        category: 'Math'
-      }
+        OR: [
+          { courseTrack: 'larry-math' },
+          { category: 'math' },
+          { category: 'Math' },
+          { category: 'competition' },
+        ],
+      },
     }
   });
 

@@ -10,9 +10,14 @@ export async function GET(request: NextRequest) {
       where: {
         ...(grade ? { gradeLevel: grade } : {}),
         course: {
-          category: 'Math',
-          published: true
-        }
+          published: true,
+          OR: [
+            { courseTrack: 'larry-math' },
+            { category: 'math' },
+            { category: 'Math' },
+            { category: 'competition' },
+          ],
+        },
       },
       include: {
         course: true
