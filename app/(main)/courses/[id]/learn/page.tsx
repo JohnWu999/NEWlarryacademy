@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
@@ -308,9 +309,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [questIndex, setQuestIndex] = useState(0)
   const [questAnswers, setQuestAnswers] = useState<Record<string, string | string[]>>({})
   const [questFeedback, setQuestFeedback] = useState<'correct' | 'incorrect' | null>(null)
+  const [questHintVisible, setQuestHintVisible] = useState(false)
   const [questSubmitted, setQuestSubmitted] = useState(false)
   const [questSaving, setQuestSaving] = useState(false)
-  const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number } | null>(null)
+  const [questAutoAdvancing, setQuestAutoAdvancing] = useState(false)
+  const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number; wrongCount?: number } | null>(null)
   const [questEffect, setQuestEffect] = useState<{ kind: 'correct' | 'incorrect' | 'complete'; key: number } | null>(null)
 
   useEffect(() => {
@@ -337,9 +340,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     setQuestIndex(0)
     setQuestAnswers({})
     setQuestFeedback(null)
+    setQuestHintVisible(false)
     setQuestSubmitted(false)
     setQuestResult(null)
     setQuestEffect(null)
+    setQuestAutoAdvancing(false)
   }, [course?.id, activeLessonId, activePracticeId])
 
   const fetchLessonDirectly = async (lessonId: string) => {
@@ -451,21 +456,49 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const answerCurrentQuest = (question: PracticeQuestion, value: string | string[]) => {
     setQuestAnswers((answers) => ({ ...answers, [question.id]: value }))
     setQuestFeedback(null)
+    setQuestHintVisible(false)
     setQuestEffect(null)
   }
 
-  const checkCurrentQuest = (question: PracticeQuestion) => {
-    const correct = checkPracticeAnswer(question, questAnswers[question.id] || null)
+  const recordWrongQuestion = async (activity: LessonActivity, question: PracticeQuestion, value: string | string[]) => {
+    try {
+      await fetch('/api/wrong-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          activityId: activity.id,
+          questionId: question.id,
+          value,
+        }),
+      })
+    } catch (error) {
+      console.error('Error recording wrong question:', error)
+    }
+  }
+
+  const checkCurrentQuest = (question: PracticeQuestion, config: PracticeConfig, activity: LessonActivity) => {
+    if (questAutoAdvancing) return
+    const value = questAnswers[question.id] || ''
+    const correct = checkPracticeAnswer(question, value)
     setQuestFeedback(correct ? 'correct' : 'incorrect')
     setQuestEffect({ kind: correct ? 'correct' : 'incorrect', key: Date.now() })
     playFeedbackTone(correct ? 'correct' : 'incorrect')
+    if (!correct) {
+      setQuestAutoAdvancing(true)
+      void recordWrongQuestion(activity, question, value)
+      window.setTimeout(() => {
+        void continueQuest(config, activity)
+      }, 850)
+    }
   }
 
   const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
     if (questIndex < config.questions.length - 1) {
       setQuestIndex((index) => index + 1)
       setQuestFeedback(null)
+      setQuestHintVisible(false)
       setQuestEffect(null)
+      setQuestAutoAdvancing(false)
       return
     }
 
@@ -478,7 +511,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       const response = await fetch(`/api/activities/${activity.id}/attempt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers, recordWrongQuestions: false }),
       })
       if (response.ok) {
         const result = await response.json()
@@ -492,6 +525,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       console.error('Error saving quest:', error)
     } finally {
       setQuestSaving(false)
+      setQuestAutoAdvancing(false)
     }
   }
 
@@ -769,6 +803,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                 <input
                                   value={String(questAnswers[currentQuestQuestion.id] || '')}
                                   onChange={(event) => answerCurrentQuest(currentQuestQuestion, event.target.value)}
+                                  disabled={Boolean(questFeedback) || questAutoAdvancing}
                                   inputMode={currentQuestQuestion.type === 'numeric-input' ? 'decimal' : 'text'}
                                   placeholder={currentQuestQuestion.inputPlaceholder || 'Type your answer'}
                                   className="min-w-0 flex-1 bg-transparent px-5 py-4 text-xl font-black text-[#171717] outline-none placeholder:text-[#b6ad9d]"
@@ -793,10 +828,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                       <button
                                         key={choice}
                                         onClick={() => {
-                                          if (isSelected || questFeedback) return
+                                          if (isSelected || questFeedback || questAutoAdvancing) return
                                           answerCurrentQuest(currentQuestQuestion, [...selectedValue, choice])
                                         }}
-                                        disabled={isSelected || Boolean(questFeedback)}
+                                        disabled={isSelected || Boolean(questFeedback) || questAutoAdvancing}
                                         className={`w-full rounded-2xl border p-3 text-left text-sm font-bold leading-6 transition ${
                                           isSelected ? 'border-blue-200 bg-blue-50 text-blue-900 opacity-60' : 'border-[#e2ded3] bg-white hover:border-blue-400 hover:bg-blue-50'
                                         }`}
@@ -812,9 +847,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                   <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Your ladder</div>
                                   <button
                                     onClick={() => {
+                                      if (questFeedback || questAutoAdvancing) return
                                       answerCurrentQuest(currentQuestQuestion, [])
                                       setQuestFeedback(null)
                                     }}
+                                    disabled={Boolean(questFeedback) || questAutoAdvancing}
                                     className="text-xs font-black text-blue-700"
                                   >
                                     Reset
@@ -825,6 +862,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                     <button
                                       key={`${choice}-${index}`}
                                       onClick={() => {
+                                        if (questFeedback || questAutoAdvancing) return
                                         const selectedValue = Array.isArray(questAnswers[currentQuestQuestion.id]) ? questAnswers[currentQuestQuestion.id] as string[] : []
                                         answerCurrentQuest(currentQuestQuestion, selectedValue.filter((_, selectedIndex) => selectedIndex !== index))
                                       }}
@@ -846,12 +884,13 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                 const isCorrectChoice = Array.isArray(currentQuestQuestion.answer)
                                   ? currentQuestQuestion.answer.includes(choice)
                                   : currentQuestQuestion.answer === choice
-                                const showCorrect = questFeedback && isCorrectChoice
+                                const showCorrect = questFeedback === 'correct' && isCorrectChoice
                                 const showWrong = questFeedback === 'incorrect' && isSelected && !isCorrectChoice
                                 return (
                                   <button
                                     key={choice}
                                     onClick={() => {
+                                      if (questFeedback || questAutoAdvancing) return
                                       if (currentQuestQuestion.type === 'multiple-select') {
                                         const next = isSelected ? selectedList.filter((item) => item !== choice) : [...selectedList, choice]
                                         answerCurrentQuest(currentQuestQuestion, next)
@@ -878,28 +917,32 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         </div>
                       </div>
 
-                      {questFeedback && (
+                      {(questFeedback || questHintVisible) && (
                         <div className={`mt-5 rounded-2xl p-4 text-sm font-bold leading-6 ${questFeedback === 'correct' ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950'}`}>
-                          <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.'}</div>
-                          <div className="mt-2 font-semibold">{questFeedback === 'correct' ? currentQuestQuestion.explanation : currentQuestQuestion.hint}</div>
+                          <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : questHintVisible ? 'Try this hint before checking.' : currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.'}</div>
+                          <div className="mt-2 font-semibold">
+                            {questFeedback === 'correct'
+                              ? currentQuestQuestion.explanation
+                              : questHintVisible
+                              ? currentQuestQuestion.hint
+                              : `${currentQuestQuestion.hint} This one is saved to your mistake notebook. Next question is coming up.`}
+                          </div>
                         </div>
                       )}
 
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <button
-                          onClick={() => questFeedback ? continueQuest(questConfig, practiceActivity) : checkCurrentQuest(currentQuestQuestion)}
-                          disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving}
+                          onClick={() => questFeedback ? continueQuest(questConfig, practiceActivity) : checkCurrentQuest(currentQuestQuestion, questConfig, practiceActivity)}
+                          disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {questSaving ? 'Saving...' : questFeedback ? (questIndex === questConfig.questions.length - 1 ? 'Finish quest' : 'Continue') : 'Check answer'}
+                          {questSaving ? 'Saving...' : questAutoAdvancing ? 'Saved. Next question...' : questFeedback ? (questIndex === questConfig.questions.length - 1 ? 'Finish quest' : 'Continue') : 'Check answer'}
                         </button>
                         <button
                           onClick={() => {
-                            setQuestFeedback('incorrect')
-                            setQuestEffect({ kind: 'incorrect', key: Date.now() })
-                            playFeedbackTone('incorrect')
+                            setQuestHintVisible(true)
                           }}
-                          disabled={Boolean(questFeedback)}
+                          disabled={Boolean(questFeedback) || questAutoAdvancing}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Need a hint
@@ -947,6 +990,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           ? 'Strong work. You are ready to keep climbing.'
                           : questConfig.reviewAdvice?.rewatchMessage || 'Review the video once more, then come back for a higher score.'}
                         <div className="mt-2 text-blue-700">Focus: {questConfig.reviewAdvice?.focus || currentLesson.title}</div>
+                        {questResult?.wrongCount ? (
+                          <Link href="/wrongbook" className="mt-3 inline-flex rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white transition hover:bg-blue-500">
+                            View {questResult.wrongCount} saved mistake{questResult.wrongCount > 1 ? 's' : ''}
+                          </Link>
+                        ) : null}
                       </div>
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <button
@@ -954,8 +1002,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                             setQuestIndex(0)
                             setQuestAnswers({})
                             setQuestFeedback(null)
+                            setQuestHintVisible(false)
                             setQuestSubmitted(false)
                             setQuestResult(null)
+                            setQuestAutoAdvancing(false)
                           }}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black"
                         >

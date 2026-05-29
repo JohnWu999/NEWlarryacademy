@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isPracticeAnswerCorrect, serializePracticeValue } from '@/lib/practiceGrading'
 
 type PracticeQuestion = {
   id: string
   type: string
+  prompt?: string
+  choices?: string[]
   answer: string | string[]
   points: number
   penalty: number
@@ -17,37 +20,6 @@ type PracticeQuestion = {
 type SubmittedAnswer = {
   questionId: string
   value: string | string[]
-}
-
-function normalize(value: string) {
-  return value.trim().toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ')
-}
-
-function normalizeNumber(value: string) {
-  const number = Number(normalize(value).replace(/[^\d.-]/g, ''))
-  return Number.isFinite(number) ? number : null
-}
-
-function isCorrect(question: PracticeQuestion, submitted?: SubmittedAnswer) {
-  if (!submitted) return false
-  if (question.type === 'numeric-input') {
-    const expected = normalizeNumber(String(question.answer))
-    const actual = normalizeNumber(Array.isArray(submitted.value) ? submitted.value.join('') : String(submitted.value))
-    if (expected === null || actual === null) return false
-    return Math.abs(expected - actual) <= Number(question.tolerance || 0.0001)
-  }
-  if (Array.isArray(question.answer)) {
-    const expected = question.answer.map(normalize)
-    const actual = Array.isArray(submitted.value) ? submitted.value.map(normalize) : [normalize(String(submitted.value))]
-    if (question.type === 'multiple-select') {
-      const sortedExpected = expected.sort()
-      const sortedActual = actual.sort()
-      return sortedExpected.length === sortedActual.length && sortedExpected.every((value, index) => value === sortedActual[index])
-    }
-    return expected.length === actual.length && expected.every((value, index) => value === actual[index])
-  }
-
-  return normalize(String(submitted.value)) === normalize(String(question.answer))
 }
 
 export async function POST(
@@ -63,6 +35,7 @@ export async function POST(
     const { id } = await params
     const body = await request.json()
     const submittedAnswers = Array.isArray(body.answers) ? (body.answers as SubmittedAnswer[]) : []
+    const shouldRecordWrongQuestions = body.recordWrongQuestions !== false
 
     const user = await prisma.user.findUnique({ where: { email: session.user.email } })
     if (!user) return NextResponse.json({ error: '用户不存在' }, { status: 404 })
@@ -79,7 +52,7 @@ export async function POST(
 
     let rawScore = 0
     const results = questions.map((question) => {
-      const correct = isCorrect(question, answersById.get(question.id))
+      const correct = isPracticeAnswerCorrect(question, answersById.get(question.id))
       rawScore += correct ? Number(question.points || 0) : -Number(question.penalty || 0)
       return {
         questionId: question.id,
@@ -89,6 +62,7 @@ export async function POST(
         hint: question.hint || null,
       }
     })
+    const wrongResults = results.filter((result) => !result.correct)
 
     const score = Math.max(0, rawScore)
     const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0
@@ -164,6 +138,54 @@ export async function POST(
       })
     }
 
+    if (shouldRecordWrongQuestions && wrongResults.length > 0) {
+      const now = new Date()
+      await prisma.$transaction(
+        wrongResults.map((result) => {
+          const question = questions.find((item) => item.id === result.questionId)
+          const submitted = answersById.get(result.questionId)
+          return prisma.wrongQuestion.upsert({
+            where: {
+              userId_activityId_questionId: {
+                userId: user.id,
+                activityId: activity.id,
+                questionId: result.questionId,
+              },
+            },
+            create: {
+              userId: user.id,
+              activityId: activity.id,
+              courseId: activity.courseId,
+              lessonId: activity.lessonId,
+              questionId: result.questionId,
+              questionType: question?.type || 'practice',
+              prompt: question?.prompt || activity.title,
+              choices: question?.choices ? JSON.stringify(question.choices) : null,
+              submittedAnswer: serializePracticeValue(submitted?.value),
+              correctAnswer: serializePracticeValue(question?.answer),
+              hint: question?.hint || null,
+              explanation: question?.explanation || null,
+              lastSeenAt: now,
+            },
+            update: {
+              courseId: activity.courseId,
+              lessonId: activity.lessonId,
+              questionType: question?.type || 'practice',
+              prompt: question?.prompt || activity.title,
+              choices: question?.choices ? JSON.stringify(question.choices) : null,
+              submittedAnswer: serializePracticeValue(submitted?.value),
+              correctAnswer: serializePracticeValue(question?.answer),
+              hint: question?.hint || null,
+              explanation: question?.explanation || null,
+              status: 'open',
+              mistakeCount: { increment: 1 },
+              lastSeenAt: now,
+            },
+          })
+        })
+      )
+    }
+
     return NextResponse.json({
       attemptId: attempt.id,
       score,
@@ -172,6 +194,7 @@ export async function POST(
       completed,
       earnedPoints: pointsDelta,
       earnedGems,
+      wrongCount: wrongResults.length,
       results,
     })
   } catch (error) {
