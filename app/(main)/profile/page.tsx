@@ -68,8 +68,8 @@ export default function ProfilePage() {
 
   const quickLinks = [
     { title: t('nav.courses'), desc: t('locale') === 'zh' ? '查看和继续学习您的课程' : 'View and continue your courses', href: '/subjects/math', icon: '📚', color: 'from-blue-500/20 to-cyan-500/20' },
+    { title: t('locale') === 'zh' ? '错题本' : 'Mistake Notebook', desc: t('locale') === 'zh' ? '查看练习中积累的错题' : 'Review practice questions to revisit later', href: '/wrongbook', icon: '📝', color: 'from-amber-500/20 to-orange-500/20' },
     { title: t('nav.games'), desc: t('locale') === 'zh' ? '查看您的游戏历史和成绩' : 'View your game history and scores', href: '/games', icon: '🎮', color: 'from-purple-500/20 to-pink-500/20' },
-    { title: t('nav.shop'), desc: t('locale') === 'zh' ? '购买 3D 工具和学习材料' : 'Buy 3D tools and learning materials', href: '/shop', icon: '🛍️', color: 'from-indigo-500/20 to-blue-500/20' },
     { title: t('locale') === 'zh' ? '订单历史' : 'Order History', desc: t('locale') === 'zh' ? '查看您的购买记录' : 'View your purchase history', href: '/profile/orders', icon: '📦', color: 'from-emerald-500/20 to-teal-500/20' },
   ]
 

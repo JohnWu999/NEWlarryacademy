@@ -2,7 +2,6 @@
 
 import { use, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
@@ -991,9 +990,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           : questConfig.reviewAdvice?.rewatchMessage || 'Review the video once more, then come back for a higher score.'}
                         <div className="mt-2 text-blue-700">Focus: {questConfig.reviewAdvice?.focus || currentLesson.title}</div>
                         {questResult?.wrongCount ? (
-                          <Link href="/wrongbook" className="mt-3 inline-flex rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white transition hover:bg-blue-500">
-                            View {questResult.wrongCount} saved mistake{questResult.wrongCount > 1 ? 's' : ''}
-                          </Link>
+                          <div className="mt-3 rounded-xl bg-white/70 px-4 py-2 text-xs font-black text-blue-800">
+                            {questResult.wrongCount} question{questResult.wrongCount > 1 ? 's were' : ' was'} saved. Review them from Profile.
+                          </div>
                         ) : null}
                       </div>
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">

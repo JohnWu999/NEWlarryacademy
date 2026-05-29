@@ -26,7 +26,6 @@ export default function Navbar() {
     { name: t('nav.courses'), href: '/subjects' },
     { name: t('nav.tools'), href: '/tools' },
     { name: t('nav.games'), href: '/games' },
-    { name: t('nav.shop'), href: '/shop' },
     { name: t('nav.about'), href: '/about' },
   ]
 
@@ -88,12 +87,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-4">
             {session ? (
               <div className="flex items-center space-x-4">
-                <Link
-                  href="/wrongbook"
-                  className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-                >
-                  {locale === 'zh' ? '错题本' : 'Wrongbook'}
-                </Link>
                 <Link
                   href="/profile"
                   className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
@@ -160,7 +153,6 @@ export default function Navbar() {
             <div className="pt-4 mt-4 border-t border-white/10 flex flex-col space-y-3">
               {session ? (
                 <>
-                  <Link href="/wrongbook" className="px-4 py-3 text-gray-400" onClick={() => setMobileMenuOpen(false)}>{locale === 'zh' ? '错题本' : 'Wrongbook'}</Link>
                   <Link href="/profile" className="px-4 py-3 text-gray-400" onClick={() => setMobileMenuOpen(false)}>{t('nav.profile')}</Link>
                   <button onClick={() => signOut({ callbackUrl: '/' })} className="text-left px-4 py-3 text-red-500 font-bold">{t('nav.logout')}</button>
                 </>

@@ -87,9 +87,8 @@ export default function ToolsPage() {
         {/* How to Get Section */}
         <div className="relative p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-[40px] bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-white/10 overflow-hidden">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 text-center">{t('tools.get')}</h2>
-          <div className="grid md:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
             {[
-              { icon: '🛍️', title: t('locale') === 'zh' ? '购买成品' : 'Buy Ready-made', desc: t('locale') === 'zh' ? '在我们的在线商店购买已经打印好的教具套装' : 'Purchase pre-printed teaching aid sets in our online store', link: '/shop', btn: t('home.hero.shop') },
               { icon: '📥', title: t('locale') === 'zh' ? '下载文件' : 'Download Files', desc: t('locale') === 'zh' ? '下载 3D 打印文件，使用自己的打印机制作' : 'Download 3D print files and make them with your own printer', link: '#', btn: t('locale') === 'zh' ? '浏览文件库' : 'Browse Files' },
               { icon: '🎓', title: t('locale') === 'zh' ? '课程配套' : 'Course Bundle', desc: t('locale') === 'zh' ? '部分付费课程会赠送配套的 3D 打印教具' : 'Some paid courses include matching 3D printed teaching aids', link: '/subjects', btn: t('locale') === 'zh' ? '查看课程' : 'View Courses' }
             ].map((item, i) => (

@@ -25,7 +25,6 @@ export default function Footer() {
               <li><a href="/subjects" className="text-gray-500 hover:text-blue-400 transition-colors font-light">{t('nav.courses')}</a></li>
               <li><a href="/tools" className="text-gray-500 hover:text-blue-400 transition-colors font-light">{t('nav.tools')}</a></li>
               <li><a href="/games" className="text-gray-500 hover:text-blue-400 transition-colors font-light">{t('nav.games')}</a></li>
-              <li><a href="/shop" className="text-gray-500 hover:text-blue-400 transition-colors font-light">{t('nav.shop')}</a></li>
             </ul>
           </div>
 
@@ -44,15 +43,9 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="text-gray-500 font-light flex items-center gap-3">
                 <span className="w-5 h-5 rounded bg-white/5 flex items-center justify-center text-[10px]">📧</span>
-                info@larryacademy.com
-              </li>
-              <li className="text-gray-500 font-light flex items-center gap-3">
-                <span className="w-5 h-5 rounded bg-white/5 flex items-center justify-center text-[10px]">📞</span>
-                400-123-4567
-              </li>
-              <li className="text-gray-500 font-light flex items-center gap-3">
-                <span className="w-5 h-5 rounded bg-white/5 flex items-center justify-center text-[10px]">📍</span>
-                {t('locale') === 'zh' ? '中国 · 上海' : 'Shanghai, China'}
+                <a href="mailto:wularry999@gmail.com" className="hover:text-blue-400 transition-colors">
+                  wularry999@gmail.com
+                </a>
               </li>
             </ul>
           </div>

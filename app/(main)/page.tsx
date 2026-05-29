@@ -36,19 +36,13 @@ export default function HomePage() {
             {t('home.hero.subtitle')}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center items-stretch sm:items-center w-full max-w-md sm:max-w-none mx-auto sm:mx-0 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-500">
+          <div className="flex justify-center items-stretch sm:items-center w-full max-w-md sm:max-w-none mx-auto sm:mx-0 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-500">
             <Link
               href="/subjects"
               className="group relative px-6 py-3.5 sm:px-10 sm:py-5 bg-blue-600 text-white rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold text-center shadow-2xl shadow-blue-600/20 overflow-hidden transition-all hover:scale-[1.02] sm:hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               {t('home.hero.start')}
-            </Link>
-            <Link
-              href="/shop"
-              className="px-6 py-3.5 sm:px-10 sm:py-5 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold text-center backdrop-blur-xl transition-all hover:scale-[1.02] sm:hover:scale-105 active:scale-95"
-            >
-              {t('home.hero.shop')}
             </Link>
           </div>
         </div>

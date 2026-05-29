@@ -76,18 +76,12 @@ export default function AboutPage() {
         {/* Contact Section */}
         <div className="p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-[40px] bg-white/[0.02] border border-white/[0.08] text-center">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12">{t('about.contact.title')}</h2>
-          <div className="flex flex-wrap justify-center gap-8 sm:gap-10 lg:gap-12">
+          <div className="flex justify-center">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">📧</div>
-              <span className="text-gray-400 font-light">info@larryacademy.com</span>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">📞</div>
-              <span className="text-gray-400 font-light">400-123-4567</span>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-2xl">📍</div>
-              <span className="text-gray-400 font-light">{t('home.hero.title') === 'WELCOME TO' ? 'Shanghai, China' : '中国 · 上海'}</span>
+              <a href="mailto:wularry999@gmail.com" className="text-gray-400 font-light transition-colors hover:text-blue-400">
+                wularry999@gmail.com
+              </a>
             </div>
           </div>
         </div>
