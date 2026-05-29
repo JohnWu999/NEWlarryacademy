@@ -127,86 +127,72 @@
           },
           {
             "id": "01-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Notebook revenue: 8 x 16 = ?",
-            "choices": [
-              "128",
-              "129",
-              "127",
-              "256"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Notebook revenue: 8 x 16 = ___",
+            "choices": [],
             "answer": "128",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Notebook revenue: 8 x 16 = 128.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "01-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Marker revenue: 3 x 24 = ?",
-            "choices": [
-              "72",
-              "73",
-              "71",
-              "144"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Marker revenue: 3 x 24 = ___",
+            "choices": [],
             "answer": "72",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Marker revenue: 3 x 24 = 72.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "01-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Total revenue: 128 + 72 = ?",
-            "choices": [
-              "200",
-              "201",
-              "199",
-              "400"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Total revenue: 128 + 72 = ___",
+            "choices": [],
             "answer": "200",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Total revenue: 128 + 72 = 200.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "01-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Profit after booth fee: 200 - 25 = ?",
-            "choices": [
-              "175",
-              "176",
-              "174",
-              "350"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Profit after booth fee: 200 - 25 = ___",
+            "choices": [],
             "answer": "175",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Profit after booth fee: 200 - 25 = 175.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -253,23 +239,19 @@
           },
           {
             "id": "01-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment is stated at the end of the lesson.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This episode aligns with the IB PYP mathematics learning process, constructing meaning, transferring meaning into symbols, and applying with understanding in real contexts. It also connects to Number, Phase 4, selecting appropriate operation strategies for rea",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -509,23 +491,19 @@
           },
           {
             "id": "02-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students understand the base-ten place-value system, read, write, compare, and order large numbers, and represent numbers in different forms. It also supports the mathematics learning process, transf",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -767,23 +745,19 @@
           },
           {
             "id": "03-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students extend their understanding of the number system, represent and compare integers in real contexts, and use number lines to reason about direction, order, and distance from zero. It also bridg",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -905,23 +879,20 @@
           },
           {
             "id": "04-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 298 x 42 is estimated by 300 x 40 = ?,000.",
-            "choices": [
-              "12",
-              "13",
-              "11",
-              "24"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 298 x 42 is estimated by 300 x 40 = ___,000.",
+            "choices": [],
             "answer": "12",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "298 x 42 is estimated by 300 x 40 = 12,000.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
@@ -945,43 +916,37 @@
           },
           {
             "id": "04-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 6,842 + 3,197 is estimated by 6,800 + 3,200 = ?,000.",
-            "choices": [
-              "10",
-              "11",
-              "9",
-              "20"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 6,842 + 3,197 is estimated by 6,800 + 3,200 = ___,000.",
+            "choices": [],
             "answer": "10",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "6,842 + 3,197 is estimated by 6,800 + 3,200 = 10,000.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "04-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 49 x 21 is estimated by 50 x 20 = ?,000.",
-            "choices": [
-              "1",
-              "2",
-              "0"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 49 x 21 is estimated by 50 x 20 = ___,000.",
+            "choices": [],
             "answer": "1",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "49 x 21 is estimated by 50 x 20 = 1,000.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -1028,23 +993,19 @@
           },
           {
             "id": "04-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Approximate answers are checkpoints, not exact values.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Here is the common mistake. A student says estimation means the answer is exactly twelve thousand. No. Twelve thousand is a checkpoint, not the final exact answer. Estimation tells us the neighborhood where the exact answer should live.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -1165,86 +1126,72 @@
           },
           {
             "id": "05-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 36 x 24 is close to 40 x 20 = ?",
-            "choices": [
-              "800",
-              "801",
-              "799",
-              "1600"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 36 x 24 is close to 40 x 20 = ___",
+            "choices": [],
             "answer": "800",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "36 x 24 is close to 40 x 20 = 800.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "05-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 36 x 24 = ? x 20 + 6 x 20 + 30 x 4 + 6 x 4 = 600 + 120 + 120 + 24 = 864.",
-            "choices": [
-              "30",
-              "31",
-              "29",
-              "60"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 36 x 24 = ___ x 20 + 6 x 20 + 30 x 4 + 6 x 4 = 600 + 120 + 120 + 24 = 864.",
+            "choices": [],
             "answer": "30",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "36 x 24 = 30 x 20 + 6 x 20 + 30 x 4 + 6 x 4 = 600 + 120 + 120 + 24 = 864.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "05-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 24 x 6 = ? and 24 x 30 = 720; 144 + 720 = 864.",
-            "choices": [
-              "144",
-              "145",
-              "143",
-              "288"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 24 x 6 = ___ and 24 x 30 = 720; 144 + 720 = 864.",
+            "choices": [],
             "answer": "144",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "24 x 6 = 144 and 24 x 30 = 720; 144 + 720 = 864.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "05-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 125 / 6 = ? remainder 5 because 6 x 20 = 120 and 125 - 120 = 5.",
-            "choices": [
-              "20",
-              "21",
-              "19",
-              "40"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 125 / 6 = ___ remainder 5 because 6 x 20 = 120 and 125 - 120 = 5.",
+            "choices": [],
             "answer": "20",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "125 / 6 = 20 remainder 5 because 6 x 20 = 120 and 125 - 120 = 5.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -1291,23 +1238,19 @@
           },
           {
             "id": "05-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: 48 ÷ 6 + 7 x 3 equals 29.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Try one full expression. Forty-eight divided by six plus seven times three. Division and multiplication happen before addition. Forty-eight divided by six is eight. Seven times three is twenty-one. Then eight plus twenty-one equals twenty-nine.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -1546,23 +1489,19 @@
           },
           {
             "id": "06-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Summary toolkit.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Today's toolkit has four ideas. Factors fit exactly. Multiples are skip-counting landing points. Prime numbers have exactly two factors. GCF is for largest shared group size, and LCM is for first shared meeting time.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -1801,23 +1740,19 @@
           },
           {
             "id": "07-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Summary toolkit.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Today's toolkit has four ideas. Fractions need a whole and equal parts. Fractions are numbers on a number line. Equivalent fractions are the same value with different names. Simplifying uses common factors to make the name cleaner.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -2056,23 +1991,19 @@
           },
           {
             "id": "08-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Summary toolkit.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Today's toolkit has four moves. Identify the fraction units. Find a common denominator. Combine only the numerators after the units match. Then simplify or convert if needed. This prepares us for fraction multiplication, division, ratios, and algebraic fractio",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -2212,64 +2143,54 @@
           },
           {
             "id": "09-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: (2/3) x (3/5) = ?/15 = 2/5.",
-            "choices": [
-              "6",
-              "7",
-              "5",
-              "12"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: (2/3) x (3/5) = ___/15 = 2/5.",
+            "choices": [],
             "answer": "6",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "(2/3) x (3/5) = 6/15 = 2/5.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "09-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 4 x 1/3 = ?/3 = 1 1/3.",
-            "choices": [
-              "4",
-              "5",
-              "3",
-              "8"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 4 x 1/3 = ___/3 = 1 1/3.",
+            "choices": [],
             "answer": "4",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "4 x 1/3 = 4/3 = 1 1/3.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "09-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 1/2 x 1/3 = ?/6, not 2/5.",
-            "choices": [
-              "1",
-              "2",
-              "0"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 1/2 x 1/3 = ___/6, not 2/5.",
+            "choices": [],
             "answer": "1",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "1/2 x 1/3 = 1/6, not 2/5.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -2316,23 +2237,19 @@
           },
           {
             "id": "09-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students multiply fractions using visual models and symbolic procedures, and understand multiplication as scaling. It also bridges toward MYP numerical and abstract reasoning through proportional rea",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -2453,85 +2370,72 @@
           },
           {
             "id": "10-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 2 divided by 1/3 = ? because two wholes contain six thirds.",
-            "choices": [
-              "6",
-              "7",
-              "5",
-              "12"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 2 divided by 1/3 = ___ because two wholes contain six thirds.",
+            "choices": [],
             "answer": "6",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "2 divided by 1/3 = 6 because two wholes contain six thirds.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "10-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 3/4 divided by 3 = ?/4.",
-            "choices": [
-              "1",
-              "2",
-              "0"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 3/4 divided by 3 = ___/4.",
+            "choices": [],
             "answer": "1",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "3/4 divided by 3 = 1/4.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "10-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 3/4 divided by 1/8 = ? because 3/4 = 6/8.",
-            "choices": [
-              "6",
-              "7",
-              "5",
-              "12"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 3/4 divided by 1/8 = ___ because 3/4 = 6/8.",
+            "choices": [],
             "answer": "6",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "3/4 divided by 1/8 = 6 because 3/4 = 6/8.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "10-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: (3/4) divided by (1/8) = (3/4) x 8 = ?",
-            "choices": [
-              "6",
-              "7",
-              "5",
-              "12"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: (3/4) divided by (1/8) = (3/4) x 8 = ___",
+            "choices": [],
             "answer": "6",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "(3/4) divided by (1/8) = (3/4) x 8 = 6.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -2578,23 +2482,19 @@
           },
           {
             "id": "10-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students divide fractions using models and understand inverse operations. It also bridges toward MYP numerical and abstract reasoning, especially operations with fractions and solving equations throu",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -2715,44 +2615,37 @@
           },
           {
             "id": "11-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 3.472 = ? + 4/10 + 7/100 + 2/1000.",
-            "choices": [
-              "3",
-              "4",
-              "2",
-              "6"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 3.472 = ___ + 4/10 + 7/100 + 2/1000.",
+            "choices": [],
             "answer": "3",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "3.472 = 3 + 4/10 + 7/100 + 2/1000.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "11-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 0.47 = ?/100.",
-            "choices": [
-              "47",
-              "48",
-              "46",
-              "94"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 0.47 = ___/100.",
+            "choices": [],
             "answer": "47",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "0.47 = 47/100.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -2837,23 +2730,19 @@
           },
           {
             "id": "11-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students read, write, compare, order, and round decimal fractions using place value and visual models. It also bridges toward MYP numerical and abstract reasoning through powers of ten, equivalent re",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -2973,86 +2862,72 @@
           },
           {
             "id": "12-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 2.75 + 3.40 = ?",
-            "choices": [
-              "6.15",
-              "7.15",
-              "5.15",
-              "12.3"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 2.75 + 3.40 = ___",
+            "choices": [],
             "answer": "6.15",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "2.75 + 3.40 = 6.15.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "12-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 6.15 - 1.25 = ?",
-            "choices": [
-              "4.90",
-              "5.9",
-              "3.9000000000000004",
-              "9.8"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 6.15 - 1.25 = ___",
+            "choices": [],
             "answer": "4.90",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "6.15 - 1.25 = 4.90.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "12-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 2.75 x 3 = ?",
-            "choices": [
-              "8.25",
-              "9.25",
-              "7.25",
-              "16.5"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 2.75 x 3 = ___",
+            "choices": [],
             "answer": "8.25",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "2.75 x 3 = 8.25.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "12-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Estimate 2.75 x 3 is close to 3 x 3 = ?",
-            "choices": [
-              "9",
-              "10",
-              "8",
-              "18"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Estimate 2.75 x 3 is close to 3 x 3 = ___",
+            "choices": [],
             "answer": "9",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Estimate 2.75 x 3 is close to 3 x 3 = 9.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -3099,23 +2974,19 @@
           },
           {
             "id": "12-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students select efficient strategies for decimal addition, subtraction, and multiplication in real-life situations, use estimation to check reasonableness, and communicate the meaning of each operati",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -3236,86 +3107,72 @@
           },
           {
             "id": "13-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 12.60 / 3 = ?",
-            "choices": [
-              "4.20",
-              "5.2",
-              "3.2",
-              "8.4"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 12.60 / 3 = ___",
+            "choices": [],
             "answer": "4.20",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "12.60 / 3 = 4.20.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "13-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 4.2 = ? for money notation.",
-            "choices": [
-              "4.20",
-              "5.2",
-              "3.2",
-              "8.4"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 4.2 = ___ for money notation.",
+            "choices": [],
             "answer": "4.20",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "4.2 = 4.20 for money notation.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "13-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 8.75 / 5 = ?",
-            "choices": [
-              "1.75",
-              "2.75",
-              "0.75",
-              "3.5"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 8.75 / 5 = ___",
+            "choices": [],
             "answer": "1.75",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "8.75 / 5 = 1.75.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "13-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 4.50 / 3 = ?",
-            "choices": [
-              "1.50",
-              "2.5",
-              "0.5",
-              "3"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 4.50 / 3 = ___",
+            "choices": [],
             "answer": "1.50",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "4.50 / 3 = 1.50.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -3362,23 +3219,19 @@
           },
           {
             "id": "13-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Ignoring the decimal point changes the size of the answer.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Here is a common mistake. A student writes twelve point six divided by three equals forty-two because they ignore the decimal point. But division does not erase place value. The answer is four point two, not forty-two.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -3499,85 +3352,72 @@
           },
           {
             "id": "14-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 50% = ?/100 = 0.50 = 1/2.",
-            "choices": [
-              "50",
-              "51",
-              "49",
-              "100"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 50% = ___/100 = 0.50 = 1/2.",
+            "choices": [],
             "answer": "50",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "50% = 50/100 = 0.50 = 1/2.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "14-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 25% = ?/4 = 0.25.",
-            "choices": [
-              "1",
-              "2",
-              "0"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 25% = ___/4 = 0.25.",
+            "choices": [],
             "answer": "1",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "25% = 1/4 = 0.25.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "14-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 25% of 80 = ?",
-            "choices": [
-              "20",
-              "21",
-              "19",
-              "40"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 25% of 80 = ___",
+            "choices": [],
             "answer": "20",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "25% of 80 = 20.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "14-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 25% of 48 = ?; 48 - 12 = 36.",
-            "choices": [
-              "12",
-              "13",
-              "11",
-              "24"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 25% of 48 = ___; 48 - 12 = 36.",
+            "choices": [],
             "answer": "12",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "25% of 48 = 12; 48 - 12 = 36.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -3624,23 +3464,19 @@
           },
           {
             "id": "14-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Number, Phase 4. Students connect fractions, decimals, and percentages, use equivalent representations, and apply proportional reasoning in real-life situations. It also bridges toward MYP numerical and abstract reas",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -3761,23 +3597,20 @@
           },
           {
             "id": "15-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 6 + 9 + 5 + 4 = ?",
-            "choices": [
-              "24",
-              "25",
-              "23",
-              "48"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 6 + 9 + 5 + 4 = ___",
+            "choices": [],
             "answer": "24",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "6 + 9 + 5 + 4 = 24.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
@@ -3881,23 +3714,19 @@
           },
           {
             "id": "15-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Data Handling, Phase 4. Students collect, organize, display, and interpret data, and use range, mode, median, and mean to describe a set of data. It also bridges toward MYP statistics through evidence-based claims an",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -4057,44 +3886,37 @@
           },
           {
             "id": "16-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Explicit rule: M = ?n + 1.",
-            "choices": [
-              "3",
-              "4",
-              "2",
-              "6"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Explicit rule: M = ___n + 1.",
+            "choices": [],
             "answer": "3",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Explicit rule: M = 3n + 1.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "16-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Figure 10: 3 x 10 + 1 = ?",
-            "choices": [
-              "31",
-              "32",
-              "30",
-              "62"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Figure 10: 3 x 10 + 1 = ___",
+            "choices": [],
             "answer": "31",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Figure 10: 3 x 10 + 1 = 31.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -4141,23 +3963,19 @@
           },
           {
             "id": "16-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Mathematics, Pattern and Function, Phase 4. Students identify, describe, and extend patterns, and represent patterns using tables, rules, and symbols. It also bridges toward MYP thinking with models, especially sequences, general",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -4282,86 +4100,72 @@
           },
           {
             "id": "17-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: x + 7 = ? gives x = 16.",
-            "choices": [
-              "23",
-              "24",
-              "22",
-              "46"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: x + 7 = ___ gives x = 16.",
+            "choices": [],
             "answer": "23",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "x + 7 = 23 gives x = 16.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "17-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 3x = ? gives x = 6.",
-            "choices": [
-              "18",
-              "19",
-              "17",
-              "36"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: 3x = ___ gives x = 6.",
+            "choices": [],
             "answer": "18",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "3x = 18 gives x = 6.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "17-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: 2x + 5 = ? gives 2x = 12, x = 6.",
-            "choices": [
-              "17",
-              "18",
-              "16",
-              "34"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: 2x + 5 = ___ gives 2x = 12, x = 6.",
+            "choices": [],
             "answer": "17",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "2x + 5 = 17 gives 2x = 12, x = 6.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "17-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Check: 2(6) + 5 = ?",
-            "choices": [
-              "17",
-              "18",
-              "16",
-              "34"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Check: 2(6) + 5 = ___",
+            "choices": [],
             "answer": "17",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Check: 2(6) + 5 = 17.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -4408,23 +4212,19 @@
           },
           {
             "id": "17-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Student teaches a real-context equation.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "Now I invite you to be the Math Instructor. Teach this problem. A taxi ride costs four dollars to start, plus three dollars per mile. The total cost is twenty-two dollars. Write an equation, solve for the number of miles, and check your answer by substitution.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -4587,23 +4387,20 @@
           },
           {
             "id": "18-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Cyclist rule: distance = ? × time.",
-            "choices": [
-              "12",
-              "13",
-              "11",
-              "24"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Cyclist rule: distance = ___ × time.",
+            "choices": [],
             "answer": "12",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Cyclist rule: distance = 12 × time.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
@@ -4669,23 +4466,19 @@
           },
           {
             "id": "18-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Shape and Space, Phase 4, using coordinate systems to describe position, and Pattern and Function, Phase 4, representing relationships in tables and graphs. It bridges toward MYP thinking with models, spatial reasoning, coordinat",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -4807,86 +4600,72 @@
           },
           {
             "id": "19-q04",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Rectangle area 6 x 4 = ? square units.",
-            "choices": [
-              "24",
-              "25",
-              "23",
-              "48"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Rectangle area 6 x 4 = ___ square units.",
+            "choices": [],
             "answer": "24",
             "points": 8,
             "penalty": 3,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Rectangle area 6 x 4 = 24 square units.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "19-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: L split area: 4 x 5 + 3 x 3 = ? + 9 = 29.",
-            "choices": [
-              "20",
-              "21",
-              "19",
-              "40"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: L split area: 4 x 5 + 3 x 3 = ___ + 9 = 29.",
+            "choices": [],
             "answer": "20",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "L split area: 4 x 5 + 3 x 3 = 20 + 9 = 29.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "19-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: L complete area: 7 x 5 - 3 x 2 = ? - 6 = 29.",
-            "choices": [
-              "35",
-              "36",
-              "34",
-              "70"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: L complete area: 7 x 5 - 3 x 2 = ___ - 6 = 29.",
+            "choices": [],
             "answer": "35",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "L complete area: 7 x 5 - 3 x 2 = 35 - 6 = 29.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "19-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Prism volume: 6 x 3 x 4 = ? cubic units.",
-            "choices": [
-              "72",
-              "73",
-              "71",
-              "144"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Prism volume: 6 x 3 x 4 = ___ cubic units.",
+            "choices": [],
             "answer": "72",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Prism volume: 6 x 3 x 4 = 72 cubic units.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -4933,23 +4712,19 @@
           },
           {
             "id": "19-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Measurement, Phase 4, selecting and using standard units, understanding area, perimeter, and volume, and solving measurement problems. It also connects to Shape and Space, Phase 4, and bridges toward MYP spatial reasoning.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]
@@ -5090,65 +4865,54 @@
           },
           {
             "id": "20-q05",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Mean = ?/5 = 24.",
-            "choices": [
-              "120",
-              "121",
-              "119",
-              "240"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Mean = ___/5 = 24.",
+            "choices": [],
             "answer": "120",
             "points": 10,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Mean = 120/5 = 24.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
             "id": "20-q06",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Median = ?",
-            "choices": [
-              "20",
-              "21",
-              "19",
-              "40"
-            ],
+            "type": "numeric-input",
+            "prompt": "Type the missing result: Median = ___",
+            "choices": [],
             "answer": "20",
             "points": 11,
             "penalty": 4,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "Write the operation on your scratch pad before typing.",
             "explanation": "Median = 20.",
-            "visual": "choice-burst",
+            "visual": "math-pad",
+            "inputPlaceholder": "Type the number",
+            "unit": "",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Boom. You calculated it yourself instead of recognizing a button.",
+              "incorrect": "Good try. Rebuild the operation slowly, then check the place value."
             }
           },
           {
             "id": "20-q07",
-            "type": "multiple-choice",
-            "prompt": "According to the lesson check, what result completes this statement: Mode = ?",
-            "choices": [
-              "20",
-              "21",
-              "19",
-              "40"
-            ],
+            "type": "fill-blank",
+            "prompt": "Complete the math sentence: Mode = ___",
+            "choices": [],
             "answer": "20",
             "points": 12,
             "penalty": 5,
-            "hint": "Rebuild the operation before choosing the number.",
+            "hint": "The blank is the result of the operation just before it.",
             "explanation": "Mode = 20.",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           },
           {
@@ -5195,23 +4959,19 @@
           },
           {
             "id": "20-q10",
-            "type": "multiple-choice",
-            "prompt": "Which student move best matches this idea: Official IB alignment.",
-            "choices": [
-              "Explain the relationship in words, then connect it to symbols.",
-              "Copy the final answer without the relationship.",
-              "Use a random operation because it looks familiar.",
-              "Ignore the units and compare only digits."
-            ],
-            "answer": "Explain the relationship in words, then connect it to symbols.",
+            "type": "fill-blank",
+            "prompt": "Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.",
+            "choices": [],
+            "answer": "relationship",
             "points": 15,
             "penalty": 6,
-            "hint": "Find the relationship hiding inside the sentence.",
+            "hint": "What connects the story to the equation?",
             "explanation": "This lesson aligns with IB PYP Data Handling, Phase 4. Students collect, organize, display, and interpret data, and understand probability and chance. It also bridges toward MYP reasoning with data, including statistics, probability, interpreting data, limitat",
-            "visual": "choice-burst",
+            "visual": "blank-card",
+            "inputPlaceholder": "Fill in the missing math word or value",
             "encouragement": {
-              "correct": "Nice. You used the mathematician move, not just the calculator move.",
-              "incorrect": "Good attempt. Slow the story down and rebuild the model one step at a time."
+              "correct": "Yes. You filled the missing piece like a real problem solver.",
+              "incorrect": "Close. Look at what the sentence is asking the blank to represent."
             }
           }
         ]

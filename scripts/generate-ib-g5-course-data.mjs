@@ -90,6 +90,47 @@ function trueFalseQuestion(id, prompt, answer, points, penalty, hint, explanatio
   }
 }
 
+function numericQuestion(id, prompt, answer, points, penalty, hint, explanation, unit = '') {
+  return {
+    id,
+    type: 'numeric-input',
+    prompt: cleanText(prompt),
+    choices: [],
+    answer: cleanText(answer),
+    points,
+    penalty,
+    hint: cleanText(hint),
+    explanation: cleanText(explanation),
+    visual: 'math-pad',
+    inputPlaceholder: unit ? `Type the number in ${unit}` : 'Type the number',
+    unit: cleanText(unit),
+    encouragement: {
+      correct: 'Boom. You calculated it yourself instead of recognizing a button.',
+      incorrect: 'Good try. Rebuild the operation slowly, then check the place value.',
+    },
+  }
+}
+
+function fillBlankQuestion(id, prompt, answer, points, penalty, hint, explanation) {
+  return {
+    id,
+    type: 'fill-blank',
+    prompt: cleanText(prompt),
+    choices: [],
+    answer: cleanText(answer),
+    points,
+    penalty,
+    hint: cleanText(hint),
+    explanation: cleanText(explanation),
+    visual: 'blank-card',
+    inputPlaceholder: 'Fill in the missing math word or value',
+    encouragement: {
+      correct: 'Yes. You filled the missing piece like a real problem solver.',
+      incorrect: 'Close. Look at what the sentence is asking the blank to represent.',
+    },
+  }
+}
+
 function orderQuestion(id, prompt, steps, points, penalty, hint, explanation) {
   return {
     id,
@@ -157,17 +198,27 @@ function buildQuestions(lesson) {
   audit.slice(0, 4).forEach((line, index) => {
     const answer = numericFromAudit(line)
     if (answer) {
-      const number = Number(answer)
-      questions.push(choiceQuestion(
-        `${ep}-q${String(questions.length + 1).padStart(2, '0')}`,
-        `According to the lesson check, what result completes this statement: ${line.replace(/=\s*-?\d+(?:\.\d+)?\.?/, '= ?')}`,
-        answer,
-        [String(number + 1), String(Math.max(0, number - 1)), String(number * 2)].filter((value, i, arr) => arr.indexOf(value) === i && value !== answer),
-        points[questions.length],
-        penalties[questions.length],
-        'Rebuild the operation before choosing the number.',
-        line
-      ))
+      if (index % 2 === 0) {
+        questions.push(numericQuestion(
+          `${ep}-q${String(questions.length + 1).padStart(2, '0')}`,
+          `Type the missing result: ${line.replace(/=\s*-?\d+(?:\.\d+)?\.?/, '= ___')}`,
+          answer,
+          points[questions.length],
+          penalties[questions.length],
+          'Write the operation on your scratch pad before typing.',
+          line
+        ))
+      } else {
+        questions.push(fillBlankQuestion(
+          `${ep}-q${String(questions.length + 1).padStart(2, '0')}`,
+          `Complete the math sentence: ${line.replace(/=\s*-?\d+(?:\.\d+)?\.?/, '= ___')}`,
+          answer,
+          points[questions.length],
+          penalties[questions.length],
+          'The blank is the result of the operation just before it.',
+          line
+        ))
+      }
     } else {
       questions.push(trueFalseQuestion(
         `${ep}-q${String(questions.length + 1).padStart(2, '0')}`,
@@ -185,16 +236,28 @@ function buildQuestions(lesson) {
     const idx = questions.length
     const segment = lesson.segments[idx % lesson.segments.length]
     const claim = cleanText(segment.claim || storyClaim)
-    questions.push(choiceQuestion(
-      `${ep}-q${String(idx + 1).padStart(2, '0')}`,
-      `Which student move best matches this idea: ${claim}`,
-      'Explain the relationship in words, then connect it to symbols.',
-      ['Copy the final answer without the relationship.', 'Use a random operation because it looks familiar.', 'Ignore the units and compare only digits.'],
-      points[idx],
-      penalties[idx],
-      'Find the relationship hiding inside the sentence.',
-      cleanText(segment.narration || claim).slice(0, 260)
-    ))
+    if (idx % 4 === 1) {
+      questions.push(fillBlankQuestion(
+        `${ep}-q${String(idx + 1).padStart(2, '0')}`,
+        `Fill in the missing strategy word: A strong solution should explain the ___ before the symbols.`,
+        'relationship',
+        points[idx],
+        penalties[idx],
+        'What connects the story to the equation?',
+        cleanText(segment.narration || claim).slice(0, 260)
+      ))
+    } else {
+      questions.push(choiceQuestion(
+        `${ep}-q${String(idx + 1).padStart(2, '0')}`,
+        `Which student move best matches this idea: ${claim}`,
+        'Explain the relationship in words, then connect it to symbols.',
+        ['Copy the final answer without the relationship.', 'Use a random operation because it looks familiar.', 'Ignore the units and compare only digits.'],
+        points[idx],
+        penalties[idx],
+        'Find the relationship hiding inside the sentence.',
+        cleanText(segment.narration || claim).slice(0, 260)
+      ))
+    }
   }
 
   return questions.slice(0, 10)

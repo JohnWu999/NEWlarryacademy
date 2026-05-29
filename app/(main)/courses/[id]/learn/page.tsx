@@ -18,7 +18,7 @@ interface LessonActivity {
 
 interface PracticeQuestion {
   id: string
-  type: 'multiple-choice' | 'true-false' | 'order-steps'
+  type: 'multiple-choice' | 'true-false' | 'order-steps' | 'numeric-input' | 'fill-blank' | 'multiple-select'
   prompt: string
   choices: string[]
   answer: string | string[]
@@ -27,6 +27,9 @@ interface PracticeQuestion {
   hint: string
   explanation: string
   visual?: string
+  inputPlaceholder?: string
+  unit?: string
+  tolerance?: number
   encouragement?: {
     correct?: string
     incorrect?: string
@@ -136,7 +139,19 @@ function CheckIcon() {
 }
 
 function normalizeAnswer(value: string) {
-  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+  return value.trim().toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ')
+}
+
+function normalizeNumber(value: string) {
+  const number = Number(normalizeAnswer(value).replace(/[^\d.-]/g, ''))
+  return Number.isFinite(number) ? number : null
+}
+
+function hasQuestAnswer(question: PracticeQuestion, value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return question.type === 'order-steps' ? value.length === question.choices.length : value.length > 0
+  }
+  return Boolean(value && value.trim())
 }
 
 function parsePracticeConfig(activity?: LessonActivity) {
@@ -151,11 +166,67 @@ function parsePracticeConfig(activity?: LessonActivity) {
 
 function checkPracticeAnswer(question: PracticeQuestion, value: string | string[] | null) {
   if (!value) return false
+  if (question.type === 'numeric-input') {
+    const expected = normalizeNumber(String(question.answer))
+    const actual = normalizeNumber(Array.isArray(value) ? value.join('') : value)
+    if (expected === null || actual === null) return false
+    return Math.abs(expected - actual) <= Number(question.tolerance || 0.0001)
+  }
   if (Array.isArray(question.answer)) {
     const actual = Array.isArray(value) ? value : [value]
+    if (question.type === 'multiple-select') {
+      const expected = question.answer.map(normalizeAnswer).sort()
+      const selected = actual.map(normalizeAnswer).sort()
+      return expected.length === selected.length && expected.every((answer, index) => answer === selected[index])
+    }
     return question.answer.length === actual.length && question.answer.every((answer, index) => normalizeAnswer(answer) === normalizeAnswer(actual[index] || ''))
   }
   return normalizeAnswer(String(question.answer)) === normalizeAnswer(Array.isArray(value) ? value.join(' > ') : value)
+}
+
+function getQuestionLabel(type: PracticeQuestion['type']) {
+  const labels: Record<PracticeQuestion['type'], string> = {
+    'multiple-choice': 'Choose',
+    'true-false': 'True / False',
+    'order-steps': 'Order the steps',
+    'numeric-input': 'Type the answer',
+    'fill-blank': 'Fill the blank',
+    'multiple-select': 'Select all',
+  }
+  return labels[type] || 'Practice'
+}
+
+function QuestVisual({ type }: { type: PracticeQuestion['type'] }) {
+  if (type === 'numeric-input' || type === 'fill-blank') {
+    return (
+      <div className="mt-4 grid grid-cols-5 gap-1 rounded-2xl bg-[#f7f0dd] p-3">
+        {[...Array(15)].map((_, index) => (
+          <div key={index} className={`h-8 rounded-lg border border-[#e2d4b8] ${index % 3 === 1 ? 'bg-white' : 'bg-[#fbf8ef]'}`} />
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'order-steps') {
+    return (
+      <div className="mt-4 flex items-end gap-2 rounded-2xl bg-blue-50 p-3">
+        {[1, 2, 3, 4].map((height) => (
+          <div key={height} className="flex flex-1 flex-col items-center gap-2">
+            <div className="w-full rounded-xl bg-blue-500/70" style={{ height: `${height * 14}px` }} />
+            <span className="text-[10px] font-black text-blue-700">{height}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4 flex gap-2 rounded-2xl bg-emerald-50 p-3">
+      {[0, 1, 2, 3].map((index) => (
+        <div key={index} className={`h-10 flex-1 rounded-xl ${index === 0 ? 'bg-emerald-500' : 'bg-white'} ring-1 ring-emerald-100`} />
+      ))}
+    </div>
+  )
 }
 
 function TencentVodPlayer({ fileId, mediaUrl, title }: { fileId: string; mediaUrl?: string | null; title: string }) {
@@ -240,6 +311,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [questSubmitted, setQuestSubmitted] = useState(false)
   const [questSaving, setQuestSaving] = useState(false)
   const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number } | null>(null)
+  const [questEffect, setQuestEffect] = useState<{ kind: 'correct' | 'incorrect' | 'complete'; key: number } | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -256,6 +328,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     }
   }, [status, resolvedParams.id, lessonIdFromQuery])
 
+  const activeLessonId = course?.lessons[currentLessonIndex]?.id
+  const activePracticeId = course?.lessons[currentLessonIndex]?.activities?.find((activity) => activity.type === 'practice' && activity.config)?.id
+
   useEffect(() => {
     setSelectedChoice(null)
     setPracticeChecked(false)
@@ -264,7 +339,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     setQuestFeedback(null)
     setQuestSubmitted(false)
     setQuestResult(null)
-  }, [currentLessonIndex])
+    setQuestEffect(null)
+  }, [course?.id, activeLessonId, activePracticeId])
 
   const fetchLessonDirectly = async (lessonId: string) => {
     try {
@@ -348,17 +424,25 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
       if (!AudioContextClass) return
       const ctx = new AudioContextClass()
-      const oscillator = ctx.createOscillator()
-      const gain = ctx.createGain()
-      oscillator.type = kind === 'incorrect' ? 'triangle' : 'sine'
-      oscillator.frequency.value = kind === 'incorrect' ? 220 : kind === 'complete' ? 740 : 560
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.02)
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22)
-      oscillator.connect(gain)
-      gain.connect(ctx.destination)
-      oscillator.start()
-      oscillator.stop(ctx.currentTime + 0.24)
+      const sequence = kind === 'incorrect'
+        ? [180, 140]
+        : kind === 'complete'
+        ? [523, 659, 784, 1046]
+        : [523, 659, 880]
+      sequence.forEach((frequency, index) => {
+        const oscillator = ctx.createOscillator()
+        const gain = ctx.createGain()
+        const start = ctx.currentTime + index * 0.085
+        oscillator.type = kind === 'incorrect' ? 'sawtooth' : 'sine'
+        oscillator.frequency.setValueAtTime(frequency, start)
+        gain.gain.setValueAtTime(0.0001, start)
+        gain.gain.exponentialRampToValueAtTime(kind === 'incorrect' ? 0.06 : 0.1, start + 0.02)
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16)
+        oscillator.connect(gain)
+        gain.connect(ctx.destination)
+        oscillator.start(start)
+        oscillator.stop(start + 0.18)
+      })
     } catch {
       // Audio feedback is optional; browsers may block it in some contexts.
     }
@@ -367,11 +451,13 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const answerCurrentQuest = (question: PracticeQuestion, value: string | string[]) => {
     setQuestAnswers((answers) => ({ ...answers, [question.id]: value }))
     setQuestFeedback(null)
+    setQuestEffect(null)
   }
 
   const checkCurrentQuest = (question: PracticeQuestion) => {
     const correct = checkPracticeAnswer(question, questAnswers[question.id] || null)
     setQuestFeedback(correct ? 'correct' : 'incorrect')
+    setQuestEffect({ kind: correct ? 'correct' : 'incorrect', key: Date.now() })
     playFeedbackTone(correct ? 'correct' : 'incorrect')
   }
 
@@ -379,6 +465,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     if (questIndex < config.questions.length - 1) {
       setQuestIndex((index) => index + 1)
       setQuestFeedback(null)
+      setQuestEffect(null)
       return
     }
 
@@ -397,6 +484,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         const result = await response.json()
         setQuestResult(result)
         setQuestSubmitted(true)
+        setQuestEffect({ kind: 'complete', key: Date.now() })
         playFeedbackTone('complete')
         await markPracticeComplete()
       }
@@ -433,7 +521,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const currentQuestQuestion = questConfig?.questions[questIndex]
   const questScorePreview = questConfig?.questions.reduce((sum, question) => {
     const value = questAnswers[question.id]
-    if (!value) return sum
+    if (!hasQuestAnswer(question, value)) return sum
     return sum + (checkPracticeAnswer(question, value) ? question.points : -question.penalty)
   }, 0) || 0
   const practice = buildPracticePrompt(currentLesson)
@@ -645,35 +733,149 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         </div>
                       </div>
 
-                      <p className="mt-5 text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
+                      <div className="relative overflow-hidden">
+                        {questEffect && (
+                          <div key={questEffect.key} className={`pointer-events-none absolute inset-0 z-10 ${questEffect.kind === 'incorrect' ? 'quest-shake' : 'quest-fireworks'}`}>
+                            {questEffect.kind === 'incorrect' ? (
+                              <div className="absolute right-4 top-4 rounded-full bg-amber-100 px-4 py-2 text-sm font-black text-amber-900 shadow-lg">
+                                Try a new strategy
+                              </div>
+                            ) : (
+                              [...Array(18)].map((_, index) => (
+                                <span
+                                  key={index}
+                                  className="quest-spark"
+                                  style={{
+                                    left: `${12 + ((index * 37) % 76)}%`,
+                                    top: `${10 + ((index * 23) % 68)}%`,
+                                    animationDelay: `${index * 0.025}s`,
+                                  }}
+                                />
+                              ))
+                            )}
+                          </div>
+                        )}
 
-                      <div className="mt-5 space-y-3">
-                        {currentQuestQuestion.choices.map((choice) => {
-                          const selectedValue = questAnswers[currentQuestQuestion.id]
-                          const isSelected = Array.isArray(selectedValue) ? selectedValue.includes(choice) : selectedValue === choice
-                          const isCorrectChoice = Array.isArray(currentQuestQuestion.answer)
-                            ? currentQuestQuestion.answer.includes(choice)
-                            : currentQuestQuestion.answer === choice
-                          const showCorrect = questFeedback && isCorrectChoice
-                          const showWrong = questFeedback === 'incorrect' && isSelected && !isCorrectChoice
-                          return (
-                            <button
-                              key={choice}
-                              onClick={() => answerCurrentQuest(currentQuestQuestion, choice)}
-                              className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
-                                showCorrect
-                                  ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
-                                  : showWrong
-                                  ? 'border-red-400 bg-red-50 text-red-900'
-                                  : isSelected
-                                  ? 'border-blue-500 bg-blue-50 text-blue-950'
-                                  : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
-                              }`}
-                            >
-                              {choice}
-                            </button>
-                          )
-                        })}
+                        <div className={`rounded-3xl border border-[#efe7d8] bg-[#fffdf8] p-4 ${questEffect?.kind === 'correct' ? 'quest-pop' : ''} ${questEffect?.kind === 'incorrect' ? 'quest-wobble' : ''}`}>
+                          <div className="mb-3 inline-flex rounded-full bg-[#f4f1e8] px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#777064]">
+                            {getQuestionLabel(currentQuestQuestion.type)}
+                          </div>
+                          <p className="text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
+                          <QuestVisual type={currentQuestQuestion.type} />
+
+                          {currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
+                            <div className="mt-5">
+                              <div className="flex overflow-hidden rounded-2xl border-2 border-[#171717] bg-white shadow-[0_8px_0_#171717] focus-within:border-blue-600">
+                                <input
+                                  value={String(questAnswers[currentQuestQuestion.id] || '')}
+                                  onChange={(event) => answerCurrentQuest(currentQuestQuestion, event.target.value)}
+                                  inputMode={currentQuestQuestion.type === 'numeric-input' ? 'decimal' : 'text'}
+                                  placeholder={currentQuestQuestion.inputPlaceholder || 'Type your answer'}
+                                  className="min-w-0 flex-1 bg-transparent px-5 py-4 text-xl font-black text-[#171717] outline-none placeholder:text-[#b6ad9d]"
+                                />
+                                {currentQuestQuestion.unit && (
+                                  <div className="flex items-center border-l border-[#e2ded3] bg-[#f4f1e8] px-4 text-sm font-black text-[#777064]">
+                                    {currentQuestQuestion.unit}
+                                  </div>
+                                )}
+                              </div>
+                              <p className="mt-3 text-xs font-bold text-[#857b69]">Type it yourself. This is where the math muscles grow.</p>
+                            </div>
+                          ) : currentQuestQuestion.type === 'order-steps' ? (
+                            <div className="mt-5 grid gap-4 lg:grid-cols-2">
+                              <div>
+                                <div className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Tap in order</div>
+                                <div className="space-y-2">
+                                  {currentQuestQuestion.choices.map((choice) => {
+                                    const selectedValue = Array.isArray(questAnswers[currentQuestQuestion.id]) ? questAnswers[currentQuestQuestion.id] as string[] : []
+                                    const isSelected = selectedValue.includes(choice)
+                                    return (
+                                      <button
+                                        key={choice}
+                                        onClick={() => {
+                                          if (isSelected || questFeedback) return
+                                          answerCurrentQuest(currentQuestQuestion, [...selectedValue, choice])
+                                        }}
+                                        disabled={isSelected || Boolean(questFeedback)}
+                                        className={`w-full rounded-2xl border p-3 text-left text-sm font-bold leading-6 transition ${
+                                          isSelected ? 'border-blue-200 bg-blue-50 text-blue-900 opacity-60' : 'border-[#e2ded3] bg-white hover:border-blue-400 hover:bg-blue-50'
+                                        }`}
+                                      >
+                                        {choice}
+                                      </button>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="mb-2 flex items-center justify-between gap-2">
+                                  <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Your ladder</div>
+                                  <button
+                                    onClick={() => {
+                                      answerCurrentQuest(currentQuestQuestion, [])
+                                      setQuestFeedback(null)
+                                    }}
+                                    className="text-xs font-black text-blue-700"
+                                  >
+                                    Reset
+                                  </button>
+                                </div>
+                                <div className="min-h-[190px] space-y-2 rounded-2xl border border-dashed border-[#d7d0c3] bg-[#fbfaf6] p-3">
+                                  {(Array.isArray(questAnswers[currentQuestQuestion.id]) ? questAnswers[currentQuestQuestion.id] as string[] : []).map((choice, index) => (
+                                    <button
+                                      key={`${choice}-${index}`}
+                                      onClick={() => {
+                                        const selectedValue = Array.isArray(questAnswers[currentQuestQuestion.id]) ? questAnswers[currentQuestQuestion.id] as string[] : []
+                                        answerCurrentQuest(currentQuestQuestion, selectedValue.filter((_, selectedIndex) => selectedIndex !== index))
+                                      }}
+                                      className="flex w-full items-center gap-3 rounded-xl bg-[#171717] p-3 text-left text-sm font-black text-white"
+                                    >
+                                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500">{index + 1}</span>
+                                      {choice}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-5 space-y-3">
+                              {currentQuestQuestion.choices.map((choice) => {
+                                const selectedValue = questAnswers[currentQuestQuestion.id]
+                                const selectedList = Array.isArray(selectedValue) ? selectedValue : []
+                                const isSelected = currentQuestQuestion.type === 'multiple-select' ? selectedList.includes(choice) : selectedValue === choice
+                                const isCorrectChoice = Array.isArray(currentQuestQuestion.answer)
+                                  ? currentQuestQuestion.answer.includes(choice)
+                                  : currentQuestQuestion.answer === choice
+                                const showCorrect = questFeedback && isCorrectChoice
+                                const showWrong = questFeedback === 'incorrect' && isSelected && !isCorrectChoice
+                                return (
+                                  <button
+                                    key={choice}
+                                    onClick={() => {
+                                      if (currentQuestQuestion.type === 'multiple-select') {
+                                        const next = isSelected ? selectedList.filter((item) => item !== choice) : [...selectedList, choice]
+                                        answerCurrentQuest(currentQuestQuestion, next)
+                                      } else {
+                                        answerCurrentQuest(currentQuestQuestion, choice)
+                                      }
+                                    }}
+                                    className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
+                                      showCorrect
+                                        ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                                        : showWrong
+                                        ? 'border-red-400 bg-red-50 text-red-900'
+                                        : isSelected
+                                        ? 'border-blue-500 bg-blue-50 text-blue-950 shadow-[0_4px_0_#2563eb]'
+                                        : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
+                                    }`}
+                                  >
+                                    {choice}
+                                  </button>
+                                )
+                              })}
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {questFeedback && (
@@ -686,13 +888,17 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <button
                           onClick={() => questFeedback ? continueQuest(questConfig, practiceActivity) : checkCurrentQuest(currentQuestQuestion)}
-                          disabled={!questAnswers[currentQuestQuestion.id] || questSaving}
+                          disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           {questSaving ? 'Saving...' : questFeedback ? (questIndex === questConfig.questions.length - 1 ? 'Finish quest' : 'Continue') : 'Check answer'}
                         </button>
                         <button
-                          onClick={() => setQuestFeedback('incorrect')}
+                          onClick={() => {
+                            setQuestFeedback('incorrect')
+                            setQuestEffect({ kind: 'incorrect', key: Date.now() })
+                            playFeedbackTone('incorrect')
+                          }}
                           disabled={Boolean(questFeedback)}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                         >
@@ -701,7 +907,22 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
+                    <div className="relative mt-6 overflow-hidden rounded-3xl bg-white p-5 shadow-sm">
+                      {questEffect?.kind === 'complete' && (
+                        <div key={questEffect.key} className="pointer-events-none absolute inset-0 z-10 quest-fireworks">
+                          {[...Array(28)].map((_, index) => (
+                            <span
+                              key={index}
+                              className="quest-spark"
+                              style={{
+                                left: `${8 + ((index * 29) % 84)}%`,
+                                top: `${8 + ((index * 31) % 76)}%`,
+                                animationDelay: `${index * 0.018}s`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
                       <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
                           <SparkIcon />
@@ -880,6 +1101,72 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           </div>
         </aside>
       </main>
+      <style jsx global>{`
+        .quest-pop {
+          animation: quest-pop 520ms cubic-bezier(.2, 1.5, .35, 1);
+        }
+
+        .quest-wobble {
+          animation: quest-wobble 420ms ease-in-out;
+        }
+
+        .quest-fireworks .quest-spark {
+          position: absolute;
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          background: #facc15;
+          box-shadow:
+            18px 0 #22c55e,
+            -14px 8px #3b82f6,
+            6px -18px #f97316,
+            -10px -14px #ec4899;
+          opacity: 0;
+          transform: scale(.4);
+          animation: quest-spark 760ms ease-out forwards;
+        }
+
+        .quest-shake {
+          animation: quest-shake-layer 420ms ease-in-out;
+        }
+
+        @keyframes quest-pop {
+          0% { transform: scale(.97); }
+          45% { transform: scale(1.035); }
+          100% { transform: scale(1); }
+        }
+
+        @keyframes quest-wobble {
+          0%, 100% { transform: translateX(0); }
+          18% { transform: translateX(-8px) rotate(-.6deg); }
+          38% { transform: translateX(7px) rotate(.5deg); }
+          58% { transform: translateX(-4px) rotate(-.3deg); }
+          78% { transform: translateX(3px); }
+        }
+
+        @keyframes quest-spark {
+          0% { opacity: 0; transform: scale(.4) translateY(0); }
+          18% { opacity: 1; transform: scale(1.2) translateY(-8px); }
+          100% { opacity: 0; transform: scale(.1) translateY(-42px); }
+        }
+
+        @keyframes quest-shake-layer {
+          0%, 100% { transform: translateX(0); }
+          20% { transform: translateX(-5px); }
+          40% { transform: translateX(5px); }
+          60% { transform: translateX(-3px); }
+          80% { transform: translateX(3px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .quest-pop,
+          .quest-wobble,
+          .quest-shake,
+          .quest-fireworks .quest-spark {
+            animation: none;
+          }
+        }
+      `}</style>
     </div>
   )
 }
