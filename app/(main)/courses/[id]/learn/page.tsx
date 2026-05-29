@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Script from 'next/script'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
 
 interface LessonActivity {
@@ -10,8 +11,42 @@ interface LessonActivity {
   type: string
   title: string
   description: string | null
+  config?: string | null
   rewardsPoints: number
   rewardsGems: number
+}
+
+interface PracticeQuestion {
+  id: string
+  type: 'multiple-choice' | 'true-false' | 'order-steps'
+  prompt: string
+  choices: string[]
+  answer: string | string[]
+  points: number
+  penalty: number
+  hint: string
+  explanation: string
+  visual?: string
+  encouragement?: {
+    correct?: string
+    incorrect?: string
+  }
+}
+
+interface PracticeConfig {
+  title: string
+  maxScore: number
+  passingScore: number
+  rewards?: {
+    gemsOnPass?: number
+    gemsOnPerfect?: number
+    streakBonus?: number
+  }
+  reviewAdvice?: {
+    rewatchMessage?: string
+    focus?: string
+  }
+  questions: PracticeQuestion[]
 }
 
 interface Lesson {
@@ -84,11 +119,91 @@ function PlayIcon() {
   )
 }
 
+function SparkIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2 14.6 8.4 21 11l-6.4 2.6L12 20l-2.6-6.4L3 11l6.4-2.6L12 2Z" />
+    </svg>
+  )
+}
+
 function CheckIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m5 12 4 4L19 6" />
     </svg>
+  )
+}
+
+function normalizeAnswer(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+function parsePracticeConfig(activity?: LessonActivity) {
+  if (!activity?.config) return null
+  try {
+    const config = JSON.parse(activity.config) as PracticeConfig
+    return Array.isArray(config.questions) && config.questions.length ? config : null
+  } catch {
+    return null
+  }
+}
+
+function checkPracticeAnswer(question: PracticeQuestion, value: string | string[] | null) {
+  if (!value) return false
+  if (Array.isArray(question.answer)) {
+    const actual = Array.isArray(value) ? value : [value]
+    return question.answer.length === actual.length && question.answer.every((answer, index) => normalizeAnswer(answer) === normalizeAnswer(actual[index] || ''))
+  }
+  return normalizeAnswer(String(question.answer)) === normalizeAnswer(Array.isArray(value) ? value.join(' > ') : value)
+}
+
+function TencentVodPlayer({ fileId, mediaUrl, title }: { fileId: string; mediaUrl?: string | null; title: string }) {
+  const playerId = `tcplayer-${fileId.replace(/[^a-zA-Z0-9_-]/g, '')}`
+  const appId = process.env.NEXT_PUBLIC_TENCENT_VOD_APP_ID
+  const licenseUrl = process.env.NEXT_PUBLIC_TENCENT_VOD_LICENSE_URL
+  const psign = process.env.NEXT_PUBLIC_TENCENT_VOD_PLAYER_SIGNATURE
+  const [scriptReady, setScriptReady] = useState(false)
+
+  useEffect(() => {
+    const win = window as Window & { TCPlayer?: (id: string, options: Record<string, unknown>) => unknown }
+    if (!win.TCPlayer || !appId || !scriptReady) return
+    win.TCPlayer(playerId, {
+      fileID: fileId,
+      appID: appId,
+      psign,
+      licenseUrl,
+      language: 'en',
+      autoplay: false,
+      controls: true,
+      width: '100%',
+      height: '100%',
+    })
+  }, [appId, fileId, licenseUrl, playerId, psign, scriptReady])
+
+  if (!appId) {
+    if (mediaUrl) {
+      return <video className="h-full w-full bg-black" src={mediaUrl} title={title} controls preload="metadata" playsInline />
+    }
+
+    return (
+      <div className="flex h-full items-center justify-center bg-gradient-to-br from-blue-500/10 to-white/[0.02]">
+        <div className="max-w-md px-6 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-white/10 text-blue-200">
+            <PlayIcon />
+          </div>
+          <p className="font-black text-white">{title}</p>
+          <p className="mt-3 text-sm leading-6 text-gray-500">Tencent VOD video is uploaded, but the web player app ID still needs to be configured.</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <Script src="https://web.sdk.qcloud.com/player/tcplayer/release/v5.1.0/tcplayer.v5.1.0.min.js" strategy="afterInteractive" onLoad={() => setScriptReady(true)} />
+      <video id={playerId} className="h-full w-full" preload="metadata" playsInline />
+    </>
   )
 }
 
@@ -119,6 +234,12 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null)
   const [practiceChecked, setPracticeChecked] = useState(false)
   const [savingProgress, setSavingProgress] = useState(false)
+  const [questIndex, setQuestIndex] = useState(0)
+  const [questAnswers, setQuestAnswers] = useState<Record<string, string | string[]>>({})
+  const [questFeedback, setQuestFeedback] = useState<'correct' | 'incorrect' | null>(null)
+  const [questSubmitted, setQuestSubmitted] = useState(false)
+  const [questSaving, setQuestSaving] = useState(false)
+  const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number } | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -138,6 +259,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   useEffect(() => {
     setSelectedChoice(null)
     setPracticeChecked(false)
+    setQuestIndex(0)
+    setQuestAnswers({})
+    setQuestFeedback(null)
+    setQuestSubmitted(false)
+    setQuestResult(null)
   }, [currentLessonIndex])
 
   const fetchLessonDirectly = async (lessonId: string) => {
@@ -217,6 +343,70 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     await updateProgress(nextPercentage)
   }
 
+  const playFeedbackTone = (kind: 'correct' | 'incorrect' | 'complete') => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!AudioContextClass) return
+      const ctx = new AudioContextClass()
+      const oscillator = ctx.createOscillator()
+      const gain = ctx.createGain()
+      oscillator.type = kind === 'incorrect' ? 'triangle' : 'sine'
+      oscillator.frequency.value = kind === 'incorrect' ? 220 : kind === 'complete' ? 740 : 560
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.02)
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22)
+      oscillator.connect(gain)
+      gain.connect(ctx.destination)
+      oscillator.start()
+      oscillator.stop(ctx.currentTime + 0.24)
+    } catch {
+      // Audio feedback is optional; browsers may block it in some contexts.
+    }
+  }
+
+  const answerCurrentQuest = (question: PracticeQuestion, value: string | string[]) => {
+    setQuestAnswers((answers) => ({ ...answers, [question.id]: value }))
+    setQuestFeedback(null)
+  }
+
+  const checkCurrentQuest = (question: PracticeQuestion) => {
+    const correct = checkPracticeAnswer(question, questAnswers[question.id] || null)
+    setQuestFeedback(correct ? 'correct' : 'incorrect')
+    playFeedbackTone(correct ? 'correct' : 'incorrect')
+  }
+
+  const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
+    if (questIndex < config.questions.length - 1) {
+      setQuestIndex((index) => index + 1)
+      setQuestFeedback(null)
+      return
+    }
+
+    setQuestSaving(true)
+    try {
+      const answers = config.questions.map((question) => ({
+        questionId: question.id,
+        value: questAnswers[question.id] || '',
+      }))
+      const response = await fetch(`/api/activities/${activity.id}/attempt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers }),
+      })
+      if (response.ok) {
+        const result = await response.json()
+        setQuestResult(result)
+        setQuestSubmitted(true)
+        playFeedbackTone('complete')
+        await markPracticeComplete()
+      }
+    } catch (error) {
+      console.error('Error saving quest:', error)
+    } finally {
+      setQuestSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#070707] text-white">
@@ -238,6 +428,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
   const currentLesson = course.lessons[currentLessonIndex]
   const embedUrl = getVideoEmbedUrl(currentLesson)
+  const practiceActivity = currentLesson.activities?.find((activity) => activity.type === 'practice' && activity.config)
+  const questConfig = parsePracticeConfig(practiceActivity)
+  const currentQuestQuestion = questConfig?.questions[questIndex]
+  const questScorePreview = questConfig?.questions.reduce((sum, question) => {
+    const value = questAnswers[question.id]
+    if (!value) return sum
+    return sum + (checkPracticeAnswer(question, value) ? question.points : -question.penalty)
+  }, 0) || 0
   const practice = buildPracticePrompt(currentLesson)
   const progressPercent = Math.round(((currentLessonIndex + 1) / course.lessons.length) * 100)
   const selectedIsCorrect = selectedChoice === practice.answer
@@ -319,6 +517,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
+              ) : currentLesson.videoProvider === 'tencent-vod' && currentLesson.tencentVodFileId ? (
+                <TencentVodPlayer fileId={currentLesson.tencentVodFileId} mediaUrl={currentLesson.videoUrl} title={currentLesson.title} />
               ) : currentLesson.videoUrl ? (
                 <div className="flex h-full items-center justify-center">
                   <a
@@ -409,73 +609,220 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-[#f4f1e8] p-5 text-[#171717] shadow-2xl shadow-black/20 sm:p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-black uppercase tracking-[0.22em] text-[#777064]">Practice check</p>
-                  <h2 className="mt-2 text-2xl font-black leading-tight">Try one step before moving on</h2>
-                </div>
-                <div className="rounded-2xl bg-[#171717] px-3 py-2 text-sm font-black text-white">
-                  +{currentLesson.rewardsPoints || 20} pts
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
-                <p className="text-lg font-black leading-8">{practice.question}</p>
-
-                <div className="mt-5 space-y-3">
-                  {practiceChoices.map((choice) => {
-                    const isSelected = selectedChoice === choice
-                    const isCorrectChoice = choice === practice.answer
-                    const showCorrect = practiceChecked && isCorrectChoice
-                    const showWrong = practiceChecked && isSelected && !isCorrectChoice
-                    return (
-                      <button
-                        key={choice}
-                        onClick={() => {
-                          setSelectedChoice(choice)
-                          setPracticeChecked(false)
-                        }}
-                        className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
-                          showCorrect
-                            ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
-                            : showWrong
-                            ? 'border-red-400 bg-red-50 text-red-900'
-                            : isSelected
-                            ? 'border-blue-500 bg-blue-50 text-blue-950'
-                            : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
-                        }`}
-                      >
-                        {choice}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                {practiceChecked && (
-                  <div className={`mt-5 rounded-2xl p-4 text-sm font-bold leading-6 ${selectedIsCorrect ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950'}`}>
-                    {selectedIsCorrect ? 'Correct. ' : 'Not quite. '}
-                    {practice.explanation}
+              {questConfig && practiceActivity && currentQuestQuestion ? (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.22em] text-[#777064]">Practice quest</p>
+                      <h2 className="mt-2 text-2xl font-black leading-tight">{questConfig.title}</h2>
+                    </div>
+                    <div className="rounded-2xl bg-[#171717] px-3 py-2 text-sm font-black text-white">
+                      {Math.max(0, questScorePreview)} / {questConfig.maxScore}
+                    </div>
                   </div>
-                )}
 
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <button
-                    onClick={markPracticeComplete}
-                    disabled={!selectedChoice || savingProgress}
-                    className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    {savingProgress ? 'Saving...' : practiceChecked ? 'Saved' : 'Check answer'}
-                  </button>
-                  <button
-                    onClick={() => goToLesson(currentLessonIndex + 1)}
-                    disabled={currentLessonIndex === course.lessons.length - 1}
-                    className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Next lesson
-                    <ChevronRightIcon />
-                  </button>
-                </div>
-              </div>
+                  <div className="mt-5 grid grid-cols-10 gap-1.5">
+                    {questConfig.questions.map((question, index) => {
+                      const answered = Boolean(questAnswers[question.id])
+                      return (
+                        <div
+                          key={question.id}
+                          className={`h-2 rounded-full ${index === questIndex ? 'bg-blue-600' : answered ? 'bg-emerald-500' : 'bg-[#d8d0c2]'}`}
+                        />
+                      )
+                    })}
+                  </div>
+
+                  {!questSubmitted ? (
+                    <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
+                          <SparkIcon />
+                          Question {questIndex + 1} of {questConfig.questions.length}
+                        </div>
+                        <div className="text-sm font-black text-[#777064]">
+                          +{currentQuestQuestion.points} / -{currentQuestQuestion.penalty}
+                        </div>
+                      </div>
+
+                      <p className="mt-5 text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
+
+                      <div className="mt-5 space-y-3">
+                        {currentQuestQuestion.choices.map((choice) => {
+                          const selectedValue = questAnswers[currentQuestQuestion.id]
+                          const isSelected = Array.isArray(selectedValue) ? selectedValue.includes(choice) : selectedValue === choice
+                          const isCorrectChoice = Array.isArray(currentQuestQuestion.answer)
+                            ? currentQuestQuestion.answer.includes(choice)
+                            : currentQuestQuestion.answer === choice
+                          const showCorrect = questFeedback && isCorrectChoice
+                          const showWrong = questFeedback === 'incorrect' && isSelected && !isCorrectChoice
+                          return (
+                            <button
+                              key={choice}
+                              onClick={() => answerCurrentQuest(currentQuestQuestion, choice)}
+                              className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
+                                showCorrect
+                                  ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                                  : showWrong
+                                  ? 'border-red-400 bg-red-50 text-red-900'
+                                  : isSelected
+                                  ? 'border-blue-500 bg-blue-50 text-blue-950'
+                                  : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
+                              }`}
+                            >
+                              {choice}
+                            </button>
+                          )
+                        })}
+                      </div>
+
+                      {questFeedback && (
+                        <div className={`mt-5 rounded-2xl p-4 text-sm font-bold leading-6 ${questFeedback === 'correct' ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950'}`}>
+                          <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.'}</div>
+                          <div className="mt-2 font-semibold">{questFeedback === 'correct' ? currentQuestQuestion.explanation : currentQuestQuestion.hint}</div>
+                        </div>
+                      )}
+
+                      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button
+                          onClick={() => questFeedback ? continueQuest(questConfig, practiceActivity) : checkCurrentQuest(currentQuestQuestion)}
+                          disabled={!questAnswers[currentQuestQuestion.id] || questSaving}
+                          className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {questSaving ? 'Saving...' : questFeedback ? (questIndex === questConfig.questions.length - 1 ? 'Finish quest' : 'Continue') : 'Check answer'}
+                        </button>
+                        <button
+                          onClick={() => setQuestFeedback('incorrect')}
+                          disabled={Boolean(questFeedback)}
+                          className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Need a hint
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                          <SparkIcon />
+                        </div>
+                        <div>
+                          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#777064]">Quest complete</p>
+                          <h3 className="text-2xl font-black">{questResult?.score || 0} / {questResult?.maxScore || questConfig.maxScore}</h3>
+                        </div>
+                      </div>
+                      <div className="mt-5 grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl bg-[#f4f1e8] p-4">
+                          <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Points earned</div>
+                          <div className="mt-2 text-2xl font-black">+{questResult?.earnedPoints || 0}</div>
+                        </div>
+                        <div className="rounded-2xl bg-[#f4f1e8] p-4">
+                          <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Gems earned</div>
+                          <div className="mt-2 text-2xl font-black">+{questResult?.earnedGems || 0}</div>
+                        </div>
+                      </div>
+                      <div className="mt-5 rounded-2xl bg-blue-50 p-4 text-sm font-bold leading-6 text-blue-950">
+                        {questResult && questResult.percent >= questConfig.passingScore
+                          ? 'Strong work. You are ready to keep climbing.'
+                          : questConfig.reviewAdvice?.rewatchMessage || 'Review the video once more, then come back for a higher score.'}
+                        <div className="mt-2 text-blue-700">Focus: {questConfig.reviewAdvice?.focus || currentLesson.title}</div>
+                      </div>
+                      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                        <button
+                          onClick={() => {
+                            setQuestIndex(0)
+                            setQuestAnswers({})
+                            setQuestFeedback(null)
+                            setQuestSubmitted(false)
+                            setQuestResult(null)
+                          }}
+                          className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black"
+                        >
+                          Try again
+                        </button>
+                        <button
+                          onClick={() => goToLesson(currentLessonIndex + 1)}
+                          disabled={currentLessonIndex === course.lessons.length - 1}
+                          className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          Next lesson
+                          <ChevronRightIcon />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.22em] text-[#777064]">Practice check</p>
+                      <h2 className="mt-2 text-2xl font-black leading-tight">Try one step before moving on</h2>
+                    </div>
+                    <div className="rounded-2xl bg-[#171717] px-3 py-2 text-sm font-black text-white">
+                      +{currentLesson.rewardsPoints || 20} pts
+                    </div>
+                  </div>
+
+                  <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
+                    <p className="text-lg font-black leading-8">{practice.question}</p>
+
+                    <div className="mt-5 space-y-3">
+                      {practiceChoices.map((choice) => {
+                        const isSelected = selectedChoice === choice
+                        const isCorrectChoice = choice === practice.answer
+                        const showCorrect = practiceChecked && isCorrectChoice
+                        const showWrong = practiceChecked && isSelected && !isCorrectChoice
+                        return (
+                          <button
+                            key={choice}
+                            onClick={() => {
+                              setSelectedChoice(choice)
+                              setPracticeChecked(false)
+                            }}
+                            className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
+                              showCorrect
+                                ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
+                                : showWrong
+                                ? 'border-red-400 bg-red-50 text-red-900'
+                                : isSelected
+                                ? 'border-blue-500 bg-blue-50 text-blue-950'
+                                : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
+                            }`}
+                          >
+                            {choice}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {practiceChecked && (
+                      <div className={`mt-5 rounded-2xl p-4 text-sm font-bold leading-6 ${selectedIsCorrect ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950'}`}>
+                        {selectedIsCorrect ? 'Correct. ' : 'Not quite. '}
+                        {practice.explanation}
+                      </div>
+                    )}
+
+                    <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                      <button
+                        onClick={markPracticeComplete}
+                        disabled={!selectedChoice || savingProgress}
+                        className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {savingProgress ? 'Saving...' : practiceChecked ? 'Saved' : 'Check answer'}
+                      </button>
+                      <button
+                        onClick={() => goToLesson(currentLessonIndex + 1)}
+                        disabled={currentLessonIndex === course.lessons.length - 1}
+                        className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Next lesson
+                        <ChevronRightIcon />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>

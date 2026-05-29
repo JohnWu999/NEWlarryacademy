@@ -16,6 +16,8 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:legacy": "tsx prisma/seed-legacy.ts",
+    "db:import:ib-g5": "tsx scripts/import-ib-g5-course.ts",
+    "data:ib-g5": "node scripts/generate-ib-g5-course-data.mjs",
     "db:sync-larry-tags": "node scripts/sync-lark-base.js",
     "db:studio": "prisma studio",
     "db:ensure-qa-user": "tsx scripts/ensure-wularry-user.ts"
