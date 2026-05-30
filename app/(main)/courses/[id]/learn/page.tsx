@@ -610,14 +610,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     const correct = checkPracticeAnswer(question, value)
     setQuestFeedback(correct ? 'correct' : 'incorrect')
     setQuestEffect({ kind: correct ? 'correct' : 'incorrect', key: Date.now() })
+    setQuestAutoAdvancing(true)
     playFeedbackTone(correct ? 'correct' : 'incorrect')
     if (!correct) {
-      setQuestAutoAdvancing(true)
       void recordWrongQuestion(activity, question, value)
-      window.setTimeout(() => {
-        void continueQuest(config, activity)
-      }, 850)
     }
+    window.setTimeout(() => {
+      void continueQuest(config, activity)
+    }, correct ? 950 : 1250)
   }
 
   const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
@@ -1072,11 +1072,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
                       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                         <button
-                          onClick={() => questFeedback ? continueQuest(questConfig, practiceActivity) : checkCurrentQuest(currentQuestQuestion, questConfig, practiceActivity)}
+                          onClick={() => checkCurrentQuest(currentQuestQuestion, questConfig, practiceActivity)}
                           disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {questSaving ? 'Saving...' : questAutoAdvancing ? 'Saved. Next question...' : questFeedback ? (questIndex === questConfig.questions.length - 1 ? 'Finish quest' : 'Continue') : 'Check answer'}
+                          {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === questConfig.questions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
                         </button>
                         <button
                           onClick={() => {
