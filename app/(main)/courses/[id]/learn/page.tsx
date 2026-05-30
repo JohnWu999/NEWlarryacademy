@@ -647,6 +647,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         setQuestSubmitted(true)
         setQuestEffect({ kind: 'complete', key: Date.now() })
         playFeedbackTone('complete')
+        if (result.earnedPoints > 0 || result.earnedGems > 0) {
+          window.dispatchEvent(new CustomEvent('larry:reward-earned', {
+            detail: {
+              points: Number(result.earnedPoints || 0),
+              gems: Number(result.earnedGems || 0),
+            },
+          }))
+        }
         await markPracticeComplete()
       }
     } catch (error) {
