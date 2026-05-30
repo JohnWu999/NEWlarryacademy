@@ -158,25 +158,25 @@ export default function Navbar() {
                     <div key={rewardBurst.key} className="pointer-events-none fixed right-28 top-[68vh] z-[70] flex flex-col items-end gap-2">
                       {rewardBurst.gems > 0 && (
                         <div className="reward-fly-chip reward-fly-gem">
-                          <span className="reward-gem" />
-                          +{rewardBurst.gems}
+                          <img src="/reward-icons/gem.png" alt="" className="reward-icon reward-icon-fly" />
+                          <span>+{rewardBurst.gems}</span>
                         </div>
                       )}
                       {rewardBurst.points > 0 && (
                         <div className="reward-fly-chip reward-fly-points">
-                          <span className="reward-spark">✦</span>
-                          +{rewardBurst.points}
+                          <img src="/reward-icons/spark.png" alt="" className="reward-icon reward-icon-fly" />
+                          <span>+{rewardBurst.points}</span>
                         </div>
                       )}
                     </div>
                   )}
                   <Link href="/profile" className="reward-pill reward-pill-gem" aria-label={`${rewards.gems} gems`}>
-                    <span className="reward-gem" />
-                    <span>{rewards.gems}</span>
+                    <img src="/reward-icons/gem.png" alt="" className="reward-icon" />
+                    <span className="reward-count">{rewards.gems}</span>
                   </Link>
                   <Link href="/profile" className="reward-pill reward-pill-points" aria-label={`${rewards.points} points`}>
-                    <span className="reward-spark">✦</span>
-                    <span>{rewards.points}</span>
+                    <img src="/reward-icons/spark.png" alt="" className="reward-icon" />
+                    <span className="reward-count">{rewards.points}</span>
                   </Link>
                 </div>
                 <Link
@@ -247,12 +247,12 @@ export default function Navbar() {
                 <>
                   <div className="mx-4 grid grid-cols-2 gap-2">
                     <div className="reward-pill reward-pill-gem justify-center">
-                      <span className="reward-gem" />
-                      <span>{rewards.gems}</span>
+                      <img src="/reward-icons/gem.png" alt="" className="reward-icon" />
+                      <span className="reward-count">{rewards.gems}</span>
                     </div>
                     <div className="reward-pill reward-pill-points justify-center">
-                      <span className="reward-spark">✦</span>
-                      <span>{rewards.points}</span>
+                      <img src="/reward-icons/spark.png" alt="" className="reward-icon" />
+                      <span className="reward-count">{rewards.points}</span>
                     </div>
                   </div>
                   <Link href="/profile" className="px-4 py-3 text-gray-400" onClick={() => setMobileMenuOpen(false)}>{t('nav.profile')}</Link>
@@ -272,16 +272,17 @@ export default function Navbar() {
         .reward-pill {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
-          min-width: 4.25rem;
+          gap: 0.62rem;
+          min-width: 5.2rem;
           border-radius: 999px;
-          border: 1px solid rgba(255, 255, 255, 0.12);
-          padding: 0.43rem 0.72rem;
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          padding: 0.34rem 0.82rem 0.34rem 0.42rem;
           color: white;
-          font-size: 0.78rem;
+          font-size: 0.9rem;
           font-weight: 900;
           line-height: 1;
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 30px rgba(0,0,0,0.18);
+          letter-spacing: 0;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 12px 34px rgba(0,0,0,0.22);
           transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
         }
         .reward-pill:hover {
@@ -289,41 +290,39 @@ export default function Navbar() {
           border-color: rgba(255,255,255,0.28);
         }
         .reward-pill-gem {
-          background: linear-gradient(135deg, rgba(12, 148, 136, 0.32), rgba(59, 130, 246, 0.22));
+          background: linear-gradient(135deg, rgba(11, 42, 60, 0.88), rgba(8, 23, 45, 0.72));
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.13), 0 0 28px rgba(45, 212, 191, 0.14);
         }
         .reward-pill-points {
-          background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(236, 72, 153, 0.18));
+          background: linear-gradient(135deg, rgba(63, 35, 6, 0.9), rgba(48, 17, 12, 0.72));
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.13), 0 0 28px rgba(245, 158, 11, 0.16);
         }
-        .reward-gem {
-          width: 1rem;
-          height: 1rem;
-          display: inline-block;
-          transform: rotate(45deg);
-          border-radius: 0.22rem;
-          background: linear-gradient(135deg, #b9fff5 0%, #30e8cf 34%, #2f80ed 70%, #9b5cff 100%);
-          box-shadow: 0 0 16px rgba(45, 212, 191, 0.72), inset 0 1px 3px rgba(255,255,255,0.9);
+        .reward-icon {
+          width: 1.72rem;
+          height: 1.72rem;
+          flex: 0 0 auto;
+          object-fit: contain;
+          filter: drop-shadow(0 0 10px rgba(255,255,255,0.16));
         }
-        .reward-spark {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 1.08rem;
-          height: 1.08rem;
-          border-radius: 999px;
-          background: radial-gradient(circle at 35% 35%, #fff7ad, #f59e0b 48%, #ef4444 100%);
-          color: #1f1300;
-          font-size: 0.72rem;
-          box-shadow: 0 0 18px rgba(245, 158, 11, 0.7), inset 0 1px 2px rgba(255,255,255,0.75);
+        .reward-icon-fly {
+          width: 2rem;
+          height: 2rem;
+        }
+        .reward-count {
+          min-width: 1.65rem;
+          text-align: left;
+          font-variant-numeric: tabular-nums;
+          text-shadow: 0 1px 10px rgba(0,0,0,0.35);
         }
         .reward-fly-chip {
           display: inline-flex;
           align-items: center;
-          gap: 0.45rem;
+          gap: 0.62rem;
           border-radius: 999px;
-          padding: 0.62rem 0.86rem;
+          padding: 0.46rem 0.9rem 0.46rem 0.5rem;
           color: white;
           font-weight: 950;
-          font-size: 0.95rem;
+          font-size: 1.05rem;
           border: 1px solid rgba(255,255,255,0.24);
           box-shadow: 0 20px 50px rgba(0,0,0,0.35);
           animation: reward-fly 1.25s cubic-bezier(.16, .88, .22, 1) forwards;
