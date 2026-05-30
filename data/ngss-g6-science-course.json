@@ -2077,7 +2077,7 @@
       "title": "NGSS G6 Science 10: Energy Forms and Transformations",
       "description": "Trace energy as it changes form in systems while still being conserved.",
       "order": 10,
-      "duration": 600,
+      "duration": 344,
       "gradeLevel": "G6",
       "difficulty": "Medium",
       "videoProvider": "tencent-vod",
@@ -2305,7 +2305,7 @@
       "title": "NGSS G6 Science 11: Waves, Sound, and Vibration",
       "description": "See how vibrations create waves and how sound carries energy through matter.",
       "order": 11,
-      "duration": 600,
+      "duration": 320,
       "gradeLevel": "G6",
       "difficulty": "Medium",
       "videoProvider": "tencent-vod",
@@ -2533,7 +2533,7 @@
       "title": "NGSS G6 Science 12: Light and Vision",
       "description": "Explore how light travels, reflects, enters the eye, and helps us see.",
       "order": 12,
-      "duration": 600,
+      "duration": 303,
       "gradeLevel": "G6",
       "difficulty": "Medium",
       "videoProvider": "tencent-vod",
@@ -2741,6 +2741,1830 @@
             "id": "ngss-g6-l12-q10",
             "type": "open-response",
             "prompt": "In 2-4 sentences, explain one idea from Light and Vision using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-13-earth-systems",
+      "episode": 13,
+      "title": "NGSS G6 Science 13: Earth Systems",
+      "description": "Connect the atmosphere, hydrosphere, geosphere, and biosphere as interacting Earth systems.",
+      "order": 13,
+      "duration": 325,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson13_Earth_Systems_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 13 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Earth Systems video and focus on how evidence supports explanations.",
+          "focus": "Earth Systems"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l13-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Earth Systems\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q2",
+            "type": "fill-blank",
+            "prompt": "In Earth Systems, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q5",
+            "type": "order-steps",
+            "prompt": "Put the Earth Systems investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Earth Systems idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Earth Systems point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Earth Systems notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Earth Systems, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l13-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Earth Systems using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-14-water-cycle",
+      "episode": 14,
+      "title": "NGSS G6 Science 14: Water Cycle",
+      "description": "Follow water as it evaporates, condenses, precipitates, and moves through Earth systems.",
+      "order": 14,
+      "duration": 304,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson14_Water_Cycle_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 14 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Water Cycle video and focus on how evidence supports explanations.",
+          "focus": "Water Cycle"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l14-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Water Cycle\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q2",
+            "type": "fill-blank",
+            "prompt": "In Water Cycle, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q5",
+            "type": "order-steps",
+            "prompt": "Put the Water Cycle investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Water Cycle idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Water Cycle point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Water Cycle notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Water Cycle, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l14-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Water Cycle using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-15-weather-and-climate",
+      "episode": 15,
+      "title": "NGSS G6 Science 15: Weather and Climate",
+      "description": "Compare short-term weather with long-term climate patterns using observations and data.",
+      "order": 15,
+      "duration": 292,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson15_Weather_And_Climate_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 15 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Weather and Climate video and focus on how evidence supports explanations.",
+          "focus": "Weather and Climate"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l15-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Weather and Climate\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q2",
+            "type": "fill-blank",
+            "prompt": "In Weather and Climate, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q5",
+            "type": "order-steps",
+            "prompt": "Put the Weather and Climate investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Weather and Climate idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Weather and Climate point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Weather and Climate notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Weather and Climate, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l15-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Weather and Climate using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-16-rock-cycle-and-surface-change",
+      "episode": 16,
+      "title": "NGSS G6 Science 16: Rock Cycle and Surface Change",
+      "description": "Model how rocks form, break down, move, and reshape Earth over time.",
+      "order": 16,
+      "duration": 327,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson16_Rock_Cycle_And_Surface_Change_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 16 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Rock Cycle and Surface Change video and focus on how evidence supports explanations.",
+          "focus": "Rock Cycle and Surface Change"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l16-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Rock Cycle and Surface Change\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q2",
+            "type": "fill-blank",
+            "prompt": "In Rock Cycle and Surface Change, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q5",
+            "type": "order-steps",
+            "prompt": "Put the Rock Cycle and Surface Change investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Rock Cycle and Surface Change idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Rock Cycle and Surface Change point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Rock Cycle and Surface Change notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Rock Cycle and Surface Change, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l16-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Rock Cycle and Surface Change using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-17-energy-flow-in-ecosystems",
+      "episode": 17,
+      "title": "NGSS G6 Science 17: Energy Flow in Ecosystems",
+      "description": "Track how sunlight becomes food energy and moves through producers, consumers, and decomposers.",
+      "order": 17,
+      "duration": 331,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson17_Energy_Flow_In_Ecosystems_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 17 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Energy Flow in Ecosystems video and focus on how evidence supports explanations.",
+          "focus": "Energy Flow in Ecosystems"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l17-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Energy Flow in Ecosystems\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q2",
+            "type": "fill-blank",
+            "prompt": "In Energy Flow in Ecosystems, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q5",
+            "type": "order-steps",
+            "prompt": "Put the Energy Flow in Ecosystems investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Energy Flow in Ecosystems idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Energy Flow in Ecosystems point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Energy Flow in Ecosystems notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Energy Flow in Ecosystems, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l17-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Energy Flow in Ecosystems using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-18-populations-resources-and-ecological-balance",
+      "episode": 18,
+      "title": "NGSS G6 Science 18: Populations, Resources, and Ecological Balance",
+      "description": "Investigate how resources, competition, and environmental change affect populations in ecosystems.",
+      "order": 18,
+      "duration": 317,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson18_Populations_Resources_And_Ecological_Balance_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 18 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Populations Resources and Ecological Balance video and focus on how evidence supports explanations.",
+          "focus": "Populations Resources and Ecological Balance"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l18-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Populations Resources and Ecological Balance\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q2",
+            "type": "fill-blank",
+            "prompt": "In Populations Resources and Ecological Balance, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q5",
+            "type": "order-steps",
+            "prompt": "Put the Populations Resources and Ecological Balance investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Populations Resources and Ecological Balance idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Populations Resources and Ecological Balance point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Populations Resources and Ecological Balance notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Populations Resources and Ecological Balance, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l18-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Populations Resources and Ecological Balance using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-19-human-impact-and-solutions",
+      "episode": 19,
+      "title": "NGSS G6 Science 19: Human Impact and Solutions",
+      "description": "Use evidence to understand human impacts and design solutions that protect Earth systems.",
+      "order": 19,
+      "duration": 305,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson19_Human_Impact_And_Solutions_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 19 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Human Impact and Solutions video and focus on how evidence supports explanations.",
+          "focus": "Human Impact and Solutions"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l19-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Human Impact and Solutions\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q2",
+            "type": "fill-blank",
+            "prompt": "In Human Impact and Solutions, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q5",
+            "type": "order-steps",
+            "prompt": "Put the Human Impact and Solutions investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Human Impact and Solutions idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Human Impact and Solutions point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Human Impact and Solutions notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Human Impact and Solutions, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l19-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Human Impact and Solutions using evidence or a model. Then write one new question you would test next.",
+            "choices": [],
+            "points": 16,
+            "penalty": 0,
+            "hint": "Use this pattern: I noticed... This suggests... Next I would test...",
+            "explanation": "Reflection saved. Strong scientists explain what they noticed and choose the next question.",
+            "inputPlaceholder": "I noticed... This suggests... Next I would test...",
+            "encouragement": {
+              "correct": "Thoughtful scientist reflection.",
+              "incorrect": "Add a little more detail: evidence, model, and next question."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-20-engineering-design-challenge",
+      "episode": 20,
+      "title": "NGSS G6 Science 20: Engineering Design Challenge",
+      "description": "Apply the engineering design process to define a problem, test ideas, and improve a solution.",
+      "order": 20,
+      "duration": 322,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson20_Engineering_Design_Challenge_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 20 Practice Quest",
+        "maxScore": 100,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Engineering Design Challenge video and focus on how evidence supports explanations.",
+          "focus": "Engineering Design Challenge"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l20-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Engineering Design Challenge\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q2",
+            "type": "fill-blank",
+            "prompt": "In Engineering Design Challenge, a scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q5",
+            "type": "order-steps",
+            "prompt": "Put the Engineering Design Challenge investigation moves in the best order.",
+            "choices": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "answer": [
+              "Notice the phenomenon",
+              "Ask a testable question",
+              "Collect useful data",
+              "Use evidence to explain the pattern"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Start with what you observe, then test, measure, and explain.",
+            "explanation": "Scientific thinking moves from observation to question to data to evidence-based explanation.",
+            "encouragement": {
+              "correct": "Excellent science ladder.",
+              "incorrect": "Build the ladder from noticing to explaining."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q6",
+            "type": "multiple-choice",
+            "prompt": "Which answer best shows that you can use the Engineering Design Challenge idea in a new situation?",
+            "choices": [
+              "Explain a new example with the same model",
+              "Repeat the title only",
+              "Pick the longest sentence",
+              "Ignore the result if it is surprising"
+            ],
+            "answer": "Explain a new example with the same model",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q7",
+            "type": "fill-blank",
+            "prompt": "When several observations in Engineering Design Challenge point the same way, scientists call that repeated result a ____.",
+            "choices": [],
+            "answer": "pattern",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Look for the word that means a repeated trend in data.",
+            "explanation": "Patterns help scientists make predictions and build explanations.",
+            "encouragement": {
+              "correct": "Pattern spotted.",
+              "incorrect": "Think about repeated trends in the data."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q8",
+            "type": "multiple-select",
+            "prompt": "Which actions would make your Engineering Design Challenge notebook more useful?",
+            "choices": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data",
+              "Erase measurements that do not fit"
+            ],
+            "answer": [
+              "Label units",
+              "Record the setup",
+              "Circle unexpected data"
+            ],
+            "points": 10,
+            "penalty": 3,
+            "hint": "Good scientists keep useful details, especially surprises.",
+            "explanation": "Clear units, setup notes, and unexpected data help you review and improve an investigation.",
+            "encouragement": {
+              "correct": "Strong lab notebook habits.",
+              "incorrect": "Keep the choices that make the data easier to trust."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q9",
+            "type": "multiple-choice",
+            "prompt": "After finishing Engineering Design Challenge, what is the strongest next investigation?",
+            "choices": [
+              "Test one new variable and compare the data",
+              "Change everything and hope it works",
+              "Stop after one example",
+              "Choose the answer before observing"
+            ],
+            "answer": "Test one new variable and compare the data",
+            "points": 12,
+            "penalty": 4,
+            "hint": "A strong extension changes one thing and compares evidence.",
+            "explanation": "Testing one new variable lets you compare results and build a stronger explanation.",
+            "encouragement": {
+              "correct": "That is a real next-lab move.",
+              "incorrect": "Choose the move that creates better evidence."
+            }
+          },
+          {
+            "id": "ngss-g6-l20-q10",
+            "type": "open-response",
+            "prompt": "In 2-4 sentences, explain one idea from Engineering Design Challenge using evidence or a model. Then write one new question you would test next.",
             "choices": [],
             "points": 16,
             "penalty": 0,

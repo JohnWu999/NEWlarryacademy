@@ -13,9 +13,17 @@ const lessons = [
   ['Phase Change and Energy Transfer', 'Explain melting, freezing, evaporation, and condensation with energy flow.', 378],
   ['Forces and Motion Intro', 'Start modeling pushes, pulls, speed, direction, and balanced forces.', 383],
   ['Gravity, Friction, and Balance', 'Investigate how gravity and friction affect motion, stability, and everyday systems.', 372],
-  ['Energy Forms and Transformations', 'Trace energy as it changes form in systems while still being conserved.', 600],
-  ['Waves, Sound, and Vibration', 'See how vibrations create waves and how sound carries energy through matter.', 600],
-  ['Light and Vision', 'Explore how light travels, reflects, enters the eye, and helps us see.', 600],
+  ['Energy Forms and Transformations', 'Trace energy as it changes form in systems while still being conserved.', 344],
+  ['Waves, Sound, and Vibration', 'See how vibrations create waves and how sound carries energy through matter.', 320],
+  ['Light and Vision', 'Explore how light travels, reflects, enters the eye, and helps us see.', 303],
+  ['Earth Systems', 'Connect the atmosphere, hydrosphere, geosphere, and biosphere as interacting Earth systems.', 325],
+  ['Water Cycle', 'Follow water as it evaporates, condenses, precipitates, and moves through Earth systems.', 304],
+  ['Weather and Climate', 'Compare short-term weather with long-term climate patterns using observations and data.', 292],
+  ['Rock Cycle and Surface Change', 'Model how rocks form, break down, move, and reshape Earth over time.', 327],
+  ['Energy Flow in Ecosystems', 'Track how sunlight becomes food energy and moves through producers, consumers, and decomposers.', 331],
+  ['Populations, Resources, and Ecological Balance', 'Investigate how resources, competition, and environmental change affect populations in ecosystems.', 317],
+  ['Human Impact and Solutions', 'Use evidence to understand human impacts and design solutions that protect Earth systems.', 305],
+  ['Engineering Design Challenge', 'Apply the engineering design process to define a problem, test ideas, and improve a solution.', 322],
 ]
 
 function slugify(title) {
