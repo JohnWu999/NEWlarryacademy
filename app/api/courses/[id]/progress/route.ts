@@ -5,9 +5,42 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
 const progressSchema = z.object({
-  lastWatchedPosition: z.number().min(0),
-  progressPercentage: z.number().min(0).max(100),
+  lastWatchedPosition: z.number().min(0).optional(),
+  progressPercentage: z.number().min(0).max(100).optional(),
+  lessonId: z.string().optional(),
+  lessonProgressPercentage: z.number().min(0).max(100).optional(),
+  completed: z.boolean().optional(),
 })
+
+async function recalculateCourseProgress(userId: string, courseId: string, lastWatchedPosition = 0) {
+  const [lessonCount, completedCount] = await Promise.all([
+    prisma.lesson.count({ where: { courseId } }),
+    prisma.userLessonProgress.count({
+      where: {
+        userId,
+        completedAt: { not: null },
+        lesson: { courseId },
+      },
+    }),
+  ])
+  const progressPercentage = lessonCount ? Math.round((completedCount / lessonCount) * 100) : 0
+
+  return prisma.userCourseProgress.upsert({
+    where: { userId_courseId: { userId, courseId } },
+    update: {
+      lastWatchedPosition,
+      progressPercentage,
+      completedAt: progressPercentage === 100 ? new Date() : null,
+    },
+    create: {
+      userId,
+      courseId,
+      lastWatchedPosition,
+      progressPercentage,
+      completedAt: progressPercentage === 100 ? new Date() : null,
+    },
+  })
+}
 
 export async function POST(
   request: NextRequest,
@@ -37,21 +70,47 @@ export async function POST(
       if (!purchased) return NextResponse.json({ error: '您还未购买此课程' }, { status: 403 })
     }
 
-    const progress = await prisma.userCourseProgress.upsert({
-      where: { userId_courseId: { userId: user.id, courseId } },
-      update: {
-        lastWatchedPosition: validatedData.lastWatchedPosition,
-        progressPercentage: validatedData.progressPercentage,
-        completedAt: validatedData.progressPercentage === 100 ? new Date() : null,
-      },
-      create: {
-        userId: user.id,
-        courseId,
-        lastWatchedPosition: validatedData.lastWatchedPosition,
-        progressPercentage: validatedData.progressPercentage,
-        completedAt: validatedData.progressPercentage === 100 ? new Date() : null,
-      },
-    })
+    let lastWatchedPosition = validatedData.lastWatchedPosition || 0
+
+    if (validatedData.lessonId) {
+      const lesson = await prisma.lesson.findFirst({
+        where: { id: validatedData.lessonId, courseId },
+        select: { id: true, order: true, duration: true },
+      })
+      if (!lesson) return NextResponse.json({ error: '课节不存在' }, { status: 404 })
+
+      lastWatchedPosition = lesson.order
+      const existingLessonProgress = await prisma.userLessonProgress.findUnique({
+        where: { userId_lessonId: { userId: user.id, lessonId: lesson.id } },
+      })
+      const nextLessonProgress = Math.max(
+        Number(existingLessonProgress?.progressPercentage || 0),
+        Number(validatedData.lessonProgressPercentage || 0)
+      )
+      const shouldComplete = Boolean(validatedData.completed)
+      const storedLessonProgress = shouldComplete ? 100 : nextLessonProgress
+      const completedAt = existingLessonProgress?.completedAt || (shouldComplete ? new Date() : null)
+
+      await prisma.userLessonProgress.upsert({
+        where: { userId_lessonId: { userId: user.id, lessonId: lesson.id } },
+        update: {
+          progressPercentage: storedLessonProgress,
+          lastWatchedPosition: Math.round((storedLessonProgress / 100) * Number(lesson.duration || 0)),
+          ...(completedAt ? { completedAt } : {}),
+        },
+        create: {
+          userId: user.id,
+          lessonId: lesson.id,
+          progressPercentage: storedLessonProgress,
+          lastWatchedPosition: Math.round((storedLessonProgress / 100) * Number(lesson.duration || 0)),
+          completedAt,
+        },
+      })
+    } else if (typeof validatedData.progressPercentage === 'number') {
+      lastWatchedPosition = validatedData.lastWatchedPosition || 0
+    }
+
+    const progress = await recalculateCourseProgress(user.id, courseId, lastWatchedPosition)
 
     return NextResponse.json(progress)
   } catch (error) {

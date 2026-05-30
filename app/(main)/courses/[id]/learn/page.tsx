@@ -71,6 +71,23 @@ interface Lesson {
   gradeLevel?: string | null
   difficulty?: string | null
   activities?: LessonActivity[]
+  userProgress?: {
+    progressPercentage: number
+    lastWatchedPosition: number
+    completedAt: string | null
+  } | null
+  latestPracticeAttempt?: PracticeAttemptSummary | null
+  bestPracticeAttempt?: PracticeAttemptSummary | null
+}
+
+interface PracticeAttemptSummary {
+  score: number | null
+  maxScore: number | null
+  completed: boolean
+  earnedPoints: number
+  earnedGems: number
+  data?: string | null
+  createdAt?: string
 }
 
 interface Course {
@@ -97,6 +114,42 @@ const practiceChoices = [
   'Try random numbers until the answer looks close.',
   'Skip the setup and calculate from the largest number first.',
 ]
+
+const resumeCookiePrefix = 'larry_last_lesson'
+
+function getResumeCookieName(courseId: string) {
+  return `${resumeCookiePrefix}_${courseId.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+}
+
+function setCookieValue(name: string, value: string) {
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; SameSite=Lax`
+}
+
+function getCookieValue(name: string) {
+  return document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split('=')
+    .slice(1)
+    .join('=')
+}
+
+function getDraftKey(courseId: string, activityId: string) {
+  return `larry_practice_draft_${courseId}_${activityId}`
+}
+
+function parseAttemptData(attempt?: PracticeAttemptSummary | null) {
+  if (!attempt?.data) return null
+  try {
+    return JSON.parse(attempt.data) as {
+      answers?: { questionId: string; value: string | string[] }[]
+      results?: { correct: boolean }[]
+      percent?: number
+    }
+  } catch {
+    return null
+  }
+}
 
 function ChevronLeftIcon() {
   return (
@@ -463,17 +516,60 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const activePracticeId = course?.lessons[currentLessonIndex]?.activities?.find((activity) => activity.type === 'practice' && activity.config)?.id
 
   useEffect(() => {
+    const currentLesson = course?.lessons[currentLessonIndex]
+    const attemptData = parseAttemptData(currentLesson?.latestPracticeAttempt)
+    const draftKey = course?.id && activePracticeId ? getDraftKey(course.id, activePracticeId) : null
+    let draft: { questIndex?: number; answers?: Record<string, string | string[]> } | null = null
+    if (draftKey) {
+      try {
+        const rawDraft = window.localStorage.getItem(draftKey)
+        draft = rawDraft ? JSON.parse(rawDraft) : null
+      } catch {
+        draft = null
+      }
+    }
+
     setSelectedChoice(null)
     setPracticeChecked(false)
-    setQuestIndex(0)
-    setQuestAnswers({})
+    setQuestIndex(Math.max(0, Number(draft?.questIndex || 0)))
+    setQuestAnswers(
+      currentLesson?.latestPracticeAttempt?.completed && attemptData?.answers
+        ? Object.fromEntries(attemptData.answers.map((answer) => [answer.questionId, answer.value]))
+        : draft?.answers || {}
+    )
     setQuestFeedback(null)
     setQuestHintVisible(false)
-    setQuestSubmitted(false)
-    setQuestResult(null)
+    setQuestSubmitted(Boolean(currentLesson?.latestPracticeAttempt?.completed))
+    setQuestResult(currentLesson?.latestPracticeAttempt?.completed ? {
+      score: Number(currentLesson.latestPracticeAttempt.score || 0),
+      maxScore: Number(currentLesson.latestPracticeAttempt.maxScore || 0),
+      percent: Number(attemptData?.percent || 0),
+      earnedPoints: 0,
+      earnedGems: 0,
+      wrongCount: attemptData?.results?.filter((result) => !result.correct).length || 0,
+    } : null)
     setQuestEffect(null)
     setQuestAutoAdvancing(false)
-  }, [course?.id, activeLessonId, activePracticeId])
+  }, [course, currentLessonIndex, activeLessonId, activePracticeId])
+
+  useEffect(() => {
+    const lesson = course?.lessons[currentLessonIndex]
+    if (!course || !lesson) return
+    setCookieValue(getResumeCookieName(course.id), lesson.id)
+    if (!lesson.userProgress?.completedAt) {
+      void saveLessonProgress(lesson, false, Math.max(10, Number(lesson.userProgress?.progressPercentage || 0)))
+    }
+  }, [course?.id, activeLessonId])
+
+  useEffect(() => {
+    if (!course || !activePracticeId || questSubmitted) return
+    if (!Object.keys(questAnswers).length && questIndex === 0) return
+    window.localStorage.setItem(getDraftKey(course.id, activePracticeId), JSON.stringify({
+      questIndex,
+      answers: questAnswers,
+      updatedAt: new Date().toISOString(),
+    }))
+  }, [course?.id, activePracticeId, questAnswers, questIndex, questSubmitted])
 
   const fetchLessonDirectly = async (lessonId: string) => {
     try {
@@ -488,7 +584,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         })
 
         const index = courseData.lessons.findIndex((lesson: Lesson) => lesson.id === lessonId)
-        if (index !== -1) setCurrentLessonIndex(index)
+        if (index !== -1) {
+          setCurrentLessonIndex(index)
+          setCookieValue(getResumeCookieName(courseData.id), lessonId)
+        }
       } else {
         router.push('/subjects/math')
       }
@@ -509,6 +608,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           return
         }
         setCourse(data)
+        const resumeLessonId = getCookieValue(getResumeCookieName(data.id))
+        const resumeIndex = data.lessons.findIndex((lesson: Lesson) => lesson.id === resumeLessonId)
+        const firstIncompleteIndex = data.lessons.findIndex((lesson: Lesson) => !lesson.userProgress?.completedAt && !lesson.latestPracticeAttempt?.completed)
+        if (resumeIndex >= 0) {
+          setCurrentLessonIndex(resumeIndex)
+        } else if (firstIncompleteIndex >= 0) {
+          setCurrentLessonIndex(firstIncompleteIndex)
+        }
       } else {
         router.push('/courses')
       }
@@ -519,18 +626,32 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     }
   }
 
-  const updateProgress = async (percentage: number) => {
+  const saveLessonProgress = async (lesson: Lesson, completed: boolean, lessonProgressPercentage = completed ? 100 : 10) => {
     if (!course) return
     setSavingProgress(true)
     try {
-      await fetch(`/api/courses/${course.id}/progress`, {
+      const response = await fetch(`/api/courses/${course.id}/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          lastWatchedPosition: Math.round((percentage / 100) * (course.lessons.length || 1) * 600),
-          progressPercentage: percentage,
+          lessonId: lesson.id,
+          lessonProgressPercentage,
+          completed,
         }),
       })
+      if (response.ok && completed) {
+        setCourse((current) => current ? {
+          ...current,
+          lessons: current.lessons.map((item) => item.id === lesson.id ? {
+            ...item,
+            userProgress: {
+              progressPercentage: 100,
+              lastWatchedPosition: Number(item.duration || 0),
+              completedAt: new Date().toISOString(),
+            },
+          } : item),
+        } : current)
+      }
     } catch (error) {
       console.error('Error updating progress:', error)
     } finally {
@@ -539,17 +660,21 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   }
 
   const goToLesson = (index: number) => {
-    setCurrentLessonIndex(Math.max(0, Math.min(index, (course?.lessons.length || 1) - 1)))
+    const nextIndex = Math.max(0, Math.min(index, (course?.lessons.length || 1) - 1))
+    const lesson = course?.lessons[nextIndex]
+    if (course && lesson) setCookieValue(getResumeCookieName(course.id), lesson.id)
+    setCurrentLessonIndex(nextIndex)
   }
 
-  const markPracticeComplete = async () => {
-    if (!course) return
+  const markPracticeComplete = async (force = false) => {
+    if (!course || (!force && !selectedIsCorrect)) return
     setPracticeChecked(true)
-    const nextPercentage = Math.max(
-      course.progress?.progressPercentage || 0,
-      Math.round(((currentLessonIndex + 1) / course.lessons.length) * 100)
-    )
-    await updateProgress(nextPercentage)
+    await saveLessonProgress(course.lessons[currentLessonIndex], true)
+  }
+
+  const checkFallbackPractice = async () => {
+    setPracticeChecked(true)
+    if (selectedIsCorrect) await markPracticeComplete()
   }
 
   const playFeedbackTone = (kind: 'correct' | 'incorrect' | 'complete') => {
@@ -655,7 +780,50 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             },
           }))
         }
-        await markPracticeComplete()
+        if (course) {
+          const completedLesson = course.lessons[currentLessonIndex]
+          setCourse((current) => current ? {
+            ...current,
+            lessons: current.lessons.map((lesson) => lesson.id === completedLesson.id ? {
+              ...lesson,
+              userProgress: {
+                progressPercentage: 100,
+                lastWatchedPosition: Number(lesson.duration || 0),
+                completedAt: new Date().toISOString(),
+              },
+              latestPracticeAttempt: {
+                score: Number(result.score || 0),
+                maxScore: Number(result.maxScore || 0),
+                completed: true,
+                earnedPoints: Number(result.earnedPoints || 0),
+                earnedGems: Number(result.earnedGems || 0),
+                data: JSON.stringify({
+                  answers,
+                  results: result.results || [],
+                  percent: result.percent,
+                  maxCorrectStreak: result.maxCorrectStreak,
+                }),
+              },
+              bestPracticeAttempt: lesson.bestPracticeAttempt && Number(lesson.bestPracticeAttempt.score || 0) > Number(result.score || 0)
+                ? lesson.bestPracticeAttempt
+                : {
+                    score: Number(result.score || 0),
+                    maxScore: Number(result.maxScore || 0),
+                    completed: true,
+                    earnedPoints: Number(result.earnedPoints || 0),
+                    earnedGems: Number(result.earnedGems || 0),
+                    data: JSON.stringify({
+                      answers,
+                      results: result.results || [],
+                      percent: result.percent,
+                      maxCorrectStreak: result.maxCorrectStreak,
+                    }),
+                  },
+            } : lesson),
+          } : current)
+          if (activePracticeId) window.localStorage.removeItem(getDraftKey(course.id, activePracticeId))
+        }
+        await markPracticeComplete(true)
       }
     } catch (error) {
       console.error('Error saving quest:', error)
@@ -695,7 +863,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     return sum + (checkPracticeAnswer(question, value) ? question.points : -question.penalty)
   }, 0) || 0
   const practice = buildPracticePrompt(currentLesson)
-  const progressPercent = Math.round(((currentLessonIndex + 1) / course.lessons.length) * 100)
+  const completedLessonIds = new Set(course.lessons.filter((lesson) => lesson.userProgress?.completedAt || lesson.latestPracticeAttempt?.completed).map((lesson) => lesson.id))
+  const completedLessonCount = completedLessonIds.size
+  const progressPercent = Math.round((completedLessonCount / course.lessons.length) * 100)
+  const currentLessonComplete = completedLessonIds.has(currentLesson.id)
   const selectedIsCorrect = selectedChoice === practice.answer
 
   const learningSteps = [
@@ -707,7 +878,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     {
       title: 'Practice',
       text: currentLesson.hasPractice ? 'Complete the quick check below to lock in the method.' : 'A quick check is ready here while the full worksheet is being prepared.',
-      active: practiceChecked,
+      active: practiceChecked || currentLessonComplete,
     },
     {
       title: 'Apply',
@@ -736,7 +907,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           <div className="flex items-center gap-3">
             <div className="hidden w-48 sm:block">
               <div className="mb-1 flex justify-between text-[11px] font-bold text-gray-500">
-                <span>Course progress</span>
+                <span>Completed lessons</span>
                 <span>{progressPercent}%</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/10">
@@ -1218,7 +1389,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                       <button
-                        onClick={markPracticeComplete}
+                        onClick={checkFallbackPractice}
                         disabled={!selectedChoice || savingProgress}
                         className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                       >
@@ -1249,7 +1420,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   <p className="mt-1 text-sm text-gray-500">{course.lessons.length} lessons</p>
                 </div>
                 <div className="rounded-2xl bg-white/[0.05] px-3 py-2 text-xs font-black text-gray-400">
-                  {progressPercent}%
+                  {completedLessonCount}/{course.lessons.length}
                 </div>
               </div>
               <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
@@ -1260,7 +1431,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             <div className="flex-1 space-y-2 overflow-y-auto p-3 sm:p-4">
               {course.lessons.map((lesson, index) => {
                 const active = currentLessonIndex === index
-                const completed = index < currentLessonIndex
+                const completed = completedLessonIds.has(lesson.id)
+                const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 return (
                   <button
                     key={lesson.id}
@@ -1283,6 +1455,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <span>{formatDuration(lesson.duration)}</span>
                           {lesson.gradeLevel && <span>{lesson.gradeLevel}</span>}
                           {lesson.hasPractice && <span>Practice</span>}
+                          {lesson.latestPracticeAttempt?.completed && (
+                            <span className="text-emerald-300">
+                              Best {lesson.bestPracticeAttempt?.score || lesson.latestPracticeAttempt.score || 0}/{lesson.bestPracticeAttempt?.maxScore || lesson.latestPracticeAttempt.maxScore || 100}
+                            </span>
+                          )}
+                          {latestAttemptData?.percent !== undefined && !lesson.latestPracticeAttempt?.completed && (
+                            <span>{latestAttemptData.percent}% saved</span>
+                          )}
                         </div>
                       </div>
                     </div>

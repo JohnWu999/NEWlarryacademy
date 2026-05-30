@@ -37,20 +37,55 @@ export async function GET(
       ? { hasAccess: true, reason: 'public' as const }
       : await resolveCourseAccess(lesson.course, session?.user?.email)
     let progress = null
+    let lessonProgressById = new Map<string, unknown>()
+    let latestAttemptByActivityId = new Map<string, unknown>()
+    let bestAttemptByActivityId = new Map<string, unknown>()
 
     if (session?.user?.email) {
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: {
-          purchasedCourses: { where: { courseId: lesson.courseId } },
-          courseProgress: { where: { courseId: lesson.courseId } },
-        },
-      })
-      if (user) progress = user.courseProgress[0] || null
+      const user = await prisma.user.findUnique({ where: { email: session.user.email } })
+      if (user) {
+        const activityIds = lesson.course.lessons.flatMap((courseLesson) => courseLesson.activities.filter((activity) => activity.type === 'practice').map((activity) => activity.id))
+        const [courseProgress, lessonProgress, attempts] = await Promise.all([
+          prisma.userCourseProgress.findUnique({ where: { userId_courseId: { userId: user.id, courseId: lesson.courseId } } }),
+          prisma.userLessonProgress.findMany({ where: { userId: user.id, lessonId: { in: lesson.course.lessons.map((courseLesson) => courseLesson.id) } } }),
+          activityIds.length
+            ? prisma.userActivityAttempt.findMany({
+                where: { userId: user.id, activityId: { in: activityIds } },
+                orderBy: { createdAt: 'desc' },
+              })
+            : Promise.resolve([]),
+        ])
+        progress = courseProgress
+        lessonProgressById = new Map(lessonProgress.map((item) => [item.lessonId, item]))
+        for (const attempt of attempts) {
+          if (!latestAttemptByActivityId.has(attempt.activityId)) {
+            latestAttemptByActivityId.set(attempt.activityId, attempt)
+          }
+          const currentBest = bestAttemptByActivityId.get(attempt.activityId) as { score?: number } | undefined
+          if (!currentBest || Number(attempt.score || 0) > Number(currentBest.score || 0)) {
+            bestAttemptByActivityId.set(attempt.activityId, attempt)
+          }
+        }
+      }
     }
+
+    const lessons = lesson.course.lessons.map((courseLesson) => {
+      const practiceActivity = courseLesson.activities.find((activity) => activity.type === 'practice')
+      return {
+        ...courseLesson,
+        userProgress: lessonProgressById.get(courseLesson.id) || null,
+        latestPracticeAttempt: practiceActivity ? latestAttemptByActivityId.get(practiceActivity.id) || null : null,
+        bestPracticeAttempt: practiceActivity ? bestAttemptByActivityId.get(practiceActivity.id) || null : null,
+      }
+    })
 
     return NextResponse.json({
       ...lesson,
+      course: {
+        ...lesson.course,
+        lessons,
+      },
+      userProgress: lessonProgressById.get(lesson.id) || null,
       hasAccess: access.hasAccess,
       accessReason: access.reason,
       progress,

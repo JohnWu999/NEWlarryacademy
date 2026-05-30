@@ -195,6 +195,49 @@ export async function POST(
       )
     }
 
+    if (completed && activity.lessonId) {
+      await prisma.userLessonProgress.upsert({
+        where: { userId_lessonId: { userId: user.id, lessonId: activity.lessonId } },
+        update: {
+          progressPercentage: 100,
+          completedAt: new Date(),
+        },
+        create: {
+          userId: user.id,
+          lessonId: activity.lessonId,
+          progressPercentage: 100,
+          completedAt: new Date(),
+        },
+      })
+
+      const [lessonCount, completedCount] = await Promise.all([
+        prisma.lesson.count({ where: { courseId: activity.courseId } }),
+        prisma.userLessonProgress.count({
+          where: {
+            userId: user.id,
+            completedAt: { not: null },
+            lesson: { courseId: activity.courseId },
+          },
+        }),
+      ])
+      const progressPercentage = lessonCount ? Math.round((completedCount / lessonCount) * 100) : 0
+      await prisma.userCourseProgress.upsert({
+        where: { userId_courseId: { userId: user.id, courseId: activity.courseId } },
+        update: {
+          progressPercentage,
+          lastWatchedPosition: completedCount,
+          completedAt: progressPercentage === 100 ? new Date() : null,
+        },
+        create: {
+          userId: user.id,
+          courseId: activity.courseId,
+          progressPercentage,
+          lastWatchedPosition: completedCount,
+          completedAt: progressPercentage === 100 ? new Date() : null,
+        },
+      })
+    }
+
     return NextResponse.json({
       attemptId: attempt.id,
       score,
