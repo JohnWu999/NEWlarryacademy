@@ -1,0 +1,1571 @@
+{
+  "id": "course-ngss-science",
+  "title": "NGSS Science",
+  "description": "A future-facing NGSS Grade 6 science course built around phenomena, virtual labs, evidence-based explanations, interactive practice, and student curiosity.",
+  "category": "ngss-science",
+  "courseTrack": "ngss-science",
+  "status": "active",
+  "accessLevel": "public",
+  "isFree": true,
+  "price": 0,
+  "difficultyLevel": "intermediate",
+  "gradeLevel": "G6",
+  "difficulty": "Medium",
+  "videoProvider": "tencent-vod",
+  "expectedFeatures": [
+    "Tencent VOD science videos",
+    "Interactive practice",
+    "Virtual lab thinking prompts",
+    "Points and gems rewards"
+  ],
+  "lessons": [
+    {
+      "id": "lesson-ngss-g6-01-ask-like-a-scientist",
+      "episode": 1,
+      "title": "NGSS G6 Science 1: Ask Like a Scientist",
+      "description": "Learn how scientists turn curiosity into testable questions and careful observations.",
+      "order": 1,
+      "duration": 509,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": true,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson01_Ask_Like_A_Scientist_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 1 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Ask Like a Scientist video and focus on how evidence supports explanations.",
+          "focus": "Ask Like a Scientist"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l01-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Ask Like a Scientist\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l01-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l01-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l01-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l01-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Ask Like a Scientist\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-02-design-a-fair-test",
+      "episode": 2,
+      "title": "NGSS G6 Science 2: Design a Fair Test",
+      "description": "Build experiments with one independent variable, one dependent variable, and controlled conditions.",
+      "order": 2,
+      "duration": 390,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": true,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson02_Design_A_Fair_Test_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 2 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Design a Fair Test video and focus on how evidence supports explanations.",
+          "focus": "Design a Fair Test"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l02-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Design a Fair Test\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l02-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l02-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l02-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l02-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Design a Fair Test\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-03-from-data-to-evidence",
+      "episode": 3,
+      "title": "NGSS G6 Science 3: From Data to Evidence",
+      "description": "Turn measurements and patterns into evidence that supports a scientific claim.",
+      "order": 3,
+      "duration": 383,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson03_From_Data_To_Evidence_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 3 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the From Data to Evidence video and focus on how evidence supports explanations.",
+          "focus": "From Data to Evidence"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l03-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"From Data to Evidence\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l03-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l03-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l03-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l03-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"From Data to Evidence\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-04-matter-is-made-of-particles",
+      "episode": 4,
+      "title": "NGSS G6 Science 4: Matter Is Made of Particles",
+      "description": "Use particle models to explain matter, spacing, motion, and invisible structure.",
+      "order": 4,
+      "duration": 415,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson04_Matter_Is_Made_Of_Particles_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 4 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Matter Is Made of Particles video and focus on how evidence supports explanations.",
+          "focus": "Matter Is Made of Particles"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l04-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Matter Is Made of Particles\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l04-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l04-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l04-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l04-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Matter Is Made of Particles\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-05-density-and-floating",
+      "episode": 5,
+      "title": "NGSS G6 Science 5: Density and Floating",
+      "description": "Explore why some objects sink or float by comparing mass, volume, and density.",
+      "order": 5,
+      "duration": 367,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson05_Density_And_Floating_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 5 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Density and Floating video and focus on how evidence supports explanations.",
+          "focus": "Density and Floating"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l05-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Density and Floating\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l05-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l05-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l05-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l05-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Density and Floating\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-06-temperature-heat-and-particle-motion",
+      "episode": 6,
+      "title": "NGSS G6 Science 6: Temperature, Heat, and Particle Motion",
+      "description": "Connect temperature and heat transfer to particle speed and energy.",
+      "order": 6,
+      "duration": 365,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson06_Temperature_Heat_And_Particle_Motion_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 6 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Temperature Heat and Particle Motion video and focus on how evidence supports explanations.",
+          "focus": "Temperature Heat and Particle Motion"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l06-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Temperature Heat and Particle Motion\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l06-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l06-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l06-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l06-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Temperature Heat and Particle Motion\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-07-phase-change-and-energy-transfer",
+      "episode": 7,
+      "title": "NGSS G6 Science 7: Phase Change and Energy Transfer",
+      "description": "Explain melting, freezing, evaporation, and condensation with energy flow.",
+      "order": 7,
+      "duration": 378,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson07_Phase_Change_And_Energy_Transfer_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 7 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Phase Change and Energy Transfer video and focus on how evidence supports explanations.",
+          "focus": "Phase Change and Energy Transfer"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l07-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Phase Change and Energy Transfer\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l07-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l07-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l07-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l07-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Phase Change and Energy Transfer\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-08-forces-and-motion-intro",
+      "episode": 8,
+      "title": "NGSS G6 Science 8: Forces and Motion Intro",
+      "description": "Start modeling pushes, pulls, speed, direction, and balanced forces.",
+      "order": 8,
+      "duration": 383,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson08_Forces_And_Motion_Intro_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 8 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Forces and Motion Intro video and focus on how evidence supports explanations.",
+          "focus": "Forces and Motion Intro"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l08-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Forces and Motion Intro\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l08-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l08-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l08-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l08-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Forces and Motion Intro\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-09-gravity-friction-and-balance",
+      "episode": 9,
+      "title": "NGSS G6 Science 9: Gravity, Friction, and Balance",
+      "description": "Investigate how gravity and friction affect motion, stability, and everyday systems.",
+      "order": 9,
+      "duration": 372,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson09_Gravity_Friction_And_Balance_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 9 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Gravity Friction and Balance video and focus on how evidence supports explanations.",
+          "focus": "Gravity Friction and Balance"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l09-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Gravity Friction and Balance\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l09-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l09-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l09-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l09-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Gravity Friction and Balance\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-10-energy-forms-and-transformations",
+      "episode": 10,
+      "title": "NGSS G6 Science 10: Energy Forms and Transformations",
+      "description": "Trace energy as it changes form in systems while still being conserved.",
+      "order": 10,
+      "duration": 600,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson10_Energy_Forms_And_Transformations_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 10 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Energy Forms and Transformations video and focus on how evidence supports explanations.",
+          "focus": "Energy Forms and Transformations"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l10-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Energy Forms and Transformations\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l10-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l10-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l10-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l10-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Energy Forms and Transformations\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-11-waves-sound-and-vibration",
+      "episode": 11,
+      "title": "NGSS G6 Science 11: Waves, Sound, and Vibration",
+      "description": "See how vibrations create waves and how sound carries energy through matter.",
+      "order": 11,
+      "duration": 600,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson11_Waves_Sound_And_Vibration_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 11 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Waves Sound and Vibration video and focus on how evidence supports explanations.",
+          "focus": "Waves Sound and Vibration"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l11-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Waves Sound and Vibration\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l11-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l11-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l11-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l11-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Waves Sound and Vibration\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "lesson-ngss-g6-12-light-and-vision",
+      "episode": 12,
+      "title": "NGSS G6 Science 12: Light and Vision",
+      "description": "Explore how light travels, reflects, enters the eye, and helps us see.",
+      "order": 12,
+      "duration": 600,
+      "gradeLevel": "G6",
+      "difficulty": "Medium",
+      "videoProvider": "tencent-vod",
+      "isPreview": false,
+      "hasPractice": true,
+      "hasGame": false,
+      "rewardsPoints": 50,
+      "rewardsGems": 1,
+      "videoFileName": "NGSS_G6_Science_Lesson12_Light_And_Vision_Schedar.mp4",
+      "practice": {
+        "title": "NGSS G6 Lab 12 Practice Quest",
+        "maxScore": 50,
+        "passingScore": 70,
+        "rewards": {
+          "gemsOnPass": 1,
+          "gemsOnPerfect": 2
+        },
+        "reviewAdvice": {
+          "rewatchMessage": "Rewatch the Light and Vision video and focus on how evidence supports explanations.",
+          "focus": "Light and Vision"
+        },
+        "questions": [
+          {
+            "id": "ngss-g6-l12-q1",
+            "type": "multiple-choice",
+            "prompt": "In \"Light and Vision\", what should a scientist do first when investigating a new phenomenon?",
+            "choices": [
+              "Ask a clear testable question",
+              "Guess the answer and stop",
+              "Change every variable at once",
+              "Ignore measurements"
+            ],
+            "answer": "Ask a clear testable question",
+            "points": 8,
+            "penalty": 2,
+            "hint": "Start with a question that can be tested with evidence.",
+            "explanation": "A strong investigation begins with a testable question.",
+            "encouragement": {
+              "correct": "Good scientific start.",
+              "incorrect": "Pause and think like a lab designer."
+            }
+          },
+          {
+            "id": "ngss-g6-l12-q2",
+            "type": "fill-blank",
+            "prompt": "A scientific claim is stronger when it is supported by ____.",
+            "choices": [],
+            "answer": "evidence",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Scientists use observations and data, not guesses.",
+            "explanation": "Evidence from observations, measurements, and patterns supports scientific claims.",
+            "encouragement": {
+              "correct": "Exactly. Evidence is the backbone.",
+              "incorrect": "Look for the word scientists use for data that supports a claim."
+            }
+          },
+          {
+            "id": "ngss-g6-l12-q3",
+            "type": "true-false",
+            "prompt": "True or false: A fair test changes one main variable at a time.",
+            "choices": [
+              "True",
+              "False"
+            ],
+            "answer": "True",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Changing too many things makes it hard to know what caused the result.",
+            "explanation": "A fair test isolates one independent variable so the result can be interpreted.",
+            "encouragement": {
+              "correct": "Nice control of variables.",
+              "incorrect": "Think about what makes a test fair."
+            }
+          },
+          {
+            "id": "ngss-g6-l12-q4",
+            "type": "multiple-select",
+            "prompt": "Select the habits that make a strong NGSS science explanation.",
+            "choices": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning",
+              "Hide the data"
+            ],
+            "answer": [
+              "Use evidence",
+              "Describe a pattern",
+              "Explain the reasoning"
+            ],
+            "points": 12,
+            "penalty": 4,
+            "hint": "A complete explanation connects claim, evidence, and reasoning.",
+            "explanation": "Strong explanations use evidence, patterns, and reasoning while keeping data visible.",
+            "encouragement": {
+              "correct": "That is real science reasoning.",
+              "incorrect": "Choose the habits that help another scientist trust the explanation."
+            }
+          },
+          {
+            "id": "ngss-g6-l12-q5",
+            "type": "multiple-choice",
+            "prompt": "After watching \"Light and Vision\", what is the best next study move?",
+            "choices": [
+              "Summarize the model, then try a new example",
+              "Memorize one sentence only",
+              "Skip the data table",
+              "Avoid explaining your reasoning"
+            ],
+            "answer": "Summarize the model, then try a new example",
+            "points": 10,
+            "penalty": 3,
+            "hint": "Science sticks when you can use the model in a new situation.",
+            "explanation": "Applying the model to a new example shows deeper understanding.",
+            "encouragement": {
+              "correct": "Great transfer move.",
+              "incorrect": "Pick the choice that helps you use the idea again."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
