@@ -830,17 +830,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 xl:grid-cols-1">
-                {[
-                  ['Views', currentLesson.viewCount || 0],
-                  ['Reward', `${currentLesson.rewardsPoints || 20} pts`],
-                  ['Gems', `${currentLesson.rewardsGems || 0}`],
-                ].map(([label, value]) => (
-                  <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                    <div className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-600">{label}</div>
-                    <div className="mt-2 text-xl font-black text-white">{value}</div>
-                  </div>
-                ))}
+              <div className="grid gap-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-600">Views</div>
+                  <div className="mt-2 text-xl font-black text-white">{currentLesson.viewCount || 0}</div>
+                </div>
               </div>
             </div>
           </div>
