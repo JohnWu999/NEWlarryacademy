@@ -24,6 +24,20 @@ const trackLabels: Record<string, { title: string; eyebrow: string; accent: stri
   },
 }
 
+const categoryToTrack: Record<string, string> = {
+  math: 'larry-math',
+  'larry-math': 'larry-math',
+  'ib-big-math': 'ib-big-math',
+  'ngss-science': 'ngss-science',
+}
+
+const trackDescriptions: Record<string, string> = {
+  'larry-math': 'Larry Math focuses on Larry video lessons, skill drills, Practice, and small games that help students build confident math thinking.',
+  'ib-big-math': 'IB Big Math will organize each lesson around video, interactive questions, practice, and playful challenges for deeper math reasoning.',
+  'ngss-science': 'NGSS Science is a science-only learning track with phenomenon-based videos, inquiry practice, evidence reasoning, open-response reflection, and future lab-style simulations.',
+  other: 'These future course areas are being shaped into polished introductions first, with full lessons opening when the content is ready.',
+}
+
 function accessLabel(course: { status: string; accessLevel: string; isFree: boolean; price: number }) {
   if (course.status === 'coming-soon') return '即将开放'
   if (course.isFree || course.price <= 0 || course.accessLevel === 'public') return '公开免费'
@@ -37,6 +51,8 @@ export default async function CoursesPage({
   searchParams: Promise<{ category?: string }>
 }) {
   const { category } = await searchParams
+  const selectedTrackKey = category ? categoryToTrack[category] || 'other' : null
+  const selectedTrack = selectedTrackKey ? trackLabels[selectedTrackKey] : null
 
   const courses = await prisma.course.findMany({
     where: {
@@ -54,11 +70,12 @@ export default async function CoursesPage({
     ],
   })
 
-  const tracks = ['larry-math', 'ib-big-math', 'ngss-science', 'other'].map((track) => ({
+  const allTracks = ['larry-math', 'ib-big-math', 'ngss-science', 'other'].map((track) => ({
     key: track,
     ...trackLabels[track],
     courses: courses.filter((course) => (course.courseTrack || 'other') === track),
   }))
+  const tracks = selectedTrackKey ? allTracks.filter((track) => track.key === selectedTrackKey) : allTracks
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-[#050505] text-white">
@@ -71,26 +88,33 @@ export default async function CoursesPage({
         <div className="mb-12 max-w-4xl">
           <p className="mb-4 text-xs font-black uppercase tracking-[0.35em] text-blue-400">Courses</p>
           <h1 className="text-4xl font-black tracking-tight sm:text-6xl">
-            {category ? `${category} 课程` : '三大主课程体系'}
+            {selectedTrack ? `${selectedTrack.title} 课程` : '三大主课程体系'}
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-gray-400">
-            Larry Academy 目前以 Larry Math、IB Big Math、NGSS Science 为主线。每门主课都会围绕视频、互动答题、Practice 和小游戏来组织；其他方向先保留精美介绍，等内容准备好再开放学习。
+            {selectedTrackKey ? trackDescriptions[selectedTrackKey] : 'Larry Academy 目前以 Larry Math、IB Big Math、NGSS Science 为主线。每门主课都会围绕视频、互动答题、Practice 和小游戏来组织；其他方向先保留精美介绍，等内容准备好再开放学习。'}
           </p>
+          {selectedTrackKey && (
+            <Link href="/courses" className="mt-6 inline-flex rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-white/75 transition hover:border-white/25 hover:text-white">
+              查看全部课程体系
+            </Link>
+          )}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {tracks.slice(0, 3).map((track) => (
-            <a
-              key={track.key}
-              href={`#${track.key}`}
-              className={`rounded-3xl border border-white/10 bg-gradient-to-br ${track.accent} p-6 transition hover:border-white/25 hover:bg-white/[0.04]`}
-            >
-              <p className="text-sm font-bold text-gray-400">{track.eyebrow}</p>
-              <h2 className="mt-3 text-2xl font-black">{track.title}</h2>
-              <p className="mt-5 text-sm text-gray-400">{track.courses.length} 个课程单元</p>
-            </a>
-          ))}
-        </div>
+        {!selectedTrackKey && (
+          <div className="grid gap-5 md:grid-cols-3">
+            {tracks.slice(0, 3).map((track) => (
+              <a
+                key={track.key}
+                href={`#${track.key}`}
+                className={`rounded-3xl border border-white/10 bg-gradient-to-br ${track.accent} p-6 transition hover:border-white/25 hover:bg-white/[0.04]`}
+              >
+                <p className="text-sm font-bold text-gray-400">{track.eyebrow}</p>
+                <h2 className="mt-3 text-2xl font-black">{track.title}</h2>
+                <p className="mt-5 text-sm text-gray-400">{track.courses.length} 个课程单元</p>
+              </a>
+            ))}
+          </div>
+        )}
 
         <div className="mt-14 space-y-14">
           {tracks.map((track) => (
@@ -117,7 +141,7 @@ export default async function CoursesPage({
                         </div>
                         <div className="absolute bottom-5 left-5 right-5">
                           <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/50">
-                            {course.category}
+                            {track.title}
                           </p>
                           <h3 className="mt-2 text-2xl font-black leading-tight">{course.title}</h3>
                         </div>

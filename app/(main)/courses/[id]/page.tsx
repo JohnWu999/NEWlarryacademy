@@ -23,6 +23,20 @@ function accessCopy(reason: string, price: number) {
   return `付费课程，开通后即可学习。当前价格 ¥${price}。`
 }
 
+function courseTrackLabel(track: string) {
+  if (track === 'ngss-science') return 'NGSS Science'
+  if (track === 'ib-big-math') return 'IB Big Math'
+  if (track === 'larry-math') return 'Larry Math'
+  return 'Future Course'
+}
+
+function courseCoverPath(course: { id: string; courseTrack: string }) {
+  if (course.id === 'course-ngss-science' || course.courseTrack === 'ngss-science') {
+    return '/course-covers/ngss-science-cover.png'
+  }
+  return null
+}
+
 export default async function CourseDetailPage({
   params,
 }: {
@@ -66,6 +80,7 @@ export default async function CourseDetailPage({
     : null
 
   const heroEmbed = getVideoEmbedUrl(course)
+  const coverPath = courseCoverPath(course)
   const featureCards = course.expectedFeatures
     ? JSON.parse(course.expectedFeatures) as string[]
     : ['视频课程', '互动答题', 'Practice 练习', '小游戏挑战']
@@ -84,8 +99,25 @@ export default async function CourseDetailPage({
 
         <div className="grid gap-8 lg:grid-cols-[1.7fr_1fr]">
           <main className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.025]">
-            <div className="aspect-video bg-black">
-              {heroEmbed ? (
+            <div className="relative aspect-video overflow-hidden bg-black">
+              {coverPath ? (
+                <>
+                  <img
+                    src={coverPath}
+                    alt={`${course.title} course cover`}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_42%,rgba(16,185,129,0.08),transparent_34%),linear-gradient(90deg,rgba(0,0,0,0.64),rgba(0,0,0,0.16)_52%,rgba(0,0,0,0.56))]" />
+                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.35em] text-emerald-200/80">
+                      Future Science Lab
+                    </p>
+                    <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white drop-shadow-2xl sm:text-6xl">
+                      {course.title}
+                    </h1>
+                  </div>
+                </>
+              ) : heroEmbed ? (
                 <iframe
                   className="h-full w-full"
                   src={heroEmbed}
@@ -108,7 +140,7 @@ export default async function CourseDetailPage({
             <div className="p-6 sm:p-8">
               <div className="mb-5 flex flex-wrap gap-2">
                 <span className="rounded-full bg-blue-500/15 px-3 py-1 text-xs font-bold text-blue-200">
-                  {course.courseTrack}
+                  {courseTrackLabel(course.courseTrack)}
                 </span>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white/70">
                   {difficultyLabel(course.difficultyLevel)}
