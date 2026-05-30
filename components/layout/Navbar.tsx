@@ -170,12 +170,12 @@ export default function Navbar() {
                       )}
                     </div>
                   )}
-                  <Link href="/profile" className="reward-pill reward-pill-gem" aria-label={`${rewards.gems} gems`}>
-                    <img src="/reward-icons/gem.png" alt="" className="reward-icon" />
+                  <Link href="/profile" className="reward-pill reward-pill-gem inline-flex h-10 min-w-[5.9rem] items-center justify-center gap-2.5 rounded-full px-3" aria-label={`${rewards.gems} gems`}>
+                    <img src="/reward-icons/gem.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.gems}</span>
                   </Link>
-                  <Link href="/profile" className="reward-pill reward-pill-points" aria-label={`${rewards.points} points`}>
-                    <img src="/reward-icons/spark.png" alt="" className="reward-icon" />
+                  <Link href="/profile" className="reward-pill reward-pill-points inline-flex h-10 min-w-[5.9rem] items-center justify-center gap-2.5 rounded-full px-3" aria-label={`${rewards.points} points`}>
+                    <img src="/reward-icons/spark.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.points}</span>
                   </Link>
                 </div>
@@ -246,12 +246,12 @@ export default function Navbar() {
               {session ? (
                 <>
                   <div className="mx-4 grid grid-cols-2 gap-2">
-                    <div className="reward-pill reward-pill-gem justify-center">
-                      <img src="/reward-icons/gem.png" alt="" className="reward-icon" />
+                    <div className="reward-pill reward-pill-gem inline-flex h-10 items-center justify-center gap-2.5 rounded-full px-3">
+                      <img src="/reward-icons/gem.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                       <span className="reward-count">{rewards.gems}</span>
                     </div>
-                    <div className="reward-pill reward-pill-points justify-center">
-                      <img src="/reward-icons/spark.png" alt="" className="reward-icon" />
+                    <div className="reward-pill reward-pill-points inline-flex h-10 items-center justify-center gap-2.5 rounded-full px-3">
+                      <img src="/reward-icons/spark.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                       <span className="reward-count">{rewards.points}</span>
                     </div>
                   </div>
@@ -272,7 +272,9 @@ export default function Navbar() {
         .reward-pill {
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 0.62rem;
+          height: 2.5rem;
           min-width: 5.2rem;
           border-radius: 999px;
           border: 1px solid rgba(255, 255, 255, 0.14);
@@ -298,10 +300,12 @@ export default function Navbar() {
           box-shadow: inset 0 1px 0 rgba(255,255,255,0.13), 0 0 28px rgba(245, 158, 11, 0.16);
         }
         .reward-icon {
-          width: 1.72rem;
-          height: 1.72rem;
+          display: block;
+          width: 1.75rem;
+          height: 1.75rem;
           flex: 0 0 auto;
           object-fit: contain;
+          line-height: 1;
           filter: drop-shadow(0 0 10px rgba(255,255,255,0.16));
         }
         .reward-icon-fly {
@@ -311,6 +315,8 @@ export default function Navbar() {
         .reward-count {
           min-width: 1.65rem;
           text-align: left;
+          display: inline-block;
+          line-height: 1;
           font-variant-numeric: tabular-nums;
           text-shadow: 0 1px 10px rgba(0,0,0,0.35);
         }
