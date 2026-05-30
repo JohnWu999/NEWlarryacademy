@@ -3,7 +3,7 @@ export type PracticeQuestionForGrading = {
   type: string
   prompt?: string
   choices?: string[]
-  answer: string | string[]
+  answer?: string | string[]
   points?: number
   penalty?: number
   tolerance?: number
@@ -27,6 +27,10 @@ function normalizeNumber(value: string) {
 
 export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, submitted?: SubmittedPracticeAnswer) {
   if (!submitted) return false
+  if (question.type === 'open-response') {
+    const value = Array.isArray(submitted.value) ? submitted.value.join(' ') : String(submitted.value)
+    return normalize(value).length >= 12
+  }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
     const actual = normalizeNumber(Array.isArray(submitted.value) ? submitted.value.join('') : String(submitted.value))

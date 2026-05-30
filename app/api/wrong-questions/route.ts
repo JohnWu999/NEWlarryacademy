@@ -9,7 +9,7 @@ type PracticeQuestion = {
   type: string
   prompt?: string
   choices?: string[]
-  answer: string | string[]
+  answer?: string | string[]
   hint?: string
   explanation?: string
   tolerance?: number

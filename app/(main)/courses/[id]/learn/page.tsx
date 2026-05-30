@@ -18,10 +18,10 @@ interface LessonActivity {
 
 interface PracticeQuestion {
   id: string
-  type: 'multiple-choice' | 'true-false' | 'order-steps' | 'numeric-input' | 'fill-blank' | 'multiple-select'
+  type: 'multiple-choice' | 'true-false' | 'order-steps' | 'numeric-input' | 'fill-blank' | 'multiple-select' | 'open-response'
   prompt: string
   choices: string[]
-  answer: string | string[]
+  answer?: string | string[]
   points: number
   penalty: number
   hint: string
@@ -166,6 +166,10 @@ function parsePracticeConfig(activity?: LessonActivity) {
 
 function checkPracticeAnswer(question: PracticeQuestion, value: string | string[] | null) {
   if (!value) return false
+  if (question.type === 'open-response') {
+    const response = Array.isArray(value) ? value.join(' ') : value
+    return normalizeAnswer(response).length >= 12
+  }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
     const actual = normalizeNumber(Array.isArray(value) ? value.join('') : value)
@@ -192,6 +196,7 @@ function getQuestionLabel(type: PracticeQuestion['type']) {
     'numeric-input': 'Type the answer',
     'fill-blank': 'Fill the blank',
     'multiple-select': 'Select all',
+    'open-response': 'Reflect',
   }
   return labels[type] || 'Practice'
 }
@@ -214,6 +219,19 @@ function QuestVisual({ type }: { type: PracticeQuestion['type'] }) {
           <div key={height} className="flex flex-1 flex-col items-center gap-2">
             <div className="w-full rounded-xl bg-blue-500/70" style={{ height: `${height * 14}px` }} />
             <span className="text-[10px] font-black text-blue-700">{height}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'open-response') {
+    return (
+      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-violet-50 p-3">
+        {['Evidence', 'Model', 'Next test'].map((label, index) => (
+          <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-violet-100">
+            <div className={`mb-2 h-2 rounded-full ${index === 0 ? 'bg-violet-500' : index === 1 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+            <div className="text-[10px] font-black uppercase text-violet-800">{label}</div>
           </div>
         ))}
       </div>
@@ -796,7 +814,19 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <p className="text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
                           <QuestVisual type={currentQuestQuestion.type} />
 
-                          {currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
+                          {currentQuestQuestion.type === 'open-response' ? (
+                            <div className="mt-5">
+                              <textarea
+                                value={String(questAnswers[currentQuestQuestion.id] || '')}
+                                onChange={(event) => answerCurrentQuest(currentQuestQuestion, event.target.value)}
+                                disabled={Boolean(questFeedback) || questAutoAdvancing}
+                                placeholder={currentQuestQuestion.inputPlaceholder || 'Write your idea in 2-3 sentences.'}
+                                rows={5}
+                                className="min-h-[150px] w-full resize-y rounded-2xl border-2 border-[#171717] bg-white px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none shadow-[0_8px_0_#171717] placeholder:text-[#b6ad9d] focus:border-violet-600 disabled:opacity-70"
+                              />
+                              <p className="mt-3 text-xs font-bold text-[#857b69]">Use evidence, a model, or a next-test idea. There is no single perfect answer.</p>
+                            </div>
+                          ) : currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
                             <div className="mt-5">
                               <div className="flex overflow-hidden rounded-2xl border-2 border-[#171717] bg-white shadow-[0_8px_0_#171717] focus-within:border-blue-600">
                                 <input
