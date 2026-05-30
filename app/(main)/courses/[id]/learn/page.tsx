@@ -201,33 +201,136 @@ function getQuestionLabel(type: PracticeQuestion['type']) {
   return labels[type] || 'Practice'
 }
 
-function QuestVisual({ type }: { type: PracticeQuestion['type'] }) {
+function getQuestionKeywords(question: PracticeQuestion) {
+  const source = `${question.prompt} ${question.visual || ''}`.toLowerCase()
+  const scienceTerms = [
+    'evidence',
+    'model',
+    'pattern',
+    'variable',
+    'data',
+    'claim',
+    'reasoning',
+    'force',
+    'energy',
+    'particle',
+    'density',
+    'gravity',
+    'friction',
+    'wave',
+    'light',
+    'heat',
+  ]
+  const foundScience = scienceTerms.filter((term) => source.includes(term)).slice(0, 3)
+  if (foundScience.length) return foundScience.map((term) => term.replace(/^\w/, (letter) => letter.toUpperCase()))
+
+  const mathTerms = [
+    ['percent', '%'],
+    ['ratio', 'ratio'],
+    ['area', 'area'],
+    ['perimeter', 'perimeter'],
+    ['angle', 'angle'],
+    ['triangle', 'triangle'],
+    ['fraction', 'fraction'],
+    ['average', 'average'],
+    ['speed', 'speed'],
+    ['distance', 'distance'],
+    ['time', 'time'],
+  ]
+  const foundMath = mathTerms.filter(([term]) => source.includes(term)).map(([, label]) => label).slice(0, 3)
+  return foundMath.length ? foundMath : ['Model', 'Solve', 'Check']
+}
+
+function getQuestionNumbers(question: PracticeQuestion) {
+  return question.prompt.match(/-?\d+(?:\.\d+)?%?/g)?.slice(0, 5) || []
+}
+
+function QuestVisual({ question }: { question: PracticeQuestion }) {
+  const { type } = question
+  const keywords = getQuestionKeywords(question)
+  const numbers = getQuestionNumbers(question)
+
   if (type === 'numeric-input' || type === 'fill-blank') {
     return (
-      <div className="mt-4 grid grid-cols-5 gap-1 rounded-2xl bg-[#f7f0dd] p-3">
-        {[...Array(15)].map((_, index) => (
-          <div key={index} className={`h-8 rounded-lg border border-[#e2d4b8] ${index % 3 === 1 ? 'bg-white' : 'bg-[#fbf8ef]'}`} />
-        ))}
+      <div className="mt-4 overflow-hidden rounded-2xl border border-amber-200 bg-[#fff8e8] p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div className="text-xs font-black uppercase tracking-[0.16em] text-amber-800">Build the model</div>
+          <div className="rounded-full bg-white px-3 py-1 text-xs font-black text-amber-900 ring-1 ring-amber-200">? = ___</div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+          <div className="rounded-xl bg-white p-3 ring-1 ring-amber-200">
+            <div className="text-[10px] font-black uppercase text-amber-700">Given</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(numbers.length ? numbers : keywords).slice(0, 3).map((item) => (
+                <span key={item} className="rounded-lg bg-amber-100 px-3 py-1 text-sm font-black text-[#171717]">{item}</span>
+              ))}
+            </div>
+          </div>
+          <div className="hidden text-2xl font-black text-amber-700 sm:block">→</div>
+          <div className="rounded-xl bg-white p-3 ring-1 ring-amber-200">
+            <div className="text-[10px] font-black uppercase text-amber-700">Find</div>
+            <div className="mt-2 flex items-center gap-2 text-lg font-black text-[#171717]">
+              <span className="rounded-lg bg-[#171717] px-3 py-1 text-white">?</span>
+              <span className="text-sm text-amber-800">use units and relationships</span>
+            </div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (type === 'order-steps') {
     return (
-      <div className="mt-4 flex items-end gap-2 rounded-2xl bg-blue-50 p-3">
-        {[1, 2, 3, 4].map((height) => (
-          <div key={height} className="flex flex-1 flex-col items-center gap-2">
-            <div className="w-full rounded-xl bg-blue-500/70" style={{ height: `${height * 14}px` }} />
-            <span className="text-[10px] font-black text-blue-700">{height}</span>
-          </div>
-        ))}
+      <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-blue-800">Reasoning ladder</div>
+        <div className="grid grid-cols-4 gap-2">
+          {[1, 2, 3, 4].map((step) => (
+            <div key={step} className="rounded-xl bg-white p-3 ring-1 ring-blue-100">
+              <div className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white">{step}</div>
+              <div className="h-2 rounded-full bg-blue-100" />
+              <div className="mt-2 h-2 w-2/3 rounded-full bg-blue-100" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (type === 'multiple-select') {
+    return (
+      <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-emerald-800">Choose every useful clue</div>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {keywords.map((keyword, index) => (
+            <div key={keyword} className="rounded-xl bg-white p-3 ring-1 ring-emerald-100">
+              <div className={`mb-2 h-2 rounded-full ${index === 0 ? 'bg-emerald-500' : index === 1 ? 'bg-cyan-400' : 'bg-lime-400'}`} />
+              <div className="text-sm font-black text-emerald-950">{keyword}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (type === 'true-false') {
+    return (
+      <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50 p-4">
+        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-sky-800">Test the statement</div>
+        <div className="grid grid-cols-2 gap-3">
+          {['Evidence supports it', 'Counterexample breaks it'].map((label) => (
+            <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-sky-100">
+              <div className="text-sm font-black text-sky-950">{label}</div>
+              <div className="mt-3 h-2 rounded-full bg-sky-100" />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
 
   if (type === 'open-response') {
     return (
-      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-violet-50 p-3">
+      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl border border-violet-100 bg-violet-50 p-3">
         {['Evidence', 'Model', 'Next test'].map((label, index) => (
           <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-violet-100">
             <div className={`mb-2 h-2 rounded-full ${index === 0 ? 'bg-violet-500' : index === 1 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
@@ -239,10 +342,18 @@ function QuestVisual({ type }: { type: PracticeQuestion['type'] }) {
   }
 
   return (
-    <div className="mt-4 flex gap-2 rounded-2xl bg-emerald-50 p-3">
-      {[0, 1, 2, 3].map((index) => (
-        <div key={index} className={`h-10 flex-1 rounded-xl ${index === 0 ? 'bg-emerald-500' : 'bg-white'} ring-1 ring-emerald-100`} />
-      ))}
+    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-700">Think before choosing</div>
+        <div className="text-xs font-black text-slate-500">{numbers.length ? numbers.join(' · ') : 'A · B · C · D'}</div>
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {keywords.map((keyword) => (
+          <div key={keyword} className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
+            <div className="text-sm font-black text-slate-950">{keyword}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -812,7 +923,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                             {getQuestionLabel(currentQuestQuestion.type)}
                           </div>
                           <p className="text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
-                          <QuestVisual type={currentQuestQuestion.type} />
+                          <QuestVisual question={currentQuestQuestion} />
 
                           {currentQuestQuestion.type === 'open-response' ? (
                             <div className="mt-5">
