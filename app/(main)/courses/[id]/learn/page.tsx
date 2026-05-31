@@ -115,6 +115,15 @@ const practiceChoices = [
   'Skip the setup and calculate from the largest number first.',
 ]
 
+const lessonCoverThemes = [
+  { background: 'radial-gradient(circle at 20% 18%, rgba(96, 165, 250, 0.82), transparent 28%), linear-gradient(135deg, #071326 0%, #123f6c 52%, #0a1018 100%)', accent: '#60a5fa' },
+  { background: 'radial-gradient(circle at 78% 22%, rgba(45, 212, 191, 0.78), transparent 30%), linear-gradient(135deg, #071914 0%, #0f5a4b 50%, #09110f 100%)', accent: '#2dd4bf' },
+  { background: 'radial-gradient(circle at 22% 76%, rgba(250, 204, 21, 0.74), transparent 28%), linear-gradient(135deg, #1d1306 0%, #7c4a12 52%, #100b05 100%)', accent: '#facc15' },
+  { background: 'radial-gradient(circle at 76% 28%, rgba(167, 139, 250, 0.78), transparent 30%), linear-gradient(135deg, #120924 0%, #4c1d95 50%, #09050f 100%)', accent: '#a78bfa' },
+  { background: 'radial-gradient(circle at 30% 18%, rgba(251, 113, 133, 0.76), transparent 28%), linear-gradient(135deg, #24070e 0%, #8f243b 50%, #110509 100%)', accent: '#fb7185' },
+  { background: 'radial-gradient(circle at 75% 72%, rgba(52, 211, 153, 0.76), transparent 28%), linear-gradient(135deg, #061711 0%, #166247 52%, #07100d 100%)', accent: '#34d399' },
+]
+
 const resumeCookiePrefix = 'larry_last_lesson'
 const openLessonCount = 5
 
@@ -238,6 +247,12 @@ function LockIcon() {
       <path d="M8 11V7a4 4 0 0 1 8 0v4" />
     </svg>
   )
+}
+
+function LessonCoverMark({ index, completed, unlocked }: { index: number; completed: boolean; unlocked: boolean }) {
+  if (completed) return <CheckIcon />
+  if (!unlocked) return <LockIcon />
+  return <span>{String(index + 1).padStart(2, '0')}</span>
 }
 
 function normalizeAnswer(value: string) {
@@ -997,7 +1012,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         </div>
       </div>
 
-      <main className="mx-auto grid max-w-[1500px] gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_390px]">
+      <main className="mx-auto max-w-[1380px] px-4 py-6 sm:px-6">
         <section className="min-w-0 space-y-6">
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#101012] shadow-2xl shadow-black/40">
             <div className="relative aspect-video bg-black">
@@ -1070,6 +1085,93 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   <div className="mt-2 text-xl font-black text-white">{currentLesson.viewCount || 0}</div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="rounded-[28px] border border-white/10 bg-[#101012] p-5 shadow-2xl shadow-black/30 sm:p-7">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-2xl font-black">Course Map</h2>
+                <p className="mt-2 text-sm leading-6 text-gray-500">
+                  {completedLessonCount} of {course.lessons.length} lessons completed. New lessons unlock as you finish each quiz.
+                </p>
+              </div>
+              <div className="min-w-[180px]">
+                <div className="mb-2 flex justify-between text-[11px] font-black uppercase tracking-[0.16em] text-gray-500">
+                  <span>Progress</span>
+                  <span>{progressPercent}%</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full rounded-full bg-blue-500" style={{ width: `${progressPercent}%` }} />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {course.lessons.map((lesson, index) => {
+                const active = currentLessonIndex === index
+                const completed = completedLessonIds.has(lesson.id)
+                const unlocked = isLessonUnlocked(course.lessons, index)
+                const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
+                const theme = lessonCoverThemes[index % lessonCoverThemes.length]
+                return (
+                  <button
+                    key={lesson.id}
+                    onClick={() => goToLesson(index)}
+                    disabled={!unlocked}
+                    className={`group overflow-hidden rounded-3xl border text-left transition ${
+                      active
+                        ? 'border-blue-400 bg-blue-500/10 shadow-2xl shadow-blue-950/40'
+                        : unlocked
+                        ? 'border-white/10 bg-white/[0.035] hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.055]'
+                        : 'cursor-not-allowed border-white/[0.06] bg-white/[0.02] opacity-55'
+                    }`}
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden" style={{ background: theme.background }}>
+                      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.16)_0,rgba(255,255,255,0)_32%),radial-gradient(circle_at_84%_78%,rgba(255,255,255,0.2),transparent_28%)]" />
+                      <div
+                        className="absolute inset-0 opacity-25"
+                        style={{
+                          backgroundImage: `linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)`,
+                          backgroundSize: '28px 28px',
+                        }}
+                      />
+                      <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-black/35 text-sm font-black text-white ring-1 ring-white/20 backdrop-blur">
+                        <LessonCoverMark index={index} completed={completed} unlocked={unlocked} />
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="mb-2 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">
+                          <span>{lesson.gradeLevel || 'Lesson'}</span>
+                          <span>{formatDuration(lesson.duration)}</span>
+                          <span>{unlocked ? 'Quiz' : 'Locked'}</span>
+                        </div>
+                        <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
+                          {lesson.title.replace(/^NGSS G6 Science\s*\d+:\s*/i, '').replace(/^Larry Math Class\s*/i, '')}
+                        </div>
+                      </div>
+                      <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className={`text-xs font-black uppercase tracking-[0.16em] ${active ? 'text-blue-300' : completed ? 'text-emerald-300' : unlocked ? 'text-gray-500' : 'text-gray-700'}`}>
+                          {active ? 'Now Playing' : completed ? 'Completed' : unlocked ? 'Unlocked' : 'Locked'}
+                        </div>
+                        {lesson.latestPracticeAttempt?.completed && (
+                          <div className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-black text-emerald-300">
+                            {lesson.bestPracticeAttempt?.score || lesson.latestPracticeAttempt.score || 0}/{lesson.bestPracticeAttempt?.maxScore || lesson.latestPracticeAttempt.maxScore || 100}
+                          </div>
+                        )}
+                      </div>
+                      <p className="mt-3 line-clamp-2 min-h-[3rem] text-sm leading-6 text-gray-500">
+                        {lesson.description || 'Watch the lesson and complete the quiz to keep moving.'}
+                      </p>
+                      {latestAttemptData?.percent !== undefined && !lesson.latestPracticeAttempt?.completed && (
+                        <div className="mt-3 text-xs font-black text-blue-300">{latestAttemptData.percent}% saved</div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
 
@@ -1475,72 +1577,6 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </div>
           </div>
         </section>
-
-        <aside className="min-w-0 lg:sticky lg:top-6 lg:h-[calc(100dvh-3rem)]">
-          <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#101012]">
-            <div className="border-b border-white/10 p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-black">Curriculum</h2>
-                  <p className="mt-1 text-sm text-gray-500">{course.lessons.length} lessons</p>
-                </div>
-                <div className="rounded-2xl bg-white/[0.05] px-3 py-2 text-xs font-black text-gray-400">
-                  {completedLessonCount}/{course.lessons.length}
-                </div>
-              </div>
-              <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-blue-500" style={{ width: `${progressPercent}%` }} />
-              </div>
-            </div>
-
-            <div className="flex-1 space-y-2 overflow-y-auto p-3 sm:p-4">
-              {course.lessons.map((lesson, index) => {
-                const active = currentLessonIndex === index
-                const completed = completedLessonIds.has(lesson.id)
-                const unlocked = isLessonUnlocked(course.lessons, index)
-                const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
-                return (
-                  <button
-                    key={lesson.id}
-                    onClick={() => goToLesson(index)}
-                    disabled={!unlocked}
-                    className={`group w-full rounded-2xl border p-4 text-left transition ${
-                      active
-                        ? 'border-blue-500/70 bg-blue-600/15'
-                        : unlocked
-                        ? 'border-transparent bg-white/[0.035] hover:border-white/10 hover:bg-white/[0.06]'
-                        : 'cursor-not-allowed border-transparent bg-white/[0.02] opacity-55'
-                    }`}
-                  >
-                    <div className="flex gap-3">
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${
-                        active ? 'bg-blue-600 text-white' : completed ? 'bg-emerald-500/15 text-emerald-300' : unlocked ? 'bg-white/[0.07] text-gray-500' : 'bg-white/[0.04] text-gray-700'
-                      }`}>
-                        {completed ? <CheckIcon /> : unlocked ? index + 1 : <LockIcon />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className={`truncate font-black ${active ? 'text-white' : 'text-gray-300'}`}>{lesson.title}</div>
-                        <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600">
-                          <span>{formatDuration(lesson.duration)}</span>
-                          {lesson.gradeLevel && <span>{lesson.gradeLevel}</span>}
-                          {lesson.hasPractice && <span>{unlocked ? 'Quiz' : 'Locked'}</span>}
-                          {lesson.latestPracticeAttempt?.completed && (
-                            <span className="text-emerald-300">
-                              Best {lesson.bestPracticeAttempt?.score || lesson.latestPracticeAttempt.score || 0}/{lesson.bestPracticeAttempt?.maxScore || lesson.latestPracticeAttempt.maxScore || 100}
-                            </span>
-                          )}
-                          {latestAttemptData?.percent !== undefined && !lesson.latestPracticeAttempt?.completed && (
-                            <span>{latestAttemptData.percent}% saved</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </aside>
       </main>
       <style jsx global>{`
         .quest-pop {
