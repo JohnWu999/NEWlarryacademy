@@ -124,6 +124,10 @@ const lessonCoverThemes = [
   { background: 'radial-gradient(circle at 75% 72%, rgba(52, 211, 153, 0.76), transparent 28%), linear-gradient(135deg, #061711 0%, #166247 52%, #07100d 100%)', accent: '#34d399' },
 ]
 
+function getNgssLessonCover(index: number) {
+  return `/lesson-covers/ngss-g6/lesson-${String(index + 1).padStart(2, '0')}.jpg`
+}
+
 const resumeCookiePrefix = 'larry_last_lesson'
 const openLessonCount = 5
 
@@ -1114,6 +1118,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 const unlocked = isLessonUnlocked(course.lessons, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
+                const coverUrl = getNgssLessonCover(index)
                 return (
                   <button
                     key={lesson.id}
@@ -1128,14 +1133,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     }`}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden" style={{ background: theme.background }}>
-                      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.16)_0,rgba(255,255,255,0)_32%),radial-gradient(circle_at_84%_78%,rgba(255,255,255,0.2),transparent_28%)]" />
-                      <div
-                        className="absolute inset-0 opacity-25"
-                        style={{
-                          backgroundImage: `linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px)`,
-                          backgroundSize: '28px 28px',
-                        }}
+                      <img
+                        src={coverUrl}
+                        alt=""
+                        loading="lazy"
+                        className={`h-full w-full object-cover transition duration-500 ${unlocked ? 'group-hover:scale-105' : 'grayscale'}`}
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-black/35 text-sm font-black text-white ring-1 ring-white/20 backdrop-blur">
                         <LessonCoverMark index={index} completed={completed} unlocked={unlocked} />
                       </div>
