@@ -9,8 +9,8 @@ const subjects = [
     title: 'Larry Math',
     chineseTitle: 'Larry 数学',
     description: {
-      en: 'Competition-style math taught by Larry: sharp problem solving, fast drills, and mini games that turn hard ideas into winning instincts.',
-      zh: 'Larry 亲讲的高强度数学训练营：用竞赛题、刷题闯关和小游戏，把难题拆成孩子真正能掌握的解题直觉。'
+      en: 'A boy who started teaching math at age 6 makes hard problems feel peer-powered, playful, and surprisingly possible.',
+      zh: '一个 6 岁就开始讲数学的男孩，把难题讲给同龄人听：跟同伴学数学，更有趣，也更敢挑战。'
     },
     icon: '📐',
     color: 'from-blue-500 to-cyan-400',
@@ -21,8 +21,8 @@ const subjects = [
     title: 'IB Big Math',
     chineseTitle: 'IB 大数学',
     description: {
-      en: 'A big-picture IB math path for young thinkers: connect models, numbers, data, and real-world projects into one powerful learning journey.',
-      zh: '面向 IB 学习者的大数学路线：从模型、数感、数据到真实项目，让孩子看到数学如何解释世界、创造方案。'
+      en: 'IB has no single textbook, so this course builds the missing foundation deeply enough for students to chase full marks with confidence.',
+      zh: 'IB 没有统一教材，最怕基础不牢；这套课把每个底层能力打扎实，让孩子从此有底气冲击 IB 数学满分。'
     },
     icon: '🌐',
     color: 'from-purple-500 to-pink-400',
@@ -33,8 +33,8 @@ const subjects = [
     title: 'NGSS Science',
     chineseTitle: 'NGSS 科学',
     description: {
-      en: 'Science as investigation, not memorization: ask bold questions, test evidence, run simulations, and learn to think like a real scientist.',
-      zh: '不是背知识点，而是像科学家一样提问、观察、验证和解释；每一课都把好奇心变成可训练的科学思维。'
+      en: 'One of the most complete NGSS learning paths online, packed with practice so science becomes evidence, thinking, and action.',
+      zh: '全网少有的完整 NGSS 科学体系，配套大量 Practice，让科学不只是看懂，而是真正会思考、会解释、会应用。'
     },
     icon: '🧪',
     color: 'from-emerald-500 to-teal-400',
@@ -45,8 +45,8 @@ const subjects = [
     title: 'AI Coding',
     chineseTitle: 'AI 编程',
     description: {
-      en: 'Build with AI from day one: coding, prompts, automation, and product thinking for students who want to create the future, not just use it.',
-      zh: '让孩子从第一天就用 AI 创造作品：编程、提示词、自动化和产品思维，培养未来真正会造工具的人。'
+      en: 'Learn to build with AI, not just talk to it: prompts, coding, automation, and product thinking for future makers.',
+      zh: '不只是使用 AI，而是用 AI 做出作品：提示词、编程、自动化和产品思维，培养未来的创造者。'
     },
     icon: '🤖',
     color: 'from-indigo-600 to-blue-500',
@@ -57,8 +57,8 @@ const subjects = [
     title: 'STEM',
     chineseTitle: 'STEM',
     description: {
-      en: 'Turn ideas into engineered reality: design, prototype, measure, improve, and present ambitious STEM projects with math and science inside.',
-      zh: '把想法做成真正的作品：设计、搭建、测量、迭代和展示，在项目里把数学、科学和工程能力练出来。'
+      en: 'Turn wild ideas into real prototypes, where science, engineering, math, and presentation become one creative superpower.',
+      zh: '把大胆想法做成真实作品：在设计、搭建、测试和展示中，把科学、工程、数学变成创造力。'
     },
     icon: '🚀',
     color: 'from-emerald-500 to-teal-400',
