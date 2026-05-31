@@ -9,8 +9,8 @@ const subjects = [
     title: 'Larry Math',
     chineseTitle: 'Larry 数学',
     description: {
-      en: 'Larry video lessons with mini games and practice for confident math thinking.',
-      zh: 'Larry 讲课、小游戏和 Practice 练习组成的数学主课程。'
+      en: 'Competition-style math taught by Larry: sharp problem solving, fast drills, and mini games that turn hard ideas into winning instincts.',
+      zh: 'Larry 亲讲的高强度数学训练营：用竞赛题、刷题闯关和小游戏，把难题拆成孩子真正能掌握的解题直觉。'
     },
     icon: '📐',
     color: 'from-blue-500 to-cyan-400',
@@ -21,8 +21,8 @@ const subjects = [
     title: 'IB Big Math',
     chineseTitle: 'IB 大数学',
     description: {
-      en: 'A coming course track with video, interactive questions, and lesson games.',
-      zh: '即将发布的视频课程，每节课配互动答题和小游戏。'
+      en: 'A big-picture IB math path for young thinkers: connect models, numbers, data, and real-world projects into one powerful learning journey.',
+      zh: '面向 IB 学习者的大数学路线：从模型、数感、数据到真实项目，让孩子看到数学如何解释世界、创造方案。'
     },
     icon: '🌐',
     color: 'from-purple-500 to-pink-400',
@@ -33,8 +33,8 @@ const subjects = [
     title: 'NGSS Science',
     chineseTitle: 'NGSS 科学',
     description: {
-      en: 'NGSS-aligned science lessons with inquiry, practice, and simulations.',
-      zh: '围绕 NGSS 标准设计的科学探究、互动练习和模拟小游戏。'
+      en: 'Science as investigation, not memorization: ask bold questions, test evidence, run simulations, and learn to think like a real scientist.',
+      zh: '不是背知识点，而是像科学家一样提问、观察、验证和解释；每一课都把好奇心变成可训练的科学思维。'
     },
     icon: '🧪',
     color: 'from-emerald-500 to-teal-400',
@@ -45,8 +45,8 @@ const subjects = [
     title: 'AI Coding',
     chineseTitle: 'AI 编程',
     description: {
-      en: 'Master the future of technology with AI-assisted programming and logic.',
-      zh: '预留课程方向：AI 辅助编程、逻辑和项目实践。'
+      en: 'Build with AI from day one: coding, prompts, automation, and product thinking for students who want to create the future, not just use it.',
+      zh: '让孩子从第一天就用 AI 创造作品：编程、提示词、自动化和产品思维，培养未来真正会造工具的人。'
     },
     icon: '🤖',
     color: 'from-indigo-600 to-blue-500',
@@ -57,8 +57,8 @@ const subjects = [
     title: 'STEM',
     chineseTitle: 'STEM',
     description: {
-      en: 'Integrated learning in Science, Technology, Engineering, and Mathematics.',
-      zh: '预留课程方向：科学、技术、工程和数学的综合项目。'
+      en: 'Turn ideas into engineered reality: design, prototype, measure, improve, and present ambitious STEM projects with math and science inside.',
+      zh: '把想法做成真正的作品：设计、搭建、测量、迭代和展示，在项目里把数学、科学和工程能力练出来。'
     },
     icon: '🚀',
     color: 'from-emerald-500 to-teal-400',
