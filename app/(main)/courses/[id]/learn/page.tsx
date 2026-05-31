@@ -116,6 +116,7 @@ const practiceChoices = [
 ]
 
 const resumeCookiePrefix = 'larry_last_lesson'
+const openLessonCount = 5
 
 function getResumeCookieName(courseId: string) {
   return `${resumeCookiePrefix}_${courseId.replace(/[^a-zA-Z0-9_-]/g, '_')}`
@@ -149,6 +150,45 @@ function parseAttemptData(attempt?: PracticeAttemptSummary | null) {
   } catch {
     return null
   }
+}
+
+function isLessonCompleted(lesson: Lesson) {
+  return Boolean(lesson.userProgress?.completedAt || lesson.latestPracticeAttempt?.completed)
+}
+
+function isLessonUnlocked(lessons: Lesson[], index: number) {
+  if (index < openLessonCount) return true
+  return lessons.slice(0, index).every(isLessonCompleted)
+}
+
+function getBestResumeIndex(lessons: Lesson[], preferredIndex = -1) {
+  if (preferredIndex >= 0 && isLessonUnlocked(lessons, preferredIndex)) return preferredIndex
+  const firstUnlockedIncomplete = lessons.findIndex((lesson, index) => isLessonUnlocked(lessons, index) && !isLessonCompleted(lesson))
+  if (firstUnlockedIncomplete >= 0) return firstUnlockedIncomplete
+  const lastUnlocked = lessons.findLastIndex((_, index) => isLessonUnlocked(lessons, index))
+  return Math.max(0, lastUnlocked)
+}
+
+function shuffleItems<T>(items: T[]) {
+  const shuffled = [...items]
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1))
+    ;[shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]]
+  }
+  return shuffled
+}
+
+function buildShuffledQuestionOrder(config: PracticeConfig) {
+  const openResponse = config.questions.filter((question) => question.type === 'open-response')
+  const closedQuestions = config.questions.filter((question) => question.type !== 'open-response')
+  return [...shuffleItems(closedQuestions), ...openResponse].map((question) => question.id)
+}
+
+function getOrderedPracticeQuestions(config: PracticeConfig, questionOrder: string[]) {
+  const byId = new Map(config.questions.map((question) => [question.id, question]))
+  const ordered = questionOrder.map((id) => byId.get(id)).filter(Boolean) as PracticeQuestion[]
+  const missing = config.questions.filter((question) => !questionOrder.includes(question.id))
+  return [...ordered, ...missing]
 }
 
 function ChevronLeftIcon() {
@@ -187,6 +227,15 @@ function CheckIcon() {
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="m5 12 4 4L19 6" />
+    </svg>
+  )
+}
+
+function LockIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="11" width="14" height="10" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
     </svg>
   )
 }
@@ -496,6 +545,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [questAutoAdvancing, setQuestAutoAdvancing] = useState(false)
   const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number; wrongCount?: number } | null>(null)
   const [questEffect, setQuestEffect] = useState<{ kind: 'correct' | 'incorrect' | 'complete'; key: number } | null>(null)
+  const [questQuestionOrder, setQuestQuestionOrder] = useState<string[]>([])
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -518,8 +568,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   useEffect(() => {
     const currentLesson = course?.lessons[currentLessonIndex]
     const attemptData = parseAttemptData(currentLesson?.latestPracticeAttempt)
+    const practiceActivity = currentLesson?.activities?.find((activity) => activity.type === 'practice' && activity.config)
+    const questConfig = parsePracticeConfig(practiceActivity)
     const draftKey = course?.id && activePracticeId ? getDraftKey(course.id, activePracticeId) : null
-    let draft: { questIndex?: number; answers?: Record<string, string | string[]> } | null = null
+    let draft: { questIndex?: number; answers?: Record<string, string | string[]>; questionOrder?: string[] } | null = null
     if (draftKey) {
       try {
         const rawDraft = window.localStorage.getItem(draftKey)
@@ -528,10 +580,20 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         draft = null
       }
     }
+    const questionIds = questConfig?.questions.map((question) => question.id) || []
+    const draftOrderIsValid = draft?.questionOrder?.length === questionIds.length && draft.questionOrder.every((id) => questionIds.includes(id))
+    const nextQuestionOrder = questConfig
+      ? currentLesson?.latestPracticeAttempt?.completed
+        ? questionIds
+        : draftOrderIsValid
+        ? draft?.questionOrder || []
+        : buildShuffledQuestionOrder(questConfig)
+      : []
 
     setSelectedChoice(null)
     setPracticeChecked(false)
-    setQuestIndex(Math.max(0, Number(draft?.questIndex || 0)))
+    setQuestQuestionOrder(nextQuestionOrder)
+    setQuestIndex(Math.min(Math.max(0, Number(draft?.questIndex || 0)), Math.max(0, nextQuestionOrder.length - 1)))
     setQuestAnswers(
       currentLesson?.latestPracticeAttempt?.completed && attemptData?.answers
         ? Object.fromEntries(attemptData.answers.map((answer) => [answer.questionId, answer.value]))
@@ -550,7 +612,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     } : null)
     setQuestEffect(null)
     setQuestAutoAdvancing(false)
-  }, [course, currentLessonIndex, activeLessonId, activePracticeId])
+  }, [course?.id, currentLessonIndex, activeLessonId, activePracticeId])
 
   useEffect(() => {
     const lesson = course?.lessons[currentLessonIndex]
@@ -567,9 +629,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     window.localStorage.setItem(getDraftKey(course.id, activePracticeId), JSON.stringify({
       questIndex,
       answers: questAnswers,
+      questionOrder: questQuestionOrder,
       updatedAt: new Date().toISOString(),
     }))
-  }, [course?.id, activePracticeId, questAnswers, questIndex, questSubmitted])
+  }, [course?.id, activePracticeId, questAnswers, questIndex, questQuestionOrder, questSubmitted])
 
   const fetchLessonDirectly = async (lessonId: string) => {
     try {
@@ -585,8 +648,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
         const index = courseData.lessons.findIndex((lesson: Lesson) => lesson.id === lessonId)
         if (index !== -1) {
-          setCurrentLessonIndex(index)
-          setCookieValue(getResumeCookieName(courseData.id), lessonId)
+          const resumeIndex = getBestResumeIndex(courseData.lessons, index)
+          setCurrentLessonIndex(resumeIndex)
+          setCookieValue(getResumeCookieName(courseData.id), courseData.lessons[resumeIndex]?.id || lessonId)
         }
       } else {
         router.push('/subjects/math')
@@ -610,12 +674,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         setCourse(data)
         const resumeLessonId = getCookieValue(getResumeCookieName(data.id))
         const resumeIndex = data.lessons.findIndex((lesson: Lesson) => lesson.id === resumeLessonId)
-        const firstIncompleteIndex = data.lessons.findIndex((lesson: Lesson) => !lesson.userProgress?.completedAt && !lesson.latestPracticeAttempt?.completed)
-        if (resumeIndex >= 0) {
-          setCurrentLessonIndex(resumeIndex)
-        } else if (firstIncompleteIndex >= 0) {
-          setCurrentLessonIndex(firstIncompleteIndex)
-        }
+        setCurrentLessonIndex(getBestResumeIndex(data.lessons, resumeIndex))
       } else {
         router.push('/courses')
       }
@@ -662,6 +721,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const goToLesson = (index: number) => {
     const nextIndex = Math.max(0, Math.min(index, (course?.lessons.length || 1) - 1))
     const lesson = course?.lessons[nextIndex]
+    if (course && !isLessonUnlocked(course.lessons, nextIndex)) return
     if (course && lesson) setCookieValue(getResumeCookieName(course.id), lesson.id)
     setCurrentLessonIndex(nextIndex)
   }
@@ -746,7 +806,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   }
 
   const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
-    if (questIndex < config.questions.length - 1) {
+    const orderedQuestions = getOrderedPracticeQuestions(config, questQuestionOrder)
+    if (questIndex < orderedQuestions.length - 1) {
       setQuestIndex((index) => index + 1)
       setQuestFeedback(null)
       setQuestHintVisible(false)
@@ -757,7 +818,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
     setQuestSaving(true)
     try {
-      const answers = config.questions.map((question) => ({
+      const answers = orderedQuestions.map((question) => ({
         questionId: question.id,
         value: questAnswers[question.id] || '',
       }))
@@ -856,8 +917,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const embedUrl = getVideoEmbedUrl(currentLesson)
   const practiceActivity = currentLesson.activities?.find((activity) => activity.type === 'practice' && activity.config)
   const questConfig = parsePracticeConfig(practiceActivity)
-  const currentQuestQuestion = questConfig?.questions[questIndex]
-  const questScorePreview = questConfig?.questions.reduce((sum, question) => {
+  const orderedQuestQuestions = questConfig ? getOrderedPracticeQuestions(questConfig, questQuestionOrder) : []
+  const currentQuestQuestion = orderedQuestQuestions[questIndex]
+  const questScorePreview = orderedQuestQuestions.reduce((sum, question) => {
     const value = questAnswers[question.id]
     if (!hasQuestAnswer(question, value)) return sum
     return sum + (checkPracticeAnswer(question, value) ? question.points : -question.penalty)
@@ -868,6 +930,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const progressPercent = Math.round((completedLessonCount / course.lessons.length) * 100)
   const currentLessonComplete = completedLessonIds.has(currentLesson.id)
   const selectedIsCorrect = selectedChoice === practice.answer
+  const nextLessonUnlocked = currentLessonIndex < course.lessons.length - 1 && isLessonUnlocked(course.lessons, currentLessonIndex + 1)
 
   const learningSteps = [
     {
@@ -924,7 +987,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </button>
             <button
               onClick={() => goToLesson(currentLessonIndex + 1)}
-              disabled={currentLessonIndex === course.lessons.length - 1}
+              disabled={currentLessonIndex === course.lessons.length - 1 || !nextLessonUnlocked}
               className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-30"
               aria-label="Next lesson"
             >
@@ -1045,7 +1108,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   </div>
 
                   <div className="mt-5 grid grid-cols-10 gap-1.5">
-                    {questConfig.questions.map((question, index) => {
+                    {orderedQuestQuestions.map((question, index) => {
                       const answered = Boolean(questAnswers[question.id])
                       return (
                         <div
@@ -1061,7 +1124,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
                           <SparkIcon />
-                          Question {questIndex + 1} of {questConfig.questions.length}
+                          Question {questIndex + 1} of {orderedQuestQuestions.length}
                         </div>
                         <div className="text-sm font-black text-[#777064]">
                           +{currentQuestQuestion.points} / -{currentQuestQuestion.penalty}
@@ -1249,7 +1312,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === questConfig.questions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
+                          {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === orderedQuestQuestions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
                         </button>
                         <button
                           onClick={() => {
@@ -1314,11 +1377,13 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           onClick={() => {
                             setQuestIndex(0)
                             setQuestAnswers({})
+                            setQuestQuestionOrder(questConfig ? buildShuffledQuestionOrder(questConfig) : [])
                             setQuestFeedback(null)
                             setQuestHintVisible(false)
                             setQuestSubmitted(false)
                             setQuestResult(null)
                             setQuestAutoAdvancing(false)
+                            if (course && activePracticeId) window.localStorage.removeItem(getDraftKey(course.id, activePracticeId))
                           }}
                           className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black"
                         >
@@ -1326,10 +1391,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         </button>
                         <button
                           onClick={() => goToLesson(currentLessonIndex + 1)}
-                          disabled={currentLessonIndex === course.lessons.length - 1}
+                          disabled={currentLessonIndex === course.lessons.length - 1 || !nextLessonUnlocked}
                           className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          Next lesson
+                          {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1 ? 'Next lesson' : 'Complete this quiz to unlock'}
                           <ChevronRightIcon />
                         </button>
                       </div>
@@ -1397,10 +1462,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       </button>
                       <button
                         onClick={() => goToLesson(currentLessonIndex + 1)}
-                        disabled={currentLessonIndex === course.lessons.length - 1}
+                        disabled={currentLessonIndex === course.lessons.length - 1 || !nextLessonUnlocked}
                         className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        Next lesson
+                        {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1 ? 'Next lesson' : 'Complete this quiz to unlock'}
                         <ChevronRightIcon />
                       </button>
                     </div>
@@ -1432,29 +1497,33 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               {course.lessons.map((lesson, index) => {
                 const active = currentLessonIndex === index
                 const completed = completedLessonIds.has(lesson.id)
+                const unlocked = isLessonUnlocked(course.lessons, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 return (
                   <button
                     key={lesson.id}
                     onClick={() => goToLesson(index)}
+                    disabled={!unlocked}
                     className={`group w-full rounded-2xl border p-4 text-left transition ${
                       active
                         ? 'border-blue-500/70 bg-blue-600/15'
-                        : 'border-transparent bg-white/[0.035] hover:border-white/10 hover:bg-white/[0.06]'
+                        : unlocked
+                        ? 'border-transparent bg-white/[0.035] hover:border-white/10 hover:bg-white/[0.06]'
+                        : 'cursor-not-allowed border-transparent bg-white/[0.02] opacity-55'
                     }`}
                   >
                     <div className="flex gap-3">
                       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${
-                        active ? 'bg-blue-600 text-white' : completed ? 'bg-emerald-500/15 text-emerald-300' : 'bg-white/[0.07] text-gray-500'
+                        active ? 'bg-blue-600 text-white' : completed ? 'bg-emerald-500/15 text-emerald-300' : unlocked ? 'bg-white/[0.07] text-gray-500' : 'bg-white/[0.04] text-gray-700'
                       }`}>
-                        {completed ? <CheckIcon /> : index + 1}
+                        {completed ? <CheckIcon /> : unlocked ? index + 1 : <LockIcon />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className={`truncate font-black ${active ? 'text-white' : 'text-gray-300'}`}>{lesson.title}</div>
                         <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600">
                           <span>{formatDuration(lesson.duration)}</span>
                           {lesson.gradeLevel && <span>{lesson.gradeLevel}</span>}
-                          {lesson.hasPractice && <span>Practice</span>}
+                          {lesson.hasPractice && <span>{unlocked ? 'Quiz' : 'Locked'}</span>}
                           {lesson.latestPracticeAttempt?.completed && (
                             <span className="text-emerald-300">
                               Best {lesson.bestPracticeAttempt?.score || lesson.latestPracticeAttempt.score || 0}/{lesson.bestPracticeAttempt?.maxScore || lesson.latestPracticeAttempt.maxScore || 100}
