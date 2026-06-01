@@ -420,114 +420,17 @@ function MathText({ text }: { text: string }) {
 }
 
 function QuestVisual({ question }: { question: PracticeQuestion }) {
-  const { type } = question
   const keywords = getQuestionKeywords(question)
   const numbers = getQuestionNumbers(question)
-
-  if (type === 'numeric-input' || type === 'fill-blank') {
-    return (
-      <div className="mt-4 overflow-hidden rounded-2xl border border-amber-200 bg-[#fff8e8] p-4">
-        <div className="mb-3 flex items-center justify-between gap-3">
-          <div className="text-xs font-black uppercase tracking-[0.16em] text-amber-800">Build the model</div>
-          <div className="rounded-full bg-white px-3 py-1 text-xs font-black text-amber-900 ring-1 ring-amber-200">? = ___</div>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
-          <div className="rounded-xl bg-white p-3 ring-1 ring-amber-200">
-            <div className="text-[10px] font-black uppercase text-amber-700">Given</div>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {(numbers.length ? numbers : keywords).slice(0, 3).map((item) => (
-                <span key={item} className="rounded-lg bg-amber-100 px-3 py-1 text-sm font-black text-[#171717]">{item}</span>
-              ))}
-            </div>
-          </div>
-          <div className="hidden text-2xl font-black text-amber-700 sm:block">→</div>
-          <div className="rounded-xl bg-white p-3 ring-1 ring-amber-200">
-            <div className="text-[10px] font-black uppercase text-amber-700">Find</div>
-            <div className="mt-2 flex items-center gap-2 text-lg font-black text-[#171717]">
-              <span className="rounded-lg bg-[#171717] px-3 py-1 text-white">?</span>
-              <span className="text-sm text-amber-800">use units and relationships</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'order-steps') {
-    return (
-      <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-blue-800">Reasoning ladder</div>
-        <div className="grid grid-cols-4 gap-2">
-          {[1, 2, 3, 4].map((step) => (
-            <div key={step} className="rounded-xl bg-white p-3 ring-1 ring-blue-100">
-              <div className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-xs font-black text-white">{step}</div>
-              <div className="h-2 rounded-full bg-blue-100" />
-              <div className="mt-2 h-2 w-2/3 rounded-full bg-blue-100" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'multiple-select') {
-    return (
-      <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-emerald-800">Choose every useful clue</div>
-        <div className="grid gap-2 sm:grid-cols-3">
-          {keywords.map((keyword, index) => (
-            <div key={keyword} className="rounded-xl bg-white p-3 ring-1 ring-emerald-100">
-              <div className={`mb-2 h-2 rounded-full ${index === 0 ? 'bg-emerald-500' : index === 1 ? 'bg-cyan-400' : 'bg-lime-400'}`} />
-              <div className="text-sm font-black text-emerald-950">{keyword}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'true-false') {
-    return (
-      <div className="mt-4 rounded-2xl border border-sky-100 bg-sky-50 p-4">
-        <div className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-sky-800">Test the statement</div>
-        <div className="grid grid-cols-2 gap-3">
-          {['Evidence supports it', 'Counterexample breaks it'].map((label) => (
-            <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-sky-100">
-              <div className="text-sm font-black text-sky-950">{label}</div>
-              <div className="mt-3 h-2 rounded-full bg-sky-100" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  if (type === 'open-response') {
-    return (
-      <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl border border-violet-100 bg-violet-50 p-3">
-        {['Evidence', 'Model', 'Next test'].map((label, index) => (
-          <div key={label} className="rounded-xl bg-white p-3 ring-1 ring-violet-100">
-            <div className={`mb-2 h-2 rounded-full ${index === 0 ? 'bg-violet-500' : index === 1 ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-            <div className="text-[10px] font-black uppercase text-violet-800">{label}</div>
-          </div>
-        ))}
-      </div>
-    )
-  }
-
+  const items = (numbers.length ? numbers : keywords).slice(0, 3)
+  if (!items.length) return null
   return (
-    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-xs font-black uppercase tracking-[0.16em] text-slate-700">Think before choosing</div>
-        <div className="text-xs font-black text-slate-500">{numbers.length ? numbers.join(' · ') : 'A · B · C · D'}</div>
-      </div>
-      <div className="grid gap-2 sm:grid-cols-3">
-        {keywords.map((keyword) => (
-          <div key={keyword} className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-            <div className="text-sm font-black text-slate-950">{keyword}</div>
-          </div>
-        ))}
-      </div>
+    <div className="mt-5 flex flex-wrap gap-2">
+      {items.map((item) => (
+        <div key={item} className="rounded-full border border-[#ebe2d3] bg-[#faf7ef] px-3 py-1 text-xs font-black text-[#746a5b]">
+          <MathText text={item} />
+        </div>
+      ))}
     </div>
   )
 }
@@ -867,14 +770,16 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     const correct = checkPracticeAnswer(question, value)
     setQuestFeedback(correct ? 'correct' : 'incorrect')
     setQuestEffect({ kind: correct ? 'correct' : 'incorrect', key: Date.now() })
-    setQuestAutoAdvancing(true)
+    setQuestAutoAdvancing(correct)
     playFeedbackTone(correct ? 'correct' : 'incorrect')
     if (!correct) {
       void recordWrongQuestion(activity, question, value)
+      setQuestHintVisible(true)
+      return
     }
     window.setTimeout(() => {
       void continueQuest(config, activity)
-    }, correct ? 950 : 1250)
+    }, 950)
   }
 
   const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
@@ -1280,18 +1185,18 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   </div>
 
                   {!questSubmitted ? (
-                    <div className="mt-6 rounded-3xl bg-white p-5 shadow-sm">
+                    <div className="mt-6 rounded-[28px] bg-white p-5 shadow-sm sm:p-7">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
                           <SparkIcon />
                           Question {questIndex + 1} of {orderedQuestQuestions.length}
                         </div>
-                        <div className="text-sm font-black text-[#777064]">
+                        <div className="rounded-full bg-[#f7f1e6] px-3 py-1 text-xs font-black text-[#777064]">
                           +{currentQuestQuestion.points} / -{currentQuestQuestion.penalty}
                         </div>
                       </div>
 
-                      <div className="relative overflow-hidden">
+                      <div className="relative mt-6 overflow-hidden">
                         {questEffect && (
                           <div key={questEffect.key} className={`pointer-events-none absolute inset-0 z-10 ${questEffect.kind === 'incorrect' ? 'quest-shake' : 'quest-fireworks'}`}>
                             {questEffect.kind === 'incorrect' ? (
@@ -1314,11 +1219,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           </div>
                         )}
 
-                        <div className={`rounded-3xl border border-[#efe7d8] bg-[#fffdf8] p-4 ${questEffect?.kind === 'correct' ? 'quest-pop' : ''} ${questEffect?.kind === 'incorrect' ? 'quest-wobble' : ''}`}>
-                          <div className="mb-3 inline-flex rounded-full bg-[#f4f1e8] px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#777064]">
+                        <div className={`rounded-[26px] border border-[#f0e7d8] bg-[#fffdf8] p-5 sm:p-7 ${questEffect?.kind === 'correct' ? 'quest-pop' : ''} ${questEffect?.kind === 'incorrect' ? 'quest-wobble' : ''}`}>
+                          <div className="mb-5 inline-flex rounded-full bg-[#f4f1e8] px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#777064]">
                             {getQuestionLabel(currentQuestQuestion.type)}
                           </div>
-                          <p className="text-lg font-black leading-8">
+                          <p className="max-w-3xl text-2xl font-black leading-[1.35] tracking-[-0.01em] text-[#111] sm:text-3xl">
                             <MathText text={currentQuestQuestion.prompt} />
                           </p>
                           <QuestVisual question={currentQuestQuestion} />
@@ -1331,13 +1236,13 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                 disabled={Boolean(questFeedback) || questAutoAdvancing}
                                 placeholder={currentQuestQuestion.inputPlaceholder || 'Write your idea in 2-3 sentences.'}
                                 rows={5}
-                                className="min-h-[150px] w-full resize-y rounded-2xl border-2 border-[#171717] bg-white px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none shadow-[0_8px_0_#171717] placeholder:text-[#b6ad9d] focus:border-violet-600 disabled:opacity-70"
+                                  className="min-h-[150px] w-full resize-y rounded-2xl border border-[#d8cdbc] bg-[#fffaf1] px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none placeholder:text-[#b6ad9d] focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:opacity-70"
                               />
                               <p className="mt-3 text-xs font-bold text-[#857b69]">Use evidence, a model, or a next-test idea. There is no single perfect answer.</p>
                             </div>
                           ) : currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
                             <div className="mt-5">
-                              <div className="flex overflow-hidden rounded-2xl border-2 border-[#171717] bg-white shadow-[0_8px_0_#171717] focus-within:border-blue-600">
+                                <div className="flex overflow-hidden rounded-2xl border border-[#d8cdbc] bg-[#fffaf1] focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
                                 <input
                                   value={String(questAnswers[currentQuestQuestion.id] || '')}
                                   onChange={(event) => answerCurrentQuest(currentQuestQuestion, event.target.value)}
@@ -1373,8 +1278,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                         className={`w-full rounded-2xl border p-3 text-left text-sm font-bold leading-6 transition ${
                                           isSelected ? 'border-blue-200 bg-blue-50 text-blue-900 opacity-60' : 'border-[#e2ded3] bg-white hover:border-blue-400 hover:bg-blue-50'
                                         }`}
-	                                      >
-	                                        <MathText text={choice} />
+                                        >
+                                          <MathText text={choice} />
                                       </button>
                                     )
                                   })}
@@ -1407,14 +1312,14 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                       className="flex w-full items-center gap-3 rounded-xl bg-[#171717] p-3 text-left text-sm font-black text-white"
                                     >
                                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500">{index + 1}</span>
-	                                      <MathText text={choice} />
+                                        <MathText text={choice} />
                                     </button>
                                   ))}
                                 </div>
                               </div>
                             </div>
                           ) : (
-                            <div className="mt-5 space-y-3">
+                              <div className="mt-6 space-y-3">
                               {currentQuestQuestion.choices.map((choice) => {
                                 const selectedValue = questAnswers[currentQuestQuestion.id]
                                 const selectedList = Array.isArray(selectedValue) ? selectedValue : []
@@ -1436,17 +1341,17 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                         answerCurrentQuest(currentQuestQuestion, choice)
                                       }
                                     }}
-                                    className={`w-full rounded-2xl border p-4 text-left text-sm font-bold leading-6 transition ${
+                                      className={`w-full rounded-2xl border p-4 text-left text-base font-bold leading-7 transition ${
                                       showCorrect
                                         ? 'border-emerald-500 bg-emerald-50 text-emerald-900'
                                         : showWrong
                                         ? 'border-red-400 bg-red-50 text-red-900'
                                         : isSelected
-                                        ? 'border-blue-500 bg-blue-50 text-blue-950 shadow-[0_4px_0_#2563eb]'
-                                        : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
+                                          ? 'border-blue-500 bg-blue-50 text-blue-950 shadow-[0_3px_0_#2563eb]'
+                                          : 'border-[#e5dccd] bg-[#fffaf1] text-[#28251f] hover:border-blue-300 hover:bg-blue-50/50'
                                     }`}
                                   >
-	                                    <MathText text={choice} />
+                                      <MathText text={choice} />
                                   </button>
                                 )
                               })}
@@ -1455,37 +1360,52 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         </div>
                       </div>
 
-                      {(questFeedback || questHintVisible) && (
-                        <div className={`mt-5 rounded-2xl p-4 text-sm font-bold leading-6 ${questFeedback === 'correct' ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950'}`}>
-                          <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : questHintVisible ? 'Try this hint before checking.' : currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.'}</div>
-                          <div className="mt-2 font-semibold">
-                            {questFeedback === 'correct'
-                              ? currentQuestQuestion.explanation
-                              : questHintVisible
-                              ? currentQuestQuestion.hint
-                              : `${currentQuestQuestion.hint} This one is saved to your mistake notebook. Next question is coming up.`}
+                        {(questFeedback || questHintVisible) && (
+                          <div className={`mt-5 rounded-2xl border p-4 text-sm font-bold leading-6 ${questFeedback === 'correct' ? 'border-emerald-100 bg-emerald-50 text-emerald-900' : 'border-amber-100 bg-amber-50 text-amber-950'}`}>
+                            <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : questFeedback === 'incorrect' ? currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.' : 'Try this hint before checking.'}</div>
+                            <div className="mt-2 font-semibold">
+                              {questFeedback === 'correct'
+                                ? currentQuestQuestion.explanation
+                                : currentQuestQuestion.hint}
+                            </div>
+                            {questFeedback === 'incorrect' && (
+                              <div className="mt-2 text-xs font-black uppercase tracking-[0.12em] text-amber-800">
+                                Saved to Practice Review. Move on when you are ready.
+                              </div>
+                            )}
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                        <button
-                          onClick={() => checkCurrentQuest(currentQuestQuestion, questConfig, practiceActivity)}
-                          disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing}
-                          className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === orderedQuestQuestions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setQuestHintVisible(true)
-                          }}
-                          disabled={Boolean(questFeedback) || questAutoAdvancing}
-                          className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
-                        >
-                          Need a hint
-                        </button>
-                      </div>
+                        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                          {questFeedback === 'incorrect' ? (
+                            <button
+                              onClick={() => void continueQuest(questConfig, practiceActivity)}
+                              disabled={questSaving}
+                              className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              {questSaving ? 'Saving...' : questIndex === orderedQuestQuestions.length - 1 ? 'Finish quest' : 'Next question'}
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => checkCurrentQuest(currentQuestQuestion, questConfig, practiceActivity)}
+                                disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing || Boolean(questFeedback)}
+                                className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === orderedQuestQuestions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setQuestHintVisible(true)
+                                }}
+                                disabled={Boolean(questFeedback) || questAutoAdvancing}
+                                className="inline-flex flex-1 items-center justify-center rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                Need a hint
+                              </button>
+                            </>
+                          )}
+                        </div>
                     </div>
                   ) : (
                     <div className="relative mt-6 overflow-hidden rounded-3xl bg-white p-5 shadow-sm">
