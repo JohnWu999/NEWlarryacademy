@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
 const sourceRoot = '/Users/johnwu/Documents/自动视频剪辑项目/output'
+const exerciseBankPath = '/Users/johnwu/Documents/自动视频剪辑项目/docs/IB_PYP_G4_Lessons_1_40_Exercise_Bank.json'
 const outputPath = path.join(projectRoot, 'data/ib-pyp-g4-course.json')
 
 const episodeTitles = {
@@ -53,9 +54,247 @@ const episodeTitles = {
 
 const points = [6, 6, 7, 7, 8, 8, 10, 11, 12, 15]
 const penalties = [1, 1, 1, 2, 2, 2, 3, 3, 4, 0]
+const bankPoints = [4, 4, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 10, 10, 7, 7, 7, 12, 14]
+const bankPenalties = [1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 2, 2, 2, 0, 0]
+const exerciseBank = fs.existsSync(exerciseBankPath)
+  ? JSON.parse(fs.readFileSync(exerciseBankPath, 'utf8'))
+  : null
 
 function cleanText(value = '') {
   return String(value).replace(/\s+/g, ' ').replace(/"/g, "'").trim()
+}
+
+function cleanMathText(value = '') {
+  return cleanText(value)
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\text\{([^{}]+)\}/g, '$1')
+    .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2')
+    .replace(/\\times/g, 'x')
+    .replace(/\\div/g, '÷')
+    .replace(/\\Box/g, '□')
+    .replace(/\{,\}/g, ',')
+    .replace(/\.$/, '')
+}
+
+function compactAnswer(value = '') {
+  return cleanMathText(value)
+    .toLowerCase()
+    .replace(/\banswer:\s*/g, '')
+    .replace(/\babout\b/g, '')
+    .replace(/\bpossible:\s*/g, '')
+    .replace(/\bpossible answers:\s*/g, '')
+    .replace(/\bopen;\s*/g, '')
+    .replace(/[.$]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function unique(values) {
+  return [...new Set(values.map(cleanText).filter(Boolean))]
+}
+
+function splitAnswerParts(answer = '') {
+  const cleaned = cleanMathText(answer)
+  if (cleaned.includes(';')) {
+    return cleaned
+      .split(';')
+      .map((part) => part.trim().replace(/\.$/, ''))
+      .filter(Boolean)
+  }
+  return cleaned
+    .replace(/\band\b/g, ',')
+    .split(/,(?=\s*[-$()\\A-Za-z])/)
+    .map((part) => part.trim().replace(/\.$/, ''))
+    .filter(Boolean)
+}
+
+function answerKeywords(answer = '') {
+  return unique(
+    cleanMathText(answer)
+      .toLowerCase()
+      .replace(/[^a-z0-9/%<>.= -]+/g, ' ')
+      .split(/\s+/)
+      .filter((word) => word.length >= 4 && !['possible', 'answer', 'should', 'because', 'there', 'which', 'what', 'with', 'from', 'into', 'than', 'open', 'example'].includes(word))
+  ).slice(0, 5)
+}
+
+function isTrueFalseExercise(exercise) {
+  return /true or false/i.test(exercise.prompt) || /^(true|false)\.?$/i.test(exercise.answer)
+}
+
+function isOpenExercise(exercise) {
+  const prompt = exercise.prompt.toLowerCase()
+  const answer = exercise.answer.toLowerCase()
+  return (
+    exercise.category === 'Communication' ||
+    /^open\b/.test(answer) ||
+    /\b(explain|why|describe|draw|create|design|teach|correct|give one|make two|list three|choose a graph)\b/.test(prompt) ||
+    exercise.number >= 19
+  )
+}
+
+function isOrderExercise(exercise) {
+  return /\border\b/i.test(exercise.prompt) && splitAnswerParts(exercise.answer).length >= 3
+}
+
+function isCompareExercise(exercise) {
+  return /___/.test(exercise.prompt) && /[<>＝=]/.test(cleanMathText(exercise.answer))
+}
+
+function isNumericExercise(exercise) {
+  const answer = compactAnswer(exercise.answer)
+  if (/r\d/i.test(answer) || /\/|[a-z]/i.test(answer.replace(/cm|m|ml|in|ft|yd|km|l|x/g, ''))) return false
+  return /^-?\$?\d+(?:\.\d+)?%?$/.test(answer.replace(/\s*(tickets|miles|minutes|students|visitors|people|boxes|cookies|pencils|prizes|dollars|cans|books|plants|markers|degrees|units|cm|m|ml|in)\b/g, ''))
+}
+
+function answerAlternatives(answer = '') {
+  const raw = cleanMathText(answer)
+  const compact = compactAnswer(answer)
+  const alternatives = [raw, compact]
+  const firstNumber = raw.match(/-?\d+(?:,\d{3})*(?:\.\d+)?%?/)
+  if (firstNumber) alternatives.push(firstNumber[0], firstNumber[0].replace(/,/g, ''))
+  if (/^yes\b/i.test(raw)) alternatives.push('yes')
+  if (/^no\b/i.test(raw)) alternatives.push('no')
+  if (/^true\b/i.test(raw)) alternatives.push('true')
+  if (/^false\b/i.test(raw)) alternatives.push('false')
+  if (/city\s+[ab]/i.test(raw)) alternatives.push(raw.match(/city\s+[ab]/i)?.[0] || '')
+  if (/prime/i.test(raw)) alternatives.push('prime')
+  if (/composite/i.test(raw)) alternatives.push('composite')
+  return unique(alternatives)
+}
+
+function makeBankQuestion(exercise, lessonTitle) {
+  const index = Math.max(0, Number(exercise.number || 1) - 1)
+  const answer = cleanText(exercise.answer)
+  const base = {
+    id: exercise.id,
+    prompt: cleanText(exercise.prompt),
+    answer: cleanMathText(answer),
+    answerPreview: cleanMathText(answer),
+    alternativeAnswers: answerAlternatives(answer),
+    acceptableKeywords: answerKeywords(answer),
+    points: bankPoints[index] || 8,
+    penalty: bankPenalties[index] ?? 2,
+    hint: `${exercise.category} · ${exercise.difficulty}: build a quick model, then check the units and the meaning.`,
+    explanation: `Expected idea: ${cleanMathText(answer)}`,
+    sourceCategory: exercise.category,
+    difficulty: exercise.difficulty,
+    encouragement: {
+      correct: index >= 18 ? 'That is championship-level reasoning.' : 'Nice. You solved the math, not just the screen.',
+      incorrect: 'Good attempt. This one is saved for review; keep your streak moving.',
+    },
+  }
+
+  if (isTrueFalseExercise(exercise)) {
+    return {
+      ...base,
+      type: 'true-false',
+      choices: ['True', 'False'],
+      answer: /^true/i.test(answer) ? 'True' : 'False',
+      alternativeAnswers: [/^true/i.test(answer) ? 'true' : 'false'],
+      visual: 'truth-lab',
+    }
+  }
+
+  if (isOrderExercise(exercise)) {
+    const steps = splitAnswerParts(answer)
+    return {
+      ...base,
+      type: 'order-steps',
+      choices: [...steps].sort(),
+      answer: steps,
+      alternativeAnswers: [],
+      visual: 'sequence-track',
+      inputPlaceholder: 'Tap the values in order',
+    }
+  }
+
+  if (isOpenExercise(exercise)) {
+    return {
+      ...base,
+      type: 'open-response',
+      choices: [],
+      answer: '',
+      visual: exercise.category === 'Communication' ? 'math-talk' : 'strategy-board',
+      inputPlaceholder: `Explain your thinking for ${lessonTitle}.`,
+      hint: 'Write one or two complete sentences. Use a number, model, unit, or reason from the problem.',
+      explanation: 'Open response: we look for a real explanation, model, or reasonable example rather than one exact sentence.',
+    }
+  }
+
+  if (isCompareExercise(exercise)) {
+    const symbol = cleanMathText(answer).match(/[<>=]/)?.[0] || cleanMathText(answer)
+    return {
+      ...base,
+      type: 'multiple-choice',
+      choices: ['<', '>', '='],
+      answer: symbol,
+      alternativeAnswers: [symbol],
+      visual: 'compare-scale',
+    }
+  }
+
+  if (/which .*:|which .*\\?|which .* is|who /i.test(exercise.prompt) || /prime or composite/i.test(exercise.prompt)) {
+    const correct = cleanMathText(answer)
+    const distractors = /prime|composite/i.test(correct)
+      ? ['Prime', 'Composite', 'Neither']
+      : /which form/i.test(exercise.prompt)
+      ? ['Standard form', 'Word form', 'Expanded form']
+      : /yes|no/i.test(correct)
+      ? ['Yes', 'No', 'Not enough information']
+      : []
+    if (distractors.length) {
+      return {
+        ...base,
+        type: 'multiple-choice',
+        choices: unique([correct, ...distractors]).slice(0, 4),
+        answer: correct,
+        visual: 'choice-burst',
+      }
+    }
+  }
+
+  if (isNumericExercise(exercise)) {
+    return {
+      ...base,
+      type: 'numeric-input',
+      choices: [],
+      answer: answerAlternatives(answer).find((item) => /^-?\d/.test(item.replace('$', ''))) || cleanMathText(answer),
+      visual: 'math-pad',
+      inputPlaceholder: 'Type the number',
+    }
+  }
+
+  return {
+    ...base,
+    type: 'fill-blank',
+    choices: [],
+    visual: /fraction/i.test(`${exercise.prompt} ${answer}`) ? 'fraction-builder' : 'blank-card',
+    inputPlaceholder: 'Type the answer in words, numbers, or symbols',
+  }
+}
+
+function buildPracticeFromExerciseBank(episode, title) {
+  const lesson = exerciseBank?.lessons?.find((item) => Number(item.lesson) === Number(episode))
+  if (!lesson || !Array.isArray(lesson.exercises)) return null
+  const questions = lesson.exercises.map((exercise) => makeBankQuestion(exercise, title))
+  const maxScore = questions.reduce((sum, question) => sum + Number(question.points || 0), 0)
+  return {
+    title: `${title} Practice Quest`,
+    source: 'IB_PYP_G4_Lessons_1_40_Exercise_Bank.md',
+    maxScore,
+    passingScore: 75,
+    rewards: {
+      gemsOnPass: 0,
+      gemsOnPerfect: 2,
+      streakBonus: 1,
+    },
+    reviewAdvice: {
+      rewatchMessage: `If your score is below 80, rewatch "${title}" and then replay the 20-question quest.`,
+      focus: `Master the full ${title.toLowerCase()} set: concept checks, skill drills, applications, spiral review, and communication.`,
+    },
+    questions,
+  }
 }
 
 function slugify(value) {
@@ -187,6 +426,9 @@ function openQuestion(id, title) {
 }
 
 function buildPractice(episode, title) {
+  const bankPractice = buildPracticeFromExerciseBank(episode, title)
+  if (bankPractice) return bankPractice
+
   const ep = String(episode).padStart(2, '0')
   const q = (i, kind, prompt, answer, hint, explanation, extra = {}) => {
     const id = `ib-g4-${ep}-q${String(i + 1).padStart(2, '0')}`

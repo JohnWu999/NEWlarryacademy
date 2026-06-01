@@ -22,6 +22,9 @@ interface PracticeQuestion {
   prompt: string
   choices: string[]
   answer?: string | string[]
+  alternativeAnswers?: string[]
+  acceptableKeywords?: string[]
+  answerPreview?: string
   points: number
   penalty: number
   hint: string
@@ -260,7 +263,18 @@ function LessonCoverMark({ index, completed, unlocked }: { index: number; comple
 }
 
 function normalizeAnswer(value: string) {
-  return value.trim().toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ')
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\text\{([^{}]+)\}/g, '$1')
+    .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2')
+    .replace(/\\times/g, 'x')
+    .replace(/\\div/g, '÷')
+    .replace(/\{,\}/g, ',')
+    .replace(/[.$]/g, '')
+    .replace(/,/g, '')
+    .replace(/\s+/g, ' ')
 }
 
 function normalizeNumber(value: string) {
@@ -289,7 +303,10 @@ function checkPracticeAnswer(question: PracticeQuestion, value: string | string[
   if (!value) return false
   if (question.type === 'open-response') {
     const response = Array.isArray(value) ? value.join(' ') : value
-    return normalizeAnswer(response).length >= 12
+    const normalized = normalizeAnswer(response)
+    const keywords = question.acceptableKeywords || []
+    const keywordHits = keywords.filter((keyword) => normalized.includes(normalizeAnswer(keyword))).length
+    return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
   }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
@@ -306,7 +323,11 @@ function checkPracticeAnswer(question: PracticeQuestion, value: string | string[
     }
     return question.answer.length === actual.length && question.answer.every((answer, index) => normalizeAnswer(answer) === normalizeAnswer(actual[index] || ''))
   }
-  return normalizeAnswer(String(question.answer)) === normalizeAnswer(Array.isArray(value) ? value.join(' > ') : value)
+  const actual = normalizeAnswer(Array.isArray(value) ? value.join(' > ') : value)
+  const accepted = [question.answer, ...(question.alternativeAnswers || [])]
+    .filter((answer): answer is string => typeof answer === 'string')
+    .map(normalizeAnswer)
+  return accepted.some((answer) => answer === actual || (answer.length >= 4 && actual.includes(answer)) || (actual.length >= 4 && answer.includes(actual)))
 }
 
 function getQuestionLabel(type: PracticeQuestion['type']) {
@@ -364,6 +385,38 @@ function getQuestionKeywords(question: PracticeQuestion) {
 
 function getQuestionNumbers(question: PracticeQuestion) {
   return question.prompt.match(/-?\d+(?:\.\d+)?%?/g)?.slice(0, 5) || []
+}
+
+function MathText({ text }: { text: string }) {
+  const source = String(text)
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\times/g, '×')
+    .replace(/\\div/g, '÷')
+    .replace(/\\Box/g, '□')
+    .replace(/\{,\}/g, ',')
+  const parts: Array<{ type: 'text' | 'frac'; text?: string; top?: string; bottom?: string }> = []
+  let cursor = 0
+  const fractionPattern = /\\frac\{([^{}]+)\}\{([^{}]+)\}/g
+  let match: RegExpExecArray | null
+  while ((match = fractionPattern.exec(source))) {
+    if (match.index > cursor) parts.push({ type: 'text', text: source.slice(cursor, match.index) })
+    parts.push({ type: 'frac', top: match[1], bottom: match[2] })
+    cursor = match.index + match[0].length
+  }
+  if (cursor < source.length) parts.push({ type: 'text', text: source.slice(cursor) })
+
+  return (
+    <>
+      {parts.map((part, index) => part.type === 'frac' ? (
+        <span key={index} className="mx-0.5 inline-flex translate-y-1 flex-col items-center align-middle text-[0.9em] font-black leading-none">
+          <span className="border-b border-current px-1 pb-0.5">{part.top}</span>
+          <span className="px-1 pt-0.5">{part.bottom}</span>
+        </span>
+      ) : (
+        <span key={index}>{part.text}</span>
+      ))}
+    </>
+  )
 }
 
 function QuestVisual({ question }: { question: PracticeQuestion }) {
@@ -1265,7 +1318,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <div className="mb-3 inline-flex rounded-full bg-[#f4f1e8] px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[#777064]">
                             {getQuestionLabel(currentQuestQuestion.type)}
                           </div>
-                          <p className="text-lg font-black leading-8">{currentQuestQuestion.prompt}</p>
+                          <p className="text-lg font-black leading-8">
+                            <MathText text={currentQuestQuestion.prompt} />
+                          </p>
                           <QuestVisual question={currentQuestQuestion} />
 
                           {currentQuestQuestion.type === 'open-response' ? (
@@ -1318,8 +1373,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                         className={`w-full rounded-2xl border p-3 text-left text-sm font-bold leading-6 transition ${
                                           isSelected ? 'border-blue-200 bg-blue-50 text-blue-900 opacity-60' : 'border-[#e2ded3] bg-white hover:border-blue-400 hover:bg-blue-50'
                                         }`}
-                                      >
-                                        {choice}
+	                                      >
+	                                        <MathText text={choice} />
                                       </button>
                                     )
                                   })}
@@ -1352,7 +1407,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                       className="flex w-full items-center gap-3 rounded-xl bg-[#171717] p-3 text-left text-sm font-black text-white"
                                     >
                                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-500">{index + 1}</span>
-                                      {choice}
+	                                      <MathText text={choice} />
                                     </button>
                                   ))}
                                 </div>
@@ -1391,7 +1446,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                         : 'border-[#e2ded3] bg-[#fbfaf6] text-[#28251f] hover:border-[#bdb5a6]'
                                     }`}
                                   >
-                                    {choice}
+	                                    <MathText text={choice} />
                                   </button>
                                 )
                               })}

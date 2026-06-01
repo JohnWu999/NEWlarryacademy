@@ -4,6 +4,9 @@ export type PracticeQuestionForGrading = {
   prompt?: string
   choices?: string[]
   answer?: string | string[]
+  alternativeAnswers?: string[]
+  acceptableKeywords?: string[]
+  answerPreview?: string
   points?: number
   penalty?: number
   tolerance?: number
@@ -17,7 +20,18 @@ export type SubmittedPracticeAnswer = {
 }
 
 function normalize(value: string) {
-  return value.trim().toLowerCase().replace(/,/g, '').replace(/\s+/g, ' ')
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\text\{([^{}]+)\}/g, '$1')
+    .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, '$1/$2')
+    .replace(/\\times/g, 'x')
+    .replace(/\\div/g, '÷')
+    .replace(/\{,\}/g, ',')
+    .replace(/[.$]/g, '')
+    .replace(/,/g, '')
+    .replace(/\s+/g, ' ')
 }
 
 function normalizeNumber(value: string) {
@@ -27,9 +41,12 @@ function normalizeNumber(value: string) {
 
 export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, submitted?: SubmittedPracticeAnswer) {
   if (!submitted) return false
+  const submittedValue = Array.isArray(submitted.value) ? submitted.value.join(' ') : String(submitted.value)
   if (question.type === 'open-response') {
-    const value = Array.isArray(submitted.value) ? submitted.value.join(' ') : String(submitted.value)
-    return normalize(value).length >= 12
+    const normalized = normalize(submittedValue)
+    const keywords = question.acceptableKeywords || []
+    const keywordHits = keywords.filter((keyword) => normalized.includes(normalize(keyword))).length
+    return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
   }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
@@ -48,7 +65,11 @@ export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, su
     return expected.length === actual.length && expected.every((value, index) => value === actual[index])
   }
 
-  return normalize(String(submitted.value)) === normalize(String(question.answer))
+  const accepted = [question.answer, ...(question.alternativeAnswers || [])]
+    .filter((value): value is string => typeof value === 'string')
+    .map(normalize)
+  const actual = normalize(submittedValue)
+  return accepted.some((answer) => answer === actual || (answer.length >= 4 && actual.includes(answer)) || (actual.length >= 4 && answer.includes(actual)))
 }
 
 export function serializePracticeValue(value: string | string[] | undefined | null) {
