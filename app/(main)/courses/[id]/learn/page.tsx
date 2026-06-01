@@ -282,6 +282,91 @@ function normalizeNumber(value: string) {
   return Number.isFinite(number) ? number : null
 }
 
+function extractNumbers(value: string) {
+  return value
+    .match(/-?\d[\d,]*(?:\.\d+)?/g)
+    ?.map((item) => Number(item.replace(/,/g, '')))
+    .filter((item) => Number.isFinite(item)) || []
+}
+
+function getPromptProduct(prompt = '') {
+  const source = prompt
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\times/g, 'x')
+    .replace(/×/g, 'x')
+  const match = source.match(/(-?\d[\d,]*(?:\.\d+)?)\s*(?:x|\*)\s*(-?\d[\d,]*(?:\.\d+)?)/i)
+  if (!match) return null
+  const left = Number(match[1].replace(/,/g, ''))
+  const right = Number(match[2].replace(/,/g, ''))
+  return Number.isFinite(left) && Number.isFinite(right) ? left * right : null
+}
+
+function isEstimateRangeQuestion(question: PracticeQuestion) {
+  const prompt = normalizeAnswer(question.prompt)
+  return prompt.includes('underestimate') && prompt.includes('overestimate') && getPromptProduct(question.prompt) !== null
+}
+
+function getOpenResponseGuide(question: PracticeQuestion) {
+  if (isEstimateRangeQuestion(question)) {
+    return {
+      label: 'Answer format',
+      placeholder: 'Underestimate: ___\nOverestimate: ___\nReason: I rounded ...',
+      helper: 'Enter two estimates. One must be lower than the real product, and one must be higher.',
+      checks: ['Include 2 numbers', 'One underestimate', 'One overestimate'],
+    }
+  }
+
+  const keywords = (question.acceptableKeywords || []).slice(0, 3)
+  return {
+    label: 'Answer format',
+    placeholder: question.inputPlaceholder || 'I think ... because ...',
+    helper: 'Write one clear sentence. Use math words, a number, or a model from the problem.',
+    checks: keywords.length ? ['A complete thought', `Use: ${keywords.join(', ')}`, 'Explain why'] : ['A complete thought', 'Use a number or model', 'Explain why'],
+  }
+}
+
+function evaluateOpenResponse(question: PracticeQuestion, value: string | string[] | null) {
+  const response = Array.isArray(value) ? value.join(' ') : String(value || '')
+  const normalized = normalizeAnswer(response)
+  if (!normalized) {
+    return { correct: false, message: 'Add your answer first.' }
+  }
+
+  if (isEstimateRangeQuestion(question)) {
+    const target = getPromptProduct(question.prompt)
+    const numbers = extractNumbers(response)
+    const hasUnder = target !== null && numbers.some((number) => number < target)
+    const hasOver = target !== null && numbers.some((number) => number > target)
+    if (numbers.length < 2) {
+      return { correct: false, message: 'I need two estimates: one underestimate and one overestimate.' }
+    }
+    if (!hasUnder && !hasOver) {
+      return { correct: false, message: 'These numbers are on the same side. Make one estimate lower and one estimate higher than the real product.' }
+    }
+    if (!hasUnder) {
+      return { correct: false, message: 'I can see an overestimate. Add one estimate that is lower than the real product.' }
+    }
+    if (!hasOver) {
+      return { correct: false, message: 'I can see an underestimate. Add one estimate that is higher than the real product.' }
+    }
+    return { correct: true, message: 'Good range. You bracketed the real product with a lower and higher estimate.' }
+  }
+
+  const keywords = question.acceptableKeywords || []
+  const keywordHits = keywords.filter((keyword) => normalized.includes(normalizeAnswer(keyword))).length
+  const needsKeywords = keywords.length > 0 && keywordHits < Math.min(2, keywords.length)
+  if (normalized.length < 18 && needsKeywords) {
+    return { correct: false, message: `Make it a fuller sentence and include at least ${Math.min(2, keywords.length)} key idea${Math.min(2, keywords.length) > 1 ? 's' : ''}.` }
+  }
+  if (normalized.length < 18) {
+    return { correct: false, message: 'Make it a fuller sentence so your reasoning is clear.' }
+  }
+  if (needsKeywords) {
+    return { correct: false, message: `Use more math language from the problem. Try including: ${keywords.slice(0, 3).join(', ')}.` }
+  }
+  return { correct: true, message: 'Clear explanation.' }
+}
+
 function hasQuestAnswer(question: PracticeQuestion, value?: string | string[]) {
   if (Array.isArray(value)) {
     return question.type === 'order-steps' ? value.length === question.choices.length : value.length > 0
@@ -302,11 +387,7 @@ function parsePracticeConfig(activity?: LessonActivity) {
 function checkPracticeAnswer(question: PracticeQuestion, value: string | string[] | null) {
   if (!value) return false
   if (question.type === 'open-response') {
-    const response = Array.isArray(value) ? value.join(' ') : value
-    const normalized = normalizeAnswer(response)
-    const keywords = question.acceptableKeywords || []
-    const keywordHits = keywords.filter((keyword) => normalized.includes(normalizeAnswer(keyword))).length
-    return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
+    return evaluateOpenResponse(question, value).correct
   }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
@@ -896,6 +977,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const questConfig = parsePracticeConfig(practiceActivity)
   const orderedQuestQuestions = questConfig ? getOrderedPracticeQuestions(questConfig, questQuestionOrder) : []
   const currentQuestQuestion = orderedQuestQuestions[questIndex]
+  const currentQuestAnswer = currentQuestQuestion ? questAnswers[currentQuestQuestion.id] : undefined
+  const openResponseGuide = currentQuestQuestion?.type === 'open-response' ? getOpenResponseGuide(currentQuestQuestion) : null
+  const openResponseEvaluation = currentQuestQuestion?.type === 'open-response'
+    ? evaluateOpenResponse(currentQuestQuestion, currentQuestAnswer || null)
+    : null
   const questScorePreview = orderedQuestQuestions.reduce((sum, question) => {
     const value = questAnswers[question.id]
     if (!hasQuestAnswer(question, value)) return sum
@@ -1230,15 +1316,30 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
                           {currentQuestQuestion.type === 'open-response' ? (
                             <div className="mt-5">
+                              {openResponseGuide && (
+                                <div className="mb-4 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold leading-6 text-blue-950">
+                                  <div className="text-[11px] font-black uppercase tracking-[0.16em] text-blue-700">{openResponseGuide.label}</div>
+                                  <div className="mt-1">{openResponseGuide.helper}</div>
+                                  <div className="mt-3 flex flex-wrap gap-2">
+                                    {openResponseGuide.checks.map((check) => (
+                                      <span key={check} className="rounded-full bg-white px-3 py-1 text-xs font-black text-blue-800 ring-1 ring-blue-100">
+                                        {check}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                               <textarea
                                 value={String(questAnswers[currentQuestQuestion.id] || '')}
                                 onChange={(event) => answerCurrentQuest(currentQuestQuestion, event.target.value)}
                                 disabled={Boolean(questFeedback) || questAutoAdvancing}
-                                placeholder={currentQuestQuestion.inputPlaceholder || 'Write your idea in 2-3 sentences.'}
+                                placeholder={openResponseGuide?.placeholder || currentQuestQuestion.inputPlaceholder || 'Write your idea in 2-3 sentences.'}
                                 rows={5}
-                                  className="min-h-[150px] w-full resize-y rounded-2xl border border-[#d8cdbc] bg-[#fffaf1] px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none placeholder:text-[#b6ad9d] focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:opacity-70"
+                                className="min-h-[150px] w-full resize-y rounded-2xl border border-[#d8cdbc] bg-[#fffaf1] px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none placeholder:text-[#b6ad9d] focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:opacity-70"
                               />
-                              <p className="mt-3 text-xs font-bold text-[#857b69]">Use evidence, a model, or a next-test idea. There is no single perfect answer.</p>
+                              <p className="mt-3 text-xs font-bold text-[#857b69]">
+                                Press Enter for a new line. Short labels like "Underestimate:" and "Overestimate:" are okay.
+                              </p>
                             </div>
                           ) : currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
                             <div className="mt-5">
@@ -1365,9 +1466,16 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                             <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : questFeedback === 'incorrect' ? currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.' : 'Try this hint before checking.'}</div>
                             <div className="mt-2 font-semibold">
                               {questFeedback === 'correct'
-                                ? currentQuestQuestion.explanation
-                                : currentQuestQuestion.hint}
+                                ? openResponseEvaluation?.message || currentQuestQuestion.explanation
+                                : questFeedback === 'incorrect'
+                                  ? openResponseEvaluation?.message || currentQuestQuestion.hint
+                                  : currentQuestQuestion.hint}
                             </div>
+                            {currentQuestQuestion.type === 'open-response' && questFeedback === 'incorrect' && openResponseGuide && (
+                              <div className="mt-3 rounded-xl bg-white/70 p-3 text-xs font-black leading-5 text-amber-900">
+                                Check before moving on: {openResponseGuide.checks.join(' · ')}
+                              </div>
+                            )}
                             {questFeedback === 'incorrect' && (
                               <div className="mt-2 text-xs font-black uppercase tracking-[0.12em] text-amber-800">
                                 Saved to Practice Review. Move on when you are ready.

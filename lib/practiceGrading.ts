@@ -39,14 +39,49 @@ function normalizeNumber(value: string) {
   return Number.isFinite(number) ? number : null
 }
 
+function extractNumbers(value: string) {
+  return value
+    .match(/-?\d[\d,]*(?:\.\d+)?/g)
+    ?.map((item) => Number(item.replace(/,/g, '')))
+    .filter((item) => Number.isFinite(item)) || []
+}
+
+function getPromptProduct(prompt = '') {
+  const source = prompt
+    .replace(/\\\((.*?)\\\)/g, '$1')
+    .replace(/\\times/g, 'x')
+    .replace(/×/g, 'x')
+  const match = source.match(/(-?\d[\d,]*(?:\.\d+)?)\s*(?:x|\*)\s*(-?\d[\d,]*(?:\.\d+)?)/i)
+  if (!match) return null
+  const left = Number(match[1].replace(/,/g, ''))
+  const right = Number(match[2].replace(/,/g, ''))
+  return Number.isFinite(left) && Number.isFinite(right) ? left * right : null
+}
+
+function isEstimateRangeQuestion(question: PracticeQuestionForGrading) {
+  const prompt = normalize(question.prompt || '')
+  return prompt.includes('underestimate') && prompt.includes('overestimate') && getPromptProduct(question.prompt) !== null
+}
+
+function isOpenResponseCorrect(question: PracticeQuestionForGrading, submittedValue: string) {
+  const normalized = normalize(submittedValue)
+  if (isEstimateRangeQuestion(question)) {
+    const target = getPromptProduct(question.prompt)
+    const numbers = extractNumbers(submittedValue)
+    if (target === null || numbers.length < 2) return false
+    return numbers.some((number) => number < target) && numbers.some((number) => number > target)
+  }
+
+  const keywords = question.acceptableKeywords || []
+  const keywordHits = keywords.filter((keyword) => normalized.includes(normalize(keyword))).length
+  return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
+}
+
 export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, submitted?: SubmittedPracticeAnswer) {
   if (!submitted) return false
   const submittedValue = Array.isArray(submitted.value) ? submitted.value.join(' ') : String(submitted.value)
   if (question.type === 'open-response') {
-    const normalized = normalize(submittedValue)
-    const keywords = question.acceptableKeywords || []
-    const keywordHits = keywords.filter((keyword) => normalized.includes(normalize(keyword))).length
-    return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
+    return isOpenResponseCorrect(question, submittedValue)
   }
   if (question.type === 'numeric-input') {
     const expected = normalizeNumber(String(question.answer))
