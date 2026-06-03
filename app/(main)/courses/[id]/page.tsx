@@ -38,7 +38,22 @@ function courseCoverPath(course: { id: string; courseTrack: string; thumbnailUrl
   return null
 }
 
-function plannedCourseStats(course: { id: string; status: string; courseTrack: string; lessons: unknown[] }) {
+function countLessonQuestions(lessons: { activities?: { config: string | null }[] }[]) {
+  return lessons.reduce((total, lesson) => {
+    const lessonQuestions = lesson.activities?.reduce((activityTotal, activity) => {
+      if (!activity.config) return activityTotal
+      try {
+        const config = JSON.parse(activity.config) as { questions?: unknown[] }
+        return activityTotal + (Array.isArray(config.questions) ? config.questions.length : 0)
+      } catch {
+        return activityTotal
+      }
+    }, 0) || 0
+    return total + lessonQuestions
+  }, 0)
+}
+
+function plannedCourseStats(course: { id: string; status: string; courseTrack: string; lessons: { activities?: { config: string | null }[] }[] }) {
   const plannedIbPypIds = new Set(['course-ib-big-math', 'course-ib-big-math-g7-pyp', 'course-ib-big-math-g8-pyp'])
   if (course.status === 'coming-soon' && course.courseTrack === 'ib-big-math' && plannedIbPypIds.has(course.id)) {
     return { lessons: 40, questions: 800 }
@@ -47,7 +62,7 @@ function plannedCourseStats(course: { id: string; status: string; courseTrack: s
   if (course.status === 'coming-soon' && course.courseTrack === 'ngss-science' && plannedNgssIds.has(course.id)) {
     return { lessons: 20, questions: 200 }
   }
-  return { lessons: course.lessons.length, questions: null as number | null }
+  return { lessons: course.lessons.length, questions: countLessonQuestions(course.lessons) }
 }
 
 export default async function CourseDetailPage({

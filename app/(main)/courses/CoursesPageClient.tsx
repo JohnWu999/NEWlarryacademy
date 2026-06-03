@@ -99,12 +99,12 @@ const courseDescriptionOverrides: Record<'zh' | 'en', Record<string, string>> = 
     'course-ib-big-math-g7-pyp': 'G7 数学推理进阶路径：代数规律、比例关系、概率统计、面积体积和多步问题被组织成系统的 IB 数学学习伴侣。',
     'course-ib-big-math-g8-pyp': 'G8 高阶数学启动器：方程、函数、坐标几何、图形变换、概率和证明式推理相互连接，为之后更高阶的 IB 数学建立有条理的基础。',
     'course-ngss-science': 'G6 NGSS 科学主课：从科学提问、实验公平性、数据证据，到物质、力、能量、波、地球系统和生态影响，配套 20 节视频与 200 道练习。',
-    'course-ngss-science-g7': 'G7 NGSS 即将开放：围绕生态系统、细胞、物质循环、能量转化、地球系统和数据解释，帮助学生把科学现象组织成有证据的解释。',
+    'course-ngss-science-g7': 'G7 NGSS 已开放前 5 课：从系统、尺度和模型进入细胞世界，学习细胞结构、动植物细胞、光合作用和细胞呼吸，并通过证据推理练习把生命科学真正讲清楚。',
     'course-ngss-science-g8': 'G8 NGSS 即将开放：聚焦力与运动、波、遗传、自然选择、空间系统、气候证据和工程约束，为高阶科学学习打下清晰基础。',
   },
   en: {
     'course-ngss-science': 'Grade 6 NGSS Science: 20 phenomenon-based lessons and 200 practice questions across scientific questions, fair tests, data evidence, matter, forces, energy, waves, Earth systems, and ecosystems.',
-    'course-ngss-science-g7': 'Coming soon for Grade 7: ecosystems, cells, matter cycles, energy transfer, Earth systems, and data-rich explanations that turn phenomena into evidence-based reasoning.',
+    'course-ngss-science-g7': 'Grade 7 NGSS is open with its first 5 lessons: systems, scale, cell structures, plant and animal cells, photosynthesis, and cellular respiration, paired with evidence-based practice that helps students explain life science clearly.',
     'course-ngss-science-g8': 'Coming soon for Grade 8: forces, waves, genetics, natural selection, space systems, climate evidence, and engineering constraints for high-school-ready science thinking.',
   },
 }
@@ -309,7 +309,7 @@ export default function CoursesPageClient({
                         </div>
                         <div className="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
                           <span className="text-xs font-black uppercase tracking-[0.18em] text-white/35">
-                            {course.lessonCount > 0 ? labels.ready : labels.preview}
+                            {course.status === 'coming-soon' ? labels.preview : course.lessonCount > 0 ? labels.ready : labels.preview}
                           </span>
                           <span className="text-sm font-black text-blue-300 transition group-hover:text-blue-200">
                             {labels.explore} →
