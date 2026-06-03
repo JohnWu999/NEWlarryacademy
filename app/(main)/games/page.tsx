@@ -41,6 +41,20 @@ export default function GamesPage() {
     return { title: game.title, desc: game.description };
   }
 
+  const getGameVisual = (game: any) => {
+    const title = game.title || ''
+    if (title.includes('泡泡')) return { icon: '🫧', bg: 'from-cyan-400/25 via-blue-500/15 to-slate-900/40', ring: 'shadow-cyan-500/20' }
+    if (title.includes('赛车')) return { icon: '🏎', bg: 'from-amber-400/25 via-orange-600/15 to-slate-900/40', ring: 'shadow-amber-500/20' }
+    if (title.includes('转盘')) return { icon: '🎡', bg: 'from-violet-400/25 via-indigo-600/15 to-slate-900/40', ring: 'shadow-violet-500/20' }
+    if (title.includes('宝藏')) return { icon: '💎', bg: 'from-yellow-300/25 via-amber-600/15 to-slate-900/40', ring: 'shadow-yellow-500/20' }
+    if (title.includes('宫殿')) return { icon: '⚔️', bg: 'from-rose-400/25 via-red-700/15 to-slate-900/40', ring: 'shadow-rose-500/20' }
+    if (title.includes('革命')) return { icon: '🧭', bg: 'from-lime-400/25 via-emerald-700/15 to-slate-900/40', ring: 'shadow-lime-500/20' }
+    if (game.gameType === 'multiplication') return { icon: '✖️', bg: 'from-blue-500/25 via-indigo-600/15 to-slate-900/40', ring: 'shadow-blue-500/20' }
+    if (game.gameType === 'addition') return { icon: '➕', bg: 'from-emerald-500/25 via-teal-600/15 to-slate-900/40', ring: 'shadow-emerald-500/20' }
+    if (game.gameType === 'geometry') return { icon: '📐', bg: 'from-purple-500/25 via-pink-600/15 to-slate-900/40', ring: 'shadow-purple-500/20' }
+    return { icon: '🎯', bg: 'from-orange-500/25 via-red-600/15 to-slate-900/40', ring: 'shadow-orange-500/20' }
+  }
+
   return (
     <div className="relative min-h-dvh w-full max-w-full bg-[#050505] text-white overflow-x-clip">
       {/* Background Ambient Glows */}
@@ -79,6 +93,7 @@ export default function GamesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {games.map((game) => {
               const translation = getGameTranslation(game);
+              const visual = getGameVisual(game);
               return (
                 <div
                   key={game.id}
@@ -86,24 +101,11 @@ export default function GamesPage() {
                 >
                   {/* Game Icon / Thumbnail */}
                   <div
-                    className={`aspect-video flex items-center justify-center relative overflow-hidden ${
-                      game.gameType === 'multiplication'
-                        ? 'bg-gradient-to-br from-blue-500/20 to-indigo-600/20'
-                        : game.gameType === 'addition'
-                        ? 'bg-gradient-to-br from-emerald-500/20 to-teal-600/20'
-                        : game.gameType === 'geometry'
-                        ? 'bg-gradient-to-br from-purple-500/20 to-pink-600/20'
-                        : 'bg-gradient-to-br from-orange-500/20 to-red-600/20'
-                    }`}
+                    className={`aspect-video flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${visual.bg}`}
                   >
-                    <div className="text-white text-5xl sm:text-7xl md:text-8xl group-hover:scale-110 transition-transform duration-700">
-                      {game.gameType === 'multiplication'
-                        ? '✖️'
-                        : game.gameType === 'addition'
-                        ? '➕'
-                        : game.gameType === 'geometry'
-                        ? '📐'
-                        : '🎯'}
+                    <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:32px_32px]" />
+                    <div className={`relative rounded-[2rem] bg-white/10 p-7 text-white text-5xl shadow-2xl ${visual.ring} sm:text-7xl md:text-8xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700`}>
+                      {visual.icon}
                     </div>
                     
                     {game.featured && (
@@ -130,7 +132,7 @@ export default function GamesPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col gap-1 text-xs font-medium text-gray-600 uppercase tracking-widest">
                         <span>{game.playCount} {t('games.plays')}</span>
-                        <span>{game.viewCount || 0} views</span>
+                        <span>{game.viewCount || 0} {locale === 'zh' ? '访问' : 'views'}</span>
                       </div>
                       <Link
                         href={`/games/${game.id}`}

@@ -332,9 +332,16 @@ async function main() {
     ['game-multiplication-challenge', '乘法表挑战', '通过游戏练习乘法表，提高计算速度', 'multiplication', true],
     ['game-addition-speed', '加法速算', '快速心算加法题，锻炼数学思维', 'addition', true],
     ['game-geometry-shapes', '几何图形识别', '识别各种几何图形，学习图形特征', 'geometry', false],
+    ['game-bubble-factor-burst', '偶数泡泡派对', '弹出正确倍数泡泡，在连击中练习因数、倍数和整除判断。', 'bubble', true],
+    ['game-math-nitro-race', '数学赛车', '用加减乘混合运算给赛车充能，连续答对才能超车冲线。', 'race', true],
+    ['game-spin-wheel-arena', '乘法转盘大挑战', '转盘随机触发混合运算题，连续答对后进入更难的奖励回合。', 'wheel', false],
+    ['game-fraction-treasure', '宝藏猎人', '用分数、比例和数量关系破解宝藏封印，收集更高阶的数学能量。', 'treasure', false],
+    ['game-equation-duel', '宫殿对决', '用方程、逆运算和快速判断发动攻击，在回合制数学对决中获胜。', 'duel', false],
+    ['game-logic-rescue', '革命救援', '通过坐标、路径和逻辑推理完成救援任务，训练多步骤数学思考。', 'rescue', false],
   ] as const
 
   for (const [id, title, description, gameType, featured] of games) {
+    const difficulty = gameType === 'addition' ? 'easy' : ['duel', 'rescue', 'treasure'].includes(gameType) ? 'hard' : 'medium'
     await prisma.game.upsert({
       where: { id },
       update: {
@@ -345,9 +352,9 @@ async function main() {
         published: true,
         gameConfig: JSON.stringify({
           type: gameType,
-          difficulty: gameType === 'addition' ? 'easy' : 'medium',
+          difficulty,
           timeLimit: gameType === 'geometry' ? undefined : 60,
-          questionCount: gameType === 'geometry' ? undefined : 10,
+          questionCount: gameType === 'geometry' ? 10 : 12,
         }),
       },
       create: {
@@ -359,9 +366,9 @@ async function main() {
         published: true,
         gameConfig: JSON.stringify({
           type: gameType,
-          difficulty: gameType === 'addition' ? 'easy' : 'medium',
+          difficulty,
           timeLimit: gameType === 'geometry' ? undefined : 60,
-          questionCount: gameType === 'geometry' ? undefined : 10,
+          questionCount: gameType === 'geometry' ? 10 : 12,
         }),
       },
     })

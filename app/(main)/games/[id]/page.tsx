@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
+import MathArcade from '@/components/games/MathArcade'
 
 export default function GameDetailPage({
   params,
@@ -175,23 +176,18 @@ export default function GameDetailPage({
               )}
             </div>
 
-            {gameConfig.playUrl ? (
-              <a
-                href={gameConfig.playUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative block w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-black shadow-2xl shadow-purple-600/20 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                {t('common.start_game')} 🎮 ({t('common.new_window')})
-              </a>
-            ) : (
-              <button className="group relative w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-black shadow-2xl shadow-purple-600/20 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]">
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-                {t('common.start_game')} 🎮
-              </button>
-            )}
+            <a
+              href="#arcade"
+              className="group relative block w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-black shadow-2xl shadow-purple-600/20 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+              {t('common.start_game')} 🎮
+            </a>
           </div>
+        </div>
+
+        <div id="arcade" className="mb-12 scroll-mt-24">
+          <MathArcade game={game} />
         </div>
 
         {/* Instructions Card */}
@@ -201,20 +197,18 @@ export default function GameDetailPage({
             {t('common.instructions')}
           </h2>
           <div className="space-y-4 text-gray-400 text-lg font-light leading-relaxed">
-            {gameConfig.playUrl ? (
-              <>
-                <p>• {locale === 'zh' ? '点击上方「开始游戏」在新窗口中打开原版游戏' : 'Click "Start Game" above to open the original game in a new window.'}</p>
-                <p>• {locale === 'zh' ? '游戏结束后可关闭窗口返回本站' : 'After finishing, close the window to return to the academy.'}</p>
-              </>
-            ) : (
-              <>
-                <p>• {locale === 'zh' ? `本游戏包含 ${gameConfig.questionCount || 10} 道题目` : `This game contains ${gameConfig.questionCount || 10} questions.`}</p>
-                {gameConfig.timeLimit && (
-                  <p>• {locale === 'zh' ? `每道题有 ${gameConfig.timeLimit} 秒的时间限制` : `Each question has a ${gameConfig.timeLimit} second time limit.`}</p>
-                )}
-                <p>• {locale === 'zh' ? '选择正确答案即可得分' : 'Select the correct answer to earn points.'}</p>
-                <p>• {locale === 'zh' ? '完成所有题目后可查看成绩和排名' : 'Complete all questions to see your score and ranking.'}</p>
-              </>
+            <>
+              <p>• {locale === 'zh' ? '每个游戏都有多关进阶，数字范围、题型和策略会逐步升级。' : 'Each game has progressive levels with larger numbers, richer question types, and deeper strategy.'}</p>
+              <p>• {locale === 'zh' ? '答对会触发连击、音效和视觉奖励；答错会扣掉部分分数并给出提示。' : 'Correct answers trigger combos, sound, and visual rewards; mistakes reduce some points and show a hint.'}</p>
+              <p>• {locale === 'zh' ? '完成一局会结算积分；高正确率或连续答对可以获得宝石，并同步到个人中心。' : 'Completing a run earns points; high accuracy or long streaks can earn gems and sync to your profile.'}</p>
+            </>
+            {gameConfig.playUrl && (
+              <p>
+                •{' '}
+                <a href={gameConfig.playUrl} target="_blank" rel="noopener noreferrer" className="font-bold text-purple-300 underline-offset-4 hover:underline">
+                  {locale === 'zh' ? '也可以打开旧版原型' : 'You can also open the classic prototype.'}
+                </a>
+              </p>
             )}
           </div>
         </div>
