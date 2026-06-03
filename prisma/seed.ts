@@ -93,7 +93,7 @@ async function main() {
   const ibBigMath = await prisma.course.upsert({
     where: { id: 'course-ib-big-math' },
     update: {
-      title: 'IB Big Math',
+      title: 'IB Big Math G6 (MYP)',
       description: '面向 IB 数学思维的新课程。每节课将包含视频讲解、互动答题、Practice 和小游戏，强调概念理解、表达和跨主题连接。',
       price: 399,
       isFree: false,
@@ -110,7 +110,7 @@ async function main() {
     },
     create: {
       id: 'course-ib-big-math',
-      title: 'IB Big Math',
+      title: 'IB Big Math G6 (MYP)',
       description: '面向 IB 数学思维的新课程。每节课将包含视频讲解、互动答题、Practice 和小游戏，强调概念理解、表达和跨主题连接。',
       price: 399,
       isFree: false,
