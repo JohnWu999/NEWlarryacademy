@@ -4,15 +4,15 @@ import { useLanguage } from '@/context/LanguageContext'
 import Link from 'next/link'
 
 export default function ToolsPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   
   const tools = [
-    { id: 1, name: t('locale') === 'zh' ? '立方体模型' : 'Cube Model', description: t('locale') === 'zh' ? '展示立方体的各种属性：面、棱、顶点' : 'Show various properties of a cube: faces, edges, vertices', category: t('locale') === 'zh' ? '基础几何' : 'Basic Geometry', icon: '⬛', color: 'from-blue-500 to-cyan-500' },
-    { id: 2, name: t('locale') === 'zh' ? '圆柱体模型' : 'Cylinder Model', description: t('locale') === 'zh' ? '理解圆柱体的结构和体积计算' : 'Understand the structure and volume calculation of a cylinder', category: t('locale') === 'zh' ? '基础几何' : 'Basic Geometry', icon: '🥫', color: 'from-purple-500 to-pink-500' },
-    { id: 3, name: t('locale') === 'zh' ? '球体模型' : 'Sphere Model', description: t('locale') === 'zh' ? '探索球体的性质和表面积公式' : 'Explore the properties and surface area formula of a sphere', category: t('locale') === 'zh' ? '基础几何' : 'Basic Geometry', icon: '⚽', color: 'from-indigo-500 to-blue-500' },
-    { id: 4, name: t('locale') === 'zh' ? '函数图像可视化' : 'Function Visualization', description: t('locale') === 'zh' ? '3D 打印的函数曲线，帮助理解函数性质' : '3D printed function curves to help understand function properties', category: t('locale') === 'zh' ? '代数' : 'Algebra', icon: '📈', color: 'from-emerald-500 to-teal-500' },
-    { id: 5, name: t('locale') === 'zh' ? '分数可视化工具' : 'Fraction Tool', description: t('locale') === 'zh' ? '用实物模型理解分数的概念和运算' : 'Use physical models to understand fraction concepts and operations', category: t('locale') === 'zh' ? '基础数学' : 'Basic Math', icon: '🍕', color: 'from-orange-500 to-amber-500' },
-    { id: 6, name: t('locale') === 'zh' ? '角度测量工具' : 'Angle Measurement', description: t('locale') === 'zh' ? '学习角度的概念和测量方法' : 'Learn angle concepts and measurement methods', category: t('locale') === 'zh' ? '几何' : 'Geometry', icon: '📐', color: 'from-rose-500 to-red-500' },
+    { id: 1, name: locale === 'zh' ? '立方体模型' : 'Cube Model', description: locale === 'zh' ? '展示立方体的各种属性：面、棱、顶点' : 'Show various properties of a cube: faces, edges, vertices', category: locale === 'zh' ? '基础几何' : 'Basic Geometry', icon: '⬛', color: 'from-blue-500 to-cyan-500' },
+    { id: 2, name: locale === 'zh' ? '圆柱体模型' : 'Cylinder Model', description: locale === 'zh' ? '理解圆柱体的结构和体积计算' : 'Understand the structure and volume calculation of a cylinder', category: locale === 'zh' ? '基础几何' : 'Basic Geometry', icon: '🥫', color: 'from-purple-500 to-pink-500' },
+    { id: 3, name: locale === 'zh' ? '球体模型' : 'Sphere Model', description: locale === 'zh' ? '探索球体的性质和表面积公式' : 'Explore the properties and surface area formula of a sphere', category: locale === 'zh' ? '基础几何' : 'Basic Geometry', icon: '⚽', color: 'from-indigo-500 to-blue-500' },
+    { id: 4, name: locale === 'zh' ? '函数图像可视化' : 'Function Visualization', description: locale === 'zh' ? '3D 打印的函数曲线，帮助理解函数性质' : '3D printed function curves to help understand function properties', category: locale === 'zh' ? '代数' : 'Algebra', icon: '📈', color: 'from-emerald-500 to-teal-500' },
+    { id: 5, name: locale === 'zh' ? '分数可视化工具' : 'Fraction Tool', description: locale === 'zh' ? '用实物模型理解分数的概念和运算' : 'Use physical models to understand fraction concepts and operations', category: locale === 'zh' ? '基础数学' : 'Basic Math', icon: '🍕', color: 'from-orange-500 to-amber-500' },
+    { id: 6, name: locale === 'zh' ? '角度测量工具' : 'Angle Measurement', description: locale === 'zh' ? '学习角度的概念和测量方法' : 'Learn angle concepts and measurement methods', category: locale === 'zh' ? '几何' : 'Geometry', icon: '📐', color: 'from-rose-500 to-red-500' },
   ]
 
   return (
@@ -39,9 +39,9 @@ export default function ToolsPage() {
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 text-center">{t('tools.why')}</h2>
           <div className="grid md:grid-cols-3 gap-8 sm:gap-10 lg:gap-12">
             {[
-              { icon: '👁️', title: t('locale') === 'zh' ? '可视化学习' : 'Visual Learning', desc: t('locale') === 'zh' ? '将抽象概念转化为具体可见的模型' : 'Transform abstract concepts into concrete visible models' },
-              { icon: '✋', title: t('locale') === 'zh' ? '触觉体验' : 'Tactile Experience', desc: t('locale') === 'zh' ? '通过触摸和操作加深理解和记忆' : 'Deepen understanding and memory through touch and manipulation' },
-              { icon: '🎯', title: t('locale') === 'zh' ? '实践应用' : 'Practical Application', desc: t('locale') === 'zh' ? '在实际操作中理解数学原理' : 'Understand math principles in actual operation' }
+              { icon: '👁️', title: t('tools.visual.title'), desc: t('tools.visual.desc') },
+              { icon: '✋', title: t('tools.tactile.title'), desc: t('tools.tactile.desc') },
+              { icon: '🎯', title: t('tools.practice.title'), desc: t('tools.practice.desc') }
             ].map((item, i) => (
               <div key={i} className="text-center group">
                 <div className="text-4xl sm:text-5xl lg:text-6xl mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-500">{item.icon}</div>
@@ -56,7 +56,7 @@ export default function ToolsPage() {
         <div className="mb-12 sm:mb-16 lg:mb-24">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 flex items-center gap-3">
             <span className="w-1.5 h-8 bg-blue-500 rounded-full"></span>
-            {t('locale') === 'zh' ? '可用工具库' : 'Available Tools'}
+            {t('tools.available')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {tools.map((tool) => (
@@ -77,7 +77,7 @@ export default function ToolsPage() {
                   {tool.description}
                 </p>
                 <button className="w-full py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all">
-                  {t('locale') === 'zh' ? '查看详情' : 'View Details'}
+                  {t('tools.view')}
                 </button>
               </div>
             ))}
@@ -89,8 +89,8 @@ export default function ToolsPage() {
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-8 sm:mb-12 text-center">{t('tools.get')}</h2>
           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
             {[
-              { icon: '📥', title: t('locale') === 'zh' ? '下载文件' : 'Download Files', desc: t('locale') === 'zh' ? '下载 3D 打印文件，使用自己的打印机制作' : 'Download 3D print files and make them with your own printer', link: '#', btn: t('locale') === 'zh' ? '浏览文件库' : 'Browse Files' },
-              { icon: '🎓', title: t('locale') === 'zh' ? '课程配套' : 'Course Bundle', desc: t('locale') === 'zh' ? '部分付费课程会赠送配套的 3D 打印教具' : 'Some paid courses include matching 3D printed teaching aids', link: '/subjects', btn: t('locale') === 'zh' ? '查看课程' : 'View Courses' }
+              { icon: '📥', title: t('tools.download.title'), desc: t('tools.download.desc'), link: '#', btn: t('tools.download.btn') },
+              { icon: '🎓', title: t('tools.bundle.title'), desc: t('tools.bundle.desc'), link: '/subjects', btn: t('tools.bundle.btn') }
             ].map((item, i) => (
               <div key={i} className="text-center">
                 <div className="text-3xl sm:text-4xl lg:text-5xl mb-4 sm:mb-6">{item.icon}</div>

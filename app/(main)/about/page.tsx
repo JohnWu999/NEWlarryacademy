@@ -3,13 +3,13 @@
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function AboutPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   
   const offers = [
     { icon: '📹', title: t('home.features.courses.title'), desc: t('home.features.courses.desc'), color: 'from-blue-500/20 to-cyan-500/20' },
     { icon: '🎲', title: t('home.features.tools.title'), desc: t('home.features.tools.desc'), color: 'from-purple-500/20 to-pink-500/20' },
     { icon: '🎮', title: t('home.features.games.title'), desc: t('home.features.games.desc'), color: 'from-indigo-500/20 to-blue-500/20' },
-    { icon: '✨', title: t('home.hero.title') === 'WELCOME TO' ? 'AI Personalization' : 'AI 个性化生成', desc: t('home.hero.title') === 'WELCOME TO' ? 'Using AI to generate customized learning games based on student needs.' : '使用人工智能技术，根据学生的需求生成定制化学习游戏。', color: 'from-emerald-500/20 to-teal-500/20' },
+    { icon: '✨', title: locale === 'zh' ? 'AI 个性化生成' : 'AI Personalization', desc: locale === 'zh' ? '使用人工智能技术，根据学生的需求生成定制化学习游戏。' : 'Using AI to generate customized learning games based on student needs.', color: 'from-emerald-500/20 to-teal-500/20' },
   ]
 
   return (
@@ -31,19 +31,46 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Mission Section */}
-        <div className="relative p-6 sm:p-10 lg:p-12 rounded-2xl sm:rounded-[40px] bg-white/[0.02] border border-white/[0.08] backdrop-blur-3xl mb-12 sm:mb-16 lg:mb-24 overflow-hidden group hover:bg-white/[0.04] transition-all duration-500">
-          <div className="absolute top-0 right-0 p-4 sm:p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-            <span className="text-6xl sm:text-8xl lg:text-9xl">🎯</span>
-          </div>
-          <div className="relative z-10">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-6 sm:mb-8 flex items-center gap-3">
-              <span className="w-1.5 h-8 bg-blue-500 rounded-full"></span>
-              {t('about.mission')}
-            </h2>
-            <div className="space-y-4 sm:space-y-6 text-gray-400 text-base sm:text-lg font-light leading-relaxed max-w-2xl">
-              <p>{t('about.mission.p1')}</p>
-              <p>{t('about.mission.p2')}</p>
+        {/* Larry Story Section */}
+        <div className="relative mb-12 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 backdrop-blur-3xl transition-all duration-500 hover:bg-white/[0.04] sm:mb-16 sm:rounded-[40px] sm:p-8 lg:mb-24 lg:p-10">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_38%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.12),transparent_34%)]" />
+          <div className="relative z-10 grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+            <div>
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-blue-300">
+                {t('about.mission.kicker')}
+              </p>
+              <h2 className="text-2xl font-black tracking-tight text-white sm:text-4xl">
+                {t('about.mission')}
+              </h2>
+              <div className="mt-6 space-y-4 text-base font-light leading-8 text-gray-300 sm:text-lg">
+                <p>{t('about.mission.p1')}</p>
+                <p>{t('about.mission.p2')}</p>
+                <p>{t('about.mission.p3')}</p>
+                <p>{t('about.mission.p4')}</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-[0.9fr_1.1fr] lg:grid-cols-1">
+              <figure className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+                <img
+                  src="/about/larry-book.jpg"
+                  alt={locale === 'zh' ? 'Larry 手捧《七岁行欧洲》' : 'Larry holding Walking in Ages'}
+                  className="aspect-[1.28] w-full object-cover"
+                />
+                <figcaption className="border-t border-white/10 p-4">
+                  <p className="text-lg font-black text-white">{t('about.book.title')}</p>
+                  <p className="mt-1 text-sm font-bold text-blue-200">{t('about.book.subtitle')}</p>
+                  <p className="mt-3 text-sm leading-6 text-gray-400">{t('about.book.desc')}</p>
+                </figcaption>
+              </figure>
+
+              <figure className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+                <img
+                  src="/about/larry-cafe.jpg"
+                  alt={locale === 'zh' ? 'Larry 在欧洲旅途中写作' : 'Larry writing during his Europe journey'}
+                  className="aspect-[1.28] w-full object-cover object-[50%_68%] sm:aspect-auto sm:h-full lg:aspect-[1.28] lg:h-auto"
+                />
+              </figure>
             </div>
           </div>
         </div>
