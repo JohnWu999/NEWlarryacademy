@@ -529,7 +529,7 @@ function buildQuestions(lesson) {
 
 const course = {
   id: 'course-ib-pyp-g5-math',
-  title: 'IB Big Math G5: 20-Level Math Quest',
+  title: 'IB Big Math G5',
   description:
     'A complete Grade 5 IB PYP math path with 20 Larry-style video lessons, concept checks, and game-like practice that rewards clear reasoning, brave mistakes, and steady improvement.',
   category: 'ib-big-math',
