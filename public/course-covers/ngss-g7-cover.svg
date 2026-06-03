@@ -1,0 +1,44 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="70" y1="80" x2="1520" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071A14"/><stop offset="0.48" stop-color="#164E63"/><stop offset="1" stop-color="#050816"/>
+    </linearGradient>
+    <radialGradient id="a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1160 170) rotate(138) scale(760 520)">
+      <stop stop-color="#BBF7D0"/><stop offset="0.38" stop-color="#14B8A6" stop-opacity="0.72"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(280 690) rotate(-18) scale(660 430)">
+      <stop stop-color="#FDE68A"/><stop offset="0.3" stop-color="#84CC16" stop-opacity="0.58"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-120" y="-120" width="1840" height="1140" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="34" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="56" fill="url(#bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#a)" opacity="0.82"/>
+  <rect width="1600" height="900" rx="56" fill="url(#b)" opacity="0.62"/>
+  <g opacity="0.2">
+    <path d="M120 170C370 240 590 184 820 250C1034 312 1184 430 1480 358" stroke="#CCFBF1" stroke-width="3"/>
+    <path d="M120 360C390 428 620 360 826 430C1058 510 1232 610 1480 536" stroke="#CCFBF1" stroke-width="3"/>
+    <path d="M120 548C370 604 590 566 820 632C1024 690 1214 748 1480 692" stroke="#CCFBF1" stroke-width="3"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="150" y="178" width="540" height="430" rx="48" fill="#031A16" fill-opacity="0.76" stroke="#BBF7D0" stroke-opacity="0.7" stroke-width="3"/>
+    <text x="218" y="294" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="950">G7</text>
+    <text x="360" y="294" fill="#DCFCE7" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="900">SYSTEMS QUEST</text>
+    <path d="M236 382H604" stroke="#BEF264" stroke-width="8" stroke-linecap="round"/>
+    <path d="M236 456H536" stroke="#5EEAD4" stroke-width="8" stroke-linecap="round"/>
+    <path d="M236 530H628" stroke="#FDE68A" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="1070" cy="426" r="218" fill="#052E2B" fill-opacity="0.74" stroke="#CCFBF1" stroke-width="4"/>
+    <path d="M1070 218C1004 318 1000 526 1070 636C1140 526 1136 318 1070 218Z" stroke="#A7F3D0" stroke-width="7"/>
+    <path d="M862 426C968 354 1170 354 1278 426C1170 500 968 500 862 426Z" stroke="#67E8F9" stroke-width="7"/>
+    <path d="M922 572C1018 526 1122 526 1218 572" stroke="#FDE68A" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="1000" cy="382" r="24" fill="#BEF264"/>
+    <circle cx="1148" cy="380" r="26" fill="#5EEAD4"/>
+    <circle cx="1072" cy="520" r="30" fill="#FDE68A"/>
+  </g>
+  <text x="104" y="112" fill="#BBF7D0" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900">NGSS SCIENCE</text>
+  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">Grade 7</text>
+  <text x="104" y="820" fill="#ECFDF5" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">systems · ecology · matter cycles · data evidence</text>
+</svg>

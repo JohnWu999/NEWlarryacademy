@@ -160,42 +160,93 @@ async function main() {
     },
   })))
 
-  const ngssScience = await prisma.course.upsert({
-    where: { id: 'course-ngss-science' },
-    update: {
-      title: 'NGSS Science',
-      description: '围绕 NGSS 标准设计的科学课程。课程将以问题驱动、实验观察、互动练习和模拟小游戏帮助孩子建立科学解释能力。',
-      price: 399,
+  const ngssCourses = [
+    {
+      id: 'course-ngss-science',
+      title: 'NGSS Science Grade 6',
+      description: 'A future-facing Grade 6 NGSS science course built around phenomena, virtual labs, evidence-based explanations, interactive practice, and student curiosity.',
+      gradeLevel: 'G6',
+      thumbnailUrl: '/course-covers/ngss-g6-cover.svg',
+      status: 'active',
+      isFree: true,
+      accessLevel: 'public',
+      price: 0,
+      difficultyLevel: 'intermediate',
+      expectedFeatures: ['20 phenomenon lessons', '200 practice questions', 'Open-response science reflection', 'Evidence and model-based reasoning'],
+      duration: 300,
+    },
+    {
+      id: 'course-ngss-science-g7',
+      title: 'NGSS Science Grade 7',
+      description: 'A Grade 7 NGSS path for deeper systems thinking: ecosystems, cells, matter cycles, energy transfer, Earth systems, data, and engineering design come together through phenomena and practice.',
+      gradeLevel: 'G7',
+      thumbnailUrl: '/course-covers/ngss-g7-cover.svg',
+      status: 'coming-soon',
       isFree: false,
-      accessLevel: 'paid',
+      accessLevel: 'registered',
+      price: 0,
+      difficultyLevel: 'intermediate',
+      expectedFeatures: ['Ecosystems, cells, and matter cycles', 'Energy transfer and Earth systems', 'Data-rich explanation practice', '20 lessons and 200 planned questions'],
+      duration: 0,
+    },
+    {
+      id: 'course-ngss-science-g8',
+      title: 'NGSS Science Grade 8',
+      description: 'A Grade 8 NGSS launchpad for high-school readiness: forces, waves, genetics, natural selection, space systems, climate evidence, and engineering constraints are organized into clear inquiry missions.',
+      gradeLevel: 'G8',
+      thumbnailUrl: '/course-covers/ngss-g8-cover.svg',
+      status: 'coming-soon',
+      isFree: false,
+      accessLevel: 'registered',
+      price: 0,
+      difficultyLevel: 'advanced',
+      expectedFeatures: ['Forces, waves, genetics, and space systems', 'Climate evidence and natural selection', 'Engineering design constraints', '20 lessons and 200 planned questions'],
+      duration: 0,
+    },
+  ]
+
+  const [ngssScience, ngssScienceG7, ngssScienceG8] = await Promise.all(ngssCourses.map((course) => prisma.course.upsert({
+    where: { id: course.id },
+    update: {
+      title: course.title,
+      description: course.description,
+      price: course.price,
+      isFree: course.isFree,
+      accessLevel: course.accessLevel,
       category: 'ngss-science',
       courseTrack: 'ngss-science',
-      status: 'coming-soon',
+      status: course.status,
       videoProvider: 'tencent-vod',
-      difficultyLevel: 'intermediate',
-      duration: 0,
-      expectedFeatures: JSON.stringify(['科学探究视频', '互动答题', '实验/模拟小游戏', '积分与宝石奖励']),
+      difficultyLevel: course.difficultyLevel,
+      duration: course.duration,
+      expectedFeatures: JSON.stringify(course.expectedFeatures),
+      thumbnailUrl: course.thumbnailUrl,
+      gradeLevel: course.gradeLevel,
+      difficulty: course.difficultyLevel === 'advanced' ? 'Hard' : 'Medium',
       featured: true,
       published: true,
     },
     create: {
-      id: 'course-ngss-science',
-      title: 'NGSS Science',
-      description: '围绕 NGSS 标准设计的科学课程。课程将以问题驱动、实验观察、互动练习和模拟小游戏帮助孩子建立科学解释能力。',
-      price: 399,
-      isFree: false,
-      accessLevel: 'paid',
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      price: course.price,
+      isFree: course.isFree,
+      accessLevel: course.accessLevel,
       category: 'ngss-science',
       courseTrack: 'ngss-science',
-      status: 'coming-soon',
+      status: course.status,
       videoProvider: 'tencent-vod',
-      difficultyLevel: 'intermediate',
-      duration: 0,
-      expectedFeatures: JSON.stringify(['科学探究视频', '互动答题', '实验/模拟小游戏', '积分与宝石奖励']),
+      difficultyLevel: course.difficultyLevel,
+      duration: course.duration,
+      expectedFeatures: JSON.stringify(course.expectedFeatures),
+      thumbnailUrl: course.thumbnailUrl,
+      gradeLevel: course.gradeLevel,
+      difficulty: course.difficultyLevel === 'advanced' ? 'Hard' : 'Medium',
       featured: true,
       published: true,
     },
-  })
+  })))
 
   const futureCourses = [
     ['course-ai-coding-coming-soon', 'AI Coding Lab', 'AI 编程方向预留：项目式编程、提示词、自动化和逻辑训练。', 'AI'],
@@ -492,7 +543,7 @@ async function main() {
     })
   }
 
-  console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScience.title)
+  console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScience.title, ngssScienceG7.title, ngssScienceG8.title)
   console.log('Seeding completed!')
 }
 

@@ -1,0 +1,43 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="80" y1="80" x2="1500" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#061827"/><stop offset="0.5" stop-color="#0B3A48"/><stop offset="1" stop-color="#020611"/>
+    </linearGradient>
+    <radialGradient id="a" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1170 160) rotate(135) scale(760 480)">
+      <stop stop-color="#5EEAD4"/><stop offset="0.42" stop-color="#0EA5E9" stop-opacity="0.76"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(280 700) rotate(-18) scale(640 420)">
+      <stop stop-color="#A7F3D0"/><stop offset="0.34" stop-color="#22C55E" stop-opacity="0.68"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-120" y="-120" width="1840" height="1140" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="34" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="56" fill="url(#bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#a)" opacity="0.78"/>
+  <rect width="1600" height="900" rx="56" fill="url(#b)" opacity="0.64"/>
+  <g opacity="0.22">
+    <path d="M96 186H1504M96 354H1504M96 522H1504M96 690H1504" stroke="#CCFBF1" stroke-width="2"/>
+    <path d="M280 82V812M584 82V812M888 82V812M1192 82V812" stroke="#CCFBF1" stroke-width="2"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="150" y="178" width="540" height="430" rx="48" fill="#03131F" fill-opacity="0.76" stroke="#99F6E4" stroke-opacity="0.72" stroke-width="3"/>
+    <text x="218" y="294" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="82" font-weight="950">G6</text>
+    <text x="360" y="294" fill="#CCFBF1" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="900">PHENOMENA LAB</text>
+    <path d="M236 382H604" stroke="#67E8F9" stroke-width="8" stroke-linecap="round"/>
+    <path d="M236 456H510" stroke="#86EFAC" stroke-width="8" stroke-linecap="round"/>
+    <path d="M236 530H628" stroke="#BAE6FD" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#shadow)">
+    <path d="M1058 184C1188 184 1294 290 1294 420C1294 550 1188 656 1058 656C928 656 822 550 822 420C822 290 928 184 1058 184Z" fill="#042F2E" fill-opacity="0.72" stroke="#CCFBF1" stroke-width="4"/>
+    <path d="M906 512C950 456 1004 420 1062 404C1128 386 1200 392 1254 428" stroke="#A7F3D0" stroke-width="8" stroke-linecap="round"/>
+    <path d="M914 342C966 384 1018 402 1072 394C1130 386 1184 350 1228 292" stroke="#67E8F9" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="978" cy="330" r="24" fill="#5EEAD4"/>
+    <circle cx="1128" cy="388" r="30" fill="#22D3EE"/>
+    <circle cx="1058" cy="510" r="26" fill="#86EFAC"/>
+    <circle cx="1210" cy="492" r="20" fill="#E0F2FE"/>
+  </g>
+  <text x="104" y="112" fill="#A7F3D0" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900">NGSS SCIENCE</text>
+  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">Grade 6</text>
+  <text x="104" y="820" fill="#ECFEFF" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">20 lessons · 200 questions · evidence thinking</text>
+</svg>
