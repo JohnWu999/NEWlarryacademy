@@ -1,0 +1,41 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="86" y1="80" x2="1480" y2="870" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/><stop offset="0.52" stop-color="#173064"/><stop offset="1" stop-color="#060712"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 180) rotate(138) scale(820 520)">
+      <stop stop-color="#38BDF8"/><stop offset="0.35" stop-color="#2563EB"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(270 720) rotate(-24) scale(650 420)">
+      <stop stop-color="#FDE68A"/><stop offset="0.34" stop-color="#F59E0B"/><stop offset="1" stop-color="#020617" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-80" y="-80" width="1760" height="1060" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="36" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="56" fill="url(#bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#glowA)" opacity="0.7"/>
+  <rect width="1600" height="900" rx="56" fill="url(#glowB)" opacity="0.52"/>
+  <g opacity="0.28">
+    <path d="M96 224H1500M96 392H1500M96 560H1500M96 728H1500" stroke="#93C5FD" stroke-width="2"/>
+    <path d="M300 86V820M604 86V820M908 86V820M1212 86V820" stroke="#93C5FD" stroke-width="2"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="162" y="184" width="580" height="430" rx="44" fill="#07111F" fill-opacity="0.72" stroke="#7DD3FC" stroke-opacity="0.55" stroke-width="3"/>
+    <text x="224" y="296" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="80" font-weight="950">G6</text>
+    <text x="360" y="296" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="900" letter-spacing="8">PYP CORE</text>
+    <path d="M238 384H654" stroke="#FDE68A" stroke-width="8" stroke-linecap="round"/>
+    <path d="M238 460H530" stroke="#67E8F9" stroke-width="8" stroke-linecap="round"/>
+    <path d="M238 536H622" stroke="#C4B5FD" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g filter="url(#shadow)">
+    <path d="M1080 190L1304 318V574L1080 704L856 574V318L1080 190Z" fill="#082F49" fill-opacity="0.62" stroke="#E0F2FE" stroke-width="5"/>
+    <path d="M856 318L1080 448L1304 318M1080 448V704" stroke="#BAE6FD" stroke-width="5" opacity="0.72"/>
+    <circle cx="1080" cy="448" r="92" fill="#020617" fill-opacity="0.68" stroke="#FDE68A" stroke-width="5"/>
+    <text x="1018" y="472" fill="#FDE68A" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="950">40</text>
+    <text x="1118" y="472" fill="#E0F2FE" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="900">×</text>
+  </g>
+  <text x="104" y="112" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" letter-spacing="10">IB BIG MATH</text>
+  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">G6 (PYP)</text>
+  <text x="104" y="820" fill="#DBEAFE" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">40 lessons · 800 questions · core companion</text>
+</svg>

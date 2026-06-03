@@ -38,6 +38,14 @@ function courseCoverPath(course: { id: string; courseTrack: string; thumbnailUrl
   return null
 }
 
+function plannedCourseStats(course: { id: string; status: string; courseTrack: string; lessons: unknown[] }) {
+  const plannedIbPypIds = new Set(['course-ib-big-math', 'course-ib-big-math-g7-pyp', 'course-ib-big-math-g8-pyp'])
+  if (course.status === 'coming-soon' && course.courseTrack === 'ib-big-math' && plannedIbPypIds.has(course.id)) {
+    return { lessons: 40, questions: 800 }
+  }
+  return { lessons: course.lessons.length, questions: null as number | null }
+}
+
 export default async function CourseDetailPage({
   params,
 }: {
@@ -82,6 +90,7 @@ export default async function CourseDetailPage({
 
   const heroEmbed = getVideoEmbedUrl(course)
   const coverPath = courseCoverPath(course)
+  const plannedStats = plannedCourseStats(course)
   const featureCards = course.expectedFeatures
     ? JSON.parse(course.expectedFeatures) as string[]
     : ['视频课程', '互动答题', 'Practice 练习', '小游戏挑战']
@@ -154,12 +163,11 @@ export default async function CourseDetailPage({
               <h1 className="text-4xl font-black tracking-tight sm:text-5xl">{course.title}</h1>
               <p className="mt-6 text-lg leading-8 text-gray-400">{course.description}</p>
 
-              <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
                 {[
-                  ['课节', course.lessons.length],
+                  ['课节', plannedStats.lessons],
+                  ['题目', plannedStats.questions ?? '待定'],
                   ['访问', course.viewCount],
-                  ['报名', course.enrollmentCount],
-                  ['时长', course.duration ? `${course.duration} 分钟` : '待定'],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-2xl bg-white/[0.04] p-4">
                     <div className="text-2xl font-black">{value}</div>

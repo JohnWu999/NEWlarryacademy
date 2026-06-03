@@ -75,6 +75,14 @@ function courseQuestionCount(course: { lessons: { activities: { config: string |
   }, 0)
 }
 
+function plannedCourseStats(course: { id: string; status: string; courseTrack: string; _count: { lessons: number }; lessons: { activities: { config: string | null }[] }[] }) {
+  const plannedIbPypIds = new Set(['course-ib-big-math', 'course-ib-big-math-g7-pyp', 'course-ib-big-math-g8-pyp'])
+  if (course.status === 'coming-soon' && course.courseTrack === 'ib-big-math' && plannedIbPypIds.has(course.id)) {
+    return { lessons: 40, questions: 800 }
+  }
+  return { lessons: course._count.lessons, questions: courseQuestionCount(course) }
+}
+
 export default async function CoursesPage({
   searchParams,
 }: {
@@ -104,11 +112,13 @@ export default async function CoursesPage({
     },
     orderBy: [
       { featured: 'desc' },
+      { gradeLevel: 'asc' },
       { createdAt: 'desc' },
     ],
   })
 
-  const totalQuestionCount = courses.reduce((sum, course) => sum + courseQuestionCount(course), 0)
+  const totalLessonCount = courses.reduce((sum, course) => sum + plannedCourseStats(course).lessons, 0)
+  const totalQuestionCount = courses.reduce((sum, course) => sum + plannedCourseStats(course).questions, 0)
 
   const allTracks = ['larry-math', 'ib-big-math', 'ngss-science', 'other'].map((track) => ({
     key: track,
@@ -148,7 +158,7 @@ export default async function CoursesPage({
                 <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">Courses</div>
               </div>
               <div className="rounded-2xl bg-white/[0.04] px-4 py-3">
-                <div className="text-2xl font-black">{courses.reduce((sum, course) => sum + course._count.lessons, 0)}</div>
+                <div className="text-2xl font-black">{totalLessonCount}</div>
                 <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">Lessons</div>
               </div>
               <div className="rounded-2xl bg-white/[0.04] px-4 py-3">
@@ -227,11 +237,11 @@ export default async function CoursesPage({
                         </p>
                         <div className="mt-6 grid grid-cols-3 gap-2 text-center text-xs text-gray-500">
                           <div className="rounded-2xl bg-white/[0.055] p-3">
-                            <div className="text-lg font-black text-white">{course._count.lessons}</div>
+                            <div className="text-lg font-black text-white">{plannedCourseStats(course).lessons}</div>
                             课节
                           </div>
                           <div className="rounded-2xl bg-white/[0.055] p-3">
-                            <div className="text-lg font-black text-white">{courseQuestionCount(course)}</div>
+                            <div className="text-lg font-black text-white">{plannedCourseStats(course).questions}</div>
                             题目
                           </div>
                           <div className="rounded-2xl bg-white/[0.055] p-3">

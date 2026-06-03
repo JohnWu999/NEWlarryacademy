@@ -1,0 +1,40 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="94" y1="66" x2="1478" y2="866" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#130827"/><stop offset="0.5" stop-color="#3B176D"/><stop offset="1" stop-color="#05060F"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1160 210) rotate(140) scale(820 530)">
+      <stop stop-color="#F0ABFC"/><stop offset="0.34" stop-color="#7C3AED"/><stop offset="1" stop-color="#05060F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(270 700) rotate(-25) scale(660 420)">
+      <stop stop-color="#2DD4BF"/><stop offset="0.34" stop-color="#0EA5E9"/><stop offset="1" stop-color="#05060F" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-80" y="-80" width="1760" height="1060" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="36" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="56" fill="url(#bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#glowA)" opacity="0.74"/>
+  <rect width="1600" height="900" rx="56" fill="url(#glowB)" opacity="0.5"/>
+  <g opacity="0.36">
+    <path d="M180 672C330 535 454 548 584 615C734 693 842 611 954 458C1080 286 1222 250 1410 318" stroke="#E9D5FF" stroke-width="5"/>
+    <path d="M180 742C362 610 500 656 628 706C766 760 918 650 1046 506C1162 374 1304 354 1410 410" stroke="#67E8F9" stroke-width="4"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="160" y="186" width="590" height="428" rx="46" fill="#080A18" fill-opacity="0.72" stroke="#C084FC" stroke-opacity="0.56" stroke-width="3"/>
+    <text x="224" y="296" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="80" font-weight="950">G7</text>
+    <text x="358" y="296" fill="#E9D5FF" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="900" letter-spacing="8">PYP SYSTEM</text>
+    <text x="224" y="412" fill="#FDE68A" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="950">ratio</text>
+    <text x="430" y="412" fill="#67E8F9" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="950">scale</text>
+    <text x="224" y="520" fill="#C4B5FD" font-family="Inter, Arial, sans-serif" font-size="54" font-weight="950">proof</text>
+  </g>
+  <g filter="url(#shadow)">
+    <circle cx="1080" cy="450" r="232" fill="#080A18" fill-opacity="0.52" stroke="#E9D5FF" stroke-width="7"/>
+    <circle cx="1080" cy="450" r="150" stroke="#67E8F9" stroke-opacity="0.6" stroke-width="4"/>
+    <path d="M1080 218V682M848 450H1312M936 300C1026 360 1154 360 1246 300M936 600C1026 540 1154 540 1246 600" stroke="#F5D0FE" stroke-opacity="0.68" stroke-width="4"/>
+    <path d="M962 490L1037 560L1210 352" stroke="#34D399" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="104" y="112" fill="#E9D5FF" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" letter-spacing="10">IB BIG MATH</text>
+  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">G7 (PYP)</text>
+  <text x="104" y="820" fill="#DDD6FE" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">40 lessons · 800 questions · systematic review</text>
+</svg>

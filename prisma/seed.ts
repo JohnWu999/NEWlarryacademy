@@ -90,42 +90,69 @@ async function main() {
     },
   })
 
-  const ibBigMath = await prisma.course.upsert({
-    where: { id: 'course-ib-big-math' },
+  const ibPypComingSoon = [
+    {
+      id: 'course-ib-big-math',
+      title: 'IB Big Math G6 (PYP)',
+      gradeLevel: 'G6',
+      thumbnailUrl: '/course-covers/ib-g6-pyp-cover.svg',
+    },
+    {
+      id: 'course-ib-big-math-g7-pyp',
+      title: 'IB Big Math G7 (PYP)',
+      gradeLevel: 'G7',
+      thumbnailUrl: '/course-covers/ib-g7-pyp-cover.svg',
+    },
+    {
+      id: 'course-ib-big-math-g8-pyp',
+      title: 'IB Big Math G8 (PYP)',
+      gradeLevel: 'G8',
+      thumbnailUrl: '/course-covers/ib-g8-pyp-cover.svg',
+    },
+  ]
+
+  const [ibBigMath, ibBigMathG7, ibBigMathG8] = await Promise.all(ibPypComingSoon.map((course) => prisma.course.upsert({
+    where: { id: course.id },
     update: {
-      title: 'IB Big Math G6 (MYP)',
-      description: '面向 IB MYP 数学的核心学习伴侣。围绕最经典、最重要的概念组织视频、练习和可视化进度，帮助学生在没有统一官方教材的情况下系统预习、复习和巩固。',
-      price: 399,
+      title: course.title,
+      description: 'IB PYP 数学核心学习伴侣占位课程。规划 40 节核心概念课和 800 道系统练习，帮助学生在没有统一官方教材的情况下完成可视化预习、复习和巩固。',
+      price: 0,
       isFree: false,
-      accessLevel: 'paid',
+      accessLevel: 'registered',
       category: 'ib-big-math',
       courseTrack: 'ib-big-math',
       status: 'coming-soon',
       videoProvider: 'tencent-vod',
       difficultyLevel: 'intermediate',
       duration: 0,
-      expectedFeatures: JSON.stringify(['腾讯 VOD 视频课程', '互动答题检查理解', '每节课 Practice', '每节课小游戏']),
+      expectedFeatures: JSON.stringify(['40 节核心概念课', '800 道系统练习题', '腾讯 VOD 视频课程', '可视化学习进度']),
+      thumbnailUrl: course.thumbnailUrl,
+      gradeLevel: course.gradeLevel,
+      difficulty: 'Medium',
       featured: true,
       published: true,
     },
     create: {
-      id: 'course-ib-big-math',
-      title: 'IB Big Math G6 (MYP)',
-      description: '面向 IB MYP 数学的核心学习伴侣。围绕最经典、最重要的概念组织视频、练习和可视化进度，帮助学生在没有统一官方教材的情况下系统预习、复习和巩固。',
-      price: 399,
+      id: course.id,
+      title: course.title,
+      description: 'IB PYP 数学核心学习伴侣占位课程。规划 40 节核心概念课和 800 道系统练习，帮助学生在没有统一官方教材的情况下完成可视化预习、复习和巩固。',
+      price: 0,
       isFree: false,
-      accessLevel: 'paid',
+      accessLevel: 'registered',
       category: 'ib-big-math',
       courseTrack: 'ib-big-math',
       status: 'coming-soon',
       videoProvider: 'tencent-vod',
       difficultyLevel: 'intermediate',
       duration: 0,
-      expectedFeatures: JSON.stringify(['腾讯 VOD 视频课程', '互动答题检查理解', '每节课 Practice', '每节课小游戏']),
+      expectedFeatures: JSON.stringify(['40 节核心概念课', '800 道系统练习题', '腾讯 VOD 视频课程', '可视化学习进度']),
+      thumbnailUrl: course.thumbnailUrl,
+      gradeLevel: course.gradeLevel,
+      difficulty: 'Medium',
       featured: true,
       published: true,
     },
-  })
+  })))
 
   const ngssScience = await prisma.course.upsert({
     where: { id: 'course-ngss-science' },
@@ -348,7 +375,7 @@ async function main() {
     })
   }
 
-  console.log('Courses:', larryMath.title, ibBigMath.title, ngssScience.title)
+  console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScience.title)
   console.log('Seeding completed!')
 }
 
