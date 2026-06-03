@@ -59,6 +59,22 @@ function trackCardCopy(trackKey: string) {
   return 'Future directions are introduced beautifully first, then opened when lessons are ready.'
 }
 
+function countActivityQuestions(config?: string | null) {
+  if (!config) return 0
+  try {
+    const parsed = JSON.parse(config) as { questions?: unknown[] }
+    return Array.isArray(parsed.questions) ? parsed.questions.length : 0
+  } catch {
+    return 0
+  }
+}
+
+function courseQuestionCount(course: { lessons: { activities: { config: string | null }[] }[] }) {
+  return course.lessons.reduce((courseTotal, lesson) => {
+    return courseTotal + lesson.activities.reduce((lessonTotal, activity) => lessonTotal + countActivityQuestions(activity.config), 0)
+  }, 0)
+}
+
 export default async function CoursesPage({
   searchParams,
 }: {
@@ -74,6 +90,14 @@ export default async function CoursesPage({
       ...(category ? { category: { equals: category } } : {}),
     },
     include: {
+      lessons: {
+        select: {
+          activities: {
+            where: { type: 'practice' },
+            select: { config: true },
+          },
+        },
+      },
       _count: {
         select: { lessons: true, activities: true },
       },
@@ -83,6 +107,8 @@ export default async function CoursesPage({
       { createdAt: 'desc' },
     ],
   })
+
+  const totalQuestionCount = courses.reduce((sum, course) => sum + courseQuestionCount(course), 0)
 
   const allTracks = ['larry-math', 'ib-big-math', 'ngss-science', 'other'].map((track) => ({
     key: track,
@@ -126,8 +152,8 @@ export default async function CoursesPage({
                 <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">Lessons</div>
               </div>
               <div className="rounded-2xl bg-white/[0.04] px-4 py-3">
-                <div className="text-2xl font-black">{courses.reduce((sum, course) => sum + course._count.activities, 0)}</div>
-                <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">Activities</div>
+                <div className="text-2xl font-black">{totalQuestionCount}</div>
+                <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white/45">Questions</div>
               </div>
             </div>
           </div>
@@ -205,8 +231,8 @@ export default async function CoursesPage({
                             课节
                           </div>
                           <div className="rounded-2xl bg-white/[0.055] p-3">
-                            <div className="text-lg font-black text-white">{course._count.activities}</div>
-                            活动
+                            <div className="text-lg font-black text-white">{courseQuestionCount(course)}</div>
+                            题目
                           </div>
                           <div className="rounded-2xl bg-white/[0.055] p-3">
                             <div className="text-lg font-black text-white">{course.viewCount}</div>
