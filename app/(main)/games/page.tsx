@@ -26,8 +26,24 @@ export default function GamesPage() {
     fetchGames()
   }, [])
 
+  const parseGameConfig = (game: any) => {
+    try {
+      return typeof game.gameConfig === 'string' ? JSON.parse(game.gameConfig) : game.gameConfig || {}
+    } catch {
+      return {}
+    }
+  }
+
   // 映射数据库中的原始标题到翻译词条
   const getGameTranslation = (game: any) => {
+    const config = parseGameConfig(game)
+    if (config.collection === 'larry-originals') {
+      return {
+        title: locale === 'zh' ? config.titleZh || game.title : config.titleEn || game.title,
+        desc: locale === 'zh' ? config.descriptionZh || game.description : config.descriptionEn || game.description,
+      }
+    }
+
     const title = game.title;
     if (title.includes('乘法表')) return { title: t('game.multiplication.title'), desc: t('game.multiplication.desc') };
     if (title.includes('加法速算')) return { title: t('game.addition.title'), desc: t('game.addition.desc') };
@@ -43,6 +59,16 @@ export default function GamesPage() {
 
   const getGameVisual = (game: any) => {
     const title = game.title || ''
+    const config = parseGameConfig(game)
+    if (config.collection === 'larry-originals') {
+      if (game.id.includes('bubble')) return { icon: '🫧', bg: 'from-sky-400/35 via-cyan-500/20 to-slate-950/50', ring: 'shadow-cyan-400/30' }
+      if (game.id.includes('race')) return { icon: '🏁', bg: 'from-orange-300/35 via-red-500/20 to-slate-950/50', ring: 'shadow-orange-400/30' }
+      if (game.id.includes('spin')) return { icon: '🎡', bg: 'from-fuchsia-300/35 via-violet-600/20 to-slate-950/50', ring: 'shadow-fuchsia-400/30' }
+      if (game.id.includes('treasure')) return { icon: '🗺️', bg: 'from-yellow-300/35 via-amber-600/20 to-slate-950/50', ring: 'shadow-amber-400/30' }
+      if (game.id.includes('duel')) return { icon: '⚔️', bg: 'from-red-300/35 via-rose-700/20 to-slate-950/50', ring: 'shadow-red-400/30' }
+      if (game.id.includes('rescue')) return { icon: '🧭', bg: 'from-emerald-300/35 via-lime-700/20 to-slate-950/50', ring: 'shadow-emerald-400/30' }
+    }
+
     if (title.includes('泡泡')) return { icon: '🫧', bg: 'from-cyan-400/25 via-blue-500/15 to-slate-900/40', ring: 'shadow-cyan-500/20' }
     if (title.includes('赛车')) return { icon: '🏎', bg: 'from-amber-400/25 via-orange-600/15 to-slate-900/40', ring: 'shadow-amber-500/20' }
     if (title.includes('转盘')) return { icon: '🎡', bg: 'from-violet-400/25 via-indigo-600/15 to-slate-900/40', ring: 'shadow-violet-500/20' }
@@ -108,6 +134,11 @@ export default function GamesPage() {
                       {visual.icon}
                     </div>
                     
+                    {parseGameConfig(game).collection === 'larry-originals' && (
+                      <div className="absolute top-6 right-6 px-4 py-1 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest">
+                        {locale === 'zh' ? 'Larry 原创' : 'Larry Original'}
+                      </div>
+                    )}
                     {game.featured && (
                       <div className="absolute top-6 left-6 px-4 py-1 rounded-full bg-yellow-500 text-black text-[10px] font-black uppercase tracking-widest">
                         {t('games.featured')}

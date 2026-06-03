@@ -67,6 +67,13 @@ export default function GameDetailPage({
 
   // 映射数据库中的原始标题到翻译词条
   const getGameTranslation = (game: any) => {
+    if (gameConfig.collection === 'larry-originals') {
+      return {
+        title: locale === 'zh' ? gameConfig.titleZh || game.title : gameConfig.titleEn || game.title,
+        desc: locale === 'zh' ? gameConfig.descriptionZh || game.description : gameConfig.descriptionEn || game.description,
+      }
+    }
+
     const title = game.title;
     if (title.includes('乘法表')) return { title: t('game.multiplication.title'), desc: t('game.multiplication.desc') };
     if (title.includes('加法速算')) return { title: t('game.addition.title'), desc: t('game.addition.desc') };
@@ -81,6 +88,8 @@ export default function GameDetailPage({
   }
 
   const translation = getGameTranslation(game)
+  const isLarryOriginal = gameConfig.collection === 'larry-originals'
+  const startTarget = gameConfig.playUrl ? '#original-game' : '#arcade'
 
   return (
     <div className="relative min-h-dvh w-full max-w-full overflow-x-clip bg-[#050505] text-white">
@@ -122,6 +131,11 @@ export default function GameDetailPage({
 
           <div className="p-10">
             <div className="flex flex-wrap items-center gap-3 mb-6">
+              {isLarryOriginal && (
+                <span className="px-4 py-1 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest">
+                  {locale === 'zh' ? 'Larry 原创游戏' : 'Larry Original Game'}
+                </span>
+              )}
               {game.featured && (
                 <span className="px-4 py-1 rounded-full bg-yellow-500 text-black text-[10px] font-black uppercase tracking-widest">
                   {t('games.featured')}
@@ -177,7 +191,7 @@ export default function GameDetailPage({
             </div>
 
             <a
-              href="#arcade"
+              href={startTarget}
               className="group relative block w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-5 rounded-2xl text-xl font-black shadow-2xl shadow-purple-600/20 overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
@@ -185,6 +199,38 @@ export default function GameDetailPage({
             </a>
           </div>
         </div>
+
+        {gameConfig.playUrl && (
+          <div id="original-game" className="mb-12 scroll-mt-24 rounded-[36px] border border-white/10 bg-white/[0.03] p-4 shadow-2xl shadow-black/30 sm:p-5">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.3em] text-purple-300">
+                  {isLarryOriginal ? (locale === 'zh' ? 'Larry 早期作品' : 'Larry early build') : (locale === 'zh' ? '原版游戏' : 'Classic prototype')}
+                </div>
+                <h2 className="mt-2 text-2xl font-black text-white">
+                  {locale === 'zh' ? '直接试玩原版' : 'Play the original build'}
+                </h2>
+              </div>
+              <a
+                href={gameConfig.playUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white/15"
+              >
+                {locale === 'zh' ? '全屏打开' : 'Open full screen'}
+              </a>
+            </div>
+            <div className="overflow-hidden rounded-[28px] border border-white/10 bg-black">
+              <iframe
+                src={gameConfig.playUrl}
+                title={translation.title}
+                className="h-[720px] w-full bg-black"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              />
+            </div>
+          </div>
+        )}
 
         <div id="arcade" className="mb-12 scroll-mt-24">
           <MathArcade game={game} />

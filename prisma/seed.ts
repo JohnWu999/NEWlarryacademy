@@ -374,6 +374,110 @@ async function main() {
     })
   }
 
+  const larryOriginalGames = [
+    {
+      id: 'larry-original-even-bubble-blast',
+      title: 'Larry 原创：偶数泡泡派对',
+      titleEn: 'Larry Original: Even Bubble Blast',
+      description: 'Larry 早期亲手做的泡泡反应游戏：找到所有偶数泡泡，在越来越快的节奏里守住生命值。',
+      descriptionEn: 'One of Larry’s early handmade games: pop the even-number bubbles, protect your lives, and keep up as the pace gets faster.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/even-bubble-blast.html',
+      difficulty: 'easy',
+    },
+    {
+      id: 'larry-original-math-race',
+      title: 'Larry 原创：数学赛车',
+      titleEn: 'Larry Original: Math Race',
+      description: '驾驶赛车收集星星，用加减乘除给燃料补能；速度、燃料和心算同时在线。',
+      descriptionEn: 'Drive, collect stars, and refuel with arithmetic. Speed, strategy, and mental math all work together.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/math-race.html',
+      difficulty: 'easy',
+    },
+    {
+      id: 'larry-original-spin-wheel',
+      title: 'Larry 原创：乘法转盘大挑战',
+      titleEn: 'Larry Original: Spin Wheel Multiplication',
+      description: '转动乘法转盘，挑战更大的数字；连续答对还能解锁空战小游戏。',
+      descriptionEn: 'Spin the multiplication wheel, face bigger numbers, and unlock an arcade air-battle bonus game with streaks.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/math-spin-wheel.html',
+      difficulty: 'medium',
+    },
+    {
+      id: 'larry-original-treasure-hunter',
+      title: 'Larry 原创：宝藏猎人',
+      titleEn: 'Larry Original: Treasure Hunter',
+      description: '在神秘地图里寻找宝藏，用分数与比例解开封印，收集武器完成冒险。',
+      descriptionEn: 'Explore a mysterious map, solve fraction and ratio puzzles, unlock treasures, and collect legendary weapons.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/treasure-hunter.html',
+      difficulty: 'hard',
+    },
+    {
+      id: 'larry-original-palace-duel',
+      title: 'Larry 原创：宫殿对决',
+      titleEn: 'Larry Original: Palace Duel',
+      description: '横版动作对战原型，包含角色动画、攻击、防御和 AI 对手，是 Larry 游戏创作的动作实验。',
+      descriptionEn: 'A side-scrolling action prototype with character animation, attack, defense, and an AI opponent.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/palace-duel.html',
+      difficulty: 'medium',
+    },
+    {
+      id: 'larry-original-revolution-rescue',
+      title: 'Larry 原创：革命救援',
+      titleEn: 'Larry Original: Revolution Rescue',
+      description: '在地图中完成救援任务，用数学挑战推动剧情前进，训练计算、路径和判断力。',
+      descriptionEn: 'Move through a rescue map where math challenges drive the mission, blending calculation, pathing, and judgment.',
+      gameType: 'larry-original',
+      playUrl: '/legacy-games/revolution-rescue.html',
+      difficulty: 'hard',
+    },
+  ] as const
+
+  for (const game of larryOriginalGames) {
+    await prisma.game.upsert({
+      where: { id: game.id },
+      update: {
+        title: game.title,
+        description: game.description,
+        gameType: game.gameType,
+        featured: false,
+        published: true,
+        gameConfig: JSON.stringify({
+          collection: 'larry-originals',
+          type: game.gameType,
+          difficulty: game.difficulty,
+          playUrl: game.playUrl,
+          titleZh: game.title,
+          titleEn: game.titleEn,
+          descriptionZh: game.description,
+          descriptionEn: game.descriptionEn,
+        }),
+      },
+      create: {
+        id: game.id,
+        title: game.title,
+        description: game.description,
+        gameType: game.gameType,
+        featured: false,
+        published: true,
+        gameConfig: JSON.stringify({
+          collection: 'larry-originals',
+          type: game.gameType,
+          difficulty: game.difficulty,
+          playUrl: game.playUrl,
+          titleZh: game.title,
+          titleEn: game.titleEn,
+          descriptionZh: game.description,
+          descriptionEn: game.descriptionEn,
+        }),
+      },
+    })
+  }
+
   const products = [
     ['product-geometry-kit', '几何基础套装', '包含立方体、圆柱体、球体等基础几何模型，适合初学者', 198],
     ['product-algebra-kit', '代数可视化套装', '用 3D 模型演示方程式和函数关系，帮助理解抽象概念', 268],
