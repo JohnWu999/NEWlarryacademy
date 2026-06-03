@@ -94,7 +94,7 @@ async function main() {
     where: { id: 'course-ib-big-math' },
     update: {
       title: 'IB Big Math G6 (MYP)',
-      description: '面向 IB 数学思维的新课程。每节课将包含视频讲解、互动答题、Practice 和小游戏，强调概念理解、表达和跨主题连接。',
+      description: '面向 IB MYP 数学的核心学习伴侣。围绕最经典、最重要的概念组织视频、练习和可视化进度，帮助学生在没有统一官方教材的情况下系统预习、复习和巩固。',
       price: 399,
       isFree: false,
       accessLevel: 'paid',
@@ -111,7 +111,7 @@ async function main() {
     create: {
       id: 'course-ib-big-math',
       title: 'IB Big Math G6 (MYP)',
-      description: '面向 IB 数学思维的新课程。每节课将包含视频讲解、互动答题、Practice 和小游戏，强调概念理解、表达和跨主题连接。',
+      description: '面向 IB MYP 数学的核心学习伴侣。围绕最经典、最重要的概念组织视频、练习和可视化进度，帮助学生在没有统一官方教材的情况下系统预习、复习和巩固。',
       price: 399,
       isFree: false,
       accessLevel: 'paid',

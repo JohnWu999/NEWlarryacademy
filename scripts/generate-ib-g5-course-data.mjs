@@ -531,7 +531,7 @@ const course = {
   id: 'course-ib-pyp-g5-math',
   title: 'IB Big Math G5',
   description:
-    'A complete Grade 5 IB PYP math path with 20 Larry-style video lessons, concept checks, and game-like practice that rewards clear reasoning, brave mistakes, and steady improvement.',
+    'A Grade 5 IB Math core companion built around the concepts students actually need: video lessons, systematic practice, visible progress, and a strong bridge for preview and review.',
   category: 'ib-big-math',
   courseTrack: 'ib-big-math',
   status: 'active',

@@ -33,7 +33,7 @@ const categoryToTrack: Record<string, string> = {
 
 const trackDescriptions: Record<string, string> = {
   'larry-math': 'Larry Math focuses on Larry video lessons, skill drills, Practice, and small games that help students build confident math thinking.',
-  'ib-big-math': 'IB Big Math is built for students who want a real foundation before chasing full marks: video lessons, focused drills, interactive reasoning, and game-like practice in every released pathway.',
+  'ib-big-math': 'IB Math does not come with one official core textbook. Larry Academy turns the most essential IB concepts into a systematic video-and-practice companion, so students can preview, review, and see exactly where their math understanding stands.',
   'ngss-science': 'NGSS Science is a science-only learning track with phenomenon-based videos, inquiry practice, evidence reasoning, open-response reflection, and future lab-style simulations.',
   other: 'These future course areas are being shaped into polished introductions first, with full lessons opening when the content is ready.',
 }
@@ -53,7 +53,7 @@ function accessTone(course: { status: string; accessLevel: string; isFree: boole
 }
 
 function trackCardCopy(trackKey: string) {
-  if (trackKey === 'ib-big-math') return 'IB has no single textbook. These paths turn the missing foundation into a clear, playable climb.'
+  if (trackKey === 'ib-big-math') return 'A core IB Math companion: classic concepts, visual progress, video support, and practice where the textbook is missing.'
   if (trackKey === 'ngss-science') return 'Phenomena, evidence, reflection, and practice designed around real scientific thinking.'
   if (trackKey === 'larry-math') return 'Learn with a peer teacher: Larry explanations, practice loops, and games that make math less lonely.'
   return 'Future directions are introduced beautifully first, then opened when lessons are ready.'
