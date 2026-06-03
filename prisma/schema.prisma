@@ -80,6 +80,18 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model EmailVerification {
+  id         String    @id @default(cuid())
+  email      String
+  codeHash   String
+  purpose    String    @default("register")
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([email, purpose, createdAt])
+}
+
 // ============ Course Models ============
 
 model Course {

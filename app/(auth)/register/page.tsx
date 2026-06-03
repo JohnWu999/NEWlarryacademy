@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { signIn } from 'next-auth/react'
 import { useLanguage } from '@/context/LanguageContext'
 
 export default function RegisterPage() {
@@ -11,16 +12,65 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    verificationCode: '',
     password: '',
     confirmPassword: '',
     marketingConsent: false,
   })
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sendingCode, setSendingCode] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
+
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = window.setTimeout(() => setCooldown((value) => Math.max(value - 1, 0)), 1000)
+    return () => window.clearTimeout(timer)
+  }, [cooldown])
+
+  const handleSendCode = async () => {
+    setError('')
+    setNotice('')
+    const email = formData.email.trim()
+
+    if (!email) {
+      setError(locale === 'zh' ? '请先输入邮箱地址' : 'Please enter your email first')
+      return
+    }
+
+    setSendingCode(true)
+
+    try {
+      const response = await fetch('/api/auth/register-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || (locale === 'zh' ? '验证码发送失败' : 'Failed to send verification code'))
+        if (response.status === 429) setCooldown(60)
+        return
+      }
+
+      setNotice(data.message || (locale === 'zh' ? '验证码已发送，请查收邮箱。' : 'Verification code sent.'))
+      setCooldown(60)
+    } catch (error) {
+      setError(locale === 'zh' ? '验证码发送失败，请稍后重试' : 'Failed to send code, please try again later')
+    } finally {
+      setSendingCode(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setNotice('')
 
     if (formData.password !== formData.confirmPassword) {
       setError(locale === 'zh' ? '两次输入的密码不一致' : 'Passwords do not match')
@@ -29,6 +79,11 @@ export default function RegisterPage() {
 
     if (formData.password.length < 8) {
       setError(locale === 'zh' ? '密码至少需要8个字符' : 'Password must be at least 8 characters')
+      return
+    }
+
+    if (!/^\d{6}$/.test(formData.verificationCode.trim())) {
+      setError(locale === 'zh' ? '请输入6位邮箱验证码' : 'Please enter the 6-digit email code')
       return
     }
 
@@ -44,6 +99,7 @@ export default function RegisterPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          verificationCode: formData.verificationCode,
           marketingConsent: formData.marketingConsent,
         }),
       })
@@ -55,7 +111,19 @@ export default function RegisterPage() {
         return
       }
 
-      router.push('/login?registered=true')
+      const loginResult = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      })
+
+      if (loginResult?.error) {
+        router.push('/login?registered=true')
+        return
+      }
+
+      router.push('/courses')
+      router.refresh()
     } catch (error) {
       setError(locale === 'zh' ? '注册失败，请稍后重试' : 'Registration failed, please try again later')
     } finally {
@@ -101,6 +169,11 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
+            {notice && (
+              <div className="bg-cyan-400/10 border border-cyan-300/20 text-cyan-200 px-6 py-4 rounded-2xl text-sm font-medium">
+                {notice}
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
@@ -130,6 +203,41 @@ export default function RegisterPage() {
                 placeholder="your@email.com"
                 className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-light"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                {locale === 'zh' ? '邮箱验证码' : 'Email Code'}
+              </label>
+              <div className="grid grid-cols-[1fr_auto] gap-3">
+                <input
+                  name="verificationCode"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={formData.verificationCode}
+                  onChange={handleChange}
+                  required
+                  placeholder="123456"
+                  className="min-w-0 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder:text-gray-600 focus:ring-2 focus:ring-blue-500 outline-none transition-all font-light"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendCode}
+                  disabled={sendingCode || cooldown > 0}
+                  className="whitespace-nowrap rounded-2xl border border-cyan-300/30 bg-cyan-300 px-5 py-4 text-sm font-black text-[#05131d] shadow-lg shadow-cyan-400/10 transition hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-gray-500"
+                >
+                  {sendingCode
+                    ? (locale === 'zh' ? '发送中' : 'Sending')
+                    : cooldown > 0
+                      ? `${cooldown}s`
+                      : (locale === 'zh' ? '获取验证码' : 'Get code')}
+                </button>
+              </div>
+              <p className="mt-2 ml-1 text-xs text-gray-600">
+                {locale === 'zh' ? '验证码 10 分钟内有效，请查看收件箱或垃圾邮件。' : 'The code expires in 10 minutes. Check inbox or spam.'}
+              </p>
             </div>
 
             <div>
