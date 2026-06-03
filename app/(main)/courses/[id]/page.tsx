@@ -30,7 +30,8 @@ function courseTrackLabel(track: string) {
   return 'Future Course'
 }
 
-function courseCoverPath(course: { id: string; courseTrack: string }) {
+function courseCoverPath(course: { id: string; courseTrack: string; thumbnailUrl?: string | null }) {
+  if (course.thumbnailUrl) return course.thumbnailUrl
   if (course.id === 'course-ngss-science' || course.courseTrack === 'ngss-science') {
     return '/course-covers/ngss-science-cover.png'
   }
@@ -109,8 +110,8 @@ export default async function CourseDetailPage({
                   />
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_52%_42%,rgba(16,185,129,0.08),transparent_34%),linear-gradient(90deg,rgba(0,0,0,0.64),rgba(0,0,0,0.16)_52%,rgba(0,0,0,0.56))]" />
                   <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.35em] text-emerald-200/80">
-                      Future Science Lab
+                    <p className="mb-3 text-xs font-black uppercase tracking-[0.35em] text-white/70">
+                      {courseTrackLabel(course.courseTrack)}
                     </p>
                     <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white drop-shadow-2xl sm:text-6xl">
                       {course.title}

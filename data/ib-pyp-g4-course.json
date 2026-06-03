@@ -5,8 +5,8 @@
   "category": "ib-big-math",
   "courseTrack": "ib-big-math",
   "status": "active",
-  "accessLevel": "public",
-  "isFree": true,
+  "accessLevel": "registered",
+  "isFree": false,
   "price": 0,
   "difficultyLevel": "Grade 4",
   "gradeLevel": "G4",
@@ -23072,5 +23072,6 @@
         ]
       }
     }
-  ]
+  ],
+  "thumbnailUrl": "/course-covers/ib-g4-cover.svg"
 }

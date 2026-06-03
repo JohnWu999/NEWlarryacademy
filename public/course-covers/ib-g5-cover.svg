@@ -1,0 +1,52 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="g5GlowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1160 186) rotate(139) scale(820 540)">
+      <stop stop-color="#F0ABFC"/>
+      <stop offset="0.38" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#090511" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g5GlowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(310 690) rotate(-22) scale(650 430)">
+      <stop stop-color="#34D399"/>
+      <stop offset="0.36" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#090511" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g5Bg" x1="77" y1="80" x2="1465" y2="845" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10051F"/>
+      <stop offset="0.5" stop-color="#22104A"/>
+      <stop offset="1" stop-color="#04060F"/>
+    </linearGradient>
+    <linearGradient id="g5Ring" x1="827" y1="187" x2="1302" y2="687" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5D0FE"/>
+      <stop offset="0.48" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+    <filter id="g5Shadow" x="-80" y="-80" width="1760" height="1060" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="38" flood-color="#000000" flood-opacity="0.44"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" rx="56" fill="url(#g5Bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#g5GlowA)" opacity="0.74"/>
+  <rect width="1600" height="900" rx="56" fill="url(#g5GlowB)" opacity="0.56"/>
+  <g opacity="0.36">
+    <path d="M190 692C338 545 438 553 559 610C706 679 790 593 910 442C1041 276 1192 248 1401 330" stroke="#E9D5FF" stroke-width="5"/>
+    <path d="M190 749C358 626 468 657 579 694C733 745 891 643 1017 509C1136 383 1280 366 1401 421" stroke="#67E8F9" stroke-width="4"/>
+  </g>
+  <g filter="url(#g5Shadow)">
+    <circle cx="1048" cy="452" r="238" fill="#080A18" fill-opacity="0.54" stroke="url(#g5Ring)" stroke-width="8"/>
+    <circle cx="1048" cy="452" r="154" stroke="#E9D5FF" stroke-opacity="0.6" stroke-width="4"/>
+    <path d="M1048 214V690M810 452H1286M883 285C987 361 1097 361 1213 285M883 615C987 539 1097 539 1213 615" stroke="#F5D0FE" stroke-opacity="0.62" stroke-width="4"/>
+    <path d="M925 481L1008 558L1191 353" stroke="#34D399" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g filter="url(#g5Shadow)">
+    <rect x="152" y="188" width="568" height="420" rx="46" fill="#070816" fill-opacity="0.72" stroke="#C084FC" stroke-opacity="0.56" stroke-width="3"/>
+    <text x="214" y="292" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="74" font-weight="950">20</text>
+    <text x="323" y="292" fill="#D8B4FE" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900" letter-spacing="8">LEVEL QUEST</text>
+    <text x="214" y="402" fill="#FDE68A" font-family="Inter, Arial, sans-serif" font-size="55" font-weight="900">ratio</text>
+    <text x="426" y="402" fill="#67E8F9" font-family="Inter, Arial, sans-serif" font-size="55" font-weight="900">area</text>
+    <text x="214" y="505" fill="#C4B5FD" font-family="Inter, Arial, sans-serif" font-size="55" font-weight="900">proof</text>
+    <path d="M530 487H633M581 435V539" stroke="#34D399" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <text x="104" y="112" fill="#E9D5FF" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" letter-spacing="10">IB BIG MATH</text>
+  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">Grade 5</text>
+  <text x="104" y="820" fill="#DDD6FE" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">20 levels · reasoning · full-score foundation</text>
+</svg>

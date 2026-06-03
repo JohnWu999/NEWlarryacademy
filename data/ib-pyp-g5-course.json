@@ -7,7 +7,7 @@
   "status": "active",
   "accessLevel": "registered",
   "isFree": false,
-  "price": 399,
+  "price": 0,
   "difficultyLevel": "Intermediate",
   "gradeLevel": "G5",
   "difficulty": "Medium",
@@ -6479,5 +6479,6 @@
         ]
       }
     }
-  ]
+  ],
+  "thumbnailUrl": "/course-covers/ib-g5-cover.svg"
 }

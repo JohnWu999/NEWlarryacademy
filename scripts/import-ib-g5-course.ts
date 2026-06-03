@@ -29,6 +29,7 @@ type CourseSeed = {
   accessLevel: string
   isFree: boolean
   price: number
+  thumbnailUrl?: string
   difficultyLevel: string
   gradeLevel: string
   difficulty: string
@@ -65,6 +66,7 @@ async function main() {
       status: course.status,
       difficultyLevel: course.difficultyLevel,
       videoProvider: course.videoProvider,
+      thumbnailUrl: course.thumbnailUrl,
       duration: totalDuration,
       gradeLevel: course.gradeLevel,
       difficulty: course.difficulty,
@@ -83,6 +85,7 @@ async function main() {
       status: course.status,
       difficultyLevel: course.difficultyLevel,
       videoProvider: course.videoProvider,
+      thumbnailUrl: course.thumbnailUrl,
       duration: totalDuration,
       gradeLevel: course.gradeLevel,
       difficulty: course.difficulty,

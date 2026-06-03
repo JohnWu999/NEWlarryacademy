@@ -15,7 +15,9 @@ type CourseLike = {
 }
 
 export function isPublicCourse(course: CourseLike) {
-  return course.status !== 'coming-soon' && (course.isFree || course.price <= 0 || course.accessLevel === COURSE_ACCESS.PUBLIC)
+  if (course.status === 'coming-soon') return false
+  if (course.accessLevel === COURSE_ACCESS.REGISTERED || course.accessLevel === COURSE_ACCESS.PAID) return false
+  return course.accessLevel === COURSE_ACCESS.PUBLIC || course.isFree || course.price <= 0
 }
 
 export function requiresLogin(course: CourseLike) {
