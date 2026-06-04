@@ -142,21 +142,21 @@ const visualWallCopy = {
   },
   en: {
     label: 'Visual Preview',
-    title: 'A cinematic map of the learning journey',
+    title: 'Fantastic Learning Journey',
     subtitle: 'Every tile hints at a lesson, a practice moment, or a discovery.',
   },
 } satisfies Record<Locale, Record<string, string>>
 
 const ibVisualMotifs = [
-  { title: 'Foundation Quest', subtitle: 'models + drills', symbol: '4,820', tone: 'from-blue-500/35 via-cyan-400/18 to-slate-950' },
-  { title: 'Fraction Lab', subtitle: 'parts to whole', symbol: '3/8', tone: 'from-violet-500/35 via-fuchsia-400/18 to-slate-950' },
-  { title: 'Ratio Arena', subtitle: 'compare + scale', symbol: '5:8', tone: 'from-emerald-500/30 via-teal-300/16 to-slate-950' },
-  { title: 'Geometry Grid', subtitle: 'shape reasoning', symbol: 'A = lw', tone: 'from-sky-500/32 via-indigo-400/16 to-slate-950' },
-  { title: 'Data Mission', subtitle: 'patterns + proof', symbol: 'mean', tone: 'from-amber-400/30 via-orange-500/14 to-slate-950' },
-  { title: 'Equation Gate', subtitle: 'solve with logic', symbol: 'x + 7', tone: 'from-rose-500/30 via-red-400/14 to-slate-950' },
-  { title: 'Percent Boost', subtitle: 'change + compare', symbol: '25%', tone: 'from-cyan-400/28 via-blue-500/18 to-slate-950' },
-  { title: 'Problem Studio', subtitle: 'model before solve', symbol: '→', tone: 'from-lime-400/25 via-emerald-500/14 to-slate-950' },
-  { title: 'Full Score Path', subtitle: 'practice loop', symbol: '100', tone: 'from-purple-500/30 via-blue-500/16 to-slate-950' },
+  { title: 'Place Value', subtitle: 'model the number', symbol: '4,820', sketch: 'place-value', accent: 'bg-sky-500' },
+  { title: 'Fractions', subtitle: 'part to whole', symbol: '3/8', sketch: 'fraction', accent: 'bg-violet-500' },
+  { title: 'Ratios', subtitle: 'compare and scale', symbol: '5:8', sketch: 'ratio', accent: 'bg-emerald-500' },
+  { title: 'Geometry', subtitle: 'see the structure', symbol: 'A = lw', sketch: 'geometry', accent: 'bg-blue-500' },
+  { title: 'Data', subtitle: 'patterns and proof', symbol: 'mean', sketch: 'data', accent: 'bg-amber-500' },
+  { title: 'Equations', subtitle: 'solve with logic', symbol: 'x + 7', sketch: 'algebra', accent: 'bg-rose-500' },
+  { title: 'Percent', subtitle: 'change and compare', symbol: '25%', sketch: 'ratio', accent: 'bg-cyan-500' },
+  { title: 'Graphs', subtitle: 'relationships', symbol: 'y = 2x', sketch: 'graph', accent: 'bg-lime-500' },
+  { title: 'Number Line', subtitle: 'direction and distance', symbol: '-3', sketch: 'number-line', accent: 'bg-purple-500' },
 ]
 
 const scienceVisualMotifs = [
@@ -175,8 +175,23 @@ function getLessonShortTitle(title: string) {
   return title
     .replace(/^NGSS G[678]\s+Science\s*\d+:\s*/i, '')
     .replace(/^IB G[45]\s+Level\s+\d+\s*\|\s*/i, '')
+    .replace(/^IB Big Math G[678]\s*\(PYP\)\s*/i, '')
     .replace(/^Larry Math Class\s*/i, '')
     .slice(0, 42)
+}
+
+function getMathVisualMotif(title: string, index: number) {
+  const text = title.toLowerCase()
+  if (text.includes('fraction')) return { ...ibVisualMotifs[1], symbol: '3/8' }
+  if (text.includes('ratio') || text.includes('rate') || text.includes('percent') || text.includes('scale')) return { ...ibVisualMotifs[2], symbol: text.includes('percent') ? '25%' : '5:8' }
+  if (text.includes('area') || text.includes('volume') || text.includes('figure') || text.includes('angle') || text.includes('triangle') || text.includes('circle') || text.includes('geometry')) return ibVisualMotifs[3]
+  if (text.includes('data') || text.includes('graph') || text.includes('mean') || text.includes('median') || text.includes('probability') || text.includes('statistical')) return { ...ibVisualMotifs[4], sketch: text.includes('graph') ? 'graph' : 'data' }
+  if (text.includes('variable') || text.includes('expression') || text.includes('equation') || text.includes('inequal') || text.includes('formula')) return ibVisualMotifs[5]
+  if (text.includes('integer') || text.includes('negative') || text.includes('number line')) return ibVisualMotifs[8]
+  if (text.includes('decimal') || text.includes('place value') || text.includes('rounding') || text.includes('million')) return ibVisualMotifs[0]
+  if (text.includes('coordinate') || text.includes('linear') || text.includes('relationship') || text.includes('function')) return ibVisualMotifs[7]
+  if (text.includes('factor') || text.includes('multiple') || text.includes('prime')) return { ...ibVisualMotifs[5], symbol: '12 = 3 x 4' }
+  return ibVisualMotifs[index % ibVisualMotifs.length]
 }
 
 function courseVisualImages(course: { id: string; courseTrack: string; thumbnailUrl?: string | null }) {
@@ -185,14 +200,7 @@ function courseVisualImages(course: { id: string; courseTrack: string; thumbnail
   }
 
   if (course.courseTrack === 'ib-big-math') {
-    return [
-      course.thumbnailUrl,
-      '/course-covers/ib-g4-cover.svg',
-      '/course-covers/ib-g5-cover.svg',
-      '/course-covers/ib-g6-pyp-cover.svg',
-      '/course-covers/ib-g7-pyp-cover.svg',
-      '/course-covers/ib-g8-pyp-cover.svg',
-    ].filter(Boolean) as string[]
+    return []
   }
 
   if (course.courseTrack === 'ngss-science') {
@@ -217,15 +225,110 @@ function buildVisualWallItems(
   const lessonTitles = lessons.map((lesson) => getLessonShortTitle(lesson.title)).filter(Boolean)
 
   return Array.from({ length: 9 }, (_, index) => {
-    const motif = motifs[index % motifs.length]
+    const title = lessonTitles[index] || ''
+    const motif = course.courseTrack === 'ib-big-math' ? getMathVisualMotif(title, index) : motifs[index % motifs.length]
     return {
       image: images[index % images.length] || null,
-      title: lessonTitles[index] || motif.title,
+      title: title || motif.title,
       subtitle: motif.subtitle,
       symbol: motif.symbol,
-      tone: motif.tone,
+      tone: 'tone' in motif ? motif.tone : 'from-slate-900 via-slate-800 to-black',
+      sketch: 'sketch' in motif ? motif.sketch : 'poster',
+      accent: 'accent' in motif ? motif.accent : 'bg-blue-400',
     }
   })
+}
+
+function MathVisualPanel({
+  item,
+  index,
+}: {
+  item: { title: string; subtitle: string; symbol: string; sketch: string; accent: string }
+  index: number
+}) {
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#f6f2e8] text-slate-950">
+      <div className="absolute inset-0 opacity-[0.42] [background-image:linear-gradient(rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
+      <div className="absolute left-4 top-4 flex items-center gap-2">
+        <span className={`h-2.5 w-2.5 rounded-full ${item.accent}`} />
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">IB Big Math</span>
+      </div>
+      <div className="absolute right-4 top-4 rounded-full border border-slate-300 bg-white/75 px-3 py-1 text-[10px] font-black text-slate-500">
+        Scene {index + 1}
+      </div>
+
+      <div className="absolute inset-x-4 top-11 h-14 rounded-2xl border border-slate-200 bg-white/70 shadow-sm sm:inset-x-5 sm:h-16">
+        {item.sketch === 'fraction' && (
+          <div className="flex h-full items-center justify-center gap-2">
+            {Array.from({ length: 8 }).map((_, part) => (
+              <span key={part} className={`h-8 w-4 rounded-md border border-slate-300 sm:h-10 sm:w-5 ${part < 3 ? 'bg-violet-400' : 'bg-white'}`} />
+            ))}
+          </div>
+        )}
+        {item.sketch === 'ratio' && (
+          <div className="flex h-full items-end justify-center gap-3 pb-3 sm:gap-4">
+            <span className="h-7 w-11 rounded-t-xl bg-emerald-400 sm:h-8 sm:w-12" />
+            <span className="h-10 w-11 rounded-t-xl bg-cyan-400 sm:h-12 sm:w-12" />
+            <span className="absolute top-2 text-xl font-black text-slate-700 sm:text-2xl">{item.symbol}</span>
+          </div>
+        )}
+        {item.sketch === 'geometry' && (
+          <div className="flex h-full items-center justify-center">
+            <div className="h-10 w-20 rotate-[-8deg] rounded-xl border-4 border-blue-400 bg-blue-100/70 sm:h-12 sm:w-24" />
+            <span className="absolute text-base font-black text-slate-700 sm:text-xl">{item.symbol}</span>
+          </div>
+        )}
+        {item.sketch === 'data' && (
+          <div className="flex h-full items-end justify-center gap-2 pb-4 sm:gap-3">
+            {[38, 70, 52, 88, 63].map((height, barIndex) => (
+              <span key={barIndex} className="w-5 rounded-t-lg bg-amber-400 sm:w-6" style={{ height: Math.round(height * 0.48) }} />
+            ))}
+          </div>
+        )}
+        {item.sketch === 'algebra' && (
+          <div className="flex h-full items-center justify-center">
+            <div className="rounded-xl bg-slate-950 px-3 py-1.5 text-base font-black text-white shadow-xl sm:text-xl">{item.symbol}</div>
+          </div>
+        )}
+        {item.sketch === 'graph' && (
+          <div className="absolute inset-6">
+            <div className="absolute bottom-0 left-0 h-px w-full bg-slate-400" />
+            <div className="absolute bottom-0 left-0 h-full w-px bg-slate-400" />
+            <svg className="absolute inset-0 h-full w-full" viewBox="0 0 160 84" aria-hidden="true">
+              <polyline points="8,70 42,54 78,38 116,25 152,12" fill="none" stroke="#22c55e" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="42" cy="54" r="5" fill="#0f172a" />
+              <circle cx="116" cy="25" r="5" fill="#0f172a" />
+            </svg>
+          </div>
+        )}
+        {item.sketch === 'number-line' && (
+          <div className="absolute inset-x-7 top-1/2">
+            <div className="h-1 rounded-full bg-slate-700" />
+            {[-3, -2, -1, 0, 1, 2, 3].map((tick, tickIndex) => (
+              <span key={tick} className="absolute -top-2 h-5 w-px bg-slate-700" style={{ left: `${tickIndex * 16.6}%` }}>
+                <span className="absolute -bottom-7 -translate-x-1/2 text-xs font-black text-slate-500">{tick}</span>
+              </span>
+            ))}
+          </div>
+        )}
+        {item.sketch === 'place-value' && (
+          <div className="grid h-full grid-cols-4 gap-1.5 p-2 sm:gap-2">
+            {['1,000', '100', '10', '1'].map((label, labelIndex) => (
+              <div key={label} className="rounded-lg border border-slate-200 bg-white p-1 text-center">
+                <div className="text-sm font-black text-slate-800 sm:text-base">{labelIndex === 0 ? '4' : labelIndex === 1 ? '8' : labelIndex === 2 ? '2' : '0'}</div>
+                <div className="text-[7px] font-black uppercase tracking-widest text-slate-400">{label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-white/90 p-3 shadow-sm ring-1 ring-slate-200/70 sm:inset-x-5">
+        <p className="line-clamp-2 text-sm font-black leading-tight text-slate-950 sm:text-base">{item.title}</p>
+        <p className="mt-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">{item.subtitle}</p>
+      </div>
+    </div>
+  )
 }
 
 function courseCoverPath(course: { id: string; courseTrack: string; thumbnailUrl?: string | null }) {
@@ -421,6 +524,8 @@ export default async function CourseDetailPage({
                           alt={`${course.title} visual ${index + 1}`}
                           className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
                         />
+                      ) : course.courseTrack === 'ib-big-math' ? (
+                        <MathVisualPanel item={item} index={index} />
                       ) : (
                         <div className="absolute inset-0">
                           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.14),transparent_38%,rgba(255,255,255,0.08))]" />
@@ -430,15 +535,19 @@ export default async function CourseDetailPage({
                           <div className="absolute bottom-3 left-3 h-16 w-16 rounded-full border border-white/15 sm:h-24 sm:w-24" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-                        <p className="line-clamp-2 text-sm font-black leading-tight text-white drop-shadow-xl sm:text-base">
-                          {item.title}
-                        </p>
-                        <p className="mt-1 hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/50 sm:block">
-                          {item.subtitle}
-                        </p>
-                      </div>
+                      {course.courseTrack !== 'ib-big-math' && (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-transparent" />
+                          <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                            <p className="line-clamp-2 text-sm font-black leading-tight text-white drop-shadow-xl sm:text-base">
+                              {item.title}
+                            </p>
+                            <p className="mt-1 hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/50 sm:block">
+                              {item.subtitle}
+                            </p>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
