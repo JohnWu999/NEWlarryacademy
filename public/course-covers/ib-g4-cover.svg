@@ -1,63 +1,48 @@
 <svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <radialGradient id="g4GlowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1240 170) rotate(132) scale(780 520)">
+    <linearGradient id="bg" x1="116" y1="70" x2="1484" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06162E"/>
+      <stop offset="0.45" stop-color="#0B3A65"/>
+      <stop offset="1" stop-color="#050813"/>
+    </linearGradient>
+    <radialGradient id="cyan" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1220 170) rotate(135) scale(820 520)">
       <stop stop-color="#67E8F9"/>
-      <stop offset="0.34" stop-color="#2563EB"/>
-      <stop offset="1" stop-color="#070A18" stop-opacity="0"/>
+      <stop offset="0.38" stop-color="#2563EB" stop-opacity="0.78"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="g4GlowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(280 720) rotate(-25) scale(640 380)">
+    <radialGradient id="gold" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(310 720) rotate(-22) scale(680 430)">
       <stop stop-color="#FDE68A"/>
-      <stop offset="0.34" stop-color="#F97316"/>
-      <stop offset="1" stop-color="#070A18" stop-opacity="0"/>
+      <stop offset="0.34" stop-color="#F97316" stop-opacity="0.68"/>
+      <stop offset="1" stop-color="#020617" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="g4Bg" x1="113" y1="54" x2="1478" y2="896" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#081326"/>
-      <stop offset="0.52" stop-color="#0F2148"/>
-      <stop offset="1" stop-color="#050714"/>
-    </linearGradient>
-    <linearGradient id="g4Panel" x1="492" y1="214" x2="1225" y2="742" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#E0F2FE" stop-opacity="0.94"/>
-      <stop offset="1" stop-color="#BAE6FD" stop-opacity="0.2"/>
-    </linearGradient>
-    <filter id="g4Shadow" x="-80" y="-80" width="1760" height="1060" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="34" stdDeviation="38" flood-color="#000000" flood-opacity="0.42"/>
+    <filter id="shadow" x="-140" y="-140" width="1880" height="1180" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="34" stdDeviation="34" flood-color="#000000" flood-opacity="0.44"/>
     </filter>
   </defs>
-  <rect width="1600" height="900" rx="56" fill="url(#g4Bg)"/>
-  <rect width="1600" height="900" rx="56" fill="url(#g4GlowA)" opacity="0.72"/>
-  <rect width="1600" height="900" rx="56" fill="url(#g4GlowB)" opacity="0.62"/>
-  <g opacity="0.3">
-    <path d="M95 199H1504" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M95 347H1504" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M95 495H1504" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M95 643H1504" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M270 96V810" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M540 96V810" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M810 96V810" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M1080 96V810" stroke="#93C5FD" stroke-width="2"/>
-    <path d="M1350 96V810" stroke="#93C5FD" stroke-width="2"/>
+  <rect width="1600" height="900" rx="56" fill="url(#bg)"/>
+  <rect width="1600" height="900" rx="56" fill="url(#cyan)" opacity="0.78"/>
+  <rect width="1600" height="900" rx="56" fill="url(#gold)" opacity="0.64"/>
+  <g opacity="0.24">
+    <path d="M96 170H1504M96 330H1504M96 490H1504M96 650H1504" stroke="#BAE6FD" stroke-width="2"/>
+    <path d="M260 90V810M540 90V810M820 90V810M1100 90V810M1380 90V810" stroke="#BAE6FD" stroke-width="2"/>
   </g>
-  <g filter="url(#g4Shadow)">
-    <path d="M1038 221L1284 356V626L1038 761L792 626V356L1038 221Z" fill="url(#g4Panel)" stroke="#E0F2FE" stroke-width="4"/>
-    <path d="M792 356L1038 491L1284 356" stroke="#E0F2FE" stroke-width="4" opacity="0.76"/>
-    <path d="M1038 491V761" stroke="#E0F2FE" stroke-width="4" opacity="0.76"/>
-    <path d="M1038 221V491" stroke="#E0F2FE" stroke-width="4" opacity="0.48"/>
+  <g filter="url(#shadow)">
+    <rect x="145" y="158" width="570" height="440" rx="48" fill="#06111F" fill-opacity="0.78" stroke="#7DD3FC" stroke-opacity="0.64" stroke-width="3"/>
+    <text x="210" y="275" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="86" font-weight="950">G4</text>
+    <text x="210" y="337" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900">FOUNDATION QUEST</text>
+    <path d="M214 418H635" stroke="#38BDF8" stroke-width="9" stroke-linecap="round"/>
+    <path d="M214 490H548" stroke="#FDE68A" stroke-width="9" stroke-linecap="round"/>
+    <path d="M214 562H666" stroke="#C4B5FD" stroke-width="9" stroke-linecap="round"/>
   </g>
-  <g filter="url(#g4Shadow)">
-    <rect x="186" y="190" width="530" height="410" rx="42" fill="#07111F" fill-opacity="0.72" stroke="#7DD3FC" stroke-opacity="0.46" stroke-width="3"/>
-    <path d="M246 491H642" stroke="#38BDF8" stroke-width="8" stroke-linecap="round"/>
-    <path d="M246 421H556" stroke="#FDE68A" stroke-width="8" stroke-linecap="round"/>
-    <path d="M246 351H642" stroke="#C4B5FD" stroke-width="8" stroke-linecap="round"/>
-    <text x="246" y="292" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="66" font-weight="900">G4</text>
-    <text x="370" y="292" fill="#93C5FD" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" letter-spacing="8">FOUNDATION QUEST</text>
+  <g filter="url(#shadow)">
+    <path d="M1046 188L1300 330V614L1046 756L792 614V330L1046 188Z" fill="#DBEAFE" fill-opacity="0.18" stroke="#E0F2FE" stroke-width="5"/>
+    <path d="M792 330L1046 472L1300 330M1046 472V756M1046 188V472" stroke="#E0F2FE" stroke-opacity="0.66" stroke-width="5"/>
+    <circle cx="1046" cy="472" r="116" fill="#020617" fill-opacity="0.72" stroke="#FDE68A" stroke-width="5"/>
+    <text x="958" y="500" fill="#FDE68A" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">×</text>
+    <text x="1078" y="500" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="70" font-weight="950">÷</text>
+    <path d="M952 586C1008 638 1092 640 1146 586" stroke="#67E8F9" stroke-width="9" stroke-linecap="round"/>
   </g>
-  <g>
-    <circle cx="1060" cy="493" r="112" fill="#020617" fill-opacity="0.72" stroke="#FDE68A" stroke-width="5"/>
-    <text x="999" y="516" fill="#FDE68A" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="900">×</text>
-    <text x="1086" y="516" fill="#E0F2FE" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="900">÷</text>
-    <path d="M975 584C1017 630 1094 637 1146 586" stroke="#67E8F9" stroke-width="8" stroke-linecap="round"/>
-  </g>
-  <text x="104" y="112" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900" letter-spacing="10">IB BIG MATH</text>
-  <text x="104" y="762" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="88" font-weight="950">Grade 4</text>
-  <text x="104" y="820" fill="#C7D2FE" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">40 lessons · skill drills · model thinking</text>
+  <text x="104" y="112" fill="#BAE6FD" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="900">IB BIG MATH</text>
+  <text x="104" y="756" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="92" font-weight="950">Grade 4</text>
+  <text x="104" y="820" fill="#DBEAFE" font-family="Inter, Arial, sans-serif" font-size="36" font-weight="850">40 lessons · 800 questions · visual foundation</text>
 </svg>

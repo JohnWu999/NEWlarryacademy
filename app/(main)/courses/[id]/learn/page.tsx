@@ -131,6 +131,70 @@ function getNgssLessonCover(index: number) {
   return `/lesson-covers/ngss-g6/lesson-${String(index + 1).padStart(2, '0')}.jpg`
 }
 
+function isNgssCourse(course?: Course | null) {
+  return Boolean(course?.id.includes('ngss') || course?.title.toLowerCase().includes('ngss'))
+}
+
+function isIbMathCourse(course?: Course | null) {
+  return Boolean(course?.id.includes('ib') || course?.title.toLowerCase().includes('ib big math'))
+}
+
+function getLessonCoverUrl(course: Course, index: number) {
+  if (course.id === 'course-ngss-science') return getNgssLessonCover(index)
+  return null
+}
+
+function getLessonCardTitle(lesson: Lesson) {
+  return lesson.title
+    .replace(/^NGSS G[678]\s+Science\s*\d+:\s*/i, '')
+    .replace(/^Larry Math Class\s*/i, '')
+    .replace(/^IB G[45]\s+Level\s+\d+\s*\|\s*/i, '')
+}
+
+const ibMathCardMotifs = [
+  { formula: 'ratio', symbol: '3:5', detail: 'unit rate' },
+  { formula: 'area', symbol: 'A = l × w', detail: 'model' },
+  { formula: 'percent', symbol: '25%', detail: 'change' },
+  { formula: 'graph', symbol: 'y = 4x + 3', detail: 'rule' },
+  { formula: 'volume', symbol: 'V = lwh', detail: '3D' },
+  { formula: 'data', symbol: 'mean', detail: 'evidence' },
+]
+
+const pathwayModules = [
+  {
+    id: 'course-ib-pyp-g4',
+    title: 'IB Big Math Grade 4',
+    href: '/courses/course-ib-pyp-g4',
+    cover: '/course-covers/ib-g4-cover.svg',
+    status: 'Foundation',
+    summary: 'A 40-lesson foundation quest for fractions, operations, geometry, data, and model thinking.',
+  },
+  {
+    id: 'course-ib-big-math',
+    title: 'IB Big Math G6 (MYP)',
+    href: '/courses/course-ib-big-math',
+    cover: '/course-covers/ib-g6-pyp-cover.svg',
+    status: 'Next Pathway',
+    summary: 'A 40-lesson bridge into MYP-style reasoning: ratios, geometry, data, algebra, and multi-step modeling.',
+  },
+  {
+    id: 'course-ib-big-math-g7-pyp',
+    title: 'IB Big Math G7',
+    href: '/courses/course-ib-big-math-g7-pyp',
+    cover: '/course-covers/ib-g7-pyp-cover.svg',
+    status: 'Coming Soon',
+    summary: 'A deeper reasoning path for proportional relationships, probability, statistics, area, volume, and algebraic patterns.',
+  },
+  {
+    id: 'course-ib-big-math-g8-pyp',
+    title: 'IB Big Math G8',
+    href: '/courses/course-ib-big-math-g8-pyp',
+    cover: '/course-covers/ib-g8-pyp-cover.svg',
+    status: 'Coming Soon',
+    summary: 'A high-school-ready launchpad for equations, functions, coordinate geometry, transformations, and proof-style thinking.',
+  },
+]
+
 const resumeCookiePrefix = 'larry_last_lesson'
 const openLessonCount = 5
 
@@ -1061,7 +1125,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       </div>
 
       <main className="mx-auto max-w-[1380px] px-4 py-6 sm:px-6">
-        <section className="min-w-0 space-y-6">
+        <section className="flex min-w-0 flex-col gap-6">
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#101012] shadow-2xl shadow-black/40">
             <div className="relative aspect-video bg-black">
               {embedUrl ? (
@@ -1136,7 +1200,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-[#101012] p-5 shadow-2xl shadow-black/30 sm:p-7">
+          <div className="order-3 rounded-[28px] border border-white/10 bg-[#101012] p-5 shadow-2xl shadow-black/30 sm:p-7">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-2xl font-black">Course Map</h2>
@@ -1162,7 +1226,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 const unlocked = isLessonUnlocked(course.lessons, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
-                const coverUrl = getNgssLessonCover(index)
+                const coverUrl = getLessonCoverUrl(course, index)
+                const motif = ibMathCardMotifs[index % ibMathCardMotifs.length]
                 return (
                   <button
                     key={lesson.id}
@@ -1177,12 +1242,33 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     }`}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden" style={{ background: theme.background }}>
-                      <img
-                        src={coverUrl}
-                        alt=""
-                        loading="lazy"
-                        className={`h-full w-full object-cover transition duration-500 ${unlocked ? 'group-hover:scale-105' : 'grayscale'}`}
-                      />
+                      {coverUrl ? (
+                        <img
+                          src={coverUrl}
+                          alt=""
+                          loading="lazy"
+                          className={`h-full w-full object-cover transition duration-500 ${unlocked ? 'group-hover:scale-105' : 'grayscale'}`}
+                        />
+                      ) : (
+                        <div className={`absolute inset-0 transition duration-500 ${unlocked ? 'group-hover:scale-105' : 'grayscale'}`}>
+                          <div className="absolute inset-0 opacity-35">
+                            <div className="absolute left-[10%] right-[8%] top-[28%] h-px bg-white/40" />
+                            <div className="absolute left-[10%] right-[8%] top-[52%] h-px bg-white/25" />
+                            <div className="absolute bottom-[18%] left-[10%] right-[8%] h-px bg-white/20" />
+                            <div className="absolute bottom-[14%] top-[14%] left-[22%] w-px bg-white/20" />
+                            <div className="absolute bottom-[14%] top-[14%] left-[48%] w-px bg-white/20" />
+                            <div className="absolute bottom-[14%] top-[14%] left-[74%] w-px bg-white/20" />
+                          </div>
+                          <div className="absolute right-5 top-5 h-28 w-28 rounded-full border border-white/25 bg-black/10" />
+                          <div className="absolute right-14 top-14 h-14 w-14 rounded-2xl border border-white/25 bg-white/10 rotate-45" />
+                          <div className="absolute left-5 top-[4.5rem] rounded-2xl border border-white/15 bg-black/25 px-4 py-3 backdrop-blur">
+                            <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">IB Math</div>
+                            <div className="mt-1 text-xl font-black text-white">{motif.symbol}</div>
+                            <div className="mt-1 text-[10px] font-black uppercase tracking-[0.16em]" style={{ color: theme.accent }}>{motif.detail}</div>
+                          </div>
+                          <div className="absolute bottom-4 right-5 text-5xl font-black text-white/10">{motif.formula}</div>
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />
                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-black/35 text-sm font-black text-white ring-1 ring-white/20 backdrop-blur">
@@ -1195,7 +1281,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <span>{unlocked ? 'Quiz' : 'Locked'}</span>
                         </div>
                         <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
-                          {lesson.title.replace(/^NGSS G6 Science\s*\d+:\s*/i, '').replace(/^Larry Math Class\s*/i, '')}
+                          {getLessonCardTitle(lesson)}
                         </div>
                       </div>
                       <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />
@@ -1224,8 +1310,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </div>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-            <div className="rounded-[28px] border border-white/10 bg-[#101012] p-5 sm:p-7">
+          <div className="order-2 grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+            <div className="order-2 rounded-[28px] border border-white/10 bg-[#101012] p-5 sm:p-7 xl:order-2">
               <h2 className="text-2xl font-black">Learning path</h2>
               <div className="mt-6 space-y-4">
                 {learningSteps.map((step, index) => (
@@ -1245,7 +1331,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               </div>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[#f4f1e8] p-5 text-[#171717] shadow-2xl shadow-black/20 sm:p-7">
+            <div className="order-1 rounded-[28px] border border-white/10 bg-[#f4f1e8] p-5 text-[#171717] shadow-2xl shadow-black/20 sm:p-7 xl:order-1">
               {questConfig && practiceActivity && currentQuestQuestion ? (
                 <>
                   <div className="flex items-start justify-between gap-4">
@@ -1664,6 +1750,52 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               )}
             </div>
           </div>
+
+          {isIbMathCourse(course) && (
+            <div className="order-4 rounded-[28px] border border-white/10 bg-[#101012] p-5 shadow-2xl shadow-black/30 sm:p-7">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-black">Next IB Big Math pathways</h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+                    Keep the main flow focused on video and practice. Use these modules when you are ready to move across the IB Math pathway.
+                  </p>
+                </div>
+                <a href="/courses?category=ib-big-math" className="text-sm font-black text-blue-300 hover:text-blue-200">
+                  View all IB courses →
+                </a>
+              </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {pathwayModules.filter((module) => module.id !== course.id).map((module) => (
+                  <a
+                    key={module.id}
+                    href={module.href}
+                    className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] transition hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.055]"
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden bg-black">
+                      <img
+                        src={module.cover}
+                        alt={`${module.title} cover`}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/10" />
+                      <div className="absolute left-4 top-4 rounded-full bg-black/45 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/75 ring-1 ring-white/15 backdrop-blur">
+                        {module.status}
+                      </div>
+                      <h3 className="absolute bottom-4 left-4 right-4 text-xl font-black leading-tight text-white drop-shadow">
+                        {module.title}
+                      </h3>
+                    </div>
+                    <div className="p-4">
+                      <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-gray-500">{module.summary}</p>
+                      <div className="mt-4 text-sm font-black text-blue-300">Explore module →</div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
       </main>
       <style jsx global>{`

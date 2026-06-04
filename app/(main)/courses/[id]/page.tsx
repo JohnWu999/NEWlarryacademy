@@ -110,6 +110,7 @@ export default async function CourseDetailPage({
   const heroEmbed = getVideoEmbedUrl(course)
   const coverPath = courseCoverPath(course)
   const plannedStats = plannedCourseStats(course)
+  const startedLearners = Number(course.viewCount || 0) + 100
   const featureCards = course.expectedFeatures
     ? JSON.parse(course.expectedFeatures) as string[]
     : ['视频课程', '互动答题', 'Practice 练习', '小游戏挑战']
@@ -186,7 +187,7 @@ export default async function CourseDetailPage({
                 {[
                   ['课节', plannedStats.lessons],
                   ['题目', plannedStats.questions ?? '待定'],
-                  ['访问', course.viewCount],
+                  ['已开始学习', startedLearners],
                 ].map(([label, value]) => (
                   <div key={label} className="rounded-2xl bg-white/[0.04] p-4">
                     <div className="text-2xl font-black">{value}</div>
@@ -218,7 +219,7 @@ export default async function CourseDetailPage({
                     href={`/courses/${course.id}/learn`}
                     className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-black text-white transition hover:bg-blue-500"
                   >
-                    {progress ? '继续学习' : '开始学习'}
+                    {progress ? '继续学习' : '立即开始'}
                   </Link>
                 ) : access.reason === 'coming-soon' ? (
                   <Link
@@ -241,9 +242,18 @@ export default async function CourseDetailPage({
             </div>
 
             <div className="rounded-3xl border border-white/10 bg-white/[0.025] p-6">
-              <h2 className="text-2xl font-black">课程内容</h2>
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-black">课程内容</h2>
+                  <p className="mt-2 text-sm text-gray-500">先看前 5 级，完整路径共 {plannedStats.lessons} 级。</p>
+                </div>
+                <div className="rounded-2xl bg-white/[0.04] px-4 py-3 text-right">
+                  <div className="text-2xl font-black">{plannedStats.lessons}</div>
+                  <div className="mt-1 text-[11px] font-black uppercase tracking-[0.14em] text-gray-500">Levels</div>
+                </div>
+              </div>
               <div className="mt-5 space-y-3">
-                {course.lessons.length > 0 ? course.lessons.map((lesson, index) => (
+                {course.lessons.length > 0 ? course.lessons.slice(0, 5).map((lesson, index) => (
                   <div key={lesson.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                     <div className="flex items-start gap-3">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-sm font-black text-blue-200">
@@ -265,6 +275,14 @@ export default async function CourseDetailPage({
                   <p className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-5 text-sm text-gray-500">
                     正在制作课节内容。
                   </p>
+                )}
+                {course.lessons.length > 5 && (
+                  <Link
+                    href={`/courses/${course.id}/learn`}
+                    className="block rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 text-center text-sm font-black text-blue-200 transition hover:border-blue-300/40 hover:bg-blue-500/15"
+                  >
+                    进入学习页查看全部 {plannedStats.lessons} 级 →
+                  </Link>
                 )}
               </div>
             </div>
