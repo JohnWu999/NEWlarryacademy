@@ -1201,7 +1201,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
               <div className="grid gap-3">
                 <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-600">Views</div>
+                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-600">Peer Learning</div>
                   <div className="mt-2 text-xl font-black text-white">{currentLesson.viewCount || 0}</div>
                 </div>
               </div>
