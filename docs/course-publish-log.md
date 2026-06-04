@@ -12,6 +12,16 @@
 - Detailed run log: `docs/vod-upload-logs/larry-math-20260604-221155.jsonl`
 - Reusable command: `python3 scripts/upload-larry-math-videos-to-tencent-vod.py --skip-unavailable`; after iCloud downloads pending videos locally, rerun the same command to continue without reuploading existing VOD entries
 
+## 2026-06-04 - Larry Math VOD Upload Pass 2
+
+- Continued from the same source library and reusable upload script after several iCloud placeholder files localized.
+- Newly uploaded to Tencent VOD: episodes `22, 147, 152, 168`.
+- Episode `168` had no compressed local copy, so it was compressed first to `compressed/Larry Math Class 168_compressed.mp4` and then uploaded.
+- Total Larry Math VOD entries after this pass: 72 episodes in `data/larry-math-vod-map.json`.
+- Remaining iCloud-localization blockers: 63 episodes are still visible in iCloud Drive but have zero allocated bytes locally; the system reports `isDownloadRequested=1` and `isDownloading=1`, but controlled reads still time out without materializing data.
+- Remaining zero-byte placeholder episodes: `1, 2, 4, 6, 9, 10, 12, 14, 16, 18, 21, 27, 29, 30, 32, 33, 34, 35, 37, 38, 40, 46, 47, 51, 52, 54, 56, 57, 59, 60, 64, 65, 68, 69, 70, 72, 94, 95, 96, 98, 100, 105, 108, 111, 113, 115, 119, 120, 122, 123, 127, 128, 130, 136, 138, 139, 140, 141, 150, 155, 156, 157, 167`.
+- Detailed run log: `docs/vod-upload-logs/larry-math-20260604-230939.jsonl`
+
 ## 2026-06-04 - IB Big Math G5 Full Republish
 
 - Course: `course-ib-pyp-g5-math` / `IB Big Math G5`

@@ -746,5 +746,49 @@
     "sizeBytes": 241652619,
     "durationSeconds": null,
     "uploadedAt": "2026-06-04T14:50:20.839728+00:00"
+  },
+  "larry-math-class-022": {
+    "episode": 22,
+    "title": "Larry Math Class 22",
+    "fileId": "5001834805656240435",
+    "mediaUrl": "https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/b691c8da5001834805656240435/vApsMKtouUsA.mp4",
+    "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 22_compressed.mp4",
+    "sourceFileName": "Larry Math Class 22_compressed.mp4",
+    "sizeBytes": 86556489,
+    "durationSeconds": null,
+    "uploadedAt": "2026-06-04T15:11:14.942589+00:00"
+  },
+  "larry-math-class-147": {
+    "episode": 147,
+    "title": "Larry Math Class 147",
+    "fileId": "5001834805656988347",
+    "mediaUrl": "https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/c732a62f5001834805656988347/Ep4LwqH48sEA.mp4",
+    "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 147_compressed.mp4",
+    "sourceFileName": "Larry Math Class 147_compressed.mp4",
+    "sizeBytes": 173560122,
+    "durationSeconds": null,
+    "uploadedAt": "2026-06-04T15:11:47.971504+00:00"
+  },
+  "larry-math-class-152": {
+    "episode": 152,
+    "title": "Larry Math Class 152",
+    "fileId": "5001834805656244672",
+    "mediaUrl": "https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/b69403615001834805656244672/WtdiARhzam0A.mp4",
+    "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 152_compressed.mp4",
+    "sourceFileName": "Larry Math Class 152_compressed.mp4",
+    "sizeBytes": 182555327,
+    "durationSeconds": null,
+    "uploadedAt": "2026-06-04T15:12:18.399891+00:00"
+  },
+  "larry-math-class-168": {
+    "episode": 168,
+    "title": "Larry Math Class 168",
+    "fileId": "5001834805654491832",
+    "mediaUrl": "https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/21a2b8815001834805654491832/IreXENs4oscA.mp4",
+    "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 168_compressed.mp4",
+    "sourceFileName": "Larry Math Class 168_compressed.mp4",
+    "sizeBytes": 148332607,
+    "durationSeconds": null,
+    "uploadedAt": "2026-06-04T15:12:42.497094+00:00"
   }
 }
