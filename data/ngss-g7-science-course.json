@@ -4,6 +4,10 @@
   "description": "A Grade 7 NGSS path for systems thinking, cells, photosynthesis, respiration, evidence-based explanations, and model-driven practice.",
   "category": "ngss-science",
   "courseTrack": "ngss-science",
+  "status": "active",
+  "accessLevel": "paid",
+  "isFree": false,
+  "price": 19,
   "gradeLevel": "G7",
   "thumbnailUrl": "/course-covers/ngss-g7-cover.svg",
   "lessons": [

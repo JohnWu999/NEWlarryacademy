@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { createCheckoutSession } from '@/lib/payments/stripe'
 import { z } from 'zod'
+import Stripe from 'stripe'
 
 const createPaymentSchema = z.object({
   items: z.array(
@@ -43,7 +44,14 @@ export async function POST(request: NextRequest) {
 
     // Calculate total amount and prepare items
     let totalAmount = 0
-    const orderItems = []
+    const orderItems: Array<{
+      type: 'course' | 'product'
+      id: string
+      name: string
+      price: number
+      quantity: number
+      stripePriceId?: string | null
+    }> = []
 
     for (const item of validatedData.items) {
       if (item.type === 'course') {
@@ -79,6 +87,7 @@ export async function POST(request: NextRequest) {
           name: course.title,
           price: course.price,
           quantity: 1,
+          stripePriceId: course.stripePriceId,
         })
       } else if (item.type === 'product') {
         const product = await prisma.product.findUnique({
@@ -116,17 +125,26 @@ export async function POST(request: NextRequest) {
     })
 
     // Create payment based on method
-    if (validatedData.paymentMethod === 'stripe') {
-      const lineItems = orderItems.map((item) => ({
-        price_data: {
-          currency: 'cny',
-          product_data: {
-            name: item.name,
+    if (validatedData.paymentMethod === 'stripe' || validatedData.paymentMethod === 'wechat') {
+      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = orderItems.map((item) => {
+        if (item.stripePriceId) {
+          return {
+            price: item.stripePriceId,
+            quantity: item.quantity || 1,
+          }
+        }
+
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: item.name,
+            },
+            unit_amount: Math.round(item.price * 100),
           },
-          unit_amount: Math.round(item.price * 100),
-        },
-        quantity: item.quantity || 1,
-      }))
+          quantity: item.quantity || 1,
+        }
+      })
 
       const result = await createCheckoutSession({
         lineItems,
@@ -149,7 +167,7 @@ export async function POST(request: NextRequest) {
           success: true,
           orderId: order.id,
           paymentUrl: result.url,
-          paymentMethod: 'stripe',
+          paymentMethod: validatedData.paymentMethod,
         })
       } else {
         return NextResponse.json(
@@ -165,15 +183,6 @@ export async function POST(request: NextRequest) {
         paymentUrl: `/payment/alipay/${order.id}`,
         paymentMethod: 'alipay',
         message: '支付宝支付即将上线',
-      })
-    } else if (validatedData.paymentMethod === 'wechat') {
-      // WeChat Pay integration placeholder
-      return NextResponse.json({
-        success: true,
-        orderId: order.id,
-        paymentUrl: `/payment/wechat/${order.id}`,
-        paymentMethod: 'wechat',
-        message: '微信支付即将上线',
       })
     }
 

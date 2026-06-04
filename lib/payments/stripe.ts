@@ -37,10 +37,7 @@ export async function createPaymentIntent(params: CreatePaymentIntentParams) {
 }
 
 export async function createCheckoutSession(params: {
-  lineItems: Array<{
-    price_data: { currency: string; product_data: { name: string; description?: string }; unit_amount: number }
-    quantity: number
-  }>
+  lineItems: Stripe.Checkout.SessionCreateParams.LineItem[]
   mode: 'payment' | 'subscription'
   successUrl: string
   cancelUrl: string
