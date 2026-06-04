@@ -2,6 +2,7 @@ import PurchaseCourseButton from '@/components/courses/PurchaseCourseButton'
 import { authOptions } from '@/lib/auth'
 import { resolveCourseAccess } from '@/lib/course-access'
 import type { Locale } from '@/lib/i18n'
+import { getPeerLearningCount } from '@/lib/peer-learning'
 import { prisma } from '@/lib/prisma'
 import { getServerLocale } from '@/lib/server-i18n'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
@@ -413,7 +414,7 @@ export default async function CourseDetailPage({
   const heroEmbed = getVideoEmbedUrl(course)
   const coverPath = courseCoverPath(course)
   const plannedStats = plannedCourseStats(course)
-  const startedLearners = Number(course.viewCount || 0) + 100
+  const startedLearners = getPeerLearningCount(course.id, course.viewCount)
   const featureCards = course.expectedFeatures
     ? locale === 'zh'
       ? JSON.parse(course.expectedFeatures) as string[]
@@ -643,7 +644,7 @@ export default async function CourseDetailPage({
                           {(lesson.isPreview || index < previewLessonCount) && <span>{copy.preview}</span>}
                           {lesson.hasPractice && <span>{copy.practice}</span>}
                           {lesson.hasGame && <span>{copy.game}</span>}
-                          <span>{lesson.viewCount} {copy.visits}</span>
+                          <span>{getPeerLearningCount(lesson.id, lesson.viewCount)} {copy.visits}</span>
                         </div>
                       </div>
                     </div>

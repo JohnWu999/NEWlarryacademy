@@ -4,6 +4,9 @@ import { use, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
+import PurchaseCourseButton from '@/components/courses/PurchaseCourseButton'
+import { useLanguage } from '@/context/LanguageContext'
+import { getPeerLearningCount } from '@/lib/peer-learning'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
 
 interface LessonActivity {
@@ -99,6 +102,7 @@ interface Course {
   description: string
   lessons: Lesson[]
   hasAccess: boolean
+  price: number
   accessReason?: string
   progress: {
     progressPercentage: number
@@ -322,6 +326,15 @@ function LockIcon() {
     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="5" y="11" width="14" height="10" rx="2" />
       <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </svg>
+  )
+}
+
+function XIcon() {
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   )
 }
@@ -649,9 +662,38 @@ function buildPracticePrompt(lesson: Lesson) {
   }
 }
 
+type UnlockModalCopy = {
+  eyebrow: string
+  title: string
+  body: string
+  bullets: string[]
+  preview: string
+  close: string
+}
+
+const unlockModalCopy = {
+  zh: {
+    eyebrow: '解锁完整课程',
+    title: '打开全部精彩课节和练习挑战',
+    body: '完整课程包含系统视频、每节课配套练习、游戏化积分和宝石奖励。孩子可以边看、边做、边拿反馈，让学习更有趣，也更有效。',
+    bullets: ['全部付费课节立即开放', '大量互动练习帮助真正掌握', '积分、宝石和连续学习激励'],
+    preview: '你已经可以免费试看前 3 节；继续深入学习需要 Full Access。',
+    close: '稍后再说',
+  },
+  en: {
+    eyebrow: 'Unlock Full Access',
+    title: 'Open every lesson, practice quest, and reward moment',
+    body: 'Full Access includes the complete video pathway, lesson-by-lesson practice, game-style points, and gems. Students learn by watching, solving, getting feedback, and staying motivated.',
+    bullets: ['Unlock every paid lesson instantly', 'Practice deeply with interactive questions', 'Earn points, gems, and streak motivation'],
+    preview: 'The first 3 lessons are free to preview. Full Access opens the rest of the journey.',
+    close: 'Maybe later',
+  },
+} satisfies Record<'zh' | 'en', UnlockModalCopy>
+
 export default function LearnPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params)
   const { status } = useSession()
+  const { locale } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
   const lessonIdFromQuery = searchParams.get('lessonId')
@@ -672,6 +714,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [questResult, setQuestResult] = useState<{ score: number; maxScore: number; percent: number; earnedPoints: number; earnedGems: number; wrongCount?: number } | null>(null)
   const [questEffect, setQuestEffect] = useState<{ kind: 'correct' | 'incorrect' | 'complete'; key: number } | null>(null)
   const [questQuestionOrder, setQuestQuestionOrder] = useState<string[]>([])
+  const [unlockPromptLesson, setUnlockPromptLesson] = useState<Lesson | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -848,7 +891,12 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const goToLesson = (index: number) => {
     const nextIndex = Math.max(0, Math.min(index, (course?.lessons.length || 1) - 1))
     const lesson = course?.lessons[nextIndex]
-    if (course && !isLessonUnlocked(course, nextIndex)) return
+    if (course && !isLessonUnlocked(course, nextIndex)) {
+      if (!course.hasAccess && lesson && !isPreviewLesson(lesson, nextIndex)) {
+        setUnlockPromptLesson(lesson)
+      }
+      return
+    }
     if (course && lesson) setCookieValue(getResumeCookieName(course.id), lesson.id)
     setCurrentLessonIndex(nextIndex)
   }
@@ -1066,6 +1114,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const selectedIsCorrect = selectedChoice === practice.answer
   const nextLessonUnlocked = currentLessonIndex < course.lessons.length - 1 && isLessonUnlocked(course, currentLessonIndex + 1)
   const nextLessonRequiresPurchase = currentLessonIndex < course.lessons.length - 1 && !course.hasAccess && !isPreviewLesson(course.lessons[currentLessonIndex + 1], currentLessonIndex + 1)
+  const unlockCopy = unlockModalCopy[locale]
 
   const learningSteps = [
     {
@@ -1202,7 +1251,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               <div className="grid gap-3">
                 <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
                   <div className="text-[11px] font-black uppercase tracking-[0.18em] text-gray-600">Peer Learning</div>
-                  <div className="mt-2 text-xl font-black text-white">{currentLesson.viewCount || 0}</div>
+                  <div className="mt-2 text-xl font-black text-white">{getPeerLearningCount(currentLesson.id, currentLesson.viewCount)}</div>
                 </div>
               </div>
             </div>
@@ -1232,6 +1281,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 const active = currentLessonIndex === index
                 const completed = completedLessonIds.has(lesson.id)
                 const unlocked = isLessonUnlocked(course, index)
+                const requiresPurchase = !unlocked && !course.hasAccess && !isPreviewLesson(lesson, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
                 const coverUrl = getLessonCoverUrl(course, index)
@@ -1240,14 +1290,17 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   <button
                     key={lesson.id}
                     onClick={() => goToLesson(index)}
-                    disabled={!unlocked}
+                    disabled={!unlocked && !requiresPurchase}
                     className={`group overflow-hidden rounded-3xl border text-left transition ${
                       active
                         ? 'border-blue-400 bg-blue-500/10 shadow-2xl shadow-blue-950/40'
-                        : unlocked
+                      : unlocked
                         ? 'border-white/10 bg-white/[0.035] hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.055]'
+                      : requiresPurchase
+                        ? 'border-amber-300/20 bg-amber-400/[0.035] opacity-80 hover:-translate-y-1 hover:border-amber-200/45 hover:bg-amber-300/[0.08]'
                         : 'cursor-not-allowed border-white/[0.06] bg-white/[0.02] opacity-55'
                     }`}
+                    aria-label={requiresPurchase ? `Unlock ${lesson.title}` : undefined}
                   >
                     <div className="relative aspect-[16/9] overflow-hidden" style={{ background: theme.background }}>
                       {coverUrl ? (
@@ -1814,6 +1867,74 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           )}
         </section>
       </main>
+      {unlockPromptLesson && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/78 px-4 py-8 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="unlock-course-title">
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default"
+            aria-label={unlockCopy.close}
+            onClick={() => setUnlockPromptLesson(null)}
+          />
+          <div className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/15 bg-[#08080b] text-white shadow-2xl shadow-black/60">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(59,130,246,0.25),transparent_36%),radial-gradient(circle_at_92%_16%,rgba(245,158,11,0.22),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_42%)]" />
+            <div className="relative p-6 sm:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.28em] text-amber-200">{unlockCopy.eyebrow}</p>
+                  <h2 id="unlock-course-title" className="mt-3 max-w-xl text-3xl font-black leading-tight tracking-tight sm:text-4xl">
+                    {unlockCopy.title}
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUnlockPromptLesson(null)}
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-white/70 transition hover:bg-white/[0.1] hover:text-white"
+                  aria-label={unlockCopy.close}
+                >
+                  <XIcon />
+                </button>
+              </div>
+
+              <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.045] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">Next locked lesson</p>
+                <p className="mt-2 text-xl font-black leading-tight">{unlockPromptLesson.title}</p>
+                <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-400">
+                  {unlockPromptLesson.description || unlockCopy.preview}
+                </p>
+              </div>
+
+              <p className="mt-5 text-base leading-8 text-gray-300">{unlockCopy.body}</p>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {unlockCopy.bullets.map((item) => (
+                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.045] p-4">
+                    <div className="mb-3 inline-flex h-8 w-8 items-center justify-center rounded-xl bg-amber-300 text-black">
+                      <SparkIcon />
+                    </div>
+                    <p className="text-sm font-black leading-5 text-white">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 rounded-3xl border border-amber-200/20 bg-amber-200/[0.08] p-4 text-sm font-bold leading-6 text-amber-100">
+                {unlockCopy.preview}
+              </div>
+
+              <div className="mt-5">
+                <PurchaseCourseButton courseId={course.id} price={course.price} />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setUnlockPromptLesson(null)}
+                className="mt-4 w-full rounded-2xl border border-white/10 px-5 py-3 text-sm font-black text-white/60 transition hover:border-white/20 hover:text-white"
+              >
+                {unlockCopy.close}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <style jsx global>{`
         .quest-pop {
           animation: quest-pop 520ms cubic-bezier(.2, 1.5, .35, 1);

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { getPeerLearningCount } from '@/lib/peer-learning'
 import CoursesPageClient from './CoursesPageClient'
 
 const categoryToTrack: Record<string, string> = {
@@ -89,7 +90,7 @@ export default async function CoursesPage({
           price: course.price,
           courseTrack: course.courseTrack || 'other',
           thumbnailUrl: course.thumbnailUrl,
-          viewCount: course.viewCount,
+          viewCount: getPeerLearningCount(course.id, course.viewCount),
           lessonCount: stats.lessons,
           questionCount: stats.questions,
         }
