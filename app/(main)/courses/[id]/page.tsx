@@ -134,6 +134,100 @@ const featureCardCopy = {
   en: ['Video Lessons', 'Interactive Questions', 'Practice Drills', 'Mini Game Challenges'],
 } satisfies Record<Locale, string[]>
 
+const visualWallCopy = {
+  zh: {
+    label: '课程视觉预览',
+    title: '像打开一张学习大片海报',
+    subtitle: '每一格都代表一次视频、一次练习、一次探索。',
+  },
+  en: {
+    label: 'Visual Preview',
+    title: 'A cinematic map of the learning journey',
+    subtitle: 'Every tile hints at a lesson, a practice moment, or a discovery.',
+  },
+} satisfies Record<Locale, Record<string, string>>
+
+const ibVisualMotifs = [
+  { title: 'Foundation Quest', subtitle: 'models + drills', symbol: '4,820', tone: 'from-blue-500/35 via-cyan-400/18 to-slate-950' },
+  { title: 'Fraction Lab', subtitle: 'parts to whole', symbol: '3/8', tone: 'from-violet-500/35 via-fuchsia-400/18 to-slate-950' },
+  { title: 'Ratio Arena', subtitle: 'compare + scale', symbol: '5:8', tone: 'from-emerald-500/30 via-teal-300/16 to-slate-950' },
+  { title: 'Geometry Grid', subtitle: 'shape reasoning', symbol: 'A = lw', tone: 'from-sky-500/32 via-indigo-400/16 to-slate-950' },
+  { title: 'Data Mission', subtitle: 'patterns + proof', symbol: 'mean', tone: 'from-amber-400/30 via-orange-500/14 to-slate-950' },
+  { title: 'Equation Gate', subtitle: 'solve with logic', symbol: 'x + 7', tone: 'from-rose-500/30 via-red-400/14 to-slate-950' },
+  { title: 'Percent Boost', subtitle: 'change + compare', symbol: '25%', tone: 'from-cyan-400/28 via-blue-500/18 to-slate-950' },
+  { title: 'Problem Studio', subtitle: 'model before solve', symbol: '→', tone: 'from-lime-400/25 via-emerald-500/14 to-slate-950' },
+  { title: 'Full Score Path', subtitle: 'practice loop', symbol: '100', tone: 'from-purple-500/30 via-blue-500/16 to-slate-950' },
+]
+
+const scienceVisualMotifs = [
+  { title: 'Matter Lab', subtitle: 'particles + evidence', symbol: 'H2O', tone: 'from-emerald-400/30 via-cyan-400/18 to-slate-950' },
+  { title: 'Force Field', subtitle: 'motion + cause', symbol: 'F', tone: 'from-sky-500/32 via-blue-400/18 to-slate-950' },
+  { title: 'Energy Core', subtitle: 'systems + transfer', symbol: 'kJ', tone: 'from-amber-400/32 via-orange-500/16 to-slate-950' },
+  { title: 'Wave Chamber', subtitle: 'light + sound', symbol: 'λ', tone: 'from-violet-500/34 via-fuchsia-400/16 to-slate-950' },
+  { title: 'Earth System', subtitle: 'cycles + change', symbol: 'CO2', tone: 'from-teal-400/30 via-green-500/14 to-slate-950' },
+  { title: 'Cell World', subtitle: 'life in detail', symbol: 'DNA', tone: 'from-lime-400/28 via-emerald-400/16 to-slate-950' },
+  { title: 'Data Evidence', subtitle: 'claim + reasoning', symbol: 'CER', tone: 'from-blue-400/28 via-cyan-500/14 to-slate-950' },
+  { title: 'Design Test', subtitle: 'variables + control', symbol: 'IV', tone: 'from-rose-400/28 via-orange-400/14 to-slate-950' },
+  { title: 'Future Lab', subtitle: 'explore + explain', symbol: 'NGSS', tone: 'from-indigo-500/32 via-cyan-400/16 to-slate-950' },
+]
+
+function getLessonShortTitle(title: string) {
+  return title
+    .replace(/^NGSS G[678]\s+Science\s*\d+:\s*/i, '')
+    .replace(/^IB G[45]\s+Level\s+\d+\s*\|\s*/i, '')
+    .replace(/^Larry Math Class\s*/i, '')
+    .slice(0, 42)
+}
+
+function courseVisualImages(course: { id: string; courseTrack: string; thumbnailUrl?: string | null }) {
+  if (course.id === 'course-ngss-science') {
+    return [1, 3, 5, 7, 9, 11, 13, 15, 17].map((number) => `/lesson-covers/ngss-g6/lesson-${String(number).padStart(2, '0')}.jpg`)
+  }
+
+  if (course.courseTrack === 'ib-big-math') {
+    return [
+      course.thumbnailUrl,
+      '/course-covers/ib-g4-cover.svg',
+      '/course-covers/ib-g5-cover.svg',
+      '/course-covers/ib-g6-pyp-cover.svg',
+      '/course-covers/ib-g7-pyp-cover.svg',
+      '/course-covers/ib-g8-pyp-cover.svg',
+    ].filter(Boolean) as string[]
+  }
+
+  if (course.courseTrack === 'ngss-science') {
+    return [
+      course.thumbnailUrl,
+      '/course-covers/ngss-g6-cover.svg',
+      '/course-covers/ngss-g7-cover.svg',
+      '/course-covers/ngss-g8-cover.svg',
+      '/course-covers/ngss-science-cover.png',
+    ].filter(Boolean) as string[]
+  }
+
+  return [course.thumbnailUrl].filter(Boolean) as string[]
+}
+
+function buildVisualWallItems(
+  course: { id: string; courseTrack: string; thumbnailUrl?: string | null },
+  lessons: { title: string }[]
+) {
+  const images = courseVisualImages(course)
+  const motifs = course.courseTrack === 'ngss-science' ? scienceVisualMotifs : ibVisualMotifs
+  const lessonTitles = lessons.map((lesson) => getLessonShortTitle(lesson.title)).filter(Boolean)
+
+  return Array.from({ length: 9 }, (_, index) => {
+    const motif = motifs[index % motifs.length]
+    return {
+      image: images[index % images.length] || null,
+      title: lessonTitles[index] || motif.title,
+      subtitle: motif.subtitle,
+      symbol: motif.symbol,
+      tone: motif.tone,
+    }
+  })
+}
+
 function courseCoverPath(course: { id: string; courseTrack: string; thumbnailUrl?: string | null }) {
   if (course.thumbnailUrl) return course.thumbnailUrl
   if (course.id === 'course-ngss-science' || course.courseTrack === 'ngss-science') {
@@ -223,6 +317,8 @@ export default async function CourseDetailPage({
       : featureCardCopy.en
     : featureCardCopy[locale]
   const courseDescription = courseDescriptionOverrides[locale][course.id] || course.description
+  const visualWallItems = buildVisualWallItems(course, course.lessons)
+  const wallCopy = visualWallCopy[locale]
 
   return (
     <div className="relative min-h-dvh overflow-hidden bg-[#050505] text-white">
@@ -303,6 +399,49 @@ export default async function CourseDetailPage({
                     <div className="mt-1 text-xs font-bold text-gray-500">{label}</div>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-8 overflow-hidden rounded-[2rem] border border-white/10 bg-[#070707] shadow-2xl shadow-black/30">
+                <div className="flex flex-col gap-2 border-b border-white/10 bg-white/[0.025] px-4 py-4 sm:flex-row sm:items-end sm:justify-between sm:px-5">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em] text-blue-300">{wallCopy.label}</p>
+                    <h2 className="mt-1 text-xl font-black tracking-tight text-white sm:text-2xl">{wallCopy.title}</h2>
+                  </div>
+                  <p className="max-w-md text-xs font-medium leading-5 text-gray-500 sm:text-right">{wallCopy.subtitle}</p>
+                </div>
+                <div className="grid aspect-[1.18] min-h-[360px] grid-cols-3 gap-2 bg-black p-2 sm:min-h-[520px] sm:gap-3 sm:p-3">
+                  {visualWallItems.map((item, index) => (
+                    <div
+                      key={`${item.title}-${index}`}
+                      className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${item.tone}`}
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={`${course.title} visual ${index + 1}`}
+                          className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                        />
+                      ) : (
+                        <div className="absolute inset-0">
+                          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.14),transparent_38%,rgba(255,255,255,0.08))]" />
+                          <div className="absolute right-3 top-3 text-3xl font-black text-white/20 sm:right-5 sm:top-5 sm:text-5xl">
+                            {item.symbol}
+                          </div>
+                          <div className="absolute bottom-3 left-3 h-16 w-16 rounded-full border border-white/15 sm:h-24 sm:w-24" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                        <p className="line-clamp-2 text-sm font-black leading-tight text-white drop-shadow-xl sm:text-base">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 hidden text-[10px] font-black uppercase tracking-[0.18em] text-white/50 sm:block">
+                          {item.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {course.status === 'coming-soon' && (
