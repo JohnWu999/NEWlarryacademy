@@ -7,6 +7,7 @@ const projectRoot = path.resolve(__dirname, '..')
 const sourceRoot = '/Users/johnwu/Documents/自动视频剪辑项目/output'
 const scriptsPath = path.join(sourceRoot, 'ib_pyp_g5_scripts/ib_pyp_g5_lessons_01_20_scripts.json')
 const outputPath = path.join(projectRoot, 'data/ib-pyp-g5-course.json')
+const existingCourse = fs.existsSync(outputPath) ? JSON.parse(fs.readFileSync(outputPath, 'utf8')) : null
 
 const lessons = JSON.parse(fs.readFileSync(scriptsPath, 'utf8'))
 
@@ -43,7 +44,11 @@ function cleanText(value = '') {
 function pickVideoFile(episode) {
   const ep = String(episode).padStart(2, '0')
   const dir = path.join(sourceRoot, `ib_pyp_g5_ep${ep}`)
-  return fs.readdirSync(dir).find((file) => file.endsWith('.mp4')) || null
+  const files = fs.readdirSync(dir).filter((file) => file.endsWith('.mp4')).sort()
+  if (episode === 20) {
+    return files.find((file) => file === 'IB_PYP_G5_Ep20_Data_Probability_Project_Fenrir.mp4') || files[0] || null
+  }
+  return files[0] || null
 }
 
 function durationFor(lesson) {
@@ -591,6 +596,13 @@ const course = {
 
 function auditToShortList(audit) {
   return audit.map(cleanText).slice(0, 6)
+}
+
+const preservedAdvancedLessons =
+  existingCourse?.lessons?.filter((lesson) => Number(lesson.episode) > 20) || []
+
+if (preservedAdvancedLessons.length) {
+  course.lessons = [...course.lessons, ...preservedAdvancedLessons].sort((a, b) => a.episode - b.episode)
 }
 
 fs.writeFileSync(outputPath, `${JSON.stringify(course, null, 2)}\n`)

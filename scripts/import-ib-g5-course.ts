@@ -141,7 +141,7 @@ async function main() {
       where: { id: `activity-ib-pyp-g5-ep${String(lesson.order).padStart(2, '0')}-practice` },
       update: {
         title: `${lesson.title} Practice Quest`,
-        description: '10-question interactive quest with points, gems, hints, sound feedback, and review advice.',
+        description: '15-question interactive quest with points, gems, hints, sound feedback, and review advice.',
         config: JSON.stringify(lesson.practice),
         provider: 'internal-quiz',
         order: 1,
@@ -156,7 +156,7 @@ async function main() {
         lessonId: lesson.id,
         type: 'practice',
         title: `${lesson.title} Practice Quest`,
-        description: '10-question interactive quest with points, gems, hints, sound feedback, and review advice.',
+        description: '15-question interactive quest with points, gems, hints, sound feedback, and review advice.',
         config: JSON.stringify(lesson.practice),
         provider: 'internal-quiz',
         order: 1,
