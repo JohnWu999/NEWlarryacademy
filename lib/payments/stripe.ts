@@ -41,6 +41,7 @@ export async function createCheckoutSession(params: {
   mode: 'payment' | 'subscription'
   successUrl: string
   cancelUrl: string
+  customerEmail?: string
   metadata?: Record<string, string>
 }) {
   try {
@@ -49,6 +50,7 @@ export async function createCheckoutSession(params: {
       mode: params.mode,
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
+      customer_email: params.customerEmail,
       metadata: params.metadata,
     })
     return { success: true as const, sessionId: session.id, url: session.url }

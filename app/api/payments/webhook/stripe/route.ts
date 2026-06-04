@@ -3,6 +3,78 @@ import { constructWebhookEvent } from '@/lib/payments/stripe'
 import { prisma } from '@/lib/prisma'
 import Stripe from 'stripe'
 
+async function fulfillPaidCheckoutSession(session: Stripe.Checkout.Session) {
+  const orderId = session.metadata?.orderId
+  if (!orderId) return
+
+  if (session.payment_status !== 'paid') {
+    await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'pending',
+        paymentId: session.id,
+      },
+    })
+    console.log(`Order ${orderId} checkout completed but payment_status=${session.payment_status}`)
+    return
+  }
+
+  const order = await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status: 'paid',
+      paymentId: session.id,
+    },
+    include: {
+      user: true,
+    },
+  })
+
+  const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items as any[]
+  for (const item of items) {
+    if (item.type === 'course') {
+      const existingGrant = await prisma.userPurchasedCourse.findUnique({
+        where: {
+          userId_courseId: {
+            userId: order.userId,
+            courseId: item.id,
+          },
+        },
+        select: { id: true, status: true },
+      })
+      await prisma.userPurchasedCourse.upsert({
+        where: {
+          userId_courseId: {
+            userId: order.userId,
+            courseId: item.id,
+          },
+        },
+        update: {
+          status: 'active',
+          source: 'purchase',
+          orderId: order.id,
+          purchasedAt: new Date(),
+        },
+        create: {
+          userId: order.userId,
+          courseId: item.id,
+          orderId: order.id,
+          status: 'active',
+          source: 'purchase',
+        },
+      })
+      if (!existingGrant || existingGrant.status !== 'active') {
+        await prisma.course.update({
+          where: { id: item.id },
+          data: { enrollmentCount: { increment: 1 } },
+        })
+      }
+    }
+  }
+
+  console.log(`Order ${orderId} completed successfully`)
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
@@ -21,66 +93,13 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        const orderId = session.metadata?.orderId
+        await fulfillPaidCheckoutSession(session)
+        break
+      }
 
-        if (orderId) {
-          // Update order status
-          const order = await prisma.order.update({
-            where: { id: orderId },
-            data: {
-              status: 'paid',
-              paymentId: session.id,
-            },
-            include: {
-              user: true,
-            },
-          })
-
-          // Grant access to purchased items
-          const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items as any[]
-          for (const item of items) {
-            if (item.type === 'course') {
-              const existingGrant = await prisma.userPurchasedCourse.findUnique({
-                where: {
-                  userId_courseId: {
-                    userId: order.userId,
-                    courseId: item.id,
-                  },
-                },
-                select: { id: true, status: true },
-              })
-              await prisma.userPurchasedCourse.upsert({
-                where: {
-                  userId_courseId: {
-                    userId: order.userId,
-                    courseId: item.id,
-                  },
-                },
-                update: {
-                  status: 'active',
-                  source: 'purchase',
-                  orderId: order.id,
-                  purchasedAt: new Date(),
-                },
-                create: {
-                  userId: order.userId,
-                  courseId: item.id,
-                  orderId: order.id,
-                  status: 'active',
-                  source: 'purchase',
-                },
-              })
-              if (!existingGrant || existingGrant.status !== 'active') {
-                await prisma.course.update({
-                  where: { id: item.id },
-                  data: { enrollmentCount: { increment: 1 } },
-                })
-              }
-            }
-          }
-
-          console.log(`Order ${orderId} completed successfully`)
-        }
+      case 'checkout.session.async_payment_succeeded': {
+        const session = event.data.object as Stripe.Checkout.Session
+        await fulfillPaidCheckoutSession(session)
         break
       }
 

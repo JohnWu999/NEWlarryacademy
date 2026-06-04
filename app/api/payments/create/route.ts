@@ -151,9 +151,11 @@ export async function POST(request: NextRequest) {
         mode: 'payment',
         successUrl: `${process.env.NEXTAUTH_URL}/payment/success?orderId=${order.id}`,
         cancelUrl: `${process.env.NEXTAUTH_URL}/payment/cancel?orderId=${order.id}`,
+        customerEmail: user.email,
         metadata: {
           orderId: order.id,
           userId: user.id,
+          userEmail: user.email,
         },
       })
 

@@ -6,6 +6,7 @@ import Stripe from 'stripe'
 const WEBHOOK_URL = process.env.STRIPE_WEBHOOK_URL || 'https://larryacademy.com/api/payments/webhook/stripe'
 const EVENTS: Stripe.WebhookEndpointCreateParams.EnabledEvent[] = [
   'checkout.session.completed',
+  'checkout.session.async_payment_succeeded',
   'checkout.session.expired',
   'payment_intent.payment_failed',
 ]
@@ -52,7 +53,15 @@ async function main() {
   const matchingActiveEndpoint = existing.data.find((endpoint) => endpoint.url === WEBHOOK_URL && endpoint.status === 'enabled')
 
   if (matchingActiveEndpoint && !createNew) {
-    console.log(`Stripe webhook endpoint already exists: ${matchingActiveEndpoint.id}`)
+    await stripe.webhookEndpoints.update(matchingActiveEndpoint.id, {
+      enabled_events: EVENTS,
+      description: 'Larry Academy production checkout fulfillment',
+      metadata: {
+        app: 'larry-academy',
+        purpose: 'course-checkout-fulfillment',
+      },
+    })
+    console.log(`Stripe webhook endpoint already exists and was updated: ${matchingActiveEndpoint.id}`)
     console.log('Stripe only reveals webhook signing secrets when an endpoint is first created.')
     console.log('Use --create-new if the server does not already have STRIPE_WEBHOOK_SECRET.')
     return
