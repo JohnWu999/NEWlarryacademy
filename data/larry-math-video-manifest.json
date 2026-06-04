@@ -1,0 +1,1761 @@
+{
+  "generatedAt": "2026-06-04T14:11:55.412740+00:00",
+  "courseId": "course-larry-math-class-library",
+  "libraryId": "larry-math-class-library",
+  "sourceRoot": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库",
+  "compressedRoot": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed",
+  "episodeCount": 68,
+  "episodeRange": [
+    1,
+    182
+  ],
+  "missingEpisodesInRange": [
+    5,
+    13,
+    25,
+    39,
+    43,
+    44,
+    48,
+    63,
+    66,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    99,
+    102,
+    112,
+    117,
+    118,
+    132,
+    135,
+    144,
+    148,
+    158,
+    165,
+    166,
+    170,
+    171,
+    173,
+    175,
+    176,
+    180,
+    181
+  ],
+  "episodesMissingCompressedBeforeRun": [
+    168
+  ],
+  "unavailableSourceEpisodes": [
+    {
+      "episode": 1,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 1_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 2,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 2_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 4,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 4_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 6,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 6_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 9,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 9_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 10,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 10_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 12,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 12_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 14,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 14_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 16,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 16_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 18,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 18_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 21,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 21_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 22,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 22_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 27,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 27_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 29,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 29_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 30,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 30_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 32,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 32_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 33,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/ Larry Math Class 33_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 34,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 34_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 35,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 35_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 37,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 37_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 38,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 38_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 40,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 40_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 46,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 46_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 47,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 47_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 51,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 51_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 52,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 52_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 54,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 54_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 56,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 56_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 57,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 57_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 59,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 59_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 60,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 60_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 64,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 64_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 65,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 65_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 68,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 68_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 69,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 69_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 70,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 70_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 72,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 72_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 94,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 94_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 95,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 95_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 96,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 96_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 98,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 98_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 100,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 100_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 105,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 105_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 108,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 108_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 111,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 111_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 113,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 113_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 115,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 115_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 119,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 119_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 120,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 120_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 122,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 122_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 123,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 123_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 127,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 127_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 128,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 128_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 130,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 130_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 136,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 136_compressed.mov",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 138,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 138_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 139,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 139_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 140,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 140_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 141,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 141_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 147,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 147_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 150,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 150_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 152,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 152_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 155,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 155_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 156,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 156_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 157,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 157_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 167,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 167_compressed.mp4",
+      "reason": "selected video is an iCloud placeholder with zero allocated bytes"
+    },
+    {
+      "episode": 168,
+      "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/larry math class 168.mp4",
+      "reason": "iCloud placeholder has zero allocated bytes"
+    }
+  ],
+  "selected": [
+    {
+      "id": "larry-math-class-003",
+      "episode": 3,
+      "title": "Larry Math Class 3",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 3_compressed.mov",
+      "sourceFileName": "Larry Math Class 3_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 85685566,
+      "allocatedBytes": 85688320,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-007",
+      "episode": 7,
+      "title": "Larry Math Class 7",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 7_compressed.mov",
+      "sourceFileName": "Larry Math Class 7_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 40781979,
+      "allocatedBytes": 40783872,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-008",
+      "episode": 8,
+      "title": "Larry Math Class 8",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 8_compressed.mov",
+      "sourceFileName": "Larry Math Class 8_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 202732608,
+      "allocatedBytes": 202735616,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-011",
+      "episode": 11,
+      "title": "Larry Math Class 11",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 11_compressed.mp4",
+      "sourceFileName": "Larry Math Class 11_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 47217270,
+      "allocatedBytes": 47218688,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-015",
+      "episode": 15,
+      "title": "Larry Math Class 15",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 15_compressed.mov",
+      "sourceFileName": "Larry Math Class 15_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 80449574,
+      "allocatedBytes": 80453632,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-017",
+      "episode": 17,
+      "title": "Larry Math Class 17",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 17_compressed.mov",
+      "sourceFileName": "Larry Math Class 17_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 46870123,
+      "allocatedBytes": 46870528,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-019",
+      "episode": 19,
+      "title": "Larry Math Class 19",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 19_compressed.mp4",
+      "sourceFileName": "Larry Math Class 19_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 28273563,
+      "allocatedBytes": 28274688,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-020",
+      "episode": 20,
+      "title": "Larry Math Class 20",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 20_compressed.mp4",
+      "sourceFileName": "Larry Math Class 20_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 47242691,
+      "allocatedBytes": 47243264,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-023",
+      "episode": 23,
+      "title": "Larry Math Class 23",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 23_compressed.mp4",
+      "sourceFileName": "Larry Math Class 23_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 116371927,
+      "allocatedBytes": 116375552,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-024",
+      "episode": 24,
+      "title": "Larry Math Class 24",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 24_compressed.mp4",
+      "sourceFileName": "Larry Math Class 24_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 159264212,
+      "allocatedBytes": 159264768,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-026",
+      "episode": 26,
+      "title": "Larry Math Class 26",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 26_compressed.mp4",
+      "sourceFileName": "Larry Math Class 26_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 175782385,
+      "allocatedBytes": 175783936,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-028",
+      "episode": 28,
+      "title": "Larry Math Class 28",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 28_compressed.mp4",
+      "sourceFileName": "Larry Math Class 28_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 86342157,
+      "allocatedBytes": 86343680,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-031",
+      "episode": 31,
+      "title": "Larry Math Class 31",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 31_compressed.mov",
+      "sourceFileName": "Larry Math Class 31_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 110748480,
+      "allocatedBytes": 110751744,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-036",
+      "episode": 36,
+      "title": "Larry Math Class 36",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 36_compressed.mov",
+      "sourceFileName": "Larry Math Class 36_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 82959248,
+      "allocatedBytes": 82960384,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-041",
+      "episode": 41,
+      "title": "Larry Math Class 41",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 41_compressed.mov",
+      "sourceFileName": "Larry Math Class 41_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 83088781,
+      "allocatedBytes": 83091456,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-042",
+      "episode": 42,
+      "title": "Larry Math Class 42",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 42_compressed.mov",
+      "sourceFileName": "Larry Math Class 42_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 111211627,
+      "allocatedBytes": 111214592,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-045",
+      "episode": 45,
+      "title": "Larry Math Class 45",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 45_compressed.mov",
+      "sourceFileName": "Larry Math Class 45_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 82752427,
+      "allocatedBytes": 82755584,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-049",
+      "episode": 49,
+      "title": "Larry Math Class 49",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 49_compressed.mov",
+      "sourceFileName": "Larry Math Class 49_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 126094648,
+      "allocatedBytes": 126095360,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-050",
+      "episode": 50,
+      "title": "Larry Math Class 50",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 50_compressed.mov",
+      "sourceFileName": "Larry Math Class 50_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 234999993,
+      "allocatedBytes": 235003904,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-053",
+      "episode": 53,
+      "title": "Larry Math Class 53",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 53_compressed.mov",
+      "sourceFileName": "Larry Math Class 53_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 204543682,
+      "allocatedBytes": 204546048,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-055",
+      "episode": 55,
+      "title": "Larry Math Class 55",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 55_compressed.mp4",
+      "sourceFileName": "Larry Math Class 55_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 159106057,
+      "allocatedBytes": 159109120,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-058",
+      "episode": 58,
+      "title": "Larry Math Class 58",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 58_compressed.mp4",
+      "sourceFileName": "Larry Math Class 58_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 113486718,
+      "allocatedBytes": 113487872,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-061",
+      "episode": 61,
+      "title": "Larry Math Class 61",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 61_compressed.mp4",
+      "sourceFileName": "Larry Math Class 61_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 100045872,
+      "allocatedBytes": 100048896,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-062",
+      "episode": 62,
+      "title": "Larry Math Class 62",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 62_compressed.mp4",
+      "sourceFileName": "Larry Math Class 62_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 110431005,
+      "allocatedBytes": 110432256,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-067",
+      "episode": 67,
+      "title": "Larry Math Class 67",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 67_compressed.mp4",
+      "sourceFileName": "Larry Math Class 67_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 90378173,
+      "allocatedBytes": 90378240,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-071",
+      "episode": 71,
+      "title": "Larry Math Class 71",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 71_compressed.mp4",
+      "sourceFileName": "Larry Math Class 71_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 233218015,
+      "allocatedBytes": 233218048,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-073",
+      "episode": 73,
+      "title": "Larry Math Class 73",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 73_compressed.mov",
+      "sourceFileName": "Larry Math Class 73_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 132530751,
+      "allocatedBytes": 132534272,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-074",
+      "episode": 74,
+      "title": "Larry Math Class 74",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 74_compressed.mov",
+      "sourceFileName": "Larry Math Class 74_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 157161873,
+      "allocatedBytes": 157163520,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-097",
+      "episode": 97,
+      "title": "Larry Math Class 97",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 97_compressed.mp4",
+      "sourceFileName": "Larry Math Class 97_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 137202027,
+      "allocatedBytes": 137203712,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-101",
+      "episode": 101,
+      "title": "Larry Math Class 101",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 101_compressed.mp4",
+      "sourceFileName": "Larry Math Class 101_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 152263702,
+      "allocatedBytes": 152264704,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-103",
+      "episode": 103,
+      "title": "Larry Math Class 103",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 103_compressed.mov",
+      "sourceFileName": "Larry Math Class 103_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 245432618,
+      "allocatedBytes": 245436416,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-104",
+      "episode": 104,
+      "title": "Larry Math Class 104",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 104_compressed.mov",
+      "sourceFileName": "Larry Math Class 104_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 139110304,
+      "allocatedBytes": 139112448,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-106",
+      "episode": 106,
+      "title": "Larry Math Class 106",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 106_compressed.mov",
+      "sourceFileName": "Larry Math Class 106_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 120862351,
+      "allocatedBytes": 120864768,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-107",
+      "episode": 107,
+      "title": "Larry Math Class 107",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 107_compressed.mov",
+      "sourceFileName": "Larry Math Class 107_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 185080310,
+      "allocatedBytes": 185081856,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-109",
+      "episode": 109,
+      "title": "Larry Math Class 109",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 109_compressed.mov",
+      "sourceFileName": "Larry Math Class 109_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 161886802,
+      "allocatedBytes": 161890304,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-110",
+      "episode": 110,
+      "title": "Larry Math Class 110",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 110_compressed.mov",
+      "sourceFileName": "Larry Math Class 110_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 123605864,
+      "allocatedBytes": 123609088,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-114",
+      "episode": 114,
+      "title": "Larry Math Class 114",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 114_compressed.mov",
+      "sourceFileName": "Larry Math Class 114_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 166181301,
+      "allocatedBytes": 166182912,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-116",
+      "episode": 116,
+      "title": "Larry Math Class 116",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 116_compressed.mov",
+      "sourceFileName": "Larry Math Class 116_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 211412892,
+      "allocatedBytes": 211415040,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-121",
+      "episode": 121,
+      "title": "Larry Math Class 121",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 121_compressed.mov",
+      "sourceFileName": "Larry Math Class 121_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 97311760,
+      "allocatedBytes": 97312768,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-124",
+      "episode": 124,
+      "title": "Larry Math Class 124",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 124_compressed.mov",
+      "sourceFileName": "Larry Math Class 124_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 206648217,
+      "allocatedBytes": 206651392,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-125",
+      "episode": 125,
+      "title": "Larry Math Class 125",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 125_compressed.mov",
+      "sourceFileName": "Larry Math Class 125_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 97317534,
+      "allocatedBytes": 97320960,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-126",
+      "episode": 126,
+      "title": "Larry Math Class 126",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 126_compressed.mov",
+      "sourceFileName": "Larry Math Class 126_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 167138879,
+      "allocatedBytes": 167141376,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-129",
+      "episode": 129,
+      "title": "Larry Math Class 129",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 129_compressed.mov",
+      "sourceFileName": "Larry Math Class 129_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 107184848,
+      "allocatedBytes": 107188224,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-131",
+      "episode": 131,
+      "title": "Larry Math Class 131",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 131_compressed.mov",
+      "sourceFileName": "Larry Math Class 131_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 192217873,
+      "allocatedBytes": 192221184,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-133",
+      "episode": 133,
+      "title": "Larry Math Class 133",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 133_compressed.mov",
+      "sourceFileName": "Larry Math Class 133_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 131819258,
+      "allocatedBytes": 131821568,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-134",
+      "episode": 134,
+      "title": "Larry Math Class 134",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 134_compressed.mov",
+      "sourceFileName": "Larry Math Class 134_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 144387605,
+      "allocatedBytes": 144388096,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-137",
+      "episode": 137,
+      "title": "Larry Math Class 137",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 137_compressed.mov",
+      "sourceFileName": "Larry Math Class 137_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 140665677,
+      "allocatedBytes": 140668928,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-142",
+      "episode": 142,
+      "title": "Larry Math Class 142",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 142_compressed.mp4",
+      "sourceFileName": "Larry Math Class 142_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 186913912,
+      "allocatedBytes": 186916864,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-143",
+      "episode": 143,
+      "title": "Larry Math Class 143",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 143_compressed.mp4",
+      "sourceFileName": "Larry Math Class 143_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 105289540,
+      "allocatedBytes": 105291776,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-145",
+      "episode": 145,
+      "title": "Larry Math Class 145",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 145_compressed.mp4",
+      "sourceFileName": "Larry Math Class 145_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 192615083,
+      "allocatedBytes": 192618496,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-146",
+      "episode": 146,
+      "title": "Larry Math Class 146",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 146_compressed.mp4",
+      "sourceFileName": "Larry Math Class 146_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 114881487,
+      "allocatedBytes": 114884608,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-149",
+      "episode": 149,
+      "title": "Larry Math Class 149",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 149_compressed.mp4",
+      "sourceFileName": "Larry Math Class 149_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 100675978,
+      "allocatedBytes": 100679680,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-151",
+      "episode": 151,
+      "title": "Larry Math Class 151",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 151_compressed.mp4",
+      "sourceFileName": "Larry Math Class 151_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 249233533,
+      "allocatedBytes": 249237504,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-153",
+      "episode": 153,
+      "title": "Larry Math Class 153",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 153_compressed.mp4",
+      "sourceFileName": "Larry Math Class 153_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 148045611,
+      "allocatedBytes": 148045824,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-154",
+      "episode": 154,
+      "title": "Larry Math Class 154",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 154_compressed.mov",
+      "sourceFileName": "Larry Math Class 154_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 150906506,
+      "allocatedBytes": 150908928,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-159",
+      "episode": 159,
+      "title": "Larry Math Class 159",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 159_compressed.mp4",
+      "sourceFileName": "Larry Math Class 159_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 159796027,
+      "allocatedBytes": 159797248,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-160",
+      "episode": 160,
+      "title": "Larry Math Class 160",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 160_compressed.mp4",
+      "sourceFileName": "Larry Math Class 160_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 316337868,
+      "allocatedBytes": 316338176,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-161",
+      "episode": 161,
+      "title": "Larry Math Class 161",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 161_compressed.mp4",
+      "sourceFileName": "Larry Math Class 161_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 138444213,
+      "allocatedBytes": 138444800,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-162",
+      "episode": 162,
+      "title": "Larry Math Class 162",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 162_compressed.MOV",
+      "sourceFileName": "Larry Math Class 162_compressed.MOV",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 292835994,
+      "allocatedBytes": 292839424,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-163",
+      "episode": 163,
+      "title": "Larry Math Class 163",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/larry math class 163_compressed.MOV",
+      "sourceFileName": "larry math class 163_compressed.MOV",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 189967250,
+      "allocatedBytes": 189968384,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-164",
+      "episode": 164,
+      "title": "Larry Math Class 164",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 164_compressed.mov",
+      "sourceFileName": "Larry Math Class 164_compressed.mov",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 198243880,
+      "allocatedBytes": 198246400,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-169",
+      "episode": 169,
+      "title": "Larry Math Class 169",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 169_compressed.mp4",
+      "sourceFileName": "Larry Math Class 169_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 137397419,
+      "allocatedBytes": 137400320,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-172",
+      "episode": 172,
+      "title": "Larry Math Class 172",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 172_compressed.mp4",
+      "sourceFileName": "Larry Math Class 172_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 153015508,
+      "allocatedBytes": 153018368,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-174",
+      "episode": 174,
+      "title": "Larry Math Class 174",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 174_compressed.mp4",
+      "sourceFileName": "Larry Math Class 174_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 183317262,
+      "allocatedBytes": 184815616,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-177",
+      "episode": 177,
+      "title": "Larry Math Class 177",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 177_compressed.mp4",
+      "sourceFileName": "Larry Math Class 177_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 192964211,
+      "allocatedBytes": 201854976,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-178",
+      "episode": 178,
+      "title": "Larry Math Class 178",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 178_compressed.mp4",
+      "sourceFileName": "Larry Math Class 178_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 188799045,
+      "allocatedBytes": 201330688,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-179",
+      "episode": 179,
+      "title": "Larry Math Class 179",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 179_compressed.mp4",
+      "sourceFileName": "Larry Math Class 179_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 206117167,
+      "allocatedBytes": 206118912,
+      "durationSeconds": null
+    },
+    {
+      "id": "larry-math-class-182",
+      "episode": 182,
+      "title": "Larry Math Class 182",
+      "selectedPath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 182_compressed.mp4",
+      "sourceFileName": "Larry Math Class 182_compressed.mp4",
+      "isCompressed": true,
+      "compressedGenerated": false,
+      "sizeBytes": 241652619,
+      "allocatedBytes": 245895168,
+      "durationSeconds": null
+    }
+  ],
+  "duplicates": {
+    "53": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 53.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 53_compressed.mov"
+    ],
+    "130": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 130.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 130_compressed.mov"
+    ],
+    "124": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 124.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 124_compressed.mov"
+    ],
+    "27": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 27.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 27_compressed.mp4"
+    ],
+    "178": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 178.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 178_compressed.mp4"
+    ],
+    "150": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 150.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 150_compressed.mp4"
+    ],
+    "145": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 145.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 145_compressed.mp4"
+    ],
+    "151": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 151.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 151_compressed.mp4"
+    ],
+    "179": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 179.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 179_compressed.mp4"
+    ],
+    "26": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 26.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 26_compressed.mp4"
+    ],
+    "119": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 119.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 119_compressed.mov"
+    ],
+    "125": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 125.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 125_compressed.mov"
+    ],
+    "131": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 131.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 131_compressed.mov"
+    ],
+    "52": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 52.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 52_compressed.mov"
+    ],
+    "46": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 46.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 46_compressed.mov"
+    ],
+    "50": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 50.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 50_compressed.mov"
+    ],
+    "127": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 127.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 127_compressed.mov"
+    ],
+    "133": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 133.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 133_compressed.mov"
+    ],
+    "33": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/ Larry Math Class 33.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/ Larry Math Class 33_compressed.mov"
+    ],
+    "24": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 24.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 24_compressed.mp4"
+    ],
+    "147": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 147.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 147_compressed.mp4"
+    ],
+    "153": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 153.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 153_compressed.mp4"
+    ],
+    "152": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 152.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 152_compressed.mp4"
+    ],
+    "146": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 146.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 146_compressed.mp4"
+    ],
+    "19": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 19.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 19_compressed.mp4"
+    ],
+    "4": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 4.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 4_compressed.mp4"
+    ],
+    "126": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 126.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 126_compressed.mov"
+    ],
+    "45": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 45.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 45_compressed.mov"
+    ],
+    "51": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 51.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 51_compressed.mov"
+    ],
+    "41": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 41.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 41_compressed.mov"
+    ],
+    "122": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 122.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 122_compressed.mov"
+    ],
+    "136": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 136.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 136_compressed.mov"
+    ],
+    "21": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 21.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 21_compressed.mp4"
+    ],
+    "142": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 142.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 142_compressed.mp4"
+    ],
+    "156": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 156.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 156_compressed.mp4"
+    ],
+    "157": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 157.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 157_compressed.mp4"
+    ],
+    "143": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 143.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 143_compressed.mp4"
+    ],
+    "20": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 20.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 20_compressed.mp4"
+    ],
+    "137": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 137.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 137_compressed.mov"
+    ],
+    "123": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 123.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 123_compressed.mov"
+    ],
+    "40": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 40.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 40_compressed.mov"
+    ],
+    "54": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 54.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 54_compressed.mov"
+    ],
+    "42": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 42.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 42_compressed.mov"
+    ],
+    "109": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 109.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 109_compressed.mov"
+    ],
+    "121": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 121.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 121_compressed.mov"
+    ],
+    "22": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 22.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 22_compressed.mp4"
+    ],
+    "182": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 182.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 182_compressed.mp4"
+    ],
+    "155": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 155.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 155_compressed.mp4"
+    ],
+    "141": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 141.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 141_compressed.mp4"
+    ],
+    "169": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 169.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 169_compressed.mp4"
+    ],
+    "168": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/larry math class 168.mp4"
+    ],
+    "140": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 140.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 140_compressed.mp4"
+    ],
+    "23": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 23.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 23_compressed.mp4"
+    ],
+    "120": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 120.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 120_compressed.mov"
+    ],
+    "134": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 134.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 134_compressed.mov"
+    ],
+    "108": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 108.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 108_compressed.mov"
+    ],
+    "18": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 18.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 18_compressed.mov"
+    ],
+    "30": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 30.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 30_compressed.mov"
+    ],
+    "31": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 31.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 31_compressed.mov"
+    ],
+    "6": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 6.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 6_compressed.mov"
+    ],
+    "47": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 47.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 47_compressed.mp4"
+    ],
+    "7": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 7.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 7_compressed.mov"
+    ],
+    "32": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 32.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 32_compressed.mov"
+    ],
+    "36": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 36.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 36_compressed.mov"
+    ],
+    "3": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 3.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 3_compressed.mov"
+    ],
+    "95": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 95.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 95_compressed.mp4"
+    ],
+    "167": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 167 - 2026录播.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 167.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 167_compressed.mp4"
+    ],
+    "56": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 56.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 56_compressed.mp4"
+    ],
+    "57": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 57.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 57_compressed.mp4"
+    ],
+    "94": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 94.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 94_compressed.mp4"
+    ],
+    "154": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 154.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 154_compressed.mov"
+    ],
+    "2": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 2.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 2_compressed.mov"
+    ],
+    "37": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 37.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 37_compressed.mov"
+    ],
+    "35": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 35.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 35_compressed.mov"
+    ],
+    "96": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 96.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 96_compressed.mp4"
+    ],
+    "69": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 69.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 69_compressed.mp4"
+    ],
+    "55": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 55.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 55_compressed.mp4"
+    ],
+    "68": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 68.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 68_compressed.mp4"
+    ],
+    "97": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 97.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 97_compressed.mp4"
+    ],
+    "34": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 34.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 34_compressed.mov"
+    ],
+    "1": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 1.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 1_compressed.mov"
+    ],
+    "65": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 65.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 65_compressed.mp4"
+    ],
+    "71": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 71.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 71_compressed.mp4"
+    ],
+    "58": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 58.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 58_compressed.mp4"
+    ],
+    "70": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 70.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 70_compressed.mp4"
+    ],
+    "64": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 64.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 64_compressed.mp4"
+    ],
+    "10": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 10.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 10_compressed.mov"
+    ],
+    "38": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 38.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 38_compressed.mov"
+    ],
+    "12": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 12.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 12_compressed.mov"
+    ],
+    "139": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 139.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 139_compressed.mp4"
+    ],
+    "138": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 138.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 138_compressed.mp4"
+    ],
+    "67": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 67.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 67_compressed.mp4"
+    ],
+    "98": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 98.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 98_compressed.mp4"
+    ],
+    "164": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 164.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 164_compressed.mov"
+    ],
+    "17": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 17.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 17_compressed.mov"
+    ],
+    "100": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 100.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 100_compressed.mp4"
+    ],
+    "101": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 101.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 101_compressed.mp4"
+    ],
+    "62": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 62.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 62_compressed.mp4"
+    ],
+    "14": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 14.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 14_compressed.mov"
+    ],
+    "9": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 9.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 9_compressed.mov"
+    ],
+    "163": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/larry math class 163.MOV",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/larry math class 163_compressed.MOV"
+    ],
+    "60": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 60.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 60_compressed.mp4"
+    ],
+    "61": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 61.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 61_compressed.mp4"
+    ],
+    "162": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 162.MOV",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 162_compressed.MOV"
+    ],
+    "29": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 29.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 29_compressed.mov"
+    ],
+    "8": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 8.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 8_compressed.mov"
+    ],
+    "15": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 15.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 15_compressed.mov"
+    ],
+    "72": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 72.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 72_compressed.mov"
+    ],
+    "111": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 111.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 111_compressed.mov"
+    ],
+    "105": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 105.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 105_compressed.mov"
+    ],
+    "159": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 159.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 159_compressed.mp4"
+    ],
+    "104": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 104.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 104_compressed.mov"
+    ],
+    "110": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 110.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 110_compressed.mov"
+    ],
+    "73": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 73.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 73_compressed.mov"
+    ],
+    "59": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 59.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 59_compressed.mov"
+    ],
+    "106": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 106.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 106_compressed.mov"
+    ],
+    "11": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 11.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 11_compressed.mp4"
+    ],
+    "172": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 172.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 172_compressed.mp4"
+    ],
+    "113": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 113.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 113_compressed.mov"
+    ],
+    "107": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 107.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 107_compressed.mov"
+    ],
+    "74": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 74.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 74_compressed.mov"
+    ],
+    "103": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 103.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 103_compressed.mov"
+    ],
+    "28": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 28.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 28_compressed.mp4"
+    ],
+    "177": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 177.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 177_compressed.mp4"
+    ],
+    "116": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 116.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 116_compressed.mov"
+    ],
+    "49": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 49.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 49_compressed.mov"
+    ],
+    "128": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 128.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 128_compressed.mov"
+    ],
+    "114": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 114.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 114_compressed.mov"
+    ],
+    "174": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 174.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 174_compressed.mp4"
+    ],
+    "160": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 160.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 160_compressed.mp4"
+    ],
+    "149": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 149.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 149_compressed.mp4"
+    ],
+    "161": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 161.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 161_compressed.mp4"
+    ],
+    "16": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 16.mp4",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 16_compressed.mp4"
+    ],
+    "115": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 115.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 115_compressed.mov"
+    ],
+    "129": [
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/Larry Math Class 129.mov",
+      "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 129_compressed.mov"
+    ]
+  }
+}
