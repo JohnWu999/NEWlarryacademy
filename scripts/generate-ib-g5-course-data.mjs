@@ -565,7 +565,7 @@ const course = {
       difficulty: lesson.episode <= 6 ? 'Easy' : lesson.episode <= 14 ? 'Medium' : 'Hard',
       videoProvider: 'tencent-vod',
       videoFileName: pickVideoFile(lesson.episode),
-      isPreview: lesson.episode === 1,
+      isPreview: lesson.episode <= 3,
       hasPractice: true,
       hasGame: lesson.episode % 4 === 0,
       rewardsPoints: maxScore,

@@ -557,7 +557,7 @@ const lessons = Array.from({ length: 40 }, (_, index) => {
     difficulty: episode <= 12 ? 'Easy' : episode <= 28 ? 'Medium' : 'Hard',
     videoProvider: 'tencent-vod',
     videoFileName,
-    isPreview: episode <= 5,
+    isPreview: episode <= 3,
     hasPractice: true,
     hasGame: true,
     rewardsPoints: 80,

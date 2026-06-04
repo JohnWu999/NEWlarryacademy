@@ -63,7 +63,16 @@ export async function POST(
     const course = await prisma.course.findUnique({ where: { id: courseId } })
     if (!course) return NextResponse.json({ error: '课程不存在' }, { status: 404 })
 
-    if (!course.isFree) {
+    let requestedLesson: { id: string; order: number; duration: number | null; isPreview: boolean } | null = null
+    if (validatedData.lessonId) {
+      requestedLesson = await prisma.lesson.findFirst({
+        where: { id: validatedData.lessonId, courseId },
+        select: { id: true, order: true, duration: true, isPreview: true },
+      })
+      if (!requestedLesson) return NextResponse.json({ error: '课节不存在' }, { status: 404 })
+    }
+
+    if (!course.isFree && !requestedLesson?.isPreview) {
       const purchased = await prisma.userPurchasedCourse.findUnique({
         where: { userId_courseId: { userId: user.id, courseId } },
       })
@@ -73,10 +82,7 @@ export async function POST(
     let lastWatchedPosition = validatedData.lastWatchedPosition || 0
 
     if (validatedData.lessonId) {
-      const lesson = await prisma.lesson.findFirst({
-        where: { id: validatedData.lessonId, courseId },
-        select: { id: true, order: true, duration: true },
-      })
+      const lesson = requestedLesson
       if (!lesson) return NextResponse.json({ error: '课节不存在' }, { status: 404 })
 
       lastWatchedPosition = lesson.order

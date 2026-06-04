@@ -117,7 +117,7 @@ function accessLabel(course: CourseListItem, locale: 'zh' | 'en') {
   if (course.status === 'coming-soon') return locale === 'zh' ? '即将开放' : 'Coming Soon'
   if (course.accessLevel === 'registered') return locale === 'zh' ? '注册可学' : 'Register to Learn'
   if (course.isFree || course.price <= 0 || course.accessLevel === 'public') return locale === 'zh' ? '公开免费' : 'Free'
-  return locale === 'zh' ? `付费课程 ¥${course.price}` : `Paid Course ¥${course.price}`
+  return locale === 'zh' ? `付费课程 $${course.price} USD` : `Paid Course $${course.price} USD`
 }
 
 function accessTone(course: CourseListItem) {

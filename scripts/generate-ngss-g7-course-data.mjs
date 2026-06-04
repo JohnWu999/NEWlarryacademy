@@ -143,7 +143,7 @@ const course = {
     gradeLevel: 'G7',
     difficulty: index < 3 ? 'Medium' : 'Hard',
     videoProvider: 'tencent-vod',
-    isPreview: index < 2,
+    isPreview: index < 3,
     hasPractice: true,
     hasGame: false,
     rewardsPoints: 50,

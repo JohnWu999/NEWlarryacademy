@@ -485,7 +485,7 @@
       "gradeLevel": "G6",
       "difficulty": "Medium",
       "videoProvider": "tencent-vod",
-      "isPreview": false,
+      "isPreview": true,
       "hasPractice": true,
       "hasGame": false,
       "rewardsPoints": 50,

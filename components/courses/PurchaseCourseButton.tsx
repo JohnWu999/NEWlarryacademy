@@ -57,7 +57,7 @@ export default function PurchaseCourseButton({
         disabled={loading}
         className="w-full rounded-2xl bg-white px-6 py-4 text-base font-black text-black transition hover:bg-blue-100 disabled:opacity-60"
       >
-        {loading ? '正在创建订单...' : `开通课程权限 · ¥${price}`}
+        {loading ? '正在创建订单...' : `开通课程权限 · $${price} USD`}
       </button>
       {error && <p className="text-sm text-red-300">{error}</p>}
     </div>

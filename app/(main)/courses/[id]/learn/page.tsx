@@ -196,7 +196,7 @@ const pathwayModules = [
 ]
 
 const resumeCookiePrefix = 'larry_last_lesson'
-const openLessonCount = 5
+const previewLessonCount = 3
 
 function getResumeCookieName(courseId: string) {
   return `${resumeCookiePrefix}_${courseId.replace(/[^a-zA-Z0-9_-]/g, '_')}`
@@ -236,16 +236,22 @@ function isLessonCompleted(lesson: Lesson) {
   return Boolean(lesson.userProgress?.completedAt || lesson.latestPracticeAttempt?.completed)
 }
 
-function isLessonUnlocked(lessons: Lesson[], index: number) {
-  if (index < openLessonCount) return true
-  return lessons.slice(0, index).every(isLessonCompleted)
+function isPreviewLesson(lesson: Lesson | undefined, index: number) {
+  return Boolean(lesson?.isPreview || index < previewLessonCount)
 }
 
-function getBestResumeIndex(lessons: Lesson[], preferredIndex = -1) {
-  if (preferredIndex >= 0 && isLessonUnlocked(lessons, preferredIndex)) return preferredIndex
-  const firstUnlockedIncomplete = lessons.findIndex((lesson, index) => isLessonUnlocked(lessons, index) && !isLessonCompleted(lesson))
+function isLessonUnlocked(course: Course, index: number) {
+  const lesson = course.lessons[index]
+  if (isPreviewLesson(lesson, index)) return true
+  if (!course.hasAccess) return false
+  return course.lessons.slice(previewLessonCount, index).every(isLessonCompleted)
+}
+
+function getBestResumeIndex(course: Course, preferredIndex = -1) {
+  if (preferredIndex >= 0 && isLessonUnlocked(course, preferredIndex)) return preferredIndex
+  const firstUnlockedIncomplete = course.lessons.findIndex((lesson, index) => isLessonUnlocked(course, index) && !isLessonCompleted(lesson))
   if (firstUnlockedIncomplete >= 0) return firstUnlockedIncomplete
-  const lastUnlocked = lessons.findLastIndex((_, index) => isLessonUnlocked(lessons, index))
+  const lastUnlocked = course.lessons.findLastIndex((_, index) => isLessonUnlocked(course, index))
   return Math.max(0, lastUnlocked)
 }
 
@@ -768,7 +774,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
         const index = courseData.lessons.findIndex((lesson: Lesson) => lesson.id === lessonId)
         if (index !== -1) {
-          const resumeIndex = getBestResumeIndex(courseData.lessons, index)
+          const resumeIndex = getBestResumeIndex({ ...courseData, hasAccess: data.hasAccess, progress: data.progress }, index)
           setCurrentLessonIndex(resumeIndex)
           setCookieValue(getResumeCookieName(courseData.id), courseData.lessons[resumeIndex]?.id || lessonId)
         }
@@ -787,14 +793,15 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       const response = await fetch(`/api/courses/${courseId}`)
       if (response.ok) {
         const data = await response.json()
-        if (!data.hasAccess) {
+        const hasPreviewLessons = Array.isArray(data.lessons) && data.lessons.some((lesson: Lesson, index: number) => isPreviewLesson(lesson, index))
+        if (!data.hasAccess && !hasPreviewLessons) {
           router.push(`/courses/${courseId}`)
           return
         }
         setCourse(data)
         const resumeLessonId = getCookieValue(getResumeCookieName(data.id))
         const resumeIndex = data.lessons.findIndex((lesson: Lesson) => lesson.id === resumeLessonId)
-        setCurrentLessonIndex(getBestResumeIndex(data.lessons, resumeIndex))
+        setCurrentLessonIndex(getBestResumeIndex(data, resumeIndex))
       } else {
         router.push('/courses')
       }
@@ -841,7 +848,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const goToLesson = (index: number) => {
     const nextIndex = Math.max(0, Math.min(index, (course?.lessons.length || 1) - 1))
     const lesson = course?.lessons[nextIndex]
-    if (course && !isLessonUnlocked(course.lessons, nextIndex)) return
+    if (course && !isLessonUnlocked(course, nextIndex)) return
     if (course && lesson) setCookieValue(getResumeCookieName(course.id), lesson.id)
     setCurrentLessonIndex(nextIndex)
   }
@@ -1057,7 +1064,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const progressPercent = Math.round((completedLessonCount / course.lessons.length) * 100)
   const currentLessonComplete = completedLessonIds.has(currentLesson.id)
   const selectedIsCorrect = selectedChoice === practice.answer
-  const nextLessonUnlocked = currentLessonIndex < course.lessons.length - 1 && isLessonUnlocked(course.lessons, currentLessonIndex + 1)
+  const nextLessonUnlocked = currentLessonIndex < course.lessons.length - 1 && isLessonUnlocked(course, currentLessonIndex + 1)
+  const nextLessonRequiresPurchase = currentLessonIndex < course.lessons.length - 1 && !course.hasAccess && !isPreviewLesson(course.lessons[currentLessonIndex + 1], currentLessonIndex + 1)
 
   const learningSteps = [
     {
@@ -1205,7 +1213,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               <div>
                 <h2 className="text-2xl font-black">Course Map</h2>
                 <p className="mt-2 text-sm leading-6 text-gray-500">
-                  {completedLessonCount} of {course.lessons.length} lessons completed. New lessons unlock as you finish each quiz.
+                  {completedLessonCount} of {course.lessons.length} lessons completed. The first {previewLessonCount} lessons are free to preview; paid lessons continue unlocking as you learn.
                 </p>
               </div>
               <div className="min-w-[180px]">
@@ -1223,7 +1231,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               {course.lessons.map((lesson, index) => {
                 const active = currentLessonIndex === index
                 const completed = completedLessonIds.has(lesson.id)
-                const unlocked = isLessonUnlocked(course.lessons, index)
+                const unlocked = isLessonUnlocked(course, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
                 const coverUrl = getLessonCoverUrl(course, index)
@@ -1278,7 +1286,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         <div className="mb-2 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">
                           <span>{lesson.gradeLevel || 'Lesson'}</span>
                           <span>{formatDuration(lesson.duration)}</span>
-                          <span>{unlocked ? 'Quiz' : 'Locked'}</span>
+                          <span>{unlocked ? 'Quiz' : !course.hasAccess && !isPreviewLesson(lesson, index) ? 'Paid' : 'Locked'}</span>
                         </div>
                         <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
                           {getLessonCardTitle(lesson)}
@@ -1289,7 +1297,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className={`text-xs font-black uppercase tracking-[0.16em] ${active ? 'text-blue-300' : completed ? 'text-emerald-300' : unlocked ? 'text-gray-500' : 'text-gray-700'}`}>
-                          {active ? 'Now Playing' : completed ? 'Completed' : unlocked ? 'Unlocked' : 'Locked'}
+                          {active ? 'Now Playing' : completed ? 'Completed' : unlocked ? 'Unlocked' : !course.hasAccess && !isPreviewLesson(lesson, index) ? 'Paid Lesson' : 'Locked'}
                         </div>
                         {lesson.latestPracticeAttempt?.completed && (
                           <div className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-black text-emerald-300">
@@ -1670,7 +1678,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           disabled={currentLessonIndex === course.lessons.length - 1 || !nextLessonUnlocked}
                           className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1 ? 'Next lesson' : 'Complete this quiz to unlock'}
+                          {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1
+                            ? 'Next lesson'
+                            : nextLessonRequiresPurchase
+                            ? 'Unlock full course'
+                            : 'Complete this quiz to unlock'}
                           <ChevronRightIcon />
                         </button>
                       </div>
@@ -1741,7 +1753,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         disabled={currentLessonIndex === course.lessons.length - 1 || !nextLessonUnlocked}
                         className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-[#d7d0c3] px-5 py-4 text-sm font-black text-[#171717] transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1 ? 'Next lesson' : 'Complete this quiz to unlock'}
+                        {nextLessonUnlocked || currentLessonIndex === course.lessons.length - 1
+                          ? 'Next lesson'
+                          : nextLessonRequiresPurchase
+                          ? 'Unlock full course'
+                          : 'Complete this quiz to unlock'}
                         <ChevronRightIcon />
                       </button>
                     </div>
