@@ -3,17 +3,24 @@
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
+import type { Locale } from '@/lib/i18n'
 
 export default function Navbar() {
   const { data: session } = useSession()
   const { locale, setLocale, t } = useLanguage()
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [rewards, setRewards] = useState({ points: 0, gems: 0 })
   const [rewardBurst, setRewardBurst] = useState<{ points: number; gems: number; key: number } | null>(null)
   const pathname = usePathname()
+
+  const handleLocaleChange = (nextLocale: Locale) => {
+    setLocale(nextLocale)
+    router.refresh()
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,7 +113,7 @@ export default function Navbar() {
             {/* Language Switcher */}
             <div className="flex items-center bg-white/5 border border-white/10 rounded-full p-1">
               <button
-                onClick={() => setLocale('zh')}
+                onClick={() => handleLocaleChange('zh')}
                 className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${
                   locale === 'zh' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'
                 }`}
@@ -114,7 +121,7 @@ export default function Navbar() {
                 中
               </button>
               <button
-                onClick={() => setLocale('en')}
+                onClick={() => handleLocaleChange('en')}
                 className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${
                   locale === 'en' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'
                 }`}

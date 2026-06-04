@@ -103,6 +103,11 @@ const courseDescriptionOverrides: Record<'zh' | 'en', Record<string, string>> = 
     'course-ngss-science-g8': 'G8 NGSS 即将开放：聚焦力与运动、波、遗传、自然选择、空间系统、气候证据和工程约束，为高阶科学学习打下清晰基础。',
   },
   en: {
+    'course-ib-pyp-g4': 'A complete 40-lesson Grade 4 IB Big Math pathway with video lessons, focused skill drills, reflection prompts, progress tracking, and game-style rewards.',
+    'course-ib-pyp-g5-math': 'A Grade 5 IB Math core companion: video explanations, concept checks, and game-like practice that support preview, review, and a full-score foundation.',
+    'course-ib-big-math': 'Grade 6 is the bridge into IB-style math: fractions, ratios, decimals, geometry, data, and word problems become clear visual models and daily practice.',
+    'course-ib-big-math-g7-pyp': 'A Grade 7 reasoning pathway for algebraic patterns, proportional relationships, probability, statistics, area, volume, and multi-step problem solving.',
+    'course-ib-big-math-g8-pyp': 'A Grade 8 launchpad for advanced math: equations, functions, coordinate geometry, transformations, probability, and proof-style reasoning.',
     'course-ngss-science': 'Grade 6 NGSS Science: 20 phenomenon-based lessons and 200 practice questions across scientific questions, fair tests, data evidence, matter, forces, energy, waves, Earth systems, and ecosystems.',
     'course-ngss-science-g7': 'Grade 7 NGSS is open with its first 5 lessons: systems, scale, cell structures, plant and animal cells, photosynthesis, and cellular respiration, paired with evidence-based practice that helps students explain life science clearly.',
     'course-ngss-science-g8': 'Coming soon for Grade 8: forces, waves, genetics, natural selection, space systems, climate evidence, and engineering constraints for high-school-ready science thinking.',

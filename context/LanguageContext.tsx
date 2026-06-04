@@ -1,8 +1,8 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect } from 'react'
-
-type Locale = 'zh' | 'en'
+import { useRouter } from 'next/navigation'
+import { defaultLocale, normalizeLocale, type Locale } from '@/lib/i18n'
 
 interface LanguageContextType {
   locale: Locale
@@ -275,19 +275,38 @@ const translations = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('zh')
+export function LanguageProvider({
+  children,
+  initialLocale = defaultLocale,
+}: {
+  children: React.ReactNode
+  initialLocale?: Locale
+}) {
+  const router = useRouter()
+  const [locale, setLocaleState] = useState<Locale>(initialLocale)
 
   useEffect(() => {
-    const savedLocale = localStorage.getItem('locale') as Locale
-    if (savedLocale && (savedLocale === 'zh' || savedLocale === 'en')) {
-      setLocaleState(savedLocale)
+    const cookieLocale = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('locale='))
+      ?.split('=')
+      .slice(1)
+      .join('=')
+    const savedLocale = localStorage.getItem('locale')
+    const normalizedCookieLocale = normalizeLocale(cookieLocale)
+    const nextLocale = normalizeLocale(savedLocale || cookieLocale)
+    setLocaleState(nextLocale)
+    localStorage.setItem('locale', nextLocale)
+    document.cookie = `locale=${nextLocale}; path=/; max-age=31536000; SameSite=Lax`
+    if (savedLocale && nextLocale !== normalizedCookieLocale) {
+      router.refresh()
     }
-  }, [])
+  }, [router])
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
     localStorage.setItem('locale', newLocale)
+    document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`
   }
 
   const t = (key: string) => {
