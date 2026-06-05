@@ -134,7 +134,7 @@ const lessonCoverThemes = [
 
 function getNgssLessonCover(courseId: string, index: number) {
   if (courseId === 'course-ngss-science-g7') {
-    return `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.svg`
+    return `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.jpg`
   }
   return `/lesson-covers/ngss-g6/lesson-${String(index + 1).padStart(2, '0')}.jpg`
 }
@@ -1336,11 +1336,6 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         <LessonCoverMark index={index} completed={completed} unlocked={unlocked} />
                       </div>
                       <div className="absolute bottom-4 left-4 right-4">
-                        <div className="mb-2 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/70">
-                          <span>{lesson.gradeLevel || 'Lesson'}</span>
-                          <span>{formatDuration(lesson.duration)}</span>
-                          <span>{unlocked ? 'Quiz' : !course.hasAccess && !isPreviewLesson(lesson, index) ? 'Paid' : 'Locked'}</span>
-                        </div>
                         <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
                           {getLessonCardTitle(lesson)}
                         </div>

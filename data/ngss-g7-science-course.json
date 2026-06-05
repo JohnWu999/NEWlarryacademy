@@ -14,7 +14,7 @@
       "description": "Use systems thinking, scale, and models to explain complex science phenomena.",
       "duration": 438,
       "videoFileName": "NGSS_G7_Science_Lesson01_Systems_Scale_And_Models_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-01.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-01.jpg",
       "focus": "systems, scale, and models",
       "keyTerm": "boundary",
       "components": [
@@ -271,7 +271,7 @@
       "description": "Explain why cells are the basic unit of life and how cell structures support life functions.",
       "duration": 318,
       "videoFileName": "NGSS_G7_Science_Lesson02_Cells_Are_The_Basic_Unit_Of_Life_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-02.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-02.jpg",
       "focus": "cells as the basic unit of life",
       "keyTerm": "membrane",
       "components": [
@@ -528,7 +528,7 @@
       "description": "Compare plant and animal cells using organelles, structure-function evidence, and models.",
       "duration": 203,
       "videoFileName": "NGSS_G7_Science_Lesson03_Plant_Cells_And_Animal_Cells_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-03.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-03.jpg",
       "focus": "plant and animal cell comparison",
       "keyTerm": "chloroplasts",
       "components": [
@@ -785,7 +785,7 @@
       "description": "Model photosynthesis as a matter-and-energy process that turns light, carbon dioxide, and water into sugar and oxygen.",
       "duration": 300,
       "videoFileName": "NGSS_G7_Science_Lesson04_Photosynthesis_Light_To_Sugar_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-04.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-04.jpg",
       "focus": "photosynthesis",
       "keyTerm": "chlorophyll",
       "components": [
@@ -1043,7 +1043,7 @@
       "description": "Explain how cells release usable energy from food through cellular respiration in mitochondria.",
       "duration": 222,
       "videoFileName": "NGSS_G7_Science_Lesson05_Cellular_Respiration_Energy_From_Food_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-05.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-05.jpg",
       "focus": "cellular respiration",
       "keyTerm": "mitochondria",
       "components": [
@@ -1301,7 +1301,7 @@
       "description": "Trace how atoms move through living systems while matter is conserved and reused.",
       "duration": 390,
       "videoFileName": "NGSS_G7_Science_Lesson06_Matter_Cycles_In_Living_Systems_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-06.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-06.jpg",
       "focus": "matter cycling in living systems",
       "keyTerm": "conserved",
       "components": [
@@ -1559,7 +1559,7 @@
       "description": "Explain how body systems interact to keep internal conditions stable.",
       "duration": 244,
       "videoFileName": "NGSS_G7_Science_Lesson07_Body_Systems_And_Homeostasis_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-07.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-07.jpg",
       "focus": "body systems and homeostasis",
       "keyTerm": "homeostasis",
       "components": [
@@ -1817,7 +1817,7 @@
       "description": "Model how sensory receptors detect stimuli and how the nervous system produces responses.",
       "duration": 152,
       "videoFileName": "NGSS_G7_Science_Lesson08_Sensory_Receptors_Nerves_And_Brain_Responses_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-08.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-08.jpg",
       "focus": "sensory receptors and nervous system responses",
       "keyTerm": "stimulus",
       "components": [
@@ -2075,7 +2075,7 @@
       "description": "Use models of genes and inheritance to explain why offspring resemble but are not identical to parents.",
       "duration": 158,
       "videoFileName": "NGSS_G7_Science_Lesson09_Genes_Traits_And_Inheritance_Schedar.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-09.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-09.jpg",
       "focus": "genes, traits, and inheritance",
       "keyTerm": "gene",
       "components": [
@@ -2333,7 +2333,7 @@
       "description": "Explain how variation, selection pressures, and reproduction can change trait frequencies over time.",
       "duration": 626,
       "videoFileName": "NGSS_G7_Science_Lesson10_Natural_Selection_And_Adaptation_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-10.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-10.jpg",
       "focus": "natural selection and adaptation",
       "keyTerm": "adaptation",
       "components": [
@@ -2591,7 +2591,7 @@
       "description": "Connect vibration, wave properties, and energy transfer to explain sound.",
       "duration": 402,
       "videoFileName": "NGSS_G7_Science_Lesson11_Waves_Sound_And_Vibration_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-11.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-11.jpg",
       "focus": "waves, sound, and vibration",
       "keyTerm": "frequency",
       "components": [
@@ -2849,7 +2849,7 @@
       "description": "Use light-ray models to explain reflection, absorption, and how we see objects.",
       "duration": 222,
       "videoFileName": "NGSS_G7_Science_Lesson12_Light_Reflection_And_Vision_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-12.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-12.jpg",
       "focus": "light, reflection, and vision",
       "keyTerm": "reflection",
       "components": [
@@ -3107,7 +3107,7 @@
       "description": "Explain how plate motion and Earth-system interactions shape landforms and geologic events.",
       "duration": 306,
       "videoFileName": "NGSS_G7_Science_Lesson13_Earth_Systems_And_Plate_Tectonics_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-13.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-13.jpg",
       "focus": "Earth systems and plate tectonics",
       "keyTerm": "plate boundary",
       "components": [
@@ -3365,7 +3365,7 @@
       "description": "Connect water-cycle processes with weather patterns and long-term climate averages.",
       "duration": 415,
       "videoFileName": "NGSS_G7_Science_Lesson14_Water_Cycle_Weather_And_Climate_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-14.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-14.jpg",
       "focus": "water cycle, weather, and climate",
       "keyTerm": "condensation",
       "components": [
@@ -3623,7 +3623,7 @@
       "description": "Analyze climate data to separate evidence, trends, variability, and claims.",
       "duration": 579,
       "videoFileName": "NGSS_G7_Science_Lesson15_Climate_Evidence_And_Data_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-15.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-15.jpg",
       "focus": "climate evidence and data",
       "keyTerm": "trend",
       "components": [
@@ -3881,7 +3881,7 @@
       "description": "Use hazard data, probability, and design constraints to reduce risk from natural hazards.",
       "duration": 331,
       "videoFileName": "NGSS_G7_Science_Lesson16_Natural_Hazards_Risk_And_Design_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-16.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-16.jpg",
       "focus": "natural hazards, risk, and design",
       "keyTerm": "risk",
       "components": [
@@ -4139,7 +4139,7 @@
       "description": "Evaluate how human activities affect Earth systems and how solutions can reduce negative impacts.",
       "duration": 551,
       "videoFileName": "NGSS_G7_Science_Lesson17_Human_Impact_And_Solutions_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-17.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-17.jpg",
       "focus": "human impact and solutions",
       "keyTerm": "trade-off",
       "components": [
@@ -4397,7 +4397,7 @@
       "description": "Explain how resources, competition, and limiting factors affect population changes.",
       "duration": 474,
       "videoFileName": "NGSS_G7_Science_Lesson18_Populations_Resources_And_Ecosystem_Balance_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-18.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-18.jpg",
       "focus": "populations, resources, and ecosystem balance",
       "keyTerm": "limiting factor",
       "components": [
@@ -4655,7 +4655,7 @@
       "description": "Use biodiversity evidence to explain ecosystem stability and conservation choices.",
       "duration": 382,
       "videoFileName": "NGSS_G7_Science_Lesson19_Biodiversity_Stability_And_Conservation_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-19.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-19.jpg",
       "focus": "biodiversity, stability, and conservation",
       "keyTerm": "biodiversity",
       "components": [
@@ -4913,7 +4913,7 @@
       "description": "Apply engineering design to protect ecosystems using criteria, constraints, testing, and iteration.",
       "duration": 492,
       "videoFileName": "NGSS_G7_Science_Lesson20_Engineering_Design_To_Protect_Ecosystems_Schedar_1440p_1080p_tmp.mp4",
-      "coverUrl": "/lesson-covers/ngss-g7/lesson-20.svg",
+      "coverUrl": "/lesson-covers/ngss-g7/lesson-20.jpg",
       "focus": "engineering design to protect ecosystems",
       "keyTerm": "criteria",
       "components": [

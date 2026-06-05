@@ -284,15 +284,6 @@ const lessons = [
   },
 ]
 
-const palettes = [
-  ['#07152f', '#155e75', '#67e8f9', '#e0f2fe'],
-  ['#062018', '#047857', '#6ee7b7', '#ecfdf5'],
-  ['#1d102f', '#7c3aed', '#c4b5fd', '#faf5ff'],
-  ['#2a1206', '#c2410c', '#fdba74', '#fff7ed'],
-  ['#171717', '#334155', '#94a3b8', '#f8fafc'],
-  ['#0b1120', '#1d4ed8', '#93c5fd', '#eff6ff'],
-]
-
 function makeQuestion(lesson, index, raw) {
   const [type, prompt, choices, answer, hint, explanation, extra = {}] = raw
   const basePoints = index < 5 ? 8 : index < 9 ? 10 : 20
@@ -428,66 +419,6 @@ function questionRows(lesson) {
   ]
 }
 
-function xmlEscape(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
-function coverSvg(lesson, index) {
-  const [dark, mid, accent, light] = palettes[index % palettes.length]
-  const episode = String(lesson.episode).padStart(2, '0')
-  const title = xmlEscape(lesson.title)
-  const focus = xmlEscape(lesson.focus.toUpperCase())
-  const term = xmlEscape(lesson.keyTerm.toUpperCase())
-  const icon = index % 4
-  const motif = icon === 0
-    ? `<circle cx="826" cy="264" r="120" fill="none" stroke="${accent}" stroke-width="5" opacity=".75"/><circle cx="826" cy="264" r="54" fill="${accent}" opacity=".22"/><path d="M674 404 C766 334 892 334 984 404" fill="none" stroke="${light}" stroke-width="6" opacity=".72"/>`
-    : icon === 1
-      ? `<path d="M700 206 L900 132 L1070 260 L1016 492 L764 514 L640 342 Z" fill="${mid}" opacity=".34" stroke="${accent}" stroke-width="5"/><circle cx="840" cy="326" r="74" fill="${accent}" opacity=".18"/><path d="M760 326 H920 M840 246 V406" stroke="${light}" stroke-width="6" opacity=".78"/>`
-      : icon === 2
-        ? `<path d="M674 420 C738 260 810 230 872 344 C934 460 1004 288 1064 172" fill="none" stroke="${accent}" stroke-width="12" stroke-linecap="round"/><circle cx="674" cy="420" r="15" fill="${light}"/><circle cx="872" cy="344" r="15" fill="${light}"/><circle cx="1064" cy="172" r="15" fill="${light}"/>`
-        : `<rect x="680" y="160" width="330" height="250" rx="42" fill="${mid}" opacity=".30" stroke="${accent}" stroke-width="5"/><path d="M724 318 H966 M790 220 V372 M900 220 V372" stroke="${light}" stroke-width="5" opacity=".52"/><circle cx="790" cy="282" r="32" fill="${accent}" opacity=".50"/><circle cx="900" cy="282" r="32" fill="${accent}" opacity=".28"/>`
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
-  <defs>
-    <radialGradient id="g" cx="80%" cy="16%" r="70%">
-      <stop offset="0" stop-color="${accent}" stop-opacity=".66"/>
-      <stop offset=".44" stop-color="${mid}" stop-opacity=".35"/>
-      <stop offset="1" stop-color="${dark}" stop-opacity="1"/>
-    </radialGradient>
-    <linearGradient id="shade" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="${dark}"/>
-      <stop offset="1" stop-color="#020617"/>
-    </linearGradient>
-  </defs>
-  <rect width="1280" height="720" fill="url(#shade)"/>
-  <rect width="1280" height="720" fill="url(#g)" opacity=".92"/>
-  <g opacity=".22" stroke="${light}" stroke-width="1">
-    ${Array.from({ length: 12 }, (_, i) => `<path d="M${80 + i * 96} 80 V640"/>`).join('')}
-    ${Array.from({ length: 6 }, (_, i) => `<path d="M72 ${126 + i * 88} H1208"/>`).join('')}
-  </g>
-  <g opacity=".16">
-    <circle cx="1098" cy="122" r="138" fill="${accent}"/>
-    <circle cx="118" cy="616" r="210" fill="${mid}"/>
-  </g>
-  ${motif}
-  <rect x="72" y="92" width="328" height="66" rx="33" fill="#000" opacity=".32" stroke="${accent}" stroke-width="2"/>
-  <text x="96" y="134" fill="${light}" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" letter-spacing="7">NGSS G7 SCIENCE</text>
-  <text x="86" y="248" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="900">LESSON ${episode}</text>
-  <foreignObject x="82" y="278" width="610" height="176">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Arial,Helvetica,sans-serif;color:white;font-size:54px;font-weight:900;line-height:1.04;letter-spacing:-1px">${title}</div>
-  </foreignObject>
-  <rect x="82" y="516" width="486" height="54" rx="27" fill="#000" opacity=".34"/>
-  <text x="110" y="552" fill="${accent}" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="900" letter-spacing="4">${term}</text>
-  <text x="82" y="628" fill="${light}" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" opacity=".86">${focus}</text>
-  <text x="1030" y="624" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="900" letter-spacing="5" opacity=".72">LARRY ACADEMY</text>
-</svg>
-`
-}
-
 const course = {
   id: 'course-ngss-science-g7',
   title: 'NGSS Science Grade 7',
@@ -503,7 +434,7 @@ const course = {
     description: lesson.description,
     duration: lesson.duration,
     videoFileName: lesson.videoFileName,
-    coverUrl: `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.svg`,
+    coverUrl: `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.jpg`,
     focus: lesson.focus,
     keyTerm: lesson.keyTerm,
     components: lesson.components,
@@ -531,11 +462,6 @@ const course = {
 }
 
 const outputPath = path.join(process.cwd(), 'data', 'ngss-g7-science-course.json')
-const coverDir = path.join(process.cwd(), 'public', 'lesson-covers', 'ngss-g7')
-fs.mkdirSync(coverDir, { recursive: true })
 fs.writeFileSync(outputPath, `${JSON.stringify(course, null, 2)}\n`)
-course.lessons.forEach((lesson, index) => {
-  fs.writeFileSync(path.join(coverDir, `lesson-${String(index + 1).padStart(2, '0')}.svg`), coverSvg(lesson, index))
-})
 console.log(`Wrote ${course.lessons.length} lessons to ${outputPath}`)
-console.log(`Wrote ${course.lessons.length} covers to ${coverDir}`)
+console.log('Lesson covers are maintained as generated JPG assets in public/lesson-covers/ngss-g7')

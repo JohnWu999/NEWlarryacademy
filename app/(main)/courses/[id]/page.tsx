@@ -201,7 +201,7 @@ function courseVisualImages(course: { id: string; courseTrack: string; thumbnail
   }
 
   if (course.id === 'course-ngss-science-g7') {
-    return [1, 3, 5, 7, 9, 11, 13, 15, 17].map((number) => `/lesson-covers/ngss-g7/lesson-${String(number).padStart(2, '0')}.svg`)
+    return [1, 3, 5, 7, 9, 11, 13, 15, 17].map((number) => `/lesson-covers/ngss-g7/lesson-${String(number).padStart(2, '0')}.jpg`)
   }
 
   if (course.courseTrack === 'ib-big-math') {
