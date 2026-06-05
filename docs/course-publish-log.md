@@ -22,6 +22,16 @@
 - Remaining zero-byte placeholder episodes: `1, 2, 4, 6, 9, 10, 12, 14, 16, 18, 21, 27, 29, 30, 32, 33, 34, 35, 37, 38, 40, 46, 47, 51, 52, 54, 56, 57, 59, 60, 64, 65, 68, 69, 70, 72, 94, 95, 96, 98, 100, 105, 108, 111, 113, 115, 119, 120, 122, 123, 127, 128, 130, 136, 138, 139, 140, 141, 150, 155, 156, 157, 167`.
 - Detailed run log: `docs/vod-upload-logs/larry-math-20260604-230939.jsonl`
 
+## 2026-06-05 - Larry Math VOD Upload Pass 3
+
+- Rechecked the remaining iCloud placeholders after iCloud Drive localized most files overnight.
+- Newly uploaded to Tencent VOD: 62 more Larry Math episodes from the previously blocked placeholder set.
+- Total Larry Math VOD entries after this pass: 134 episodes in `data/larry-math-vod-map.json`.
+- Verification: sampled new VOD URLs for episodes `1, 30, 72, 100, 155, 167`; each returned HTTP 200 with the expected video content type and size.
+- Remaining VOD gap: episode `127` only. Its compressed and original video files are still zero-byte iCloud placeholders locally; `fileproviderctl` reports `isDownloadRequested=1` and `isDownloading=1`, but controlled reads still time out without materializing data.
+- Episode `101` also has a zero-byte local source placeholder, but it already has an existing VOD entry and is not a publication gap.
+- Detailed run log: `docs/vod-upload-logs/larry-math-20260605-073709.jsonl`
+
 ## 2026-06-04 - IB Big Math G5 Full Republish
 
 - Course: `course-ib-pyp-g5-math` / `IB Big Math G5`
