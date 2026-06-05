@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
+import LearningGameShowcase from '@/components/games/LearningGameShowcase'
 
 export default function GamesPage() {
   const { t, locale } = useLanguage()
@@ -83,10 +84,10 @@ export default function GamesPage() {
 
   return (
     <div className="relative min-h-dvh w-full max-w-full bg-[#050505] text-white overflow-x-clip">
-      {/* Background Ambient Glows */}
+      {/* Background Ambient Wash */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-purple-600/10 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
+        <div className="absolute inset-x-0 top-0 h-[28rem] bg-[linear-gradient(120deg,rgba(14,165,233,.14),rgba(168,85,247,.08),rgba(20,184,166,.12))]" />
+        <div className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:48px_48px]" />
       </div>
 
       <div className="relative max-w-7xl mx-auto w-full px-4 sm:px-6 py-16 sm:py-24 lg:py-28">
@@ -108,6 +109,21 @@ export default function GamesPage() {
             <span className="text-2xl">✨</span>
             {t('games.create')}
           </Link>
+        </div>
+
+        <div className="mb-16 sm:mb-20">
+          <LearningGameShowcase />
+        </div>
+
+        <div className="mb-8 flex items-end justify-between gap-4 border-t border-white/10 pt-10">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-white/35">
+              {locale === 'zh' ? '现有游戏' : 'Current Games'}
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+              {locale === 'zh' ? 'Larry Academy 游戏库' : 'Larry Academy Game Library'}
+            </h2>
+          </div>
         </div>
 
         {/* Games Grid */}
