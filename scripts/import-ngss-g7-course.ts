@@ -21,6 +21,7 @@ type LessonData = {
   rewardsPoints: number
   rewardsGems: number
   videoFileName: string
+  coverUrl?: string
   practice: {
     title: string
     maxScore: number
@@ -69,7 +70,7 @@ async function main() {
       videoProvider: 'tencent-vod',
       difficultyLevel: 'intermediate',
       duration: course.lessons.reduce((sum, lesson) => sum + lesson.duration, 0),
-      expectedFeatures: JSON.stringify(['5 released phenomenon lessons', '50 lesson-specific practice questions', 'Cell systems and energy flow', 'Open-response science explanations']),
+      expectedFeatures: JSON.stringify(['20 released phenomenon lessons', '200 lesson-specific practice questions', 'Life science, Earth systems, climate, and ecosystems', 'Open-response science explanations']),
       thumbnailUrl: course.thumbnailUrl,
       gradeLevel: course.gradeLevel,
       difficulty: 'Medium',
@@ -89,7 +90,7 @@ async function main() {
       videoProvider: 'tencent-vod',
       difficultyLevel: 'intermediate',
       duration: course.lessons.reduce((sum, lesson) => sum + lesson.duration, 0),
-      expectedFeatures: JSON.stringify(['5 released phenomenon lessons', '50 lesson-specific practice questions', 'Cell systems and energy flow', 'Open-response science explanations']),
+      expectedFeatures: JSON.stringify(['20 released phenomenon lessons', '200 lesson-specific practice questions', 'Life science, Earth systems, climate, and ecosystems', 'Open-response science explanations']),
       thumbnailUrl: course.thumbnailUrl,
       gradeLevel: course.gradeLevel,
       difficulty: 'Medium',

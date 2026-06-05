@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
@@ -131,12 +132,11 @@ const lessonCoverThemes = [
   { background: 'radial-gradient(circle at 75% 72%, rgba(52, 211, 153, 0.76), transparent 28%), linear-gradient(135deg, #061711 0%, #166247 52%, #07100d 100%)', accent: '#34d399' },
 ]
 
-function getNgssLessonCover(index: number) {
+function getNgssLessonCover(courseId: string, index: number) {
+  if (courseId === 'course-ngss-science-g7') {
+    return `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.svg`
+  }
   return `/lesson-covers/ngss-g6/lesson-${String(index + 1).padStart(2, '0')}.jpg`
-}
-
-function isNgssCourse(course?: Course | null) {
-  return Boolean(course?.id.includes('ngss') || course?.title.toLowerCase().includes('ngss'))
 }
 
 function isIbMathCourse(course?: Course | null) {
@@ -144,7 +144,7 @@ function isIbMathCourse(course?: Course | null) {
 }
 
 function getLessonCoverUrl(course: Course, index: number) {
-  if (course.id === 'course-ngss-science') return getNgssLessonCover(index)
+  if (course.id === 'course-ngss-science' || course.id === 'course-ngss-science-g7') return getNgssLessonCover(course.id, index)
   return null
 }
 
@@ -1485,7 +1485,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                 className="min-h-[150px] w-full resize-y rounded-2xl border border-[#d8cdbc] bg-[#fffaf1] px-5 py-4 text-base font-bold leading-7 text-[#171717] outline-none placeholder:text-[#b6ad9d] focus:border-violet-500 focus:ring-4 focus:ring-violet-100 disabled:opacity-70"
                               />
                               <p className="mt-3 text-xs font-bold text-[#857b69]">
-                                Press Enter for a new line. Short labels like "Underestimate:" and "Overestimate:" are okay.
+                                Press Enter for a new line. Short labels like &quot;Underestimate:&quot; and &quot;Overestimate:&quot; are okay.
                               </p>
                             </div>
                           ) : currentQuestQuestion.type === 'numeric-input' || currentQuestQuestion.type === 'fill-blank' ? (
@@ -1829,9 +1829,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     Keep the main flow focused on video and practice. Use these modules when you are ready to move across the IB Math pathway.
                   </p>
                 </div>
-                <a href="/courses?category=ib-big-math" className="text-sm font-black text-blue-300 hover:text-blue-200">
+                <Link href="/courses?category=ib-big-math" className="text-sm font-black text-blue-300 hover:text-blue-200">
                   View all IB courses →
-                </a>
+                </Link>
               </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
