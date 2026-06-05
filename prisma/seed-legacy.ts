@@ -6,11 +6,9 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-function legacyLessonId(videoId: string) {
-  return `legacy-larry-math-${videoId.replace(/[^a-zA-Z0-9]/g, '-')}`
-}
-
 // 原站数学竞赛课程 - 每课对应一个 YouTube 视频 (title, videoId)
+// Kept only as a migration note. Larry Math video publishing now uses Tencent VOD.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const LEGACY_LESSONS: { title: string; videoId: string }[] = [
   { title: 'AMC 8 课程', videoId: 'Zf_24GIXOIc' },
   { title: 'Larry Math Class 162 | Triangle Area Ratio Puzzle', videoId: 'aS5wdaND2cs' },
@@ -95,114 +93,46 @@ const LEGACY_GAMES: { title: string; description: string; gameType: string; play
 async function main() {
   console.log('开始迁移原站课程和游戏...')
 
-  // 1. 创建「数学竞赛」课程并添加所有课时
-  const existingCourse = await prisma.course.findFirst({
+  // 1. 旧站 Larry Math YouTube 课库已迁移到 Tencent VOD；这里仅归档旧入口，避免 YouTube 视频重新出现在前台。
+  const removedYoutubeLessons = await prisma.lesson.deleteMany({
     where: {
+      course: {
+        courseTrack: 'larry-math',
+      },
       OR: [
-        { id: 'course-larry-math-class-library' },
-        { title: '数学竞赛 - Larry Math Class (AMC 8)' },
+        { videoProvider: 'youtube' },
+        { videoUrl: { contains: 'youtube.com' } },
+        { videoUrl: { contains: 'youtu.be' } },
+        { youtubeVideoId: { not: null } },
       ],
     },
   })
 
-  const courseData = {
-    title: 'Larry Math Class Library (AMC 8)',
-    description: 'Larry 已录制并上传到 YouTube 的数学竞赛精选课库，涵盖几何、代数、组合、数论、逻辑推理和应用题。课程已按年级和难度继续同步标签。',
-    price: 0,
-    isFree: true,
-    accessLevel: 'public',
-    category: 'math',
-    courseTrack: 'larry-math',
-    status: 'active',
-    videoProvider: 'youtube',
-    difficultyLevel: 'intermediate',
-    duration: LEGACY_LESSONS.length * 15,
-    featured: true,
-    published: true,
-  }
-
-  const course = existingCourse
-    ? await prisma.course.update({
-      where: { id: existingCourse.id },
-      data: courseData,
-    })
-    : await prisma.course.create({
-      data: {
-        id: 'course-larry-math-class-library',
-        ...courseData,
-      },
-    })
-
-  for (let i = 0; i < LEGACY_LESSONS.length; i++) {
-    const lesson = LEGACY_LESSONS[i]
-    const data = {
-      courseId: course.id,
-      title: lesson.title,
-      description: 'Larry Math YouTube lesson',
-      videoUrl: `https://www.youtube.com/watch?v=${lesson.videoId}`,
-      videoProvider: 'youtube',
-      youtubeVideoId: lesson.videoId,
-      order: i + 1,
-      duration: 600,
-      isPreview: i < 3,
-      hasPractice: true,
-      hasGame: false,
-      rewardsPoints: 20,
-      rewardsGems: i < 3 ? 1 : 0,
-    }
-    const existingLesson = await prisma.lesson.findFirst({
-      where: {
-        courseId: course.id,
-        videoUrl: data.videoUrl,
-      },
-    })
-
-    if (existingLesson) {
-      await prisma.lesson.update({
-        where: { id: existingLesson.id },
-        data,
-      })
-    } else {
-      await prisma.lesson.upsert({
-        where: { id: legacyLessonId(lesson.videoId) },
-        update: data,
-        create: {
-          id: legacyLessonId(lesson.videoId),
-          ...data,
-        },
-      })
-    }
-  }
-
-  await prisma.course.updateMany({
+  const archivedLegacyCourses = await prisma.course.updateMany({
     where: {
-      title: '数学竞赛 - Larry Math Class (AMC 8)',
+      courseTrack: 'larry-math',
+      OR: [
+        { id: 'course-larry-math-core' },
+        { id: 'course-larry-math-class-library' },
+        { title: '数学竞赛 - Larry Math Class (AMC 8)' },
+        { videoProvider: 'youtube' },
+        { videoUrl: { contains: 'youtube.com' } },
+        { videoUrl: { contains: 'youtu.be' } },
+        { youtubeVideoId: { not: null } },
+      ],
     },
     data: {
-      courseTrack: 'larry-math',
-      status: 'active',
+      status: 'archived',
+      published: false,
+      featured: false,
       accessLevel: 'public',
       category: 'math',
-      videoProvider: 'youtube',
+      videoProvider: 'tencent-vod',
+      videoUrl: null,
+      youtubeVideoId: null,
     },
   })
-
-  await prisma.lesson.updateMany({
-    where: {
-      course: {
-        title: '数学竞赛 - Larry Math Class (AMC 8)',
-      },
-      videoUrl: {
-        contains: 'youtube.com',
-      },
-    },
-    data: {
-      videoProvider: 'youtube',
-      hasPractice: true,
-      rewardsPoints: 20,
-    },
-  })
-  console.log(`已创建课程「${course.title}」，共 ${LEGACY_LESSONS.length} 节课。`)
+  console.log(`已归档旧 Larry Math YouTube 入口 ${archivedLegacyCourses.count} 个，删除 YouTube 课时 ${removedYoutubeLessons.count} 节。`)
 
   // 2. 添加原站 6 个游戏（带 playUrl，在新站中点击「开始游戏」会打开原游戏页）
   const existingLegacy = await prisma.game.findMany({ where: { gameType: 'custom', title: { in: LEGACY_GAMES.map(x => x.title) } } })
