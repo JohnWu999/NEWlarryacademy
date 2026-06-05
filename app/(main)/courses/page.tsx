@@ -44,11 +44,12 @@ export default async function CoursesPage({
 }) {
   const { category } = await searchParams
   const selectedTrackKey = category ? categoryToTrack[category] || 'other' : null
+  const trackFilter = category ? categoryToTrack[category] : null
 
   const courses = await prisma.course.findMany({
     where: {
       published: true,
-      ...(category ? { category: { equals: category } } : {}),
+      ...(trackFilter ? { courseTrack: trackFilter } : category ? { category: { equals: category } } : {}),
     },
     include: {
       lessons: {
