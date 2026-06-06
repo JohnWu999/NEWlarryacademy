@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 type Locale = 'zh' | 'en'
@@ -32,6 +32,7 @@ const homeCopy: Record<Locale, {
   title: string
   subtitle: string
   allCourses: string
+  watchIntro: string
   heroKicker: string
   lessons: string
   questions: string
@@ -43,12 +44,18 @@ const homeCopy: Record<Locale, {
   statLessons: string
   statQuestions: string
   statPreview: string
+  featureKicker: string
+  features: Array<{
+    title: string
+    desc: string
+  }>
 }> = {
   zh: {
-    eyebrow: '面向 AI 时代的学习平台',
-    title: '从免费试学开始，进入真正有生命力的课程',
-    subtitle: 'Larry Academy 把学生自创精神、AI 技术、视频讲解和游戏化练习放在一起，让孩子从第一节课就能看见目标、马上练习、持续进步。',
+    eyebrow: 'Learn with AI. Grow together.',
+    title: '未来学习，\n学生创造',
+    subtitle: 'AI 赋能的视频课程、同龄人创造的学习路径、每节课即时练习，让复杂知识变清楚、变好玩，也真正学得进去。',
     allCourses: '查看全部课程',
+    watchIntro: '了解 Larry',
     heroKicker: '正在开放',
     lessons: '课节',
     questions: '题目',
@@ -60,12 +67,20 @@ const homeCopy: Record<Locale, {
     statLessons: '视频课节',
     statQuestions: '互动题目',
     statPreview: '免费试学',
+    featureKicker: 'Powerful learning experience',
+    features: [
+      { title: 'AI 赋能学习', desc: '更聪明的解释、提示和练习反馈。' },
+      { title: '同龄人创造课程', desc: '由学生出发，为学生设计。' },
+      { title: '边学边练', desc: '视频后马上进入互动练习和游戏。' },
+      { title: '看见成长', desc: '记录进度、奖励和每一次突破。' },
+    ],
   },
   en: {
-    eyebrow: 'Built for the AI generation',
-    title: 'Start with a free preview. Keep going with courses that feel alive.',
-    subtitle: 'Larry Academy blends student-built ambition, AI-powered learning, video lessons, and game-like practice so learners can see the path, try the work, and build momentum from lesson one.',
+    eyebrow: 'Learn with AI. Grow together.',
+    title: 'Future learning,\nbuilt by students.',
+    subtitle: 'AI-powered lessons and peer-created courses that make complex topics clear, engaging, and ready for the future.',
     allCourses: 'View all courses',
+    watchIntro: 'Watch intro',
     heroKicker: 'Now available',
     lessons: 'Lessons',
     questions: 'Questions',
@@ -77,6 +92,13 @@ const homeCopy: Record<Locale, {
     statLessons: 'Video lessons',
     statQuestions: 'Practice questions',
     statPreview: 'Free previews',
+    featureKicker: 'Powerful learning experience',
+    features: [
+      { title: 'AI-Powered Learning', desc: 'Smart explanations and instant support.' },
+      { title: 'Peer-Created Courses', desc: 'Built by students, for students.' },
+      { title: 'Learn by Doing', desc: 'Videos flow into practice and games.' },
+      { title: 'Track Your Growth', desc: 'See progress, rewards, and momentum.' },
+    ],
   },
 }
 
@@ -213,173 +235,287 @@ const showcaseCourses: CourseShowcase[] = [
   },
 ]
 
+function FeatureIcon({ index }: { index: number }) {
+  const icons = [
+    (
+      <path
+        key="ai"
+        d="M8 7h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm2 10v3m4-3v3M9 4v3m6-3v3M4 10H2m2 4H2m20-4h-2m2 4h-2m-9-4-1.4 4h1.1l.25-.85h1.55l.25.85h1.12L12.45 10H11Zm.18 2.35L12 11.18l.35 1.17h-.7Zm3.1 1.65v-4h1.05v4h-1.05Z"
+      />
+    ),
+    (
+      <path
+        key="peer"
+        d="M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.5 19a4.5 4.5 0 0 1 9 0M11.5 19a4.5 4.5 0 0 1 9 0"
+      />
+    ),
+    (
+      <path
+        key="game"
+        d="M7 9h10a4 4 0 0 1 3.7 2.5l.8 2a3 3 0 0 1-5.05 3.05L15 15H9l-1.45 1.55A3 3 0 0 1 2.5 13.5l.8-2A4 4 0 0 1 7 9Zm1 2v4m-2-2h4m7-1h.01M15 15h.01"
+      />
+    ),
+    (
+      <path
+        key="growth"
+        d="M5 19V9m7 10V5m7 14v-7M3 19h18"
+      />
+    ),
+  ]
+
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-8 w-8"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {icons[index] ?? icons[0]}
+    </svg>
+  )
+}
+
 export default function HomePage() {
   const { locale, t } = useLanguage()
   const activeLocale: Locale = locale === 'zh' ? 'zh' : 'en'
   const copy = homeCopy[activeLocale]
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(2)
 
   useEffect(() => {
     const timer = window.setInterval(() => {
       setActiveIndex((current) => (current + 1) % showcaseCourses.length)
-    }, 5200)
+    }, 6200)
 
     return () => window.clearInterval(timer)
   }, [])
 
   const activeCourse = showcaseCourses[activeIndex]
-  const activeCopy = activeCourse.copy[activeLocale]
 
-  const totalStats = useMemo(() => ({
-    lessons: '220+',
-    questions: '1800+',
-    courses: showcaseCourses.length.toString(),
-  }), [])
+  const goToPreviousCourse = () => {
+    setActiveIndex((current) => (current - 1 + showcaseCourses.length) % showcaseCourses.length)
+  }
+
+  const goToNextCourse = () => {
+    setActiveIndex((current) => (current + 1) % showcaseCourses.length)
+  }
+
+  const getCourseOffset = (index: number) => {
+    const length = showcaseCourses.length
+    const half = Math.floor(length / 2)
+    return ((index - activeIndex + length + half) % length) - half
+  }
+
+  const getDesktopCardStyle = (offset: number) => {
+    const absOffset = Math.abs(offset)
+    const translate = offset * 164
+    const rotate = offset * -8
+    const scale = offset === 0 ? 1 : absOffset === 1 ? 0.9 : 0.78
+    const y = offset === 0 ? 0 : absOffset === 1 ? 34 : 68
+
+    return {
+      zIndex: 30 - absOffset,
+      opacity: absOffset > 2 ? 0 : 1,
+      transform: `translateX(calc(-50% + ${translate}px)) translateY(${y}px) rotateY(${rotate}deg) scale(${scale})`,
+    }
+  }
 
   return (
     <div className="relative min-h-dvh w-full max-w-full overflow-x-clip bg-[#050505] text-white">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(14,23,45,0.92)_0%,rgba(5,5,5,1)_42%,rgba(16,8,25,0.96)_100%)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_35%_0%,rgba(59,130,246,0.14),transparent_30%),radial-gradient(circle_at_85%_25%,rgba(20,184,166,0.1),transparent_26%)]" />
 
-      <section className="relative px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-32 lg:pb-20 lg:pt-36">
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-12">
-          <div className="max-w-3xl">
-            <div className="mb-6 inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-black uppercase tracking-[0.28em] text-sky-300">
+      <section className="relative overflow-hidden px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28 lg:min-h-[calc(100dvh-1rem)] lg:pb-10 lg:pt-32">
+        <div className="mx-auto grid w-full max-w-[1480px] items-center gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:gap-8">
+          <div className="relative z-20 w-full min-w-0 max-w-2xl">
+            <div className="mb-7 text-xs font-black uppercase tracking-[0.34em] text-blue-300 sm:text-sm">
               {copy.eyebrow}
             </div>
 
-            <h1 className="text-[clamp(2.2rem,6.4vw,6.25rem)] font-black leading-[0.95] tracking-normal text-white">
+            <h1 className="max-w-[calc(100vw-2rem)] whitespace-pre-line text-[clamp(2.45rem,6.7vw,5.5rem)] font-black leading-[1.04] tracking-normal text-white drop-shadow-[0_12px_26px_rgba(255,255,255,0.08)] sm:max-w-[760px]">
               {copy.title}
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg lg:text-xl">
+            <p className="mt-7 max-w-[calc(100vw-2rem)] text-lg leading-9 text-slate-300 [word-break:break-word] sm:max-w-xl sm:text-xl">
               {copy.subtitle}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href={activeCourse.href}
-                className="group inline-flex min-h-14 items-center justify-center rounded-2xl bg-white px-6 text-base font-black text-black transition hover:-translate-y-0.5 hover:bg-sky-100"
-              >
-                {activeCopy.cta}
-                <span className="ml-3 transition group-hover:translate-x-1">→</span>
-              </Link>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/courses"
-                className="inline-flex min-h-14 items-center justify-center rounded-2xl border border-white/12 bg-white/[0.04] px-6 text-base font-bold text-white transition hover:border-white/25 hover:bg-white/[0.08]"
+                className="group inline-flex min-h-16 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-8 text-lg font-black text-white shadow-2xl shadow-cyan-500/20 transition hover:-translate-y-0.5 hover:shadow-cyan-500/35 sm:w-auto"
               >
                 {copy.allCourses}
+                <span className="ml-4 text-2xl transition group-hover:translate-x-1">→</span>
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex min-h-16 w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.035] px-7 text-lg font-bold text-slate-300 transition hover:border-white/30 hover:bg-white/[0.07] hover:text-white sm:w-auto"
+              >
+                <span className="grid h-7 w-7 place-items-center rounded-full border border-white/35 text-xs">▶</span>
+                {copy.watchIntro}
               </Link>
             </div>
-
-            <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                <div className="text-2xl font-black">{totalStats.courses}</div>
-                <div className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.24em] text-slate-500">{copy.statCourses}</div>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                <div className="text-2xl font-black">{totalStats.lessons}</div>
-                <div className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.24em] text-slate-500">{copy.lessons}</div>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                <div className="text-2xl font-black">{totalStats.questions}</div>
-                <div className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.24em] text-slate-500">{copy.questions}</div>
-              </div>
-            </div>
           </div>
 
-          <div className="relative">
+          <div className="relative z-10 lg:min-h-[590px] lg:[perspective:1400px]">
             <div
-              className="absolute -inset-4 rounded-[2rem] opacity-40 blur-3xl"
+              className="absolute left-1/2 top-12 hidden h-80 w-96 -translate-x-1/2 rounded-full opacity-50 blur-[100px] lg:block"
               style={{ background: activeCourse.glow }}
             />
-            <Link
-              href={activeCourse.href}
-              className="group relative block overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.04] shadow-2xl shadow-black/40"
-              aria-label={activeCopy.title}
+
+            <button
+              type="button"
+              onClick={goToPreviousCourse}
+              className="absolute left-0 top-1/2 z-50 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/50 text-2xl text-white shadow-xl backdrop-blur transition hover:border-cyan-300/60 hover:bg-cyan-400/10 lg:flex"
+              aria-label="Previous course"
             >
-              <div className="relative aspect-[16/10] min-h-[320px] overflow-hidden">
-                <Image
-                  src={activeCourse.image}
-                  alt={activeCopy.title}
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/82 via-black/36 to-black/14" />
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/45 to-transparent" />
-                <div className={`absolute left-6 top-6 rounded-full bg-gradient-to-r ${activeCourse.tone} px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-black shadow-lg`}>
-                  {activeCopy.preview}
-                </div>
-                <div className="absolute bottom-7 left-6 right-6 max-w-2xl">
-                  <div className="mb-3 text-xs font-black uppercase tracking-[0.28em] text-sky-200">
-                    {copy.heroKicker}
-                  </div>
-                  <h2 className="text-4xl font-black leading-none tracking-normal sm:text-5xl lg:text-6xl">
-                    {activeCopy.title}
-                  </h2>
-                  <p className="mt-4 max-w-xl text-base leading-7 text-slate-200 sm:text-lg">
-                    {activeCopy.line}
-                  </p>
-                  <div className="mt-6 flex flex-wrap gap-3">
-                    <span className="rounded-full border border-white/14 bg-black/35 px-4 py-2 text-sm font-bold text-white backdrop-blur">
-                      {activeCourse.stats.lessons} {copy.lessons}
-                    </span>
-                    <span className="rounded-full border border-white/14 bg-black/35 px-4 py-2 text-sm font-bold text-white backdrop-blur">
-                      {activeCourse.stats.questions} {copy.questions}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          </div>
-        </div>
+              ‹
+            </button>
+            <button
+              type="button"
+              onClick={goToNextCourse}
+              className="absolute right-0 top-1/2 z-50 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/50 text-2xl text-white shadow-xl backdrop-blur transition hover:border-cyan-300/60 hover:bg-cyan-400/10 lg:flex"
+              aria-label="Next course"
+            >
+              ›
+            </button>
 
-        <div className="mx-auto mt-8 w-full max-w-7xl">
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <div className="text-xs font-black uppercase tracking-[0.28em] text-slate-500">{copy.browse}</div>
-            <div className="hidden h-px flex-1 bg-white/10 sm:block" />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {showcaseCourses.map((course, index) => {
-              const courseCopy = course.copy[activeLocale]
-              const isActive = index === activeIndex
+            <div className="hidden h-[560px] lg:block">
+              {showcaseCourses.map((course, index) => {
+                const offset = getCourseOffset(index)
+                const courseCopy = course.copy[activeLocale]
+                const isActive = offset === 0
 
-              return (
+                return (
+                  <Link
+                    key={course.id}
+                    href={course.href}
+                    className={`group absolute left-1/2 top-4 block overflow-hidden rounded-[1.65rem] border bg-[#07101e] shadow-[0_28px_70px_rgba(0,0,0,0.55)] transition-all duration-700 ease-out ${
+                      isActive ? 'h-[520px] w-[270px] border-cyan-300/80' : 'h-[440px] w-[208px] border-blue-400/45'
+                    }`}
+                    style={getDesktopCardStyle(offset)}
+                    aria-label={courseCopy.title}
+                  >
+                    <div className="relative h-[58%] overflow-hidden">
+                      <Image
+                        src={course.image}
+                        alt={courseCopy.title}
+                        fill
+                        priority={isActive}
+                        sizes={isActive ? '270px' : '208px'}
+                        className="object-cover transition duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/65" />
+                      <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-[0.6rem] font-black uppercase tracking-[0.2em] text-sky-100 backdrop-blur">
+                        {courseCopy.eyebrow}
+                      </div>
+                    </div>
+                    <div className="relative flex h-[42%] flex-col justify-between border-t border-white/10 bg-black/45 p-5 backdrop-blur">
+                      <div>
+                        <h2 className={`${isActive ? 'text-3xl' : 'text-2xl'} font-black leading-[1.05] tracking-normal text-white`}>
+                          {courseCopy.title}
+                        </h2>
+                        <p className={`${isActive ? 'mt-4 text-base leading-7' : 'mt-3 text-sm leading-6'} line-clamp-3 text-slate-300`}>
+                          {courseCopy.line}
+                        </p>
+                      </div>
+                      <span className={`inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-black transition ${
+                        isActive
+                          ? 'border-cyan-300 bg-cyan-400/10 text-cyan-200'
+                          : 'border-blue-400/70 text-blue-300 group-hover:bg-blue-400/10'
+                      }`}>
+                        {courseCopy.preview}
+                      </span>
+                    </div>
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-[1.65rem] opacity-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25),0_0_46px_rgba(34,211,238,0.22)] transition group-hover:opacity-100"
+                      style={{ boxShadow: `inset 0 0 0 1px rgba(255,255,255,0.22), 0 0 52px ${course.glow}` }}
+                    />
+                  </Link>
+                )
+              })}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
+              {showcaseCourses.map((course, index) => {
+                const courseCopy = course.copy[activeLocale]
+                const isActive = index === activeIndex
+
+                return (
+                  <button
+                    key={course.id}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`group overflow-hidden rounded-3xl border text-left transition ${
+                      isActive
+                        ? 'border-cyan-300/70 bg-white/[0.08] shadow-lg shadow-cyan-500/10'
+                        : 'border-white/10 bg-white/[0.035]'
+                    }`}
+                    aria-pressed={isActive}
+                  >
+                    <div className="relative aspect-[16/11] overflow-hidden">
+                      <Image
+                        src={course.image}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 50vw, 100vw"
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/92 via-black/25 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className={`mb-2 inline-flex rounded-full bg-gradient-to-r ${course.tone} px-3 py-1 text-[0.62rem] font-black uppercase tracking-[0.18em] text-black`}>
+                          {courseCopy.preview}
+                        </div>
+                        <h3 className="text-2xl font-black leading-tight text-white">{courseCopy.title}</h3>
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-300">{courseCopy.line}</p>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="mt-5 flex items-center justify-center gap-3 lg:mt-0">
+              {showcaseCourses.map((course, index) => (
                 <button
                   key={course.id}
                   type="button"
                   onClick={() => setActiveIndex(index)}
-                  className={`group overflow-hidden rounded-3xl border text-left transition ${
-                    isActive
-                      ? 'border-sky-300/70 bg-white/[0.08] shadow-lg shadow-sky-500/10'
-                      : 'border-white/10 bg-white/[0.035] hover:border-white/25 hover:bg-white/[0.06]'
+                  className={`h-3 rounded-full transition-all ${
+                    index === activeIndex ? 'w-8 bg-cyan-400' : 'w-3 bg-slate-600 hover:bg-slate-400'
                   }`}
-                  aria-pressed={isActive}
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <Image
-                      src={course.image}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 20vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className={`mb-2 inline-flex rounded-full bg-gradient-to-r ${course.tone} px-3 py-1 text-[0.62rem] font-black uppercase tracking-[0.18em] text-black`}>
-                        {courseCopy.preview}
-                      </div>
-                      <h3 className="line-clamp-2 text-xl font-black leading-tight text-white">{courseCopy.title}</h3>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <p className="line-clamp-2 min-h-12 text-sm leading-6 text-slate-400">{courseCopy.detail}</p>
-                  </div>
-                </button>
-              )
-            })}
+                  aria-label={`Show ${course.copy[activeLocale].title}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-10 w-full max-w-[1480px]">
+          <div className="mb-7 flex items-center gap-4">
+            <div className="h-px flex-1 bg-white/12" />
+            <div className="text-center text-xs font-black uppercase tracking-[0.34em] text-blue-400">{copy.featureKicker}</div>
+            <div className="h-px flex-1 bg-white/12" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {copy.features.map((feature, index) => (
+              <div
+                key={feature.title}
+                className="group grid grid-cols-[4.5rem_1fr] items-center gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4 transition hover:border-blue-300/35 hover:bg-white/[0.06]"
+              >
+                <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/12 bg-white/[0.04] text-blue-300 shadow-lg shadow-blue-500/5">
+                  <FeatureIcon index={index} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-100">{feature.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-400">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
