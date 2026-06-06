@@ -282,11 +282,11 @@ export default function CoursesPageClient({
                             <div className="absolute bottom-10 left-8 h-20 w-40 rounded-full border border-white/10" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/8 to-black/10" />
+                        <div className={`absolute inset-0 ${course.courseTrack === 'larry-math' ? 'bg-gradient-to-t from-black/88 via-black/18 to-black/8' : 'bg-gradient-to-t from-black/72 via-black/8 to-black/10'}`} />
                         <div className={`absolute left-5 top-5 rounded-full px-3 py-1 text-xs font-black shadow-lg ring-1 ${accessTone(course)}`}>
                           {accessLabel(course, locale)}
                         </div>
-                        <div className="absolute bottom-5 left-5 right-5">
+                        <div className={course.courseTrack === 'larry-math' ? 'absolute inset-x-0 bottom-0 bg-black/62 px-5 py-4 shadow-[0_-18px_38px_rgba(0,0,0,0.35)] backdrop-blur-sm' : 'absolute bottom-5 left-5 right-5'}>
                           <p className="text-xs font-bold uppercase tracking-[0.25em] text-white/50">
                             {track.title}
                           </p>
