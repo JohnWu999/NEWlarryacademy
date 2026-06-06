@@ -143,6 +143,10 @@ function isIbMathCourse(course?: Course | null) {
   return Boolean(course?.id.includes('ib') || course?.title.toLowerCase().includes('ib big math'))
 }
 
+function isLarryMathCourse(course?: Course | null) {
+  return Boolean(course?.id.includes('larry-math') || course?.title.toLowerCase().includes('larry math'))
+}
+
 function getLessonCoverUrl(course: Course, index: number) {
   if (course.id === 'course-ngss-science' || course.id === 'course-ngss-science-g7') return getNgssLessonCover(course.id, index)
   return null
@@ -163,6 +167,133 @@ const ibMathCardMotifs = [
   { formula: 'volume', symbol: 'V = lwh', detail: '3D' },
   { formula: 'data', symbol: 'mean', detail: 'evidence' },
 ]
+
+const larryMathCardMotifs = [
+  { sketch: 'number-line', symbol: '42', label: 'Mental math', accent: '#38bdf8' },
+  { sketch: 'bar-model', symbol: 'A + B', label: 'Visual model', accent: '#34d399' },
+  { sketch: 'fraction', symbol: '3/4', label: 'Parts and whole', accent: '#f59e0b' },
+  { sketch: 'geometry', symbol: 'A', label: 'Shape reasoning', accent: '#a78bfa' },
+  { sketch: 'logic', symbol: 'AMC', label: 'Problem solving', accent: '#fb7185' },
+  { sketch: 'graph', symbol: 'x', label: 'Pattern thinking', accent: '#22d3ee' },
+]
+
+function getLarryMathLessonMotif(lesson: Lesson, index: number) {
+  const text = `${lesson.title} ${lesson.description || ''}`.toLowerCase()
+  if (text.includes('fraction') || text.includes('percent') || text.includes('ratio') || text.includes('rate')) {
+    return larryMathCardMotifs[2]
+  }
+  if (text.includes('triangle') || text.includes('circle') || text.includes('angle') || text.includes('area') || text.includes('geometry') || text.includes('cube')) {
+    return larryMathCardMotifs[3]
+  }
+  if (text.includes('word') || text.includes('speed') || text.includes('distance') || text.includes('time') || text.includes('model')) {
+    return larryMathCardMotifs[1]
+  }
+  if (text.includes('pattern') || text.includes('sequence') || text.includes('graph') || text.includes('average') || text.includes('data')) {
+    return larryMathCardMotifs[5]
+  }
+  if (text.includes('logic') || text.includes('amc') || text.includes('combin') || text.includes('factor') || text.includes('prime')) {
+    return larryMathCardMotifs[4]
+  }
+  return larryMathCardMotifs[index % larryMathCardMotifs.length]
+}
+
+function LarryMathLessonVisual({
+  lesson,
+  index,
+  unlocked,
+}: {
+  lesson: Lesson
+  index: number
+  unlocked: boolean
+}) {
+  const motif = getLarryMathLessonMotif(lesson, index)
+  const title = getLessonCardTitle(lesson)
+
+  return (
+    <div className={`absolute inset-0 overflow-hidden bg-[#f7f5ef] text-[#151515] transition duration-500 ${unlocked ? 'group-hover:scale-[1.015]' : 'grayscale'}`}>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_84%_20%,rgba(255,255,255,0.9),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.96),rgba(236,232,222,0.9))]" />
+      <div className="absolute inset-0 opacity-[0.28] [background-image:linear-gradient(rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:30px_30px]" />
+
+      <div className="absolute left-20 top-4 flex items-center gap-2">
+        <span className="rounded-full border border-black/10 bg-white/80 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-black/45">
+          Larry Math
+        </span>
+        <span className="h-2.5 w-2.5 rounded-full shadow-[0_0_22px_currentColor]" style={{ backgroundColor: motif.accent, color: motif.accent }} />
+      </div>
+
+      <div className="absolute right-4 top-4 rounded-full border border-black/10 bg-white/75 px-3 py-1 text-[10px] font-black text-black/50">
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
+      <div className="absolute inset-x-5 top-14 h-[42%] rounded-[1.35rem] border border-black/10 bg-white/72 shadow-sm">
+        {motif.sketch === 'number-line' && (
+          <div className="absolute inset-x-7 top-1/2">
+            <div className="h-1 rounded-full bg-[#171717]" />
+            {[0, 1, 2, 3, 4, 5].map((tick) => (
+              <span key={tick} className="absolute -top-2 h-5 w-px bg-[#171717]" style={{ left: `${tick * 20}%` }}>
+                <span className="absolute -bottom-7 -translate-x-1/2 text-[10px] font-black text-black/45">{tick * 10}</span>
+              </span>
+            ))}
+            <span className="absolute -top-5 left-[62%] h-4 w-4 rounded-full border-4 border-sky-400 bg-white shadow-lg" />
+          </div>
+        )}
+
+        {motif.sketch === 'bar-model' && (
+          <div className="flex h-full flex-col justify-center gap-2 px-7">
+            <div className="grid grid-cols-[1.4fr_1fr] gap-1.5">
+              <span className="h-7 rounded-lg bg-emerald-300" />
+              <span className="h-7 rounded-lg bg-cyan-300" />
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              <span className="h-6 rounded-lg border border-black/15 bg-white" />
+              <span className="h-6 rounded-lg border border-black/15 bg-white" />
+              <span className="h-6 rounded-lg border border-black/15 bg-white" />
+            </div>
+          </div>
+        )}
+
+        {motif.sketch === 'fraction' && (
+          <div className="flex h-full items-center justify-center gap-2">
+            {Array.from({ length: 6 }).map((_, part) => (
+              <span key={part} className={`h-12 w-7 rounded-xl border border-black/10 ${part < 4 ? 'bg-amber-300' : 'bg-white'}`} />
+            ))}
+          </div>
+        )}
+
+        {motif.sketch === 'geometry' && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg className="h-24 w-32" viewBox="0 0 150 110" aria-hidden="true">
+              <path d="M25 88 L76 18 L126 88 Z" fill="rgba(167,139,250,0.25)" stroke="#7c3aed" strokeWidth="5" strokeLinejoin="round" />
+              <path d="M38 88 H112" stroke="#111" strokeWidth="4" strokeLinecap="round" />
+              <circle cx="76" cy="18" r="5" fill="#111" />
+            </svg>
+          </div>
+        )}
+
+        {motif.sketch === 'logic' && (
+          <div className="grid h-full grid-cols-4 gap-2 p-6">
+            {Array.from({ length: 12 }).map((_, cell) => (
+              <span key={cell} className={`rounded-xl border border-black/10 ${cell === 2 || cell === 5 || cell === 11 ? 'bg-rose-300' : 'bg-white'}`} />
+            ))}
+          </div>
+        )}
+
+        {motif.sketch === 'graph' && (
+          <svg className="absolute inset-5 h-[calc(100%-2.5rem)] w-[calc(100%-2.5rem)]" viewBox="0 0 180 90" aria-hidden="true">
+            <path d="M12 78 H172 M12 78 V8" stroke="rgba(0,0,0,0.32)" strokeWidth="3" strokeLinecap="round" />
+            <path d="M18 70 C48 26 70 60 98 34 S145 30 166 14" fill="none" stroke="#06b6d4" strokeWidth="7" strokeLinecap="round" />
+            <circle cx="98" cy="34" r="6" fill="#111" />
+          </svg>
+        )}
+      </div>
+
+      <div className="absolute inset-x-5 bottom-4 rounded-[1.35rem] border border-black/10 bg-white/90 p-3 shadow-sm">
+        <p className="line-clamp-2 text-[17px] font-black leading-tight text-[#111]">{title}</p>
+        <p className="mt-1 text-[10px] font-black uppercase tracking-[0.16em] text-black/45">{motif.label}</p>
+      </div>
+    </div>
+  )
+}
 
 const pathwayModules = [
   {
@@ -1284,7 +1415,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 const requiresPurchase = !unlocked && !course.hasAccess && !isPreviewLesson(lesson, index)
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
-                const coverUrl = getLessonCoverUrl(course, index)
+                const larryMath = isLarryMathCourse(course)
+                const coverUrl = larryMath ? null : getLessonCoverUrl(course, index)
                 const motif = ibMathCardMotifs[index % ibMathCardMotifs.length]
                 return (
                   <button
@@ -1302,8 +1434,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     }`}
                     aria-label={requiresPurchase ? `Unlock ${lesson.title}` : undefined}
                   >
-                    <div className="relative aspect-[16/9] overflow-hidden" style={{ background: theme.background }}>
-                      {coverUrl ? (
+                    <div className="relative aspect-[16/9] overflow-hidden" style={larryMath ? undefined : { background: theme.background }}>
+                      {larryMath ? (
+                        <LarryMathLessonVisual lesson={lesson} index={index} unlocked={unlocked} />
+                      ) : coverUrl ? (
                         <img
                           src={coverUrl}
                           alt=""
@@ -1330,17 +1464,19 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <div className="absolute bottom-4 right-5 text-5xl font-black text-white/10">{motif.formula}</div>
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />
-                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />
+                      {!larryMath && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />}
+                      {!larryMath && <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />}
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-black/35 text-sm font-black text-white ring-1 ring-white/20 backdrop-blur">
                         <LessonCoverMark index={index} completed={completed} unlocked={unlocked} />
                       </div>
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
-                          {getLessonCardTitle(lesson)}
+                      {!larryMath && (
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
+                            {getLessonCardTitle(lesson)}
+                          </div>
                         </div>
-                      </div>
-                      <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />
+                      )}
+                      {!larryMath && <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />}
                     </div>
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-3">

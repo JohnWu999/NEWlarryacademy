@@ -1,0 +1,40 @@
+<svg width="1200" height="698" viewBox="0 0 1200 698" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="698" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071612"/>
+      <stop offset="0.6" stop-color="#0b1d18"/>
+      <stop offset="1" stop-color="#050706"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(860 150) rotate(118) scale(430 360)">
+      <stop stop-color="#34d399" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#34d399" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="698" rx="46" fill="url(#bg)"/>
+  <rect width="1200" height="698" rx="46" fill="url(#glow)"/>
+  <g opacity="0.14">
+    <path d="M112 132H1088M112 260H1088M112 388H1088M112 516H1088" stroke="#E2E8F0"/>
+    <path d="M232 88V610M424 88V610M616 88V610M808 88V610M1000 88V610" stroke="#E2E8F0"/>
+  </g>
+  <g transform="translate(116 112)">
+    <rect width="360" height="180" rx="32" fill="#FFFFFF" fill-opacity="0.07" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="36" y="58" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="8">LARRY MATH</text>
+    <text x="36" y="112" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="900">G4-G5</text>
+    <text x="36" y="148" fill="#34D399" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800">Word problem models</text>
+  </g>
+  <g transform="translate(170 385)">
+    <rect x="0" y="0" width="782" height="84" rx="24" fill="#FFFFFF" fill-opacity="0.09" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <rect x="18" y="18" width="318" height="48" rx="16" fill="#34D399"/>
+    <rect x="348" y="18" width="192" height="48" rx="16" fill="#67E8F9"/>
+    <rect x="552" y="18" width="212" height="48" rx="16" fill="#FFFFFF" fill-opacity="0.88"/>
+    <text x="128" y="116" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900">known</text>
+    <text x="390" y="116" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900">change</text>
+    <text x="620" y="116" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="900">unknown</text>
+  </g>
+  <g transform="translate(720 128)" stroke="#E2E8F0" stroke-opacity="0.82" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 240C84 120 170 82 302 108"/>
+    <path d="M282 72L320 116L266 132"/>
+    <path d="M56 314H348"/>
+    <path d="M110 278L56 314L110 350"/>
+  </g>
+</svg>

@@ -1,0 +1,40 @@
+<svg width="1200" height="698" viewBox="0 0 1200 698" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="698" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#181007"/>
+      <stop offset="0.58" stop-color="#201707"/>
+      <stop offset="1" stop-color="#060504"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(885 168) rotate(122) scale(420 370)">
+      <stop stop-color="#F59E0B" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#F59E0B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="698" rx="46" fill="url(#bg)"/>
+  <rect width="1200" height="698" rx="46" fill="url(#glow)"/>
+  <g opacity="0.13">
+    <path d="M116 132H1084M116 260H1084M116 388H1084M116 516H1084" stroke="#E2E8F0"/>
+    <path d="M232 88V610M424 88V610M616 88V610M808 88V610M1000 88V610" stroke="#E2E8F0"/>
+  </g>
+  <g transform="translate(116 112)">
+    <rect width="382" height="180" rx="32" fill="#FFFFFF" fill-opacity="0.07" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="36" y="58" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="8">LARRY MATH</text>
+    <text x="36" y="112" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="900">G5-G6</text>
+    <text x="36" y="148" fill="#FBBF24" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800">Fractions, ratios, percent</text>
+  </g>
+  <g transform="translate(680 132)">
+    <circle cx="188" cy="188" r="150" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.18" stroke-width="3"/>
+    <path d="M188 188V38A150 150 0 0 1 338 188H188Z" fill="#F59E0B"/>
+    <path d="M188 188H338A150 150 0 0 1 80 294L188 188Z" fill="#FBBF24" fill-opacity="0.88"/>
+    <circle cx="188" cy="188" r="70" fill="#0B0B0B" stroke="#FFFFFF" stroke-opacity="0.16" stroke-width="3"/>
+    <text x="124" y="207" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="52" font-weight="900">75%</text>
+  </g>
+  <g transform="translate(168 407)">
+    <rect width="430" height="38" rx="19" fill="#FFFFFF" fill-opacity="0.16"/>
+    <rect width="258" height="38" rx="19" fill="#F59E0B"/>
+    <rect y="72" width="430" height="38" rx="19" fill="#FFFFFF" fill-opacity="0.16"/>
+    <rect y="72" width="172" height="38" rx="19" fill="#67E8F9"/>
+    <text x="454" y="29" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900">3 parts</text>
+    <text x="454" y="101" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="900">2 parts</text>
+  </g>
+</svg>

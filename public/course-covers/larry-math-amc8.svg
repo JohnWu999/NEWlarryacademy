@@ -1,0 +1,47 @@
+<svg width="1200" height="698" viewBox="0 0 1200 698" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="698" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#17070b"/>
+      <stop offset="0.6" stop-color="#1b0b12"/>
+      <stop offset="1" stop-color="#050405"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(870 160) rotate(120) scale(420 360)">
+      <stop stop-color="#FB7185" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#FB7185" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="698" rx="46" fill="url(#bg)"/>
+  <rect width="1200" height="698" rx="46" fill="url(#glow)"/>
+  <g opacity="0.13">
+    <path d="M112 132H1088M112 260H1088M112 388H1088M112 516H1088" stroke="#E2E8F0"/>
+    <path d="M232 88V610M424 88V610M616 88V610M808 88V610M1000 88V610" stroke="#E2E8F0"/>
+  </g>
+  <g transform="translate(116 112)">
+    <rect width="390" height="180" rx="32" fill="#FFFFFF" fill-opacity="0.07" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="36" y="58" fill="#94A3B8" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="8">LARRY MATH</text>
+    <text x="36" y="112" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="900">G6-G8</text>
+    <text x="36" y="148" fill="#FDA4AF" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800">AMC 8 logic and number theory</text>
+  </g>
+  <g transform="translate(704 118)">
+    <rect width="330" height="330" rx="42" fill="#FFFFFF" fill-opacity="0.07" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <g transform="translate(48 48)">
+      <g fill="#FFFFFF" fill-opacity="0.88">
+        <circle cx="0" cy="0" r="18"/>
+        <circle cx="116" cy="0" r="18"/>
+        <circle cx="232" cy="0" r="18"/>
+        <circle cx="0" cy="116" r="18"/>
+        <circle cx="116" cy="116" r="18"/>
+        <circle cx="232" cy="116" r="18"/>
+        <circle cx="0" cy="232" r="18"/>
+        <circle cx="116" cy="232" r="18"/>
+        <circle cx="232" cy="232" r="18"/>
+      </g>
+      <path d="M0 0L116 116L232 0M0 232L116 116L232 232M0 116H232" stroke="#FB7185" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <g transform="translate(164 414)" font-family="Inter, Arial, sans-serif" font-weight="900">
+    <rect width="438" height="96" rx="28" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.16"/>
+    <text x="32" y="61" fill="#F8FAFC" font-size="42">12 = 3 x 4</text>
+    <text x="32" y="132" fill="#94A3B8" font-size="24">factor, pattern, proof</text>
+  </g>
+</svg>

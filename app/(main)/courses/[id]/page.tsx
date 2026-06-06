@@ -208,6 +208,10 @@ function courseVisualImages(course: { id: string; courseTrack: string; thumbnail
     return []
   }
 
+  if (course.courseTrack === 'larry-math') {
+    return []
+  }
+
   if (course.courseTrack === 'ngss-science') {
     return [
       course.thumbnailUrl,
@@ -227,11 +231,12 @@ function buildVisualWallItems(
 ) {
   const images = courseVisualImages(course)
   const motifs = course.courseTrack === 'ngss-science' ? scienceVisualMotifs : ibVisualMotifs
+  const isMathTrack = course.courseTrack === 'ib-big-math' || course.courseTrack === 'larry-math'
   const lessonTitles = lessons.map((lesson) => getLessonShortTitle(lesson.title)).filter(Boolean)
 
   return Array.from({ length: 9 }, (_, index) => {
     const title = lessonTitles[index] || ''
-    const motif = course.courseTrack === 'ib-big-math' ? getMathVisualMotif(title, index) : motifs[index % motifs.length]
+    const motif = isMathTrack ? getMathVisualMotif(title, index) : motifs[index % motifs.length]
     return {
       image: images[index % images.length] || null,
       title: title || motif.title,
@@ -247,16 +252,18 @@ function buildVisualWallItems(
 function MathVisualPanel({
   item,
   index,
+  label,
 }: {
   item: { title: string; subtitle: string; symbol: string; sketch: string; accent: string }
   index: number
+  label: string
 }) {
   return (
     <div className="absolute inset-0 overflow-hidden bg-[#f6f2e8] text-slate-950">
       <div className="absolute inset-0 opacity-[0.42] [background-image:linear-gradient(rgba(15,23,42,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.08)_1px,transparent_1px)] [background-size:28px_28px]" />
       <div className="absolute left-4 top-4 flex items-center gap-2">
         <span className={`h-2.5 w-2.5 rounded-full ${item.accent}`} />
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">IB Big Math</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{label}</span>
       </div>
       <div className="absolute right-4 top-4 rounded-full border border-slate-300 bg-white/75 px-3 py-1 text-[10px] font-black text-slate-500">
         Scene {index + 1}
@@ -529,8 +536,8 @@ export default async function CourseDetailPage({
                           alt={`${course.title} visual ${index + 1}`}
                           className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
                         />
-                      ) : course.courseTrack === 'ib-big-math' ? (
-                        <MathVisualPanel item={item} index={index} />
+                      ) : course.courseTrack === 'ib-big-math' || course.courseTrack === 'larry-math' ? (
+                        <MathVisualPanel item={item} index={index} label={course.courseTrack === 'larry-math' ? 'Larry Math' : 'IB Big Math'} />
                       ) : (
                         <div className="absolute inset-0">
                           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.14),transparent_38%,rgba(255,255,255,0.08))]" />
@@ -540,7 +547,7 @@ export default async function CourseDetailPage({
                           <div className="absolute bottom-3 left-3 h-16 w-16 rounded-full border border-white/15 sm:h-24 sm:w-24" />
                         </div>
                       )}
-                      {course.courseTrack !== 'ib-big-math' && (
+                      {course.courseTrack !== 'ib-big-math' && course.courseTrack !== 'larry-math' && (
                         <>
                           <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/12 to-transparent" />
                           <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
