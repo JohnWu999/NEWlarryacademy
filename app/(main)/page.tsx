@@ -275,7 +275,7 @@ export default function HomePage() {
             <div className="mt-8 grid max-w-xl grid-cols-3 gap-3">
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                 <div className="text-2xl font-black">{totalStats.courses}</div>
-                <div className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.24em] text-slate-500">Courses</div>
+                <div className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.24em] text-slate-500">{copy.statCourses}</div>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
                 <div className="text-2xl font-black">{totalStats.lessons}</div>
