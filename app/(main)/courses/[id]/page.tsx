@@ -1,4 +1,5 @@
 import PurchaseCourseButton from '@/components/courses/PurchaseCourseButton'
+import LeaderboardPanel from '@/components/leaderboard/LeaderboardPanel'
 import { authOptions } from '@/lib/auth'
 import { resolveCourseAccess } from '@/lib/course-access'
 import type { Locale } from '@/lib/i18n'
@@ -564,6 +565,8 @@ export default async function CourseDetailPage({
                   ))}
                 </div>
               </div>
+
+              <LeaderboardPanel courseId={course.id} variant="course" />
 
               {course.status === 'coming-soon' && (
                 <div className="mt-8 grid gap-3 sm:grid-cols-2">

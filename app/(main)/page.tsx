@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
+import LeaderboardPanel from '@/components/leaderboard/LeaderboardPanel'
 
 type Locale = 'zh' | 'en'
 
@@ -560,6 +561,12 @@ export default function HomePage() {
               )
             })}
           </div>
+        </div>
+      </section>
+
+      <section className="relative px-4 py-14 sm:px-6 lg:py-20">
+        <div className="mx-auto w-full max-w-7xl">
+          <LeaderboardPanel variant="home" />
         </div>
       </section>
 

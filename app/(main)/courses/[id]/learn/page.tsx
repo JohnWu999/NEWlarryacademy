@@ -806,16 +806,16 @@ const unlockModalCopy = {
   zh: {
     eyebrow: '解锁完整课程',
     title: '打开全部精彩课节和练习挑战',
-    body: '完整课程包含系统视频、每节课配套练习、游戏化积分和宝石奖励。孩子可以边看、边做、边拿反馈，让学习更有趣，也更有效。',
-    bullets: ['全部付费课节立即开放', '大量互动练习帮助真正掌握', '积分、宝石和连续学习激励'],
+    body: '完整课程包含系统视频、每节课配套练习、游戏化 Spark 和宝石奖励。孩子可以边看、边做、边拿反馈，让学习更有趣，也更有效。',
+    bullets: ['全部付费课节立即开放', '大量互动练习帮助真正掌握', 'Spark、宝石和连续学习激励'],
     preview: '你已经可以免费试看前 3 节；继续深入学习需要 Full Access。',
     close: '稍后再说',
   },
   en: {
     eyebrow: 'Unlock Full Access',
     title: 'Open every lesson, practice quest, and reward moment',
-    body: 'Full Access includes the complete video pathway, lesson-by-lesson practice, game-style points, and gems. Students learn by watching, solving, getting feedback, and staying motivated.',
-    bullets: ['Unlock every paid lesson instantly', 'Practice deeply with interactive questions', 'Earn points, gems, and streak motivation'],
+    body: 'Full Access includes the complete video pathway, lesson-by-lesson practice, game-style Sparks, and Gems. Students learn by watching, solving, getting feedback, and staying motivated.',
+    bullets: ['Unlock every paid lesson instantly', 'Practice deeply with interactive questions', 'Earn Sparks, Gems, and streak motivation'],
     preview: 'The first 3 lessons are free to preview. Full Access opens the rest of the journey.',
     close: 'Maybe later',
   },
@@ -1048,25 +1048,48 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
       if (!AudioContextClass) return
       const ctx = new AudioContextClass()
+      const variant = Date.now() % 3
       const sequence = kind === 'incorrect'
-        ? [180, 140]
+        ? variant === 0 ? [196, 164, 146] : variant === 1 ? [220, 175, 147] : [185, 156, 131]
         : kind === 'complete'
-        ? [523, 659, 784, 1046]
-        : [523, 659, 880]
+          ? variant === 0 ? [523, 659, 784, 1046, 1319, 1568] : variant === 1 ? [587, 740, 988, 1175, 1480] : [659, 831, 1046, 1319, 1760]
+          : variant === 0 ? [523, 659, 880, 1175] : variant === 1 ? [587, 740, 932, 1245] : [659, 784, 988, 1319]
+
+      if (kind === 'complete') {
+        const bass = ctx.createOscillator()
+        const bassGain = ctx.createGain()
+        bass.type = 'triangle'
+        bass.frequency.setValueAtTime(98, ctx.currentTime)
+        bass.frequency.exponentialRampToValueAtTime(196, ctx.currentTime + 0.26)
+        bassGain.gain.setValueAtTime(0.0001, ctx.currentTime)
+        bassGain.gain.exponentialRampToValueAtTime(0.09, ctx.currentTime + 0.035)
+        bassGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.46)
+        bass.connect(bassGain)
+        bassGain.connect(ctx.destination)
+        bass.start()
+        bass.stop(ctx.currentTime + 0.5)
+      }
+
       sequence.forEach((frequency, index) => {
         const oscillator = ctx.createOscillator()
         const gain = ctx.createGain()
-        const start = ctx.currentTime + index * 0.085
-        oscillator.type = kind === 'incorrect' ? 'sawtooth' : 'sine'
+        const start = ctx.currentTime + index * (kind === 'complete' ? 0.055 : 0.075)
+        oscillator.type = (kind === 'incorrect' ? (index % 2 ? 'triangle' : 'sine') : index % 2 ? 'triangle' : 'sine') as OscillatorType
         oscillator.frequency.setValueAtTime(frequency, start)
+        if (kind !== 'incorrect') {
+          oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.02, start + 0.08)
+        } else {
+          oscillator.frequency.exponentialRampToValueAtTime(Math.max(90, frequency * 0.92), start + 0.1)
+        }
         gain.gain.setValueAtTime(0.0001, start)
-        gain.gain.exponentialRampToValueAtTime(kind === 'incorrect' ? 0.06 : 0.1, start + 0.02)
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.16)
+        gain.gain.exponentialRampToValueAtTime(kind === 'incorrect' ? 0.045 : kind === 'complete' ? 0.11 : 0.08, start + 0.018)
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + (kind === 'complete' ? 0.2 : 0.16))
         oscillator.connect(gain)
         gain.connect(ctx.destination)
         oscillator.start(start)
-        oscillator.stop(start + 0.18)
+        oscillator.stop(start + (kind === 'complete' ? 0.22 : 0.18))
       })
+      window.setTimeout(() => void ctx.close().catch(() => {}), 1100)
     } catch {
       // Audio feedback is optional; browsers may block it in some contexts.
     }
@@ -1797,6 +1820,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     <div className="relative mt-6 overflow-hidden rounded-3xl bg-white p-5 shadow-sm">
                       {questEffect?.kind === 'complete' && (
                         <div key={questEffect.key} className="pointer-events-none absolute inset-0 z-10 quest-fireworks">
+                          <div className="quest-shockwave" />
                           {[...Array(28)].map((_, index) => (
                             <span
                               key={index}
@@ -1810,6 +1834,16 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           ))}
                         </div>
                       )}
+                      {questEffect?.kind === 'complete' && (
+                        <div className="pointer-events-none absolute right-5 top-5 z-20 quest-reward-orbit" aria-hidden="true">
+                          <span className="quest-reward-token quest-reward-token-gem">
+                            <img src="/reward-icons/gem.png" alt="" />
+                          </span>
+                          <span className="quest-reward-token quest-reward-token-spark">
+                            <img src="/reward-icons/spark.png" alt="" />
+                          </span>
+                        </div>
+                      )}
                       <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
                           <SparkIcon />
@@ -1821,7 +1855,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       </div>
                       <div className="mt-5 grid grid-cols-2 gap-3">
                         <div className="rounded-2xl bg-[#f4f1e8] p-4">
-                          <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Points earned</div>
+                          <div className="text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Sparks earned</div>
                           <div className="mt-2 text-2xl font-black">+{questResult?.earnedPoints || 0}</div>
                         </div>
                         <div className="rounded-2xl bg-[#f4f1e8] p-4">
@@ -1881,7 +1915,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       <h2 className="mt-2 text-2xl font-black leading-tight">Try one step before moving on</h2>
                     </div>
                     <div className="rounded-2xl bg-[#171717] px-3 py-2 text-sm font-black text-white">
-                      +{currentLesson.rewardsPoints || 20} pts
+                      +{currentLesson.rewardsPoints || 20} Sparks
                     </div>
                   </div>
 
@@ -2091,6 +2125,58 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           animation: quest-spark 760ms ease-out forwards;
         }
 
+        .quest-shockwave {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 8rem;
+          height: 8rem;
+          border-radius: 999px;
+          border: 2px solid rgba(34, 211, 238, 0.45);
+          background: radial-gradient(circle, rgba(250, 204, 21, 0.22), transparent 68%);
+          transform: translate(-50%, -50%) scale(.2);
+          animation: quest-shockwave 820ms ease-out forwards;
+        }
+
+        .quest-reward-orbit {
+          width: 5.4rem;
+          height: 5.4rem;
+          border-radius: 999px;
+          background:
+            radial-gradient(circle, rgba(255, 255, 255, 0.82), transparent 38%),
+            radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 68%);
+          animation: quest-orbit-pop 900ms cubic-bezier(.18, 1.35, .28, 1) both;
+        }
+
+        .quest-reward-token {
+          position: absolute;
+          display: grid;
+          place-items: center;
+          width: 2.7rem;
+          height: 2.7rem;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.88);
+          box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+          animation: quest-token-float 1.05s ease-out both;
+        }
+
+        .quest-reward-token img {
+          width: 2.25rem;
+          height: 2.25rem;
+          object-fit: contain;
+        }
+
+        .quest-reward-token-gem {
+          left: -.4rem;
+          top: .8rem;
+        }
+
+        .quest-reward-token-spark {
+          right: -.45rem;
+          bottom: .65rem;
+          animation-delay: 90ms;
+        }
+
         .quest-shake {
           animation: quest-shake-layer 420ms ease-in-out;
         }
@@ -2115,6 +2201,24 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           100% { opacity: 0; transform: scale(.1) translateY(-42px); }
         }
 
+        @keyframes quest-shockwave {
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(.16); }
+          20% { opacity: 1; transform: translate(-50%, -50%) scale(.72); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(2.35); }
+        }
+
+        @keyframes quest-orbit-pop {
+          0% { opacity: 0; transform: translateY(10px) scale(.62) rotate(-18deg); }
+          35% { opacity: 1; transform: translateY(-2px) scale(1.05) rotate(8deg); }
+          100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+        }
+
+        @keyframes quest-token-float {
+          0% { opacity: 0; transform: translateY(18px) scale(.58); }
+          36% { opacity: 1; transform: translateY(-6px) scale(1.12); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         @keyframes quest-shake-layer {
           0%, 100% { transform: translateX(0); }
           20% { transform: translateX(-5px); }
@@ -2127,7 +2231,10 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           .quest-pop,
           .quest-wobble,
           .quest-shake,
-          .quest-fireworks .quest-spark {
+          .quest-fireworks .quest-spark,
+          .quest-shockwave,
+          .quest-reward-orbit,
+          .quest-reward-token {
             animation: none;
           }
         }

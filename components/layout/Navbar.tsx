@@ -41,7 +41,7 @@ export default function Navbar() {
       .then((response) => response.ok ? response.json() : null)
       .then((stats) => {
         if (active && stats) {
-          setRewards({ points: Number(stats.points || 0), gems: Number(stats.gems || 0) })
+          setRewards({ points: Number(stats.sparks ?? stats.points ?? 0), gems: Number(stats.gems || 0) })
         }
       })
       .catch(() => {})
@@ -57,21 +57,50 @@ export default function Navbar() {
         const AudioContextClass = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
         if (!AudioContextClass) return
         const ctx = new AudioContextClass()
-        const sequence = gems > 0 ? [659, 880, 1175, 1568] : [523, 784, 1046]
+        const variant = (points + gems + Date.now()) % 3
+        const sequence = gems > 0
+          ? variant === 0
+            ? [659, 880, 1175, 1568, 1760]
+            : variant === 1
+              ? [784, 988, 1319, 1661]
+              : [587, 740, 988, 1480, 1976]
+          : variant === 0
+            ? [523, 659, 784, 1046]
+            : variant === 1
+              ? [440, 660, 880, 1320]
+              : [587, 740, 932, 1175]
+
+        if (gems > 0) {
+          const bass = ctx.createOscillator()
+          const bassGain = ctx.createGain()
+          bass.type = 'triangle'
+          bass.frequency.setValueAtTime(110, ctx.currentTime)
+          bass.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.22)
+          bassGain.gain.setValueAtTime(0.0001, ctx.currentTime)
+          bassGain.gain.exponentialRampToValueAtTime(0.09, ctx.currentTime + 0.035)
+          bassGain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.42)
+          bass.connect(bassGain)
+          bassGain.connect(ctx.destination)
+          bass.start()
+          bass.stop(ctx.currentTime + 0.45)
+        }
+
         sequence.forEach((frequency, index) => {
           const oscillator = ctx.createOscillator()
           const gain = ctx.createGain()
-          const start = ctx.currentTime + index * 0.07
-          oscillator.type = gems > 0 ? 'triangle' : 'sine'
+          const start = ctx.currentTime + index * (gems > 0 ? 0.062 : 0.072)
+          oscillator.type = (gems > 0 ? (index % 2 ? 'triangle' : 'sine') : (index % 2 ? 'sine' : 'triangle')) as OscillatorType
           oscillator.frequency.setValueAtTime(frequency + Math.min(points, 80), start)
+          oscillator.frequency.exponentialRampToValueAtTime((frequency + Math.min(points, 80)) * 1.018, start + 0.08)
           gain.gain.setValueAtTime(0.0001, start)
-          gain.gain.exponentialRampToValueAtTime(gems > 0 ? 0.11 : 0.08, start + 0.025)
-          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.18)
+          gain.gain.exponentialRampToValueAtTime(gems > 0 ? 0.12 : 0.075, start + 0.018)
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.19)
           oscillator.connect(gain)
           gain.connect(ctx.destination)
           oscillator.start(start)
-          oscillator.stop(start + 0.2)
+          oscillator.stop(start + 0.21)
         })
+        window.setTimeout(() => void ctx.close().catch(() => {}), 900)
       } catch {}
     }
 
@@ -163,6 +192,18 @@ export default function Navbar() {
                 <div id="larry-reward-hud" className="relative flex items-center gap-2">
                   {rewardBurst && (
                     <div key={rewardBurst.key} className="pointer-events-none fixed right-28 top-[68vh] z-[70] flex flex-col items-end gap-2">
+                      <div className="reward-burst-aura" />
+                      {Array.from({ length: 12 }).map((_, index) => (
+                        <span
+                          key={index}
+                          className="reward-shard"
+                          style={{
+                            left: `${18 + ((index * 17) % 62)}%`,
+                            top: `${18 + ((index * 23) % 58)}%`,
+                            animationDelay: `${index * 0.025}s`,
+                          }}
+                        />
+                      ))}
                       {rewardBurst.gems > 0 && (
                         <div className="reward-fly-chip reward-fly-gem">
                           <img src="/reward-icons/gem.png" alt="" className="reward-icon reward-icon-fly" />
@@ -181,7 +222,7 @@ export default function Navbar() {
                     <img src="/reward-icons/gem.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.gems}</span>
                   </Link>
-                  <Link href="/profile" className="reward-pill reward-pill-points inline-flex h-10 min-w-[5.9rem] items-center justify-center gap-2.5 rounded-full px-3" aria-label={`${rewards.points} points`}>
+                  <Link href="/profile" className="reward-pill reward-pill-points inline-flex h-10 min-w-[5.9rem] items-center justify-center gap-2.5 rounded-full px-3" aria-label={`${rewards.points} sparks`}>
                     <img src="/reward-icons/spark.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.points}</span>
                   </Link>
@@ -328,6 +369,7 @@ export default function Navbar() {
           text-shadow: 0 1px 10px rgba(0,0,0,0.35);
         }
         .reward-fly-chip {
+          position: relative;
           display: inline-flex;
           align-items: center;
           gap: 0.62rem;
@@ -340,12 +382,64 @@ export default function Navbar() {
           box-shadow: 0 20px 50px rgba(0,0,0,0.35);
           animation: reward-fly 1.25s cubic-bezier(.16, .88, .22, 1) forwards;
         }
+        .reward-fly-chip::after {
+          content: '';
+          position: absolute;
+          inset: -10px;
+          z-index: -1;
+          border-radius: inherit;
+          background: radial-gradient(circle, rgba(255,255,255,0.42), transparent 68%);
+          opacity: 0;
+          animation: reward-flash 520ms ease-out forwards;
+        }
         .reward-fly-gem {
           background: rgba(10, 136, 132, 0.92);
         }
         .reward-fly-points {
           background: rgba(180, 83, 9, 0.92);
           animation-delay: 90ms;
+        }
+        .reward-burst-aura {
+          position: absolute;
+          right: -1.2rem;
+          top: -1.2rem;
+          width: 9.5rem;
+          height: 9.5rem;
+          border-radius: 999px;
+          border: 1px solid rgba(251, 191, 36, 0.25);
+          background:
+            radial-gradient(circle, rgba(251, 191, 36, 0.3), transparent 56%),
+            radial-gradient(circle at 30% 30%, rgba(34, 211, 238, 0.28), transparent 44%);
+          filter: blur(0.2px);
+          animation: reward-aura 920ms ease-out forwards;
+        }
+        .reward-shard {
+          position: absolute;
+          width: 0.46rem;
+          height: 0.46rem;
+          border-radius: 999px;
+          background: #fef3c7;
+          box-shadow:
+            0 0 14px rgba(251, 191, 36, 0.9),
+            10px 6px 0 rgba(34, 211, 238, 0.72),
+            -8px -4px 0 rgba(167, 139, 250, 0.72);
+          opacity: 0;
+          animation: reward-shard-pop 760ms ease-out forwards;
+        }
+        @keyframes reward-flash {
+          0% { opacity: 0; transform: scale(.72); }
+          25% { opacity: 1; transform: scale(1.05); }
+          100% { opacity: 0; transform: scale(1.34); }
+        }
+        @keyframes reward-aura {
+          0% { opacity: 0; transform: scale(.45); }
+          28% { opacity: 1; transform: scale(1); }
+          100% { opacity: 0; transform: scale(1.65); }
+        }
+        @keyframes reward-shard-pop {
+          0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.35); }
+          22% { opacity: 1; transform: translate3d(-10px, -14px, 0) scale(1); }
+          100% { opacity: 0; transform: translate3d(-42px, -108px, 0) scale(.16); }
         }
         @keyframes reward-fly {
           0% {

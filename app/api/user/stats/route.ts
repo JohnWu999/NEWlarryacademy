@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
       gamesPlayed,
       totalLearningTime: Math.round(totalLearningTime / 60), // Convert to minutes
       points: user.points,
+      sparks: user.points,
       gems: user.gems,
     })
   } catch (error) {
