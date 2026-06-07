@@ -98,6 +98,10 @@ async function main() {
   if (courses.length === 0) {
     throw new Error('No active published courses found for NPC leaderboard seed.')
   }
+  const practiceCourses = courses.filter((course) => course.activities.some((activity) => activity.type === 'practice' || activity.type === 'quiz'))
+  if (practiceCourses.length === 0) {
+    throw new Error('No active practice or quiz activities found for NPC leaderboard seed.')
+  }
 
   await prisma.user.deleteMany({
     where: { email: { in: npcProfiles.map((profile) => profile.email) } },
@@ -123,6 +127,12 @@ async function main() {
     })
 
     const selectedCourses = Array.from({ length: profile.courseSpread }, (_, offset) => pick(courses, index + offset))
+    const hasPracticeCourse = selectedCourses.some((course) =>
+      course.activities.some((activity) => activity.type === 'practice' || activity.type === 'quiz')
+    )
+    if (!hasPracticeCourse) {
+      selectedCourses[selectedCourses.length - 1] = pick(practiceCourses, index)
+    }
     let remainingQuestions = 18 + Math.floor(profile.sparkTarget / 26)
     let remainingCorrect = Math.max(1, Math.round((remainingQuestions * profile.accuracy) / 100))
     let activityCounter = 0
