@@ -14,17 +14,17 @@ type NpcProfile = {
 }
 
 const npcProfiles: NpcProfile[] = [
-  { email: 'npc.maya.patel@larryacademy.local', name: 'Maya Patel', country: 'India', timezone: 'Asia/Kolkata', sparkTarget: 1840, gemTarget: 31, accuracy: 94, courseSpread: 4 },
-  { email: 'npc.lucas.andersen@larryacademy.local', name: 'Lucas Andersen', country: 'Denmark', timezone: 'Europe/Copenhagen', sparkTarget: 1510, gemTarget: 24, accuracy: 91, courseSpread: 4 },
-  { email: 'npc.sofia.rossi@larryacademy.local', name: 'Sofia Rossi', country: 'Italy', timezone: 'Europe/Rome', sparkTarget: 1320, gemTarget: 22, accuracy: 88, courseSpread: 3 },
-  { email: 'npc.kenji.tanaka@larryacademy.local', name: 'Kenji Tanaka', country: 'Japan', timezone: 'Asia/Tokyo', sparkTarget: 1255, gemTarget: 18, accuracy: 86, courseSpread: 3 },
-  { email: 'npc.ava.wilson@larryacademy.local', name: 'Ava Wilson', country: 'United States', timezone: 'America/New_York', sparkTarget: 1160, gemTarget: 16, accuracy: 90, courseSpread: 3 },
-  { email: 'npc.noah.kim@larryacademy.local', name: 'Noah Kim', country: 'South Korea', timezone: 'Asia/Seoul', sparkTarget: 1040, gemTarget: 15, accuracy: 84, courseSpread: 3 },
-  { email: 'npc.emma.mueller@larryacademy.local', name: 'Emma Mueller', country: 'Germany', timezone: 'Europe/Berlin', sparkTarget: 940, gemTarget: 13, accuracy: 82, courseSpread: 3 },
-  { email: 'npc.theo.martin@larryacademy.local', name: 'Theo Martin', country: 'France', timezone: 'Europe/Paris', sparkTarget: 880, gemTarget: 12, accuracy: 79, courseSpread: 2 },
-  { email: 'npc.zara.khan@larryacademy.local', name: 'Zara Khan', country: 'United Arab Emirates', timezone: 'Asia/Dubai', sparkTarget: 820, gemTarget: 11, accuracy: 87, courseSpread: 2 },
-  { email: 'npc.oliver.smith@larryacademy.local', name: 'Oliver Smith', country: 'United Kingdom', timezone: 'Europe/London', sparkTarget: 760, gemTarget: 10, accuracy: 78, courseSpread: 2 },
-  { email: 'npc.chloe.chen@larryacademy.local', name: 'Chloe Chen', country: 'Canada', timezone: 'America/Toronto', sparkTarget: 710, gemTarget: 9, accuracy: 85, courseSpread: 2 },
+  { email: 'npc.alan.chen@larryacademy.local', name: 'Alan Chen', country: 'China', timezone: 'Asia/Shanghai', sparkTarget: 1840, gemTarget: 31, accuracy: 94, courseSpread: 4 },
+  { email: 'npc.alex.wang@larryacademy.local', name: 'Alex Wang', country: 'Singapore', timezone: 'Asia/Singapore', sparkTarget: 1510, gemTarget: 24, accuracy: 91, courseSpread: 4 },
+  { email: 'npc.sophia.li@larryacademy.local', name: 'Sophia Li', country: 'United States', timezone: 'America/Los_Angeles', sparkTarget: 1320, gemTarget: 22, accuracy: 88, courseSpread: 3 },
+  { email: 'npc.ethan.zhang@larryacademy.local', name: 'Ethan Zhang', country: 'Hong Kong', timezone: 'Asia/Hong_Kong', sparkTarget: 1255, gemTarget: 18, accuracy: 86, courseSpread: 3 },
+  { email: 'npc.olivia.liu@larryacademy.local', name: 'Olivia Liu', country: 'Canada', timezone: 'America/Vancouver', sparkTarget: 1160, gemTarget: 16, accuracy: 90, courseSpread: 3 },
+  { email: 'npc.ryan.wu@larryacademy.local', name: 'Ryan Wu', country: 'Taiwan', timezone: 'Asia/Taipei', sparkTarget: 1040, gemTarget: 15, accuracy: 84, courseSpread: 3 },
+  { email: 'npc.emily.huang@larryacademy.local', name: 'Emily Huang', country: 'Australia', timezone: 'Australia/Sydney', sparkTarget: 940, gemTarget: 13, accuracy: 82, courseSpread: 3 },
+  { email: 'npc.kevin.lin@larryacademy.local', name: 'Kevin Lin', country: 'United Kingdom', timezone: 'Europe/London', sparkTarget: 880, gemTarget: 12, accuracy: 79, courseSpread: 2 },
+  { email: 'npc.grace.zhou@larryacademy.local', name: 'Grace Zhou', country: 'China', timezone: 'Asia/Shanghai', sparkTarget: 820, gemTarget: 11, accuracy: 87, courseSpread: 2 },
+  { email: 'npc.daniel.zhao@larryacademy.local', name: 'Daniel Zhao', country: 'Singapore', timezone: 'Asia/Singapore', sparkTarget: 760, gemTarget: 10, accuracy: 78, courseSpread: 2 },
+  { email: 'npc.chloe.carter@larryacademy.local', name: 'Chloe Carter', country: 'Canada', timezone: 'America/Toronto', sparkTarget: 710, gemTarget: 9, accuracy: 85, courseSpread: 2 },
   { email: 'npc.mateo.garcia@larryacademy.local', name: 'Mateo Garcia', country: 'Mexico', timezone: 'America/Mexico_City', sparkTarget: 660, gemTarget: 8, accuracy: 76, courseSpread: 2 },
   { email: 'npc.amelia.taylor@larryacademy.local', name: 'Amelia Taylor', country: 'Australia', timezone: 'Australia/Sydney', sparkTarget: 610, gemTarget: 8, accuracy: 80, courseSpread: 2 },
   { email: 'npc.levi.cohen@larryacademy.local', name: 'Levi Cohen', country: 'Israel', timezone: 'Asia/Jerusalem', sparkTarget: 560, gemTarget: 7, accuracy: 74, courseSpread: 2 },
@@ -104,7 +104,7 @@ async function main() {
   }
 
   await prisma.user.deleteMany({
-    where: { email: { in: npcProfiles.map((profile) => profile.email) } },
+    where: { email: { endsWith: '@larryacademy.local' } },
   })
 
   for (let index = 0; index < npcProfiles.length; index += 1) {
