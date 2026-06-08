@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getUserStats } from '@/lib/userStats'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,10 +17,7 @@ export async function GET(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: {
-        courseProgress: true,
-        gameHistory: true,
-      },
+      select: { id: true },
     })
 
     if (!user) {
@@ -29,25 +27,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const coursesEnrolled = user.courseProgress.length
-    const coursesCompleted = user.courseProgress.filter(
-      (p) => p.completedAt !== null
-    ).length
-    const gamesPlayed = user.gameHistory.length
-    const totalLearningTime = user.courseProgress.reduce(
-      (total, progress) => total + progress.lastWatchedPosition,
-      0
-    )
-
-    return NextResponse.json({
-      coursesEnrolled,
-      coursesCompleted,
-      gamesPlayed,
-      totalLearningTime: Math.round(totalLearningTime / 60), // Convert to minutes
-      points: user.points,
-      sparks: user.points,
-      gems: user.gems,
-    })
+    return NextResponse.json(await getUserStats(user.id))
   } catch (error) {
     console.error('Error fetching user stats:', error)
     return NextResponse.json(

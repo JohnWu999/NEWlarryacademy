@@ -196,16 +196,24 @@ export async function POST(
     }
 
     if (completed && activity.lessonId) {
+      const completedLesson = await prisma.lesson.findUnique({
+        where: { id: activity.lessonId },
+        select: { duration: true },
+      })
+      const completedPosition = Math.max(0, completedLesson?.duration || 0)
+
       await prisma.userLessonProgress.upsert({
         where: { userId_lessonId: { userId: user.id, lessonId: activity.lessonId } },
         update: {
           progressPercentage: 100,
+          lastWatchedPosition: completedPosition,
           completedAt: new Date(),
         },
         create: {
           userId: user.id,
           lessonId: activity.lessonId,
           progressPercentage: 100,
+          lastWatchedPosition: completedPosition,
           completedAt: new Date(),
         },
       })

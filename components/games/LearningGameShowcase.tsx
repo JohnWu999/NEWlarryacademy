@@ -157,6 +157,8 @@ type Sim = {
   level: number
   score: number
   streak: number
+  startedAt: number
+  pendingRecord: PendingRecord | null
   objective: Objective
   messageZh: string
   messageEn: string
@@ -185,6 +187,15 @@ type Hud = {
   promptEn: string
   messageZh: string
   messageEn: string
+}
+
+type PendingRecord = {
+  templateId: TemplateId
+  score: number
+  streak: number
+  level: number
+  round: number
+  duration: number
 }
 
 const width = 920
@@ -621,6 +632,8 @@ function makeSim(id: TemplateId, level = 1): Sim {
     level,
     score: 0,
     streak: 0,
+    startedAt: Date.now(),
+    pendingRecord: null,
     objective,
     messageZh: '',
     messageEn: '',
@@ -712,6 +725,15 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
   sim.streak += 1
   sim.round += 1
   sim.level = 1 + Math.floor(sim.round / 4)
+  sim.pendingRecord = {
+    templateId: sim.id,
+    score: sim.score,
+    streak: sim.streak,
+    level: sim.level,
+    round: sim.round,
+    duration: Math.max(1, Math.round((Date.now() - sim.startedAt) / 1000)),
+  }
+  sim.startedAt = Date.now()
   sim.objective = makeObjective(sim.id, sim.level, sim.round)
   sim.messageZh = zh
   sim.messageEn = en
@@ -1750,6 +1772,31 @@ export default function LearningGameShowcase() {
     reset(activeId)
   }, [activeId, reset])
 
+  const saveShowcaseRecord = useCallback(async (record: PendingRecord) => {
+    try {
+      const response = await fetch('/api/games/showcase/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record),
+      })
+      if (!response.ok) return
+
+      const result = await response.json()
+      if (result?.saved && (result.earnedPoints > 0 || result.earnedGems > 0)) {
+        window.dispatchEvent(
+          new CustomEvent('larry:reward-earned', {
+            detail: {
+              points: Number(result.earnedPoints || 0),
+              gems: Number(result.earnedGems || 0),
+            },
+          })
+        )
+      }
+    } catch (error) {
+      console.warn('Unable to save showcase game record', error)
+    }
+  }, [])
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const sim = simRef.current
@@ -1805,6 +1852,11 @@ export default function LearningGameShowcase() {
       const dt = Math.min(0.035, (time - last) / 1000)
       last = time
       updateSim(simRef.current, dt, audio)
+      const record = simRef.current.pendingRecord
+      if (record) {
+        simRef.current.pendingRecord = null
+        void saveShowcaseRecord(record)
+      }
       drawSim(ctx, simRef.current, activeTemplate)
       hudTimer += dt
       if (hudTimer > 0.12) {
@@ -1819,7 +1871,7 @@ export default function LearningGameShowcase() {
       window.removeEventListener('resize', resize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [activeTemplate, audio])
+  }, [activeTemplate, audio, saveShowcaseRecord])
 
   const beginDrag = (x: number, y: number) => {
     const sim = simRef.current
