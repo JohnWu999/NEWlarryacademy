@@ -1,85 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
-import LearningGameShowcase from '@/components/games/LearningGameShowcase'
+import LearningGameShowcase, { showcaseGames, type TemplateId } from '@/components/games/LearningGameShowcase'
 
 export default function GamesPage() {
   const { t, locale } = useLanguage()
-  const [games, setGames] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateId>('starship')
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const res = await fetch('/api/games')
-        if (res.ok) {
-          const data = await res.json()
-          setGames(data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch games:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchGames()
-  }, [])
-
-  const parseGameConfig = (game: any) => {
-    try {
-      return typeof game.gameConfig === 'string' ? JSON.parse(game.gameConfig) : game.gameConfig || {}
-    } catch {
-      return {}
-    }
-  }
-
-  // 映射数据库中的原始标题到翻译词条
-  const getGameTranslation = (game: any) => {
-    const config = parseGameConfig(game)
-    if (config.collection === 'larry-originals') {
-      return {
-        title: locale === 'zh' ? config.titleZh || game.title : config.titleEn || game.title,
-        desc: locale === 'zh' ? config.descriptionZh || game.description : config.descriptionEn || game.description,
-      }
-    }
-
-    const title = game.title;
-    if (title.includes('乘法表')) return { title: t('game.multiplication.title'), desc: t('game.multiplication.desc') };
-    if (title.includes('加法速算')) return { title: t('game.addition.title'), desc: t('game.addition.desc') };
-    if (title.includes('几何图形')) return { title: t('game.geometry.title'), desc: t('game.geometry.desc') };
-    if (title.includes('泡泡')) return { title: t('game.even_bubble.title'), desc: t('game.even_bubble.desc') };
-    if (title.includes('赛车')) return { title: t('game.math_race.title'), desc: t('game.math_race.desc') };
-    if (title.includes('转盘')) return { title: t('game.spin_wheel.title'), desc: t('game.spin_wheel.desc') };
-    if (title.includes('宝藏')) return { title: t('game.treasure.title'), desc: t('game.treasure.desc') };
-    if (title.includes('宫殿')) return { title: t('game.palace.title'), desc: t('game.palace.desc') };
-    if (title.includes('革命')) return { title: t('game.rescue.title'), desc: t('game.rescue.desc') };
-    return { title: game.title, desc: game.description };
-  }
-
-  const getGameVisual = (game: any) => {
-    const title = game.title || ''
-    const config = parseGameConfig(game)
-    if (config.collection === 'larry-originals') {
-      if (game.id.includes('bubble')) return { icon: '🫧', bg: 'from-sky-400/35 via-cyan-500/20 to-slate-950/50', ring: 'shadow-cyan-400/30' }
-      if (game.id.includes('race')) return { icon: '🏁', bg: 'from-orange-300/35 via-red-500/20 to-slate-950/50', ring: 'shadow-orange-400/30' }
-      if (game.id.includes('spin')) return { icon: '🎡', bg: 'from-fuchsia-300/35 via-violet-600/20 to-slate-950/50', ring: 'shadow-fuchsia-400/30' }
-      if (game.id.includes('treasure')) return { icon: '🗺️', bg: 'from-yellow-300/35 via-amber-600/20 to-slate-950/50', ring: 'shadow-amber-400/30' }
-      if (game.id.includes('duel')) return { icon: '⚔️', bg: 'from-red-300/35 via-rose-700/20 to-slate-950/50', ring: 'shadow-red-400/30' }
-      if (game.id.includes('rescue')) return { icon: '🧭', bg: 'from-emerald-300/35 via-lime-700/20 to-slate-950/50', ring: 'shadow-emerald-400/30' }
-    }
-
-    if (title.includes('泡泡')) return { icon: '🫧', bg: 'from-cyan-400/25 via-blue-500/15 to-slate-900/40', ring: 'shadow-cyan-500/20' }
-    if (title.includes('赛车')) return { icon: '🏎', bg: 'from-amber-400/25 via-orange-600/15 to-slate-900/40', ring: 'shadow-amber-500/20' }
-    if (title.includes('转盘')) return { icon: '🎡', bg: 'from-violet-400/25 via-indigo-600/15 to-slate-900/40', ring: 'shadow-violet-500/20' }
-    if (title.includes('宝藏')) return { icon: '💎', bg: 'from-yellow-300/25 via-amber-600/15 to-slate-900/40', ring: 'shadow-yellow-500/20' }
-    if (title.includes('宫殿')) return { icon: '⚔️', bg: 'from-rose-400/25 via-red-700/15 to-slate-900/40', ring: 'shadow-rose-500/20' }
-    if (title.includes('革命')) return { icon: '🧭', bg: 'from-lime-400/25 via-emerald-700/15 to-slate-900/40', ring: 'shadow-lime-500/20' }
-    if (game.gameType === 'multiplication') return { icon: '✖️', bg: 'from-blue-500/25 via-indigo-600/15 to-slate-900/40', ring: 'shadow-blue-500/20' }
-    if (game.gameType === 'addition') return { icon: '➕', bg: 'from-emerald-500/25 via-teal-600/15 to-slate-900/40', ring: 'shadow-emerald-500/20' }
-    if (game.gameType === 'geometry') return { icon: '📐', bg: 'from-purple-500/25 via-pink-600/15 to-slate-900/40', ring: 'shadow-purple-500/20' }
-    return { icon: '🎯', bg: 'from-orange-500/25 via-red-600/15 to-slate-900/40', ring: 'shadow-orange-500/20' }
+  const playTemplate = (id: TemplateId) => {
+    setSelectedTemplate(id)
+    window.setTimeout(() => {
+      document.getElementById('learning-game-showcase')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 40)
   }
 
   return (
@@ -111,95 +45,73 @@ export default function GamesPage() {
           </Link>
         </div>
 
-        <div className="mb-16 sm:mb-20">
-          <LearningGameShowcase />
+        <div id="learning-game-showcase" className="mb-16 scroll-mt-24 sm:mb-20">
+          <LearningGameShowcase selectedId={selectedTemplate} onActiveChange={setSelectedTemplate} />
         </div>
 
         <div className="mb-8 flex items-end justify-between gap-4 border-t border-white/10 pt-10">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-white/35">
-              {locale === 'zh' ? '现有游戏' : 'Current Games'}
+              {locale === 'zh' ? '原创互动模板' : 'Original Interactive Templates'}
             </p>
             <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-              {locale === 'zh' ? 'Larry Academy 游戏库' : 'Larry Academy Game Library'}
+              {locale === 'zh' ? '12 个 Larry Academy 可复用学习游戏' : '12 Reusable Larry Academy Learning Games'}
             </h2>
           </div>
         </div>
 
-        {/* Games Grid */}
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="text-blue-400 animate-pulse text-xl">{t('common.loading')}</div>
-          </div>
-        ) : games.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {games.map((game) => {
-              const translation = getGameTranslation(game);
-              const visual = getGameVisual(game);
-              return (
-                <div
-                  key={game.id}
-                  className="group relative rounded-[32px] bg-white/[0.02] border border-white/[0.08] overflow-hidden hover:bg-white/[0.04] hover:border-white/20 transition-all duration-500"
-                >
-                  {/* Game Icon / Thumbnail */}
-                  <div
-                    className={`aspect-video flex items-center justify-center relative overflow-hidden bg-gradient-to-br ${visual.bg}`}
-                  >
-                    <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:32px_32px]" />
-                    <div className={`relative rounded-[2rem] bg-white/10 p-7 text-white text-5xl shadow-2xl ${visual.ring} sm:text-7xl md:text-8xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-700`}>
-                      {visual.icon}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {showcaseGames.map((game) => {
+            const selected = game.id === selectedTemplate
+            return (
+              <button
+                key={game.id}
+                onClick={() => playTemplate(game.id)}
+                className={`group relative overflow-hidden rounded-[28px] border p-0 text-left transition-all duration-500 ${
+                  selected ? 'border-white/45 bg-white/[0.08] shadow-2xl shadow-white/10' : 'border-white/[0.08] bg-white/[0.025] hover:border-white/24 hover:bg-white/[0.05]'
+                }`}
+              >
+                <div className={`relative aspect-video bg-gradient-to-br ${game.wash} p-5`}>
+                  <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:30px_30px]" />
+                  <div className="relative flex h-full items-center justify-center">
+                    <div className="relative h-24 w-36">
+                      <div className="absolute left-2 top-9 h-8 w-16 rounded-full bg-white shadow-2xl transition group-hover:translate-x-3" />
+                      <div className="absolute right-2 top-4 flex size-20 items-center justify-center rounded-full text-2xl font-black text-black shadow-2xl transition group-hover:scale-110" style={{ backgroundColor: game.accent }}>
+                        {game.id === 'geometry' ? 'A' : game.id === 'fraction' ? '1/2' : game.id === 'circuit' ? 'V' : game.id === 'molecule' ? 'O' : game.id === 'snake' ? '×' : game.id === 'maze' ? 'F' : game.id === 'tetra' ? '+' : '50'}
+                      </div>
+                      <div className="absolute bottom-3 left-20 h-2 w-20 rounded-full" style={{ backgroundColor: game.accent }} />
                     </div>
-                    
-                    {parseGameConfig(game).collection === 'larry-originals' && (
-                      <div className="absolute top-6 right-6 px-4 py-1 rounded-full bg-white text-black text-[10px] font-black uppercase tracking-widest">
-                        {locale === 'zh' ? 'Larry 原创' : 'Larry Original'}
-                      </div>
-                    )}
-                    {game.featured && (
-                      <div className="absolute top-6 left-6 px-4 py-1 rounded-full bg-yellow-500 text-black text-[10px] font-black uppercase tracking-widest">
-                        {t('games.featured')}
-                      </div>
-                    )}
-                    {game.isAiGenerated && (
-                      <div className="absolute top-6 right-6 px-4 py-1 rounded-full bg-purple-600 text-white text-[10px] font-black uppercase tracking-widest">
-                        {t('games.ai_generated')}
-                      </div>
-                    )}
                   </div>
-
-                  {/* Content */}
-                  <div className="p-8">
-                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-purple-400 transition-colors">
-                      {translation.title}
-                    </h3>
-                    <p className="text-gray-500 font-light leading-relaxed mb-8 line-clamp-2">
-                      {translation.desc}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-col gap-1 text-xs font-medium text-gray-600 uppercase tracking-widest">
-                        <span>{game.playCount} {t('games.plays')}</span>
-                        <span>{game.viewCount || 0} {locale === 'zh' ? '访问' : 'views'}</span>
-                      </div>
-                      <Link
-                        href={`/games/${game.id}`}
-                        className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all active:scale-95"
-                      >
-                        {t('games.play')}
-                      </Link>
+                  <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
+                    {game.subject}
+                  </div>
+                  {selected && (
+                    <div className="absolute right-5 top-5 rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
+                      {locale === 'zh' ? '当前' : 'Active'}
                     </div>
+                  )}
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-xl font-black text-white transition group-hover:text-white">
+                    {locale === 'zh' ? game.titleZh : game.titleEn}
+                  </h3>
+                  <p className="mt-3 min-h-12 text-sm font-medium leading-6 text-white/52">
+                    {locale === 'zh' ? game.verbZh : game.verbEn}
+                  </p>
+                  <div className="mt-5 flex items-center justify-between">
+                    <span className="text-xs font-black uppercase tracking-[0.22em]" style={{ color: game.accent }}>
+                      {locale === 'zh' ? '玩中学' : 'Learn by playing'}
+                    </span>
+                    <span className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-black text-white">
+                      {locale === 'zh' ? '进入游戏' : 'Play'}
+                    </span>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="text-center py-16 sm:py-24 lg:py-32 px-4 bg-white/[0.02] rounded-2xl sm:rounded-[40px] border border-dashed border-white/10">
-            <div className="text-4xl sm:text-5xl mb-4 sm:mb-6 opacity-20">🎮</div>
-            <h3 className="text-2xl font-bold text-gray-400">{t('common.no_content')}</h3>
-            <p className="text-gray-600 mt-2">New challenges are being developed.</p>
-          </div>
-        )}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

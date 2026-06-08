@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
-type TemplateId =
+export type TemplateId =
   | 'starship'
   | 'geometry'
   | 'coaster'
@@ -19,6 +19,17 @@ type TemplateId =
 type DragKind = 'none' | 'ship' | 'geometry' | 'coaster' | 'chip' | 'blade' | 'atom' | 'aim' | 'paddle'
 
 type Template = {
+  id: TemplateId
+  titleZh: string
+  titleEn: string
+  subject: string
+  verbZh: string
+  verbEn: string
+  accent: string
+  wash: string
+}
+
+export type ShowcaseGameCard = {
   id: TemplateId
   titleZh: string
   titleEn: string
@@ -81,6 +92,8 @@ type Particle = {
   vy: number
   life: number
   color: string
+  text?: string
+  size?: number
 }
 
 type Shot = {
@@ -201,7 +214,7 @@ type PendingRecord = {
 const width = 920
 const height = 520
 
-const templates: Template[] = [
+export const showcaseGames: ShowcaseGameCard[] = [
   {
     id: 'starship',
     titleZh: '星际算力战舰',
@@ -294,11 +307,11 @@ const templates: Template[] = [
   },
   {
     id: 'creature',
-    titleZh: '算术精灵对战',
-    titleEn: 'Number Creature Duel',
+    titleZh: '能量对战训练场',
+    titleEn: 'Energy Duel Trainer',
     subject: 'Battle',
-    verbZh: '移动精灵吃能量，凑够伤害发动攻击',
-    verbEn: 'Move your creature to charge the right attack',
+    verbZh: '移动能量核心，凑够伤害发动攻击',
+    verbEn: 'Move the energy core to charge the right attack',
     accent: '#f472b6',
     wash: 'from-pink-400/25 via-purple-500/10 to-[#170617]',
   },
@@ -323,6 +336,119 @@ const templates: Template[] = [
     wash: 'from-purple-400/25 via-indigo-500/10 to-[#10071c]',
   },
 ]
+
+const templates: Template[] = showcaseGames
+
+const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: string[]; stepsEn: string[]; learnZh: string; learnEn: string; visual: string }> = {
+  starship: {
+    goalZh: '让飞船撞上正确结果的能量球。',
+    goalEn: 'Fly into the pod with the correct result.',
+    stepsZh: ['看左上角算式', '拖动飞船或按 WASD', '撞数字，不看颜色'],
+    stepsEn: ['Read the expression', 'Drag the ship or press WASD', 'Hit the number, not the color'],
+    learnZh: '把乘法和减法合成一个动作判断。',
+    learnEn: 'Combines multiplication and subtraction into one action.',
+    visual: 'ship',
+  },
+  geometry: {
+    goalZh: '拖角点，搭出目标面积的矩形。',
+    goalEn: 'Drag the corner to build the target area.',
+    stepsZh: ['看目标面积', '拖右上角圆点', '让 宽×高 命中目标'],
+    stepsEn: ['Read the target area', 'Drag the top-right handle', 'Match width × height'],
+    learnZh: '面积不是背公式，是数格子形成的乘法。',
+    learnEn: 'Area becomes visible as rows times columns.',
+    visual: 'grid',
+  },
+  coaster: {
+    goalZh: '拖轨道控制点，让小车穿过目标光门。',
+    goalEn: 'Drag the control point so the cart crosses the gate.',
+    stepsZh: ['看目标高度', '拖动轨道控制点', '让曲线穿过光门'],
+    stepsEn: ['Read the gate height', 'Drag the curve handle', 'Guide the track through the gate'],
+    learnZh: '函数图像是可以被操作和预测的轨迹。',
+    learnEn: 'A function graph becomes a controllable path.',
+    visual: 'curve',
+  },
+  circuit: {
+    goalZh: '把正确电阻拖进插槽，点亮电路。',
+    goalEn: 'Drag the right resistor into the socket.',
+    stepsZh: ['看电流和目标电压', '计算 V=I×R', '拖正确电阻'],
+    stepsEn: ['Read current and voltage', 'Use V=I×R', 'Drop the right resistor'],
+    learnZh: '欧姆定律从公式变成电路反馈。',
+    learnEn: 'Ohm law becomes a live circuit reaction.',
+    visual: 'circuit',
+  },
+  fraction: {
+    goalZh: '旋转刀片，切出目标分数对应的角度。',
+    goalEn: 'Rotate the blade to the fraction angle.',
+    stepsZh: ['看目标分数', '拖动刀片方向', '点执行切割'],
+    stepsEn: ['Read the fraction', 'Drag the blade angle', 'Press Slice'],
+    learnZh: '分数是整体的一部分，也能映射成圆心角。',
+    learnEn: 'Fractions map to parts of a whole circle.',
+    visual: 'fraction',
+  },
+  molecule: {
+    goalZh: '拖原子靠近，形成指定数量的稳定键。',
+    goalEn: 'Drag atoms close to make stable bonds.',
+    stepsZh: ['看目标成键数', '拖动原子靠近', '稳定 0.5 秒过关'],
+    stepsEn: ['Read the bond target', 'Drag atoms together', 'Hold stable for half a second'],
+    learnZh: '结构关系通过距离和连接被看见。',
+    learnEn: 'Structure appears through distance and bonding.',
+    visual: 'molecule',
+  },
+  blaster: {
+    goalZh: '移动战机，击落正确答案。',
+    goalEn: 'Move the blaster and shoot the correct answer.',
+    stepsZh: ['看算式', '拖动或 WASD 移动', '空格/点击发射'],
+    stepsEn: ['Read the expression', 'Drag or use WASD', 'Click or press Space'],
+    learnZh: '复杂算式需要先乘除，再加减。',
+    learnEn: 'Mixed operations need order of operations.',
+    visual: 'blaster',
+  },
+  snake: {
+    goalZh: '只吃目标数的倍数。',
+    goalEn: 'Eat only multiples of the target number.',
+    stepsZh: ['看目标因子', '方向键控制路线', '吃倍数，避开干扰'],
+    stepsEn: ['Read the factor', 'Steer with arrows', 'Eat multiples and avoid decoys'],
+    learnZh: '倍数判断变成路径规划。',
+    learnEn: 'Multiple recognition becomes route planning.',
+    visual: 'snake',
+  },
+  tetra: {
+    goalZh: '移动下落数字，让某一列和刚好等于目标。',
+    goalEn: 'Drop numbers so one lane sum equals the target.',
+    stepsZh: ['看列目标', '左右移动方块', '让列和刚好命中'],
+    stepsEn: ['Read the lane target', 'Move the falling block', 'Hit the exact lane sum'],
+    learnZh: '加法组合和超额风险一起训练。',
+    learnEn: 'Addition strategy trains exact sums and overshoot control.',
+    visual: 'tetra',
+  },
+  creature: {
+    goalZh: '收集能量，刚好凑出攻击值。',
+    goalEn: 'Collect energy to match the attack value exactly.',
+    stepsZh: ['看目标伤害', '移动能量核心', '凑够就发动攻击'],
+    stepsEn: ['Read target damage', 'Move the energy core', 'Attack when the sum matches'],
+    learnZh: '加法分解、估算和停止时机合在一起。',
+    learnEn: 'Number composition, estimation, and timing work together.',
+    visual: 'duel',
+  },
+  maze: {
+    goalZh: '在迷宫里收集目标数的因数。',
+    goalEn: 'Collect factors of the target inside the maze.',
+    stepsZh: ['看目标数', '方向键走格子', '收集 3 个因数'],
+    stepsEn: ['Read the target number', 'Move through the grid', 'Collect three factors'],
+    learnZh: '因数是能整除目标数的数字。',
+    learnEn: 'Factors divide the target with no remainder.',
+    visual: 'maze',
+  },
+  pinball: {
+    goalZh: '控制挡板，让弹球击中正确砖块。',
+    goalEn: 'Move the paddle so the ball hits the answer brick.',
+    stepsZh: ['看算式', '左右移动挡板', '反弹命中答案砖'],
+    stepsEn: ['Read the expression', 'Move the paddle', 'Bounce into the answer brick'],
+    learnZh: '算式判断和物理反弹同时发生。',
+    learnEn: 'Equation judgment connects with bounce timing.',
+    visual: 'pinball',
+  },
+}
 
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min)
@@ -706,9 +832,9 @@ function makeHud(sim: Sim): Hud {
 }
 
 function addBurst(sim: Sim, x: number, y: number, color: string) {
-  for (let i = 0; i < 18; i += 1) {
+  for (let i = 0; i < 26; i += 1) {
     const angle = rand(0, Math.PI * 2)
-    const speed = rand(70, 220)
+    const speed = rand(90, 260)
     sim.particles.push({
       x,
       y,
@@ -720,7 +846,38 @@ function addBurst(sim: Sim, x: number, y: number, color: string) {
   }
 }
 
+function knowledgeText(sim: Sim) {
+  const o = sim.objective
+  const expression = o.expression?.replaceAll('x', '×')
+  if (sim.id === 'geometry') return `${sim.geometry.w}×${sim.geometry.h}=${sim.geometry.w * sim.geometry.h}`
+  if (sim.id === 'coaster') return `y≈${o.target}: graph hits gate`
+  if (sim.id === 'circuit') return `${o.current}A×${sim.circuit.socketR}Ω=${o.target}V`
+  if (sim.id === 'fraction') return `${o.num}/${o.den} of a circle`
+  if (sim.id === 'molecule') return `${getBondCount(sim.molecule.atoms)} stable bonds`
+  if (sim.id === 'snake') return `multiple rule: n÷${o.target} has no remainder`
+  if (sim.id === 'tetra') return `lane sum=${o.target}`
+  if (sim.id === 'creature') return `${sim.arcade.energy}=${o.target} attack`
+  if (sim.id === 'maze') return `factors divide ${o.target}`
+  return expression ? `${expression}=${o.target}` : `${o.target}`
+}
+
+function addKnowledgeBurst(sim: Sim, color: string) {
+  const text = knowledgeText(sim)
+  sim.particles.push({
+    x: clamp(sim.mouse.x - 95, 80, width - 300),
+    y: clamp(sim.mouse.y - 34, 96, height - 90),
+    vx: 0,
+    vy: -46,
+    life: 1.45,
+    color,
+    text,
+    size: text.length > 26 ? 24 : 30,
+  })
+}
+
 function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnType<typeof useArcadeAudio>) {
+  addBurst(sim, sim.mouse.x, sim.mouse.y, color)
+  addKnowledgeBurst(sim, color)
   sim.score += 120 + sim.streak * 25
   sim.streak += 1
   sim.round += 1
@@ -746,7 +903,6 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
   sim.molecule.atoms = makeAtoms(sim.molecule.requiredBonds)
   sim.molecule.stableTimer = 0
   sim.arcade = makeArcade(sim.id, sim.objective, sim.round)
-  addBurst(sim, sim.mouse.x, sim.mouse.y, color)
   audio.success()
 }
 
@@ -1044,7 +1200,7 @@ function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio
       ...particle,
       x: particle.x + particle.vx * dt,
       y: particle.y + particle.vy * dt,
-      vy: particle.vy + 180 * dt,
+      vy: particle.text ? particle.vy - 8 * dt : particle.vy + 180 * dt,
       life: particle.life - dt,
     }))
     .filter((particle) => particle.life > 0)
@@ -1718,9 +1874,25 @@ function drawPinball(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
 function drawParticles(ctx: CanvasRenderingContext2D, sim: Sim) {
   for (const p of sim.particles) {
     ctx.globalAlpha = clamp(p.life, 0, 1)
+    if (p.text) {
+      ctx.font = `900 ${p.size ?? 28}px system-ui, -apple-system, sans-serif`
+      const metrics = ctx.measureText(p.text)
+      ctx.fillStyle = 'rgba(0,0,0,.68)'
+      ctx.strokeStyle = p.color
+      ctx.lineWidth = 2
+      roundRect(ctx, p.x - 16, p.y - 38, metrics.width + 32, 54, 18)
+      ctx.fill()
+      ctx.stroke()
+      ctx.shadowColor = p.color
+      ctx.shadowBlur = 26
+      ctx.fillStyle = '#ffffff'
+      ctx.fillText(p.text, p.x, p.y)
+      ctx.shadowBlur = 0
+      continue
+    }
     ctx.fillStyle = p.color
     ctx.beginPath()
-    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2)
+    ctx.arc(p.x, p.y, 6, 0, Math.PI * 2)
     ctx.fill()
   }
   ctx.globalAlpha = 1
@@ -1752,15 +1924,86 @@ function getPointer(canvas: HTMLCanvasElement, event: PointerEvent | React.Point
   }
 }
 
-export default function LearningGameShowcase() {
+function HowToPlayGraphic({ visual, accent }: { visual: string; accent: string }) {
+  return (
+    <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10 bg-black/35">
+      <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:28px_28px]" />
+      {visual === 'grid' && (
+        <div className="absolute left-12 top-8 grid grid-cols-5 gap-1">
+          {Array.from({ length: 20 }).map((_, index) => (
+            <span key={index} className="block size-4 rounded-sm" style={{ backgroundColor: accent }} />
+          ))}
+        </div>
+      )}
+      {visual === 'curve' && (
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 144">
+          <path d="M28 110 C92 20 176 132 292 40" fill="none" stroke={accent} strokeWidth="8" strokeLinecap="round" />
+          <circle cx="236" cy="64" r="20" fill="none" stroke="#fff" strokeWidth="5" />
+        </svg>
+      )}
+      {visual === 'fraction' && (
+        <div className="absolute left-1/2 top-1/2 size-24 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-white/70" style={{ background: `conic-gradient(${accent} 0 90deg, rgba(255,255,255,.08) 90deg 360deg)` }} />
+      )}
+      {visual === 'circuit' && (
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 144">
+          <path d="M34 72 H112 M204 72 H286 M286 72 V118 H34 V72" fill="none" stroke={accent} strokeWidth="7" strokeLinecap="round" />
+          <rect x="116" y="48" width="88" height="48" rx="14" fill="rgba(255,255,255,.14)" stroke="#fff" />
+          <text x="160" y="80" textAnchor="middle" fill="#fff" fontSize="20" fontWeight="900">R</text>
+        </svg>
+      )}
+      {visual === 'molecule' && (
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 144">
+          <line x1="160" y1="72" x2="88" y2="42" stroke={accent} strokeWidth="7" />
+          <line x1="160" y1="72" x2="238" y2="44" stroke={accent} strokeWidth="7" />
+          <line x1="160" y1="72" x2="194" y2="118" stroke={accent} strokeWidth="7" />
+          {[ [160,72,'O'], [88,42,'H'], [238,44,'H'], [194,118,'C'] ].map(([x, y, label]) => (
+            <g key={`${x}-${y}`}>
+              <circle cx={x} cy={y} r="24" fill={accent} />
+              <text x={x} y={Number(y) + 7} textAnchor="middle" fill="#04111d" fontSize="18" fontWeight="900">{label}</text>
+            </g>
+          ))}
+        </svg>
+      )}
+      {['ship', 'blaster', 'snake', 'tetra', 'duel', 'maze', 'pinball'].includes(visual) && (
+        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 144">
+          <circle cx="238" cy="48" r="28" fill={accent} />
+          <text x="238" y="56" textAnchor="middle" fill="#07111f" fontSize="24" fontWeight="900">50</text>
+          <path d="M52 104 L102 72 L52 40 L66 72 Z" fill="#fff" opacity=".92" />
+          <path d="M112 72 H194" stroke={accent} strokeWidth="8" strokeLinecap="round" strokeDasharray="16 10" />
+          <rect x="42" y="106" width="236" height="12" rx="6" fill="rgba(255,255,255,.16)" />
+        </svg>
+      )}
+    </div>
+  )
+}
+
+export default function LearningGameShowcase({
+  selectedId,
+  onActiveChange,
+}: {
+  selectedId?: TemplateId
+  onActiveChange?: (id: TemplateId) => void
+} = {}) {
   const { locale } = useLanguage()
   const audio = useArcadeAudio()
-  const [activeId, setActiveId] = useState<TemplateId>('starship')
+  const [activeId, setActiveId] = useState<TemplateId>(selectedId ?? 'starship')
   const activeTemplate = useMemo(() => templates.find((template) => template.id === activeId) ?? templates[0], [activeId])
-  const simRef = useRef<Sim>(makeSim('starship'))
+  const simRef = useRef<Sim>(makeSim(selectedId ?? 'starship'))
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number | null>(null)
+  const seenHowToPlayRef = useRef(new Set<TemplateId>())
+  const [showHowToPlay, setShowHowToPlay] = useState(true)
   const [hud, setHud] = useState<Hud>(makeHud(simRef.current))
+  const how = howToPlay[activeId]
+
+  const chooseTemplate = useCallback((id: TemplateId) => {
+    setActiveId(id)
+    onActiveChange?.(id)
+    if (!seenHowToPlayRef.current.has(id)) {
+      setShowHowToPlay(true)
+    }
+    audio.move()
+  }, [audio, onActiveChange])
 
   const reset = useCallback((id = activeId) => {
     simRef.current = makeSim(id)
@@ -1771,6 +2014,17 @@ export default function LearningGameShowcase() {
   useEffect(() => {
     reset(activeId)
   }, [activeId, reset])
+
+  useEffect(() => {
+    if (selectedId && selectedId !== activeId) {
+      chooseTemplate(selectedId)
+    }
+  }, [activeId, chooseTemplate, selectedId])
+
+  const closeHowToPlay = useCallback(() => {
+    seenHowToPlayRef.current.add(activeId)
+    setShowHowToPlay(false)
+  }, [activeId])
 
   const saveShowcaseRecord = useCallback(async (record: PendingRecord) => {
     try {
@@ -2071,10 +2325,7 @@ export default function LearningGameShowcase() {
               return (
                 <button
                   key={template.id}
-                  onClick={() => {
-                    setActiveId(template.id)
-                    audio.move()
-                  }}
+                  onClick={() => chooseTemplate(template.id)}
                   className={`min-h-32 rounded-2xl border p-4 text-left transition ${
                     selected ? 'border-white/45 bg-white text-black shadow-2xl shadow-white/10' : 'border-white/10 bg-white/[0.035] text-white hover:border-white/25 hover:bg-white/[0.07]'
                   }`}
@@ -2094,7 +2345,7 @@ export default function LearningGameShowcase() {
           </div>
         </div>
 
-        <div className={`rounded-2xl border border-white/10 bg-gradient-to-br ${activeTemplate.wash} p-4 shadow-2xl shadow-black/25`}>
+        <div className={`relative rounded-2xl border border-white/10 bg-gradient-to-br ${activeTemplate.wash} p-4 shadow-2xl shadow-black/25`}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">{activeTemplate.subject}</p>
@@ -2117,6 +2368,51 @@ export default function LearningGameShowcase() {
             onPointerCancel={handlePointerUp}
             className="block aspect-[920/520] w-full touch-none rounded-xl border border-white/10 bg-black shadow-inner"
           />
+          {showHowToPlay && (
+            <div className="absolute inset-4 z-20 flex items-center justify-center rounded-xl bg-black/72 p-4 backdrop-blur-md">
+              <div className="w-full max-w-xl rounded-3xl border border-white/15 bg-[#07111f]/95 p-5 shadow-2xl shadow-black/60">
+                <div className="mb-4 flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.24em]" style={{ color: activeTemplate.accent }}>
+                      {locale === 'zh' ? '怎么玩' : 'How to Play'}
+                    </p>
+                    <h4 className="mt-1 text-2xl font-black text-white">
+                      {locale === 'zh' ? activeTemplate.titleZh : activeTemplate.titleEn}
+                    </h4>
+                  </div>
+                  <button
+                    onClick={closeHowToPlay}
+                    className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-black text-white transition hover:bg-white/15"
+                  >
+                    {locale === 'zh' ? '开始' : 'Start'}
+                  </button>
+                </div>
+
+                <HowToPlayGraphic visual={how.visual} accent={activeTemplate.accent} />
+
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+                  <div className="text-lg font-black text-white">
+                    {locale === 'zh' ? how.goalZh : how.goalEn}
+                  </div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    {(locale === 'zh' ? how.stepsZh : how.stepsEn).map((step, index) => (
+                      <div key={step} className="rounded-2xl border border-white/10 bg-black/25 p-3">
+                        <div className="mb-2 flex size-7 items-center justify-center rounded-full text-sm font-black text-black" style={{ backgroundColor: activeTemplate.accent }}>
+                          {index + 1}
+                        </div>
+                        <div className="text-sm font-bold leading-5 text-white/80">{step}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm font-bold leading-6 text-white/72">
+                  <span className="mr-2 text-white">{locale === 'zh' ? '学到什么：' : 'Learning:'}</span>
+                  {locale === 'zh' ? how.learnZh : how.learnEn}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
