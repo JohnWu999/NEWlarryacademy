@@ -3,8 +3,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
-type TemplateId = 'starship' | 'geometry' | 'coaster' | 'circuit' | 'fraction' | 'molecule'
-type DragKind = 'none' | 'ship' | 'geometry' | 'coaster' | 'chip' | 'blade' | 'atom'
+type TemplateId =
+  | 'starship'
+  | 'geometry'
+  | 'coaster'
+  | 'circuit'
+  | 'fraction'
+  | 'molecule'
+  | 'blaster'
+  | 'snake'
+  | 'tetra'
+  | 'creature'
+  | 'maze'
+  | 'pinball'
+type DragKind = 'none' | 'ship' | 'geometry' | 'coaster' | 'chip' | 'blade' | 'atom' | 'aim' | 'paddle'
 
 type Template = {
   id: TemplateId
@@ -21,8 +33,10 @@ type Objective = {
   promptZh: string
   promptEn: string
   target: number
+  expression?: string
   a?: number
   b?: number
+  c?: number
   den?: number
   num?: number
   current?: number
@@ -36,6 +50,8 @@ type Pod = {
   value: number
   good: boolean
   radius: number
+  color?: string
+  label?: string
 }
 
 type Chip = {
@@ -67,6 +83,74 @@ type Particle = {
   color: string
 }
 
+type Shot = {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  life: number
+}
+
+type Cell = {
+  x: number
+  y: number
+}
+
+type FallingBlock = {
+  x: number
+  y: number
+  value: number
+  color: string
+}
+
+type MazeItem = {
+  x: number
+  y: number
+  value: number
+  good: boolean
+  color: string
+}
+
+type Brick = {
+  x: number
+  y: number
+  value: number
+  good: boolean
+  alive: boolean
+  color: string
+}
+
+type Arcade = {
+  aimX: number
+  aimY: number
+  playerX: number
+  playerY: number
+  cooldown: number
+  shots: Shot[]
+  targets: Pod[]
+  snake: Cell[]
+  snakeDir: Cell
+  nextDir: Cell
+  food: Pod[]
+  snakeTimer: number
+  falling: FallingBlock | null
+  lanes: number[]
+  dropTimer: number
+  creatureX: number
+  creatureY: number
+  enemyHp: number
+  energy: number
+  mazePlayer: Cell
+  mazeItems: MazeItem[]
+  mazePulse: number
+  ballX: number
+  ballY: number
+  ballVx: number
+  ballVy: number
+  paddleX: number
+  bricks: Brick[]
+}
+
 type Sim = {
   id: TemplateId
   round: number
@@ -90,6 +174,7 @@ type Sim = {
   circuit: { chips: Chip[]; socketR: number | null; pulse: number }
   fraction: { angle: number; sliced: number; spin: number }
   molecule: { atoms: Atom[]; requiredBonds: number; stableTimer: number }
+  arcade: Arcade
 }
 
 type Hud = {
@@ -166,6 +251,66 @@ const templates: Template[] = [
     accent: '#2dd4bf',
     wash: 'from-teal-400/25 via-blue-500/10 to-[#061217]',
   },
+  {
+    id: 'blaster',
+    titleZh: '算力弹幕战机',
+    titleEn: 'Compute Blaster',
+    subject: 'Arcade',
+    verbZh: '移动战机，瞄准并击落正确答案',
+    verbEn: 'Move, aim, and shoot the correct answer',
+    accent: '#f97316',
+    wash: 'from-orange-500/25 via-red-500/10 to-[#190b06]',
+  },
+  {
+    id: 'snake',
+    titleZh: '倍数贪吃蛇',
+    titleEn: 'Multiple Snake',
+    subject: 'Classic',
+    verbZh: '操控蛇吃掉符合规则的数字',
+    verbEn: 'Steer the snake into matching numbers',
+    accent: '#84cc16',
+    wash: 'from-lime-400/25 via-emerald-500/10 to-[#071306]',
+  },
+  {
+    id: 'tetra',
+    titleZh: '数值俄罗斯方块',
+    titleEn: 'Tetra Sum',
+    subject: 'Classic',
+    verbZh: '移动下落方块，让列和达到目标',
+    verbEn: 'Drop blocks so a lane sum hits the target',
+    accent: '#60a5fa',
+    wash: 'from-blue-400/25 via-cyan-500/10 to-[#06111f]',
+  },
+  {
+    id: 'creature',
+    titleZh: '算术精灵对战',
+    titleEn: 'Number Creature Duel',
+    subject: 'Battle',
+    verbZh: '移动精灵吃能量，凑够伤害发动攻击',
+    verbEn: 'Move your creature to charge the right attack',
+    accent: '#f472b6',
+    wash: 'from-pink-400/25 via-purple-500/10 to-[#170617]',
+  },
+  {
+    id: 'maze',
+    titleZh: '因数迷宫',
+    titleEn: 'Factor Maze',
+    subject: 'Maze',
+    verbZh: '在迷宫里收集正确因数并避开诱饵',
+    verbEn: 'Collect factors and dodge decoys in a maze',
+    accent: '#facc15',
+    wash: 'from-yellow-300/25 via-orange-500/10 to-[#171205]',
+  },
+  {
+    id: 'pinball',
+    titleZh: '算术弹球',
+    titleEn: 'Equation Pinball',
+    subject: 'Physics',
+    verbZh: '移动挡板，让弹球击中正确砖块',
+    verbEn: 'Move the paddle and bounce into the answer',
+    accent: '#c084fc',
+    wash: 'from-purple-400/25 via-indigo-500/10 to-[#10071c]',
+  },
 ]
 
 function rand(min: number, max: number) {
@@ -180,16 +325,27 @@ function dist(ax: number, ay: number, bx: number, by: number) {
   return Math.hypot(ax - bx, ay - by)
 }
 
+const candyColors = ['#38bdf8', '#f97316', '#84cc16', '#f472b6', '#facc15', '#c084fc', '#2dd4bf', '#fb7185']
+
+function pickColor(seed = 0) {
+  return candyColors[Math.abs(seed) % candyColors.length]
+}
+
 function makeObjective(id: TemplateId, level: number, round: number): Objective {
   if (id === 'starship') {
-    const a = 3 + ((round + level) % 8)
-    const b = 2 + ((round * 2 + level) % 9)
+    const a = 6 + ((round + level * 2) % 9)
+    const b = 4 + ((round * 3 + level) % 8)
+    const c = 3 + ((round * 5 + level) % 11)
+    const target = a * b - c
+    const expression = `${a} x ${b} - ${c}`
     return {
-      promptZh: `拦截 ${a} x ${b} 的能量球`,
-      promptEn: `Intercept the pod for ${a} x ${b}`,
-      target: a * b,
+      promptZh: `只看屏幕：拦截 ${expression} 的结果`,
+      promptEn: `Screen only: intercept ${expression}`,
+      target,
+      expression,
       a,
       b,
+      c,
     }
   }
 
@@ -244,10 +400,83 @@ function makeObjective(id: TemplateId, level: number, round: number): Objective 
   }
 
   const requiredBonds = [2, 3, 4, 5][round % 4]
+  if (id === 'molecule') {
+    return {
+      promptZh: `拖拽原子，形成 ${requiredBonds} 条稳定键`,
+      promptEn: `Drag atoms to create ${requiredBonds} stable bonds`,
+      target: requiredBonds,
+    }
+  }
+
+  if (id === 'blaster') {
+    const a = 7 + ((round * 2 + level) % 9)
+    const b = 5 + ((round + level * 3) % 8)
+    const c = 4 + ((round * 4 + level) % 10)
+    const target = a * b + c
+    const expression = `${a} x ${b} + ${c}`
+    return {
+      promptZh: `击落 ${expression} 的陨石`,
+      promptEn: `Blast the asteroid for ${expression}`,
+      target,
+      expression,
+      a,
+      b,
+      c,
+    }
+  }
+
+  if (id === 'snake') {
+    const factor = [6, 7, 8, 9, 11, 12][round % 6]
+    return {
+      promptZh: `只吃 ${factor} 的倍数`,
+      promptEn: `Eat multiples of ${factor}`,
+      target: factor,
+      expression: `x % ${factor} = 0`,
+    }
+  }
+
+  if (id === 'tetra') {
+    const target = [18, 21, 24, 27, 30, 33, 36, 40][round % 8]
+    return {
+      promptZh: `让任意列的和正好等于 ${target}`,
+      promptEn: `Make any lane sum exactly ${target}`,
+      target,
+      expression: `lane = ${target}`,
+    }
+  }
+
+  if (id === 'creature') {
+    const target = [24, 28, 32, 36, 42, 48][round % 6]
+    return {
+      promptZh: `收集能量，凑出 ${target} 点攻击`,
+      promptEn: `Collect energy for a ${target} damage attack`,
+      target,
+      expression: `attack ${target}`,
+    }
+  }
+
+  if (id === 'maze') {
+    const target = [24, 30, 36, 42, 48, 54, 60, 72][round % 8]
+    return {
+      promptZh: `收集 ${target} 的因数`,
+      promptEn: `Collect factors of ${target}`,
+      target,
+      expression: `factor of ${target}`,
+    }
+  }
+
+  const a = 8 + ((round + level) % 8)
+  const b = 5 + ((round * 2 + level) % 7)
+  const c = 2 + (round % 6)
+  const target = a * b - c
   return {
-    promptZh: `拖拽原子，形成 ${requiredBonds} 条稳定键`,
-    promptEn: `Drag atoms to create ${requiredBonds} stable bonds`,
-    target: requiredBonds,
+    promptZh: `弹球击中 ${a} x ${b} - ${c}`,
+    promptEn: `Bounce into ${a} x ${b} - ${c}`,
+    target,
+    expression: `${a} x ${b} - ${c}`,
+    a,
+    b,
+    c,
   }
 }
 
@@ -276,6 +505,114 @@ function makeAtoms(requiredBonds: number): Atom[] {
   return atoms.slice(0, Math.min(5, requiredBonds + 2))
 }
 
+function makeTargets(objective: Objective, count: number, fromTop = false): Pod[] {
+  const target = objective.target
+  const offsets = [0, 3, -4, 7, -9, 11, -13, 16, -18, 21]
+  return Array.from({ length: count }, (_, index) => {
+    const value = Math.max(1, target + offsets[index % offsets.length] + (index > 5 ? index : 0))
+    return {
+      x: fromTop ? rand(90, width - 90) : width + index * 96,
+      y: fromTop ? -60 - index * 72 : rand(90, height - 120),
+      vx: fromTop ? rand(-20, 20) : -rand(115, 185),
+      vy: fromTop ? rand(80, 150) : rand(-22, 22),
+      value,
+      good: value === target,
+      radius: fromTop ? 28 : 30,
+      color: pickColor(index + value),
+    }
+  })
+}
+
+function makeFood(objective: Objective): Pod[] {
+  const factor = objective.target
+  const values = [factor * 2, factor * 3, factor + 1, factor * 4, factor * 5 - 1, factor * 6]
+  return values.map((value, index) => ({
+    x: 120 + (index % 3) * 250,
+    y: 145 + Math.floor(index / 3) * 150,
+    vx: 0,
+    vy: 0,
+    value,
+    good: value % factor === 0,
+    radius: 24,
+    color: pickColor(index + value),
+  }))
+}
+
+function makeFallingBlock(round: number): FallingBlock {
+  const value = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12][round % 10]
+  return {
+    x: 2,
+    y: 0,
+    value,
+    color: pickColor(value + round),
+  }
+}
+
+function makeMazeItems(objective: Objective): MazeItem[] {
+  const target = objective.target
+  const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 18]
+  return values.map((value, index) => ({
+    x: 1 + (index % 6),
+    y: 1 + Math.floor(index / 6) * 3,
+    value,
+    good: target % value === 0,
+    color: pickColor(value + index),
+  }))
+}
+
+function makeBricks(objective: Objective): Brick[] {
+  const target = objective.target
+  const offsets = [0, 4, -5, 8, -11, 13, -17, 20, 23, -25, 29, -31]
+  return offsets.map((offset, index) => {
+    const value = Math.max(1, target + offset)
+    return {
+      x: 110 + (index % 6) * 128,
+      y: 96 + Math.floor(index / 6) * 68,
+      value,
+      good: value === target,
+      alive: true,
+      color: pickColor(index + value),
+    }
+  })
+}
+
+function makeArcade(id: TemplateId, objective: Objective, round: number): Arcade {
+  return {
+    aimX: width / 2,
+    aimY: 120,
+    playerX: width / 2,
+    playerY: height - 72,
+    cooldown: 0,
+    shots: [],
+    targets: id === 'blaster' || id === 'creature' ? makeTargets(objective, 7, true) : [],
+    snake: [
+      { x: 5, y: 4 },
+      { x: 4, y: 4 },
+      { x: 3, y: 4 },
+    ],
+    snakeDir: { x: 1, y: 0 },
+    nextDir: { x: 1, y: 0 },
+    food: id === 'snake' ? makeFood(objective) : [],
+    snakeTimer: 0,
+    falling: id === 'tetra' ? makeFallingBlock(round) : null,
+    lanes: [0, 0, 0, 0, 0, 0],
+    dropTimer: 0,
+    creatureX: 155,
+    creatureY: 330,
+    enemyHp: 100,
+    energy: 0,
+    mazePlayer: { x: 0, y: 0 },
+    mazeItems: id === 'maze' ? makeMazeItems(objective) : [],
+    mazePulse: 0,
+    ballX: width / 2,
+    ballY: 330,
+    ballVx: 180,
+    ballVy: -210,
+    paddleX: width / 2,
+    bricks: id === 'pinball' ? makeBricks(objective) : [],
+  }
+}
+
 function makeSim(id: TemplateId, level = 1): Sim {
   const objective = makeObjective(id, level, 0)
   return {
@@ -301,6 +638,7 @@ function makeSim(id: TemplateId, level = 1): Sim {
     circuit: { chips: makeChips(objective), socketR: null, pulse: 0 },
     fraction: { angle: Math.PI / 2, sliced: 0, spin: 0 },
     molecule: { atoms: makeAtoms(objective.target), requiredBonds: objective.target, stableTimer: 0 },
+    arcade: makeArcade(id, objective, 0),
   }
 }
 
@@ -385,6 +723,7 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
   sim.molecule.requiredBonds = sim.objective.target
   sim.molecule.atoms = makeAtoms(sim.molecule.requiredBonds)
   sim.molecule.stableTimer = 0
+  sim.arcade = makeArcade(sim.id, sim.objective, sim.round)
   addBurst(sim, sim.mouse.x, sim.mouse.y, color)
   audio.success()
 }
@@ -398,18 +737,18 @@ function miss(sim: Sim, zh: string, en: string, audio: ReturnType<typeof useArca
 }
 
 function spawnPods(sim: Sim) {
-  const a = sim.objective.a ?? 4
   const target = sim.objective.target
-  const values = [target, target + a, Math.max(1, target - a), target + sim.level + 3]
+  const values = [target, target + 3, Math.max(1, target - 5), target + 8, Math.max(1, target - 11), target + 13]
   const value = values[Math.floor(Math.random() * values.length)]
   sim.pods.push({
     x: width + 40,
     y: rand(86, height - 86),
-    vx: -rand(130, 190) - sim.level * 8,
-    vy: rand(-18, 18),
+    vx: -rand(155, 235) - sim.level * 9,
+    vy: rand(-34, 34),
     value,
     good: value === target,
     radius: 30,
+    color: pickColor(value + sim.pods.length),
   })
 }
 
@@ -432,6 +771,241 @@ function getBondCount(atoms: Atom[]) {
     }
   }
   return bonds
+}
+
+function shoot(sim: Sim) {
+  const dx = sim.arcade.aimX - sim.arcade.playerX
+  const dy = sim.arcade.aimY - sim.arcade.playerY
+  const len = Math.max(1, Math.hypot(dx, dy))
+  sim.arcade.shots.push({
+    x: sim.arcade.playerX,
+    y: sim.arcade.playerY - 18,
+    vx: (dx / len) * 520,
+    vy: (dy / len) * 520,
+    life: 1.5,
+  })
+}
+
+function updateBlaster(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const speed = 340
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) arcade.playerX -= speed * dt
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) arcade.playerX += speed * dt
+  if (sim.keys.has('ArrowUp') || sim.keys.has('w')) arcade.playerY -= speed * dt
+  if (sim.keys.has('ArrowDown') || sim.keys.has('s')) arcade.playerY += speed * dt
+  arcade.playerX = clamp(arcade.playerX, 58, width - 58)
+  arcade.playerY = clamp(arcade.playerY, 180, height - 44)
+  arcade.cooldown -= dt
+  if ((sim.keys.has(' ') || sim.mouse.down) && arcade.cooldown <= 0) {
+    shoot(sim)
+    arcade.cooldown = 0.18
+    audio.move()
+  }
+  arcade.shots = arcade.shots
+    .map((shot) => ({ ...shot, x: shot.x + shot.vx * dt, y: shot.y + shot.vy * dt, life: shot.life - dt }))
+    .filter((shot) => shot.life > 0 && shot.x > -40 && shot.x < width + 40 && shot.y > -60 && shot.y < height + 60)
+
+  if (arcade.targets.length < 8) {
+    arcade.targets.push(...makeTargets(sim.objective, 2, true))
+  }
+  for (const target of arcade.targets) {
+    target.x += target.vx * dt
+    target.y += target.vy * dt
+    if (target.y > height + 70) {
+      target.y = -70
+      target.x = rand(90, width - 90)
+      target.value = Math.max(1, sim.objective.target + [0, 5, -7, 9, -12][Math.floor(rand(0, 5))])
+      target.good = target.value === sim.objective.target
+      target.color = pickColor(target.value)
+    }
+  }
+  for (const shot of arcade.shots) {
+    const hit = arcade.targets.find((target) => dist(shot.x, shot.y, target.x, target.y) < target.radius + 8)
+    if (!hit) continue
+    sim.mouse.x = hit.x
+    sim.mouse.y = hit.y
+    if (hit.good) {
+      advance(sim, '击落正确目标', 'Correct target destroyed', '#f97316', audio)
+    } else {
+      miss(sim, '击中了干扰目标', 'Decoy target hit', audio)
+      addBurst(sim, hit.x, hit.y, '#fb7185')
+      arcade.targets = arcade.targets.filter((target) => target !== hit)
+    }
+    shot.life = 0
+    break
+  }
+}
+
+function updateSnake(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const dir = arcade.nextDir
+  if (dir.x !== -arcade.snakeDir.x || dir.y !== -arcade.snakeDir.y) {
+    arcade.snakeDir = dir
+  }
+  arcade.snakeTimer += dt
+  if (arcade.snakeTimer < Math.max(0.09, 0.22 - sim.level * 0.018)) return
+  arcade.snakeTimer = 0
+  const head = arcade.snake[0]
+  const next = {
+    x: (head.x + arcade.snakeDir.x + 12) % 12,
+    y: (head.y + arcade.snakeDir.y + 8) % 8,
+  }
+  arcade.snake.unshift(next)
+  const food = arcade.food.find((item) => Math.floor(item.x / 70) === next.x && Math.floor((item.y - 70) / 50) === next.y)
+  if (food) {
+    sim.mouse.x = food.x
+    sim.mouse.y = food.y
+    if (food.good) {
+      advance(sim, '吃到正确倍数', 'Correct multiple eaten', '#84cc16', audio)
+    } else {
+      arcade.snake = [
+        { x: 5, y: 4 },
+        { x: 4, y: 4 },
+        { x: 3, y: 4 },
+      ]
+      miss(sim, '吃到了不是倍数的诱饵', 'A non-multiple decoy was eaten', audio)
+    }
+  } else {
+    arcade.snake.pop()
+  }
+}
+
+function updateTetra(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  if (!arcade.falling) arcade.falling = makeFallingBlock(sim.round + arcade.dropTimer)
+  const block = arcade.falling
+  arcade.cooldown -= dt
+  if (arcade.cooldown <= 0) {
+    if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) {
+      block.x = clamp(block.x - 1, 0, 5)
+      arcade.cooldown = 0.12
+    }
+    if (sim.keys.has('ArrowRight') || sim.keys.has('d')) {
+      block.x = clamp(block.x + 1, 0, 5)
+      arcade.cooldown = 0.12
+    }
+  }
+  block.y += (sim.keys.has('ArrowDown') || sim.keys.has('s') ? 5.8 : 1.7 + sim.level * 0.12) * dt
+  if (block.y >= 7) {
+    arcade.lanes[block.x] += block.value
+    sim.mouse.x = 185 + block.x * 105
+    sim.mouse.y = 430
+    if (arcade.lanes[block.x] === sim.objective.target) {
+      advance(sim, '列和命中目标', 'Lane sum hit the target', '#60a5fa', audio)
+    } else if (arcade.lanes[block.x] > sim.objective.target) {
+      arcade.lanes[block.x] = 0
+      miss(sim, '这一列超出目标，被清空', 'Lane exceeded target and cleared', audio)
+    }
+    arcade.dropTimer += 1
+    arcade.falling = makeFallingBlock(sim.round + arcade.dropTimer)
+  }
+}
+
+function updateCreature(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const speed = 260
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) arcade.creatureX -= speed * dt
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) arcade.creatureX += speed * dt
+  if (sim.keys.has('ArrowUp') || sim.keys.has('w')) arcade.creatureY -= speed * dt
+  if (sim.keys.has('ArrowDown') || sim.keys.has('s')) arcade.creatureY += speed * dt
+  arcade.creatureX = clamp(arcade.creatureX, 64, width - 64)
+  arcade.creatureY = clamp(arcade.creatureY, 96, height - 64)
+  if (arcade.targets.length < 7) arcade.targets = makeTargets(sim.objective, 7, true)
+  for (const target of arcade.targets) {
+    target.y += (65 + sim.level * 8) * dt
+    target.x += Math.sin((target.y + target.value) * 0.02) * 28 * dt
+    if (target.y > height + 40) {
+      target.y = -40
+      target.x = rand(90, width - 90)
+    }
+  }
+  const hit = arcade.targets.find((target) => dist(arcade.creatureX, arcade.creatureY, target.x, target.y) < 48)
+  if (!hit) return
+  arcade.energy += hit.value
+  sim.mouse.x = hit.x
+  sim.mouse.y = hit.y
+  addBurst(sim, hit.x, hit.y, hit.color ?? '#f472b6')
+  arcade.targets = arcade.targets.filter((target) => target !== hit)
+  if (arcade.energy === sim.objective.target) {
+    arcade.enemyHp = Math.max(0, arcade.enemyHp - 34)
+    advance(sim, '伤害值刚好命中，发动攻击', 'Exact damage charged. Attack launched', '#f472b6', audio)
+  } else if (arcade.energy > sim.objective.target) {
+    arcade.energy = 0
+    miss(sim, '能量超载，攻击失败', 'Energy overloaded', audio)
+  }
+}
+
+function updateMaze(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  arcade.mazePulse += dt
+  arcade.cooldown -= dt
+  if (arcade.cooldown > 0) return
+  const move = { x: 0, y: 0 }
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) move.x = -1
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) move.x = 1
+  if (sim.keys.has('ArrowUp') || sim.keys.has('w')) move.y = -1
+  if (sim.keys.has('ArrowDown') || sim.keys.has('s')) move.y = 1
+  if (!move.x && !move.y) return
+  const nx = clamp(arcade.mazePlayer.x + move.x, 0, 7)
+  const ny = clamp(arcade.mazePlayer.y + move.y, 0, 5)
+  if ((nx === 3 && ny < 5) || (ny === 2 && nx > 1 && nx < 7)) {
+    arcade.cooldown = 0.12
+    return
+  }
+  arcade.mazePlayer = { x: nx, y: ny }
+  arcade.cooldown = 0.16
+  const item = arcade.mazeItems.find((candidate) => candidate.x === nx && candidate.y === ny)
+  if (!item) return
+  sim.mouse.x = 120 + nx * 90
+  sim.mouse.y = 105 + ny * 62
+  if (item.good) {
+    arcade.energy += 1
+    arcade.mazeItems = arcade.mazeItems.filter((candidate) => candidate !== item)
+    if (arcade.energy >= 3) {
+      advance(sim, '收集到足够因数，迷宫开启', 'Enough factors collected. Gate opened', '#facc15', audio)
+    } else {
+      addBurst(sim, sim.mouse.x, sim.mouse.y, '#facc15')
+      audio.success()
+    }
+  } else {
+    arcade.energy = 0
+    miss(sim, '这不是目标数的因数', 'That value is not a factor', audio)
+  }
+}
+
+function updatePinball(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) arcade.paddleX -= 390 * dt
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) arcade.paddleX += 390 * dt
+  arcade.paddleX = clamp(arcade.paddleX, 90, width - 90)
+  arcade.ballX += arcade.ballVx * dt
+  arcade.ballY += arcade.ballVy * dt
+  if (arcade.ballX < 28 || arcade.ballX > width - 28) arcade.ballVx *= -1
+  if (arcade.ballY < 56) arcade.ballVy *= -1
+  if (arcade.ballY > height - 56 && Math.abs(arcade.ballX - arcade.paddleX) < 92) {
+    arcade.ballVy = -Math.abs(arcade.ballVy) - 18
+    arcade.ballVx += (arcade.ballX - arcade.paddleX) * 2.4
+    audio.move()
+  }
+  if (arcade.ballY > height + 50) {
+    arcade.ballX = width / 2
+    arcade.ballY = 330
+    arcade.ballVx = rand(-210, 210)
+    arcade.ballVy = -230
+    miss(sim, '弹球漏掉了，重新发球', 'Ball lost. Relaunching', audio)
+  }
+  const brick = arcade.bricks.find((candidate) => candidate.alive && Math.abs(arcade.ballX - candidate.x) < 56 && Math.abs(arcade.ballY - candidate.y) < 28)
+  if (!brick) return
+  brick.alive = false
+  arcade.ballVy *= -1
+  sim.mouse.x = brick.x
+  sim.mouse.y = brick.y
+  if (brick.good) {
+    advance(sim, '弹球击中正确砖块', 'Correct brick hit', '#c084fc', audio)
+  } else {
+    miss(sim, '击中了干扰砖块', 'Decoy brick hit', audio)
+    addBurst(sim, brick.x, brick.y, '#fb7185')
+  }
 }
 
 function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
@@ -553,6 +1127,13 @@ function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio
       sim.molecule.stableTimer = 0
     }
   }
+
+  if (sim.id === 'blaster') updateBlaster(sim, dt, audio)
+  if (sim.id === 'snake') updateSnake(sim, dt, audio)
+  if (sim.id === 'tetra') updateTetra(sim, dt, audio)
+  if (sim.id === 'creature') updateCreature(sim, dt, audio)
+  if (sim.id === 'maze') updateMaze(sim, dt, audio)
+  if (sim.id === 'pinball') updatePinball(sim, dt, audio)
 }
 
 function drawBackground(ctx: CanvasRenderingContext2D, template: Template) {
@@ -593,6 +1174,31 @@ function drawTextPill(ctx: CanvasRenderingContext2D, text: string, x: number, y:
   ctx.fillText(text, x + 15, y + 27)
 }
 
+function drawMission(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const text = sim.objective.expression ?? `${sim.objective.target}`
+  ctx.fillStyle = 'rgba(0,0,0,.52)'
+  ctx.strokeStyle = 'rgba(255,255,255,.16)'
+  ctx.lineWidth = 1
+  roundRect(ctx, 24, 22, 380, 58, 18)
+  ctx.fill()
+  ctx.stroke()
+  ctx.fillStyle = template.accent
+  ctx.font = '900 13px system-ui, -apple-system, sans-serif'
+  ctx.fillText('TARGET', 44, 43)
+  ctx.fillStyle = '#ffffff'
+  ctx.font = '900 25px system-ui, -apple-system, sans-serif'
+  ctx.fillText(text, 44, 68)
+
+  if (sim.messageZh) {
+    ctx.fillStyle = 'rgba(0,0,0,.52)'
+    roundRect(ctx, width - 360, 22, 336, 52, 18)
+    ctx.fill()
+    ctx.fillStyle = template.accent
+    ctx.font = '900 17px system-ui, -apple-system, sans-serif'
+    ctx.fillText(sim.messageEn, width - 340, 55)
+  }
+}
+
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath()
   ctx.moveTo(x + r, y)
@@ -604,16 +1210,17 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 function drawStarship(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
-  drawTextPill(ctx, `${sim.objective.a} x ${sim.objective.b}`, 34, 30, '#e0f2fe')
+  drawTextPill(ctx, 'Drag or WASD. Catch the value, not the color.', 34, 94, '#e0f2fe')
   for (const pod of sim.pods) {
+    const color = pod.color ?? template.accent
     const glow = ctx.createRadialGradient(pod.x, pod.y, 4, pod.x, pod.y, pod.radius + 18)
-    glow.addColorStop(0, pod.good ? '#bae6fd' : '#fecdd3')
-    glow.addColorStop(1, pod.good ? 'rgba(56,189,248,.08)' : 'rgba(251,113,133,.08)')
+    glow.addColorStop(0, color)
+    glow.addColorStop(1, 'rgba(255,255,255,.04)')
     ctx.fillStyle = glow
     ctx.beginPath()
     ctx.arc(pod.x, pod.y, pod.radius + 14, 0, Math.PI * 2)
     ctx.fill()
-    ctx.fillStyle = pod.good ? '#38bdf8' : '#fb7185'
+    ctx.fillStyle = color
     ctx.beginPath()
     ctx.arc(pod.x, pod.y, pod.radius, 0, Math.PI * 2)
     ctx.fill()
@@ -690,7 +1297,7 @@ function drawGeometry(ctx: CanvasRenderingContext2D, sim: Sim, template: Templat
     ctx.fillRect(x + 18, bottom - bh + 28, 6, 9)
     ctx.fillStyle = 'rgba(255,255,255,.08)'
   }
-  drawTextPill(ctx, `Target area ${sim.objective.target}`, 34, 30, '#fef3c7')
+  drawTextPill(ctx, `Target area ${sim.objective.target}`, 34, 94, '#fef3c7')
 }
 
 function drawCoaster(ctx: CanvasRenderingContext2D, sim: Sim) {
@@ -784,7 +1391,7 @@ function drawCircuit(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
     ctx.fillText(`${chip.r} ohm`, chip.x, chip.y + 7)
   }
   ctx.textAlign = 'left'
-  drawTextPill(ctx, `${sim.objective.current}A -> ${sim.objective.target}V`, 34, 30, '#dcfce7')
+  drawTextPill(ctx, `${sim.objective.current}A -> ${sim.objective.target}V`, 34, 94, '#dcfce7')
 }
 
 function drawFraction(ctx: CanvasRenderingContext2D, sim: Sim) {
@@ -827,7 +1434,7 @@ function drawFraction(ctx: CanvasRenderingContext2D, sim: Sim) {
   ctx.beginPath()
   ctx.arc(cx + Math.cos(sim.fraction.angle) * 190, cy + Math.sin(sim.fraction.angle) * 190, 14, 0, Math.PI * 2)
   ctx.fill()
-  drawTextPill(ctx, `${sim.objective.num}/${sim.objective.den}`, 34, 30, '#ede9fe')
+  drawTextPill(ctx, `${sim.objective.num}/${sim.objective.den}`, 34, 94, '#ede9fe')
 }
 
 function drawMolecule(ctx: CanvasRenderingContext2D, sim: Sim) {
@@ -859,7 +1466,231 @@ function drawMolecule(ctx: CanvasRenderingContext2D, sim: Sim) {
     ctx.fillText(atom.label, atom.x, atom.y + 7)
   }
   ctx.textAlign = 'left'
-  drawTextPill(ctx, `Bonds ${getBondCount(atoms)} / ${sim.molecule.requiredBonds}`, 34, 30, '#ccfbf1')
+  drawTextPill(ctx, `Bonds ${getBondCount(atoms)} / ${sim.molecule.requiredBonds}`, 34, 94, '#ccfbf1')
+}
+
+function drawBlaster(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, 'Move WASD / drag. Click or Space to fire.', 34, 94, '#fed7aa')
+  for (const target of arcade.targets) {
+    const color = target.color ?? template.accent
+    ctx.fillStyle = color
+    ctx.shadowColor = color
+    ctx.shadowBlur = 26
+    ctx.beginPath()
+    for (let i = 0; i < 9; i += 1) {
+      const angle = (i / 9) * Math.PI * 2
+      const r = target.radius + (i % 2) * 9
+      const x = target.x + Math.cos(angle) * r
+      const y = target.y + Math.sin(angle) * r
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    }
+    ctx.closePath()
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 20px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(target.value), target.x, target.y + 7)
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,.34)'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  ctx.moveTo(arcade.playerX, arcade.playerY)
+  ctx.lineTo(arcade.aimX, arcade.aimY)
+  ctx.stroke()
+  for (const shot of arcade.shots) {
+    ctx.fillStyle = '#fff7ed'
+    ctx.beginPath()
+    ctx.arc(shot.x, shot.y, 6, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  ctx.save()
+  ctx.translate(arcade.playerX, arcade.playerY)
+  ctx.fillStyle = template.accent
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 28
+  ctx.beginPath()
+  ctx.moveTo(0, -34)
+  ctx.lineTo(28, 28)
+  ctx.lineTo(0, 12)
+  ctx.lineTo(-28, 28)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+  ctx.textAlign = 'left'
+}
+
+function drawSnake(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const cellW = 70
+  const cellH = 50
+  const ox = 75
+  const oy = 90
+  drawTextPill(ctx, `Eat multiples of ${sim.objective.target}`, 34, 94, '#ecfccb')
+  ctx.strokeStyle = 'rgba(255,255,255,.11)'
+  for (let x = 0; x <= 12; x += 1) {
+    ctx.beginPath()
+    ctx.moveTo(ox + x * cellW, oy)
+    ctx.lineTo(ox + x * cellW, oy + 8 * cellH)
+    ctx.stroke()
+  }
+  for (let y = 0; y <= 8; y += 1) {
+    ctx.beginPath()
+    ctx.moveTo(ox, oy + y * cellH)
+    ctx.lineTo(ox + 12 * cellW, oy + y * cellH)
+    ctx.stroke()
+  }
+  for (const food of sim.arcade.food) {
+    ctx.fillStyle = food.color ?? template.accent
+    ctx.beginPath()
+    ctx.arc(food.x, food.y, food.radius, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#10210a'
+    ctx.font = '900 18px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(food.value), food.x, food.y + 6)
+  }
+  sim.arcade.snake.forEach((part, index) => {
+    ctx.fillStyle = index === 0 ? '#bef264' : '#65a30d'
+    roundRect(ctx, ox + part.x * cellW + 7, oy + part.y * cellH + 6, cellW - 14, cellH - 12, 14)
+    ctx.fill()
+  })
+  ctx.textAlign = 'left'
+}
+
+function drawTetra(ctx: CanvasRenderingContext2D, sim: Sim) {
+  const ox = 155
+  const oy = 86
+  const laneW = 104
+  const floor = 438
+  drawTextPill(ctx, `Lane target ${sim.objective.target}`, 34, 94, '#dbeafe')
+  for (let i = 0; i < 6; i += 1) {
+    ctx.fillStyle = 'rgba(96,165,250,.08)'
+    ctx.strokeStyle = 'rgba(255,255,255,.15)'
+    roundRect(ctx, ox + i * laneW, oy, laneW - 12, floor - oy, 16)
+    ctx.fill()
+    ctx.stroke()
+    const fillH = clamp((sim.arcade.lanes[i] / sim.objective.target) * 220, 0, 260)
+    ctx.fillStyle = sim.arcade.lanes[i] > sim.objective.target ? 'rgba(251,113,133,.75)' : 'rgba(96,165,250,.7)'
+    roundRect(ctx, ox + i * laneW + 12, floor - fillH, laneW - 36, fillH, 12)
+    ctx.fill()
+    ctx.fillStyle = '#eff6ff'
+    ctx.font = '900 20px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(sim.arcade.lanes[i]), ox + i * laneW + 46, floor + 34)
+  }
+  const block = sim.arcade.falling
+  if (block) {
+    ctx.fillStyle = block.color
+    roundRect(ctx, ox + block.x * laneW + 7, oy + block.y * 48, laneW - 24, 54, 16)
+    ctx.fill()
+    ctx.fillStyle = '#0f172a'
+    ctx.font = '900 24px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(block.value), ox + block.x * laneW + 46, oy + block.y * 48 + 35)
+  }
+  ctx.textAlign = 'left'
+}
+
+function drawCreature(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, `Charge exact damage ${sim.objective.target}`, 34, 94, '#fce7f3')
+  ctx.fillStyle = 'rgba(0,0,0,.34)'
+  roundRect(ctx, width - 230, 96, 170, 26, 13)
+  ctx.fill()
+  ctx.fillStyle = '#fb7185'
+  roundRect(ctx, width - 230, 96, 170 * (arcade.enemyHp / 100), 26, 13)
+  ctx.fill()
+  ctx.fillStyle = '#fce7f3'
+  ctx.font = '900 16px system-ui, sans-serif'
+  ctx.fillText(`Energy ${arcade.energy}`, 34, 140)
+  for (const target of arcade.targets) {
+    ctx.fillStyle = target.color ?? template.accent
+    ctx.beginPath()
+    ctx.arc(target.x, target.y, 26, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 17px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(target.value), target.x, target.y + 6)
+  }
+  ctx.fillStyle = '#f9a8d4'
+  ctx.shadowColor = '#f472b6'
+  ctx.shadowBlur = 28
+  ctx.beginPath()
+  ctx.arc(arcade.creatureX, arcade.creatureY, 38, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.fillStyle = '#831843'
+  ctx.font = '900 22px system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('L', arcade.creatureX, arcade.creatureY + 8)
+  ctx.textAlign = 'left'
+}
+
+function drawMaze(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const ox = 120
+  const oy = 105
+  const cw = 90
+  const ch = 62
+  drawTextPill(ctx, `Collect 3 factors of ${sim.objective.target}`, 34, 94, '#fef9c3')
+  for (let y = 0; y < 6; y += 1) {
+    for (let x = 0; x < 8; x += 1) {
+      const wall = (x === 3 && y < 5) || (y === 2 && x > 1 && x < 7)
+      ctx.fillStyle = wall ? 'rgba(250,204,21,.22)' : 'rgba(255,255,255,.05)'
+      ctx.strokeStyle = 'rgba(255,255,255,.13)'
+      roundRect(ctx, ox + x * cw, oy + y * ch, cw - 8, ch - 8, 12)
+      ctx.fill()
+      ctx.stroke()
+    }
+  }
+  for (const item of sim.arcade.mazeItems) {
+    ctx.fillStyle = item.color
+    ctx.beginPath()
+    ctx.arc(ox + item.x * cw + 41, oy + item.y * ch + 28, 22, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 16px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(item.value), ox + item.x * cw + 41, oy + item.y * ch + 34)
+  }
+  ctx.fillStyle = template.accent
+  const px = ox + sim.arcade.mazePlayer.x * cw + 41
+  const py = oy + sim.arcade.mazePlayer.y * ch + 28
+  ctx.beginPath()
+  ctx.arc(px, py, 25 + Math.sin(sim.arcade.mazePulse * 8) * 2, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.fillStyle = '#111827'
+  ctx.font = '900 13px system-ui, sans-serif'
+  ctx.fillText(`${sim.arcade.energy}/3`, px, py + 5)
+  ctx.textAlign = 'left'
+}
+
+function drawPinball(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, `Hit ${sim.objective.expression}`, 34, 94, '#f3e8ff')
+  for (const brick of arcade.bricks) {
+    if (!brick.alive) continue
+    ctx.fillStyle = brick.color
+    roundRect(ctx, brick.x - 54, brick.y - 24, 108, 48, 14)
+    ctx.fill()
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 18px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(brick.value), brick.x, brick.y + 6)
+  }
+  ctx.fillStyle = '#ffffff'
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 24
+  ctx.beginPath()
+  ctx.arc(arcade.ballX, arcade.ballY, 14, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.fillStyle = template.accent
+  roundRect(ctx, arcade.paddleX - 88, height - 42, 176, 20, 10)
+  ctx.fill()
+  ctx.textAlign = 'left'
 }
 
 function drawParticles(ctx: CanvasRenderingContext2D, sim: Sim) {
@@ -875,12 +1706,19 @@ function drawParticles(ctx: CanvasRenderingContext2D, sim: Sim) {
 
 function drawSim(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
   drawBackground(ctx, template)
+  drawMission(ctx, sim, template)
   if (sim.id === 'starship') drawStarship(ctx, sim, template)
   if (sim.id === 'geometry') drawGeometry(ctx, sim, template)
   if (sim.id === 'coaster') drawCoaster(ctx, sim)
   if (sim.id === 'circuit') drawCircuit(ctx, sim, template)
   if (sim.id === 'fraction') drawFraction(ctx, sim)
   if (sim.id === 'molecule') drawMolecule(ctx, sim)
+  if (sim.id === 'blaster') drawBlaster(ctx, sim, template)
+  if (sim.id === 'snake') drawSnake(ctx, sim, template)
+  if (sim.id === 'tetra') drawTetra(ctx, sim)
+  if (sim.id === 'creature') drawCreature(ctx, sim, template)
+  if (sim.id === 'maze') drawMaze(ctx, sim, template)
+  if (sim.id === 'pinball') drawPinball(ctx, sim, template)
   drawParticles(ctx, sim)
 }
 
@@ -914,10 +1752,25 @@ export default function LearningGameShowcase() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      simRef.current.keys.add(event.key)
-      if (event.key === ' ' && simRef.current.id === 'fraction') {
+      const sim = simRef.current
+      sim.keys.add(event.key)
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'w', 'a', 's', 'd'].includes(event.key)) {
+        event.preventDefault()
+      }
+      if (sim.id === 'snake') {
+        if (event.key === 'ArrowUp' || event.key === 'w') sim.arcade.nextDir = { x: 0, y: -1 }
+        if (event.key === 'ArrowDown' || event.key === 's') sim.arcade.nextDir = { x: 0, y: 1 }
+        if (event.key === 'ArrowLeft' || event.key === 'a') sim.arcade.nextDir = { x: -1, y: 0 }
+        if (event.key === 'ArrowRight' || event.key === 'd') sim.arcade.nextDir = { x: 1, y: 0 }
+      }
+      if (event.key === ' ' && sim.id === 'fraction') {
         event.preventDefault()
         sliceFraction()
+      }
+      if (event.key === ' ' && sim.id === 'blaster' && sim.arcade.cooldown <= 0) {
+        shoot(sim)
+        sim.arcade.cooldown = 0.18
+        audio.move()
       }
     }
     const onKeyUp = (event: KeyboardEvent) => {
@@ -1005,6 +1858,23 @@ export default function LearningGameShowcase() {
         sim.drag = 'atom'
         sim.dragId = atom.id
       }
+      return
+    }
+    if (sim.id === 'blaster') {
+      sim.drag = 'aim'
+      sim.arcade.aimX = x
+      sim.arcade.aimY = y
+      sim.arcade.playerX = clamp(x, 58, width - 58)
+      return
+    }
+    if (sim.id === 'creature') {
+      sim.arcade.creatureX = clamp(x, 64, width - 64)
+      sim.arcade.creatureY = clamp(y, 96, height - 64)
+      return
+    }
+    if (sim.id === 'pinball') {
+      sim.drag = 'paddle'
+      sim.arcade.paddleX = clamp(x, 90, width - 90)
     }
   }
 
@@ -1043,6 +1913,21 @@ export default function LearningGameShowcase() {
         atom.vx *= 0.82
         atom.vy *= 0.82
       }
+    }
+    if (sim.id === 'blaster') {
+      sim.arcade.aimX = x
+      sim.arcade.aimY = y
+      if (sim.mouse.down) {
+        sim.arcade.playerX = clamp(x, 58, width - 58)
+        sim.arcade.playerY = clamp(y + 150, 180, height - 44)
+      }
+    }
+    if (sim.id === 'creature' && sim.mouse.down) {
+      sim.arcade.creatureX = clamp(x, 64, width - 64)
+      sim.arcade.creatureY = clamp(y, 96, height - 64)
+    }
+    if (sim.id === 'pinball') {
+      sim.arcade.paddleX = clamp(x, 90, width - 90)
     }
   }
 
@@ -1186,10 +2071,10 @@ export default function LearningGameShowcase() {
       <div className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr]">
         <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-5">
           <div className="text-xs font-black uppercase tracking-[0.22em] text-white/35">
-            {locale === 'zh' ? '当前任务' : 'Current Mission'}
+            {locale === 'zh' ? '操作原则' : 'Play Rule'}
           </div>
           <div className="mt-2 text-2xl font-black text-white">
-            {locale === 'zh' ? hud.promptZh : hud.promptEn}
+            {locale === 'zh' ? '只看游戏屏幕内的目标、数值和运动轨迹来操作。' : 'Use only the objective, values, and motion inside the game screen.'}
           </div>
           {hud.messageZh && (
             <div className="mt-3 text-sm font-bold" style={{ color: activeTemplate.accent }}>
