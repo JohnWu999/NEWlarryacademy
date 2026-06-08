@@ -172,6 +172,7 @@ type Sim = {
   streak: number
   startedAt: number
   pendingRecord: PendingRecord | null
+  pendingPenalty: PendingPenalty | null
   objective: Objective
   messageZh: string
   messageEn: string
@@ -211,8 +212,21 @@ type PendingRecord = {
   duration: number
 }
 
+type PendingPenalty = {
+  templateId: TemplateId
+  penalty: number
+  reason: string
+  score: number
+}
+
 const width = 920
 const height = 520
+const snakeCols = 12
+const snakeRows = 8
+const snakeCellW = 70
+const snakeCellH = 50
+const snakeOriginX = 75
+const snakeOriginY = 90
 
 export const showcaseGames: ShowcaseGameCard[] = [
   {
@@ -663,9 +677,17 @@ function makeTargets(objective: Objective, count: number, fromTop = false): Pod[
 function makeFood(objective: Objective): Pod[] {
   const factor = objective.target
   const values = [factor * 2, factor * 3, factor + 1, factor * 4, factor * 5 - 1, factor * 6]
+  const cells = [
+    { x: 2, y: 1 },
+    { x: 6, y: 1 },
+    { x: 10, y: 1 },
+    { x: 2, y: 5 },
+    { x: 6, y: 5 },
+    { x: 10, y: 5 },
+  ]
   return values.map((value, index) => ({
-    x: 120 + (index % 3) * 250,
-    y: 145 + Math.floor(index / 3) * 150,
+    x: snakeOriginX + cells[index].x * snakeCellW + snakeCellW / 2,
+    y: snakeOriginY + cells[index].y * snakeCellH + snakeCellH / 2,
     vx: 0,
     vy: 0,
     value,
@@ -760,6 +782,7 @@ function makeSim(id: TemplateId, level = 1): Sim {
     streak: 0,
     startedAt: Date.now(),
     pendingRecord: null,
+    pendingPenalty: null,
     objective,
     messageZh: '',
     messageEn: '',
@@ -907,10 +930,18 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
 }
 
 function miss(sim: Sim, zh: string, en: string, audio: ReturnType<typeof useArcadeAudio>) {
+  const scorePenalty = Math.min(95, 35 + sim.level * 8 + Math.floor(sim.score * 0.04))
+  sim.score = Math.max(0, sim.score - scorePenalty)
   sim.streak = 0
   sim.messageZh = zh
   sim.messageEn = en
   sim.messageTimer = 1.1
+  sim.pendingPenalty = {
+    templateId: sim.id,
+    penalty: Math.max(4, Math.round(scorePenalty / 5)),
+    reason: zh,
+    score: sim.score,
+  }
   audio.miss()
 }
 
@@ -1014,34 +1045,68 @@ function updateBlaster(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeA
   }
 }
 
+function foodCell(food: Pod): Cell {
+  return {
+    x: Math.round((food.x - snakeOriginX - snakeCellW / 2) / snakeCellW),
+    y: Math.round((food.y - snakeOriginY - snakeCellH / 2) / snakeCellH),
+  }
+}
+
+function resetSnakeRun(sim: Sim) {
+  sim.arcade.snake = [
+    { x: 5, y: 4 },
+    { x: 4, y: 4 },
+    { x: 3, y: 4 },
+  ]
+  sim.arcade.snakeDir = { x: 1, y: 0 }
+  sim.arcade.nextDir = { x: 1, y: 0 }
+  sim.arcade.food = makeFood(sim.objective)
+  sim.arcade.snakeTimer = 0
+  sim.arcade.cooldown = 0.55
+}
+
 function updateSnake(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
   const arcade = sim.arcade
+  if (arcade.cooldown > 0) {
+    arcade.cooldown -= dt
+    return
+  }
   const dir = arcade.nextDir
   if (dir.x !== -arcade.snakeDir.x || dir.y !== -arcade.snakeDir.y) {
     arcade.snakeDir = dir
   }
   arcade.snakeTimer += dt
-  if (arcade.snakeTimer < Math.max(0.09, 0.22 - sim.level * 0.018)) return
+  if (arcade.snakeTimer < Math.max(0.16, 0.34 - sim.level * 0.018)) return
   arcade.snakeTimer = 0
   const head = arcade.snake[0]
   const next = {
-    x: (head.x + arcade.snakeDir.x + 12) % 12,
-    y: (head.y + arcade.snakeDir.y + 8) % 8,
+    x: head.x + arcade.snakeDir.x,
+    y: head.y + arcade.snakeDir.y,
   }
+  const bodyHit = arcade.snake.some((part, index) => index > 0 && part.x === next.x && part.y === next.y)
+  const wallHit = next.x < 0 || next.x >= snakeCols || next.y < 0 || next.y >= snakeRows
+
+  if (wallHit || bodyHit) {
+    sim.mouse.x = snakeOriginX + head.x * snakeCellW + snakeCellW / 2
+    sim.mouse.y = snakeOriginY + head.y * snakeCellH + snakeCellH / 2
+    miss(sim, wallHit ? '撞到边界，重新出发' : '撞到自己，重新出发', wallHit ? 'Wall hit. Restart from a safe lane.' : 'Body hit. Restart from a safe lane.', audio)
+    resetSnakeRun(sim)
+    return
+  }
+
   arcade.snake.unshift(next)
-  const food = arcade.food.find((item) => Math.floor(item.x / 70) === next.x && Math.floor((item.y - 70) / 50) === next.y)
+  const food = arcade.food.find((item) => {
+    const cell = foodCell(item)
+    return cell.x === next.x && cell.y === next.y
+  })
   if (food) {
     sim.mouse.x = food.x
     sim.mouse.y = food.y
     if (food.good) {
       advance(sim, '吃到正确倍数', 'Correct multiple eaten', '#84cc16', audio)
     } else {
-      arcade.snake = [
-        { x: 5, y: 4 },
-        { x: 4, y: 4 },
-        { x: 3, y: 4 },
-      ]
       miss(sim, '吃到了不是倍数的诱饵', 'A non-multiple decoy was eaten', audio)
+      resetSnakeRun(sim)
     }
   } else {
     arcade.snake.pop()
@@ -1701,22 +1766,18 @@ function drawBlaster(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
 }
 
 function drawSnake(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
-  const cellW = 70
-  const cellH = 50
-  const ox = 75
-  const oy = 90
   drawTextPill(ctx, `Eat multiples of ${sim.objective.target}`, 34, 94, '#ecfccb')
   ctx.strokeStyle = 'rgba(255,255,255,.11)'
-  for (let x = 0; x <= 12; x += 1) {
+  for (let x = 0; x <= snakeCols; x += 1) {
     ctx.beginPath()
-    ctx.moveTo(ox + x * cellW, oy)
-    ctx.lineTo(ox + x * cellW, oy + 8 * cellH)
+    ctx.moveTo(snakeOriginX + x * snakeCellW, snakeOriginY)
+    ctx.lineTo(snakeOriginX + x * snakeCellW, snakeOriginY + snakeRows * snakeCellH)
     ctx.stroke()
   }
-  for (let y = 0; y <= 8; y += 1) {
+  for (let y = 0; y <= snakeRows; y += 1) {
     ctx.beginPath()
-    ctx.moveTo(ox, oy + y * cellH)
-    ctx.lineTo(ox + 12 * cellW, oy + y * cellH)
+    ctx.moveTo(snakeOriginX, snakeOriginY + y * snakeCellH)
+    ctx.lineTo(snakeOriginX + snakeCols * snakeCellW, snakeOriginY + y * snakeCellH)
     ctx.stroke()
   }
   for (const food of sim.arcade.food) {
@@ -1731,7 +1792,7 @@ function drawSnake(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) 
   }
   sim.arcade.snake.forEach((part, index) => {
     ctx.fillStyle = index === 0 ? '#bef264' : '#65a30d'
-    roundRect(ctx, ox + part.x * cellW + 7, oy + part.y * cellH + 6, cellW - 14, cellH - 12, 14)
+    roundRect(ctx, snakeOriginX + part.x * snakeCellW + 7, snakeOriginY + part.y * snakeCellH + 6, snakeCellW - 14, snakeCellH - 12, 14)
     ctx.fill()
   })
   ctx.textAlign = 'left'
@@ -2023,6 +2084,8 @@ export default function LearningGameShowcase({
 
   const closeHowToPlay = useCallback(() => {
     seenHowToPlayRef.current.add(activeId)
+    simRef.current.startedAt = Date.now()
+    simRef.current.keys.clear()
     setShowHowToPlay(false)
   }, [activeId])
 
@@ -2048,6 +2111,31 @@ export default function LearningGameShowcase({
       }
     } catch (error) {
       console.warn('Unable to save showcase game record', error)
+    }
+  }, [])
+
+  const saveShowcasePenalty = useCallback(async (penalty: PendingPenalty) => {
+    try {
+      const response = await fetch('/api/games/showcase/penalty', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(penalty),
+      })
+      if (!response.ok) return
+
+      const result = await response.json()
+      if (result?.saved && result.deductedPoints > 0) {
+        window.dispatchEvent(
+          new CustomEvent('larry:reward-earned', {
+            detail: {
+              points: -Number(result.deductedPoints || 0),
+              gems: 0,
+            },
+          })
+        )
+      }
+    } catch (error) {
+      console.warn('Unable to save showcase game penalty', error)
     }
   }, [])
 
@@ -2105,11 +2193,18 @@ export default function LearningGameShowcase({
     const loop = (time: number) => {
       const dt = Math.min(0.035, (time - last) / 1000)
       last = time
-      updateSim(simRef.current, dt, audio)
+      if (!showHowToPlay) {
+        updateSim(simRef.current, dt, audio)
+      }
       const record = simRef.current.pendingRecord
       if (record) {
         simRef.current.pendingRecord = null
         void saveShowcaseRecord(record)
+      }
+      const penalty = simRef.current.pendingPenalty
+      if (penalty) {
+        simRef.current.pendingPenalty = null
+        void saveShowcasePenalty(penalty)
       }
       drawSim(ctx, simRef.current, activeTemplate)
       hudTimer += dt
@@ -2125,7 +2220,7 @@ export default function LearningGameShowcase({
       window.removeEventListener('resize', resize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [activeTemplate, audio, saveShowcaseRecord])
+  }, [activeTemplate, audio, saveShowcasePenalty, saveShowcaseRecord, showHowToPlay])
 
   const beginDrag = (x: number, y: number) => {
     const sim = simRef.current

@@ -14,7 +14,7 @@ const showcaseTemplates = {
   blaster: { title: '乘法弹幕战机', subject: 'Arithmetic' },
   snake: { title: '倍数贪吃蛇', subject: 'Number Sense' },
   tetra: { title: '等式俄罗斯方块', subject: 'Algebra' },
-  creature: { title: '能量宝可梦训练场', subject: 'Strategy Math' },
+  creature: { title: '能量对战训练场', subject: 'Strategy Math' },
   maze: { title: '因数迷宫', subject: 'Factors' },
   pinball: { title: '质数弹球台', subject: 'Prime Numbers' },
 } as const

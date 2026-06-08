@@ -106,17 +106,19 @@ export default function Navbar() {
 
     const handleReward = (event: Event) => {
       const detail = (event as CustomEvent<{ points?: number; gems?: number }>).detail || {}
-      const points = Math.max(0, Number(detail.points || 0))
-      const gems = Math.max(0, Number(detail.gems || 0))
+      const points = Number(detail.points || 0)
+      const gems = Number(detail.gems || 0)
       if (!points && !gems) return
 
       setRewards((current) => ({
-        points: current.points + points,
-        gems: current.gems + gems,
+        points: Math.max(0, current.points + points),
+        gems: Math.max(0, current.gems + gems),
       }))
-      setRewardBurst({ points, gems, key: Date.now() })
-      playRewardTone(points, gems)
-      window.setTimeout(() => setRewardBurst(null), 1400)
+      if (points > 0 || gems > 0) {
+        setRewardBurst({ points: Math.max(0, points), gems: Math.max(0, gems), key: Date.now() })
+        playRewardTone(points, gems)
+        window.setTimeout(() => setRewardBurst(null), 1400)
+      }
     }
 
     window.addEventListener('larry:reward-earned', handleReward)
