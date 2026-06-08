@@ -1,19 +1,76 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
 import LearningGameShowcase, { showcaseGames, type TemplateId } from '@/components/games/LearningGameShowcase'
 
+type GameRecord = {
+  id: string
+  title: string
+  description: string
+  gameType: string
+  gameConfig?: string | Record<string, unknown> | null
+  playCount?: number
+  viewCount?: number
+}
+
 export default function GamesPage() {
   const { t, locale } = useLanguage()
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateId>('starship')
+  const [larryOriginals, setLarryOriginals] = useState<GameRecord[]>([])
 
   const playTemplate = (id: TemplateId) => {
     setSelectedTemplate(id)
     window.setTimeout(() => {
       document.getElementById('learning-game-showcase')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 40)
+  }
+
+  useEffect(() => {
+    const fetchLarryOriginals = async () => {
+      try {
+        const response = await fetch('/api/games')
+        if (!response.ok) return
+        const games = (await response.json()) as GameRecord[]
+        setLarryOriginals(
+          games.filter((game) => {
+            const config = parseGameConfig(game)
+            return config.collection === 'larry-originals'
+          })
+        )
+      } catch (error) {
+        console.error('Failed to fetch Larry original games:', error)
+      }
+    }
+
+    fetchLarryOriginals()
+  }, [])
+
+  const parseGameConfig = (game: GameRecord) => {
+    try {
+      return typeof game.gameConfig === 'string' ? JSON.parse(game.gameConfig) : game.gameConfig || {}
+    } catch {
+      return {}
+    }
+  }
+
+  const getOriginalTranslation = (game: GameRecord) => {
+    const config = parseGameConfig(game)
+    return {
+      title: locale === 'zh' ? config.titleZh || game.title : config.titleEn || game.title,
+      desc: locale === 'zh' ? config.descriptionZh || game.description : config.descriptionEn || game.description,
+    }
+  }
+
+  const getOriginalVisual = (game: GameRecord) => {
+    if (game.id.includes('bubble')) return { mark: 'EVEN', bg: 'from-sky-400/35 via-cyan-500/20 to-slate-950/50', accent: '#38bdf8' }
+    if (game.id.includes('race')) return { mark: 'RACE', bg: 'from-orange-300/35 via-red-500/20 to-slate-950/50', accent: '#fb923c' }
+    if (game.id.includes('spin')) return { mark: '×', bg: 'from-fuchsia-300/35 via-violet-600/20 to-slate-950/50', accent: '#d946ef' }
+    if (game.id.includes('treasure')) return { mark: 'MAP', bg: 'from-yellow-300/35 via-amber-600/20 to-slate-950/50', accent: '#facc15' }
+    if (game.id.includes('duel')) return { mark: 'DUEL', bg: 'from-red-300/35 via-rose-700/20 to-slate-950/50', accent: '#fb7185' }
+    if (game.id.includes('rescue')) return { mark: 'SAVE', bg: 'from-emerald-300/35 via-lime-700/20 to-slate-950/50', accent: '#34d399' }
+    return { mark: 'PLAY', bg: 'from-blue-400/30 via-indigo-600/20 to-slate-950/50', accent: '#60a5fa' }
   }
 
   return (
@@ -112,6 +169,61 @@ export default function GamesPage() {
             )
           })}
         </div>
+
+        {larryOriginals.length > 0 && (
+          <>
+            <div className="mb-8 mt-16 flex items-end justify-between gap-4 border-t border-white/10 pt-10">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-white/35">
+                  {locale === 'zh' ? '保留作品' : 'Preserved Originals'}
+                </p>
+                <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+                  {locale === 'zh' ? 'Larry Original 早期原创游戏' : 'Larry Original Early Games'}
+                </h2>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {larryOriginals.map((game) => {
+                const translation = getOriginalTranslation(game)
+                const visual = getOriginalVisual(game)
+                return (
+                  <Link
+                    key={game.id}
+                    href={`/games/${game.id}`}
+                    className="group relative overflow-hidden rounded-[28px] border border-white/[0.08] bg-white/[0.025] transition-all duration-500 hover:border-white/24 hover:bg-white/[0.05]"
+                  >
+                    <div className={`relative aspect-video bg-gradient-to-br ${visual.bg} p-5`}>
+                      <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:30px_30px]" />
+                      <div className="relative flex h-full items-center justify-center">
+                        <div className="flex size-24 items-center justify-center rounded-[2rem] border border-white/15 bg-black/25 text-2xl font-black text-white shadow-2xl transition group-hover:scale-110" style={{ boxShadow: `0 24px 80px ${visual.accent}44` }}>
+                          {visual.mark}
+                        </div>
+                      </div>
+                      <div className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-black">
+                        {locale === 'zh' ? 'Larry 原创' : 'Larry Original'}
+                      </div>
+                    </div>
+
+                    <div className="p-6">
+                      <h3 className="text-xl font-black text-white">{translation.title}</h3>
+                      <p className="mt-3 min-h-12 text-sm font-medium leading-6 text-white/52">{translation.desc}</p>
+                      <div className="mt-5 flex items-center justify-between">
+                        <div className="flex flex-col gap-1 text-xs font-black uppercase tracking-[0.18em] text-white/35">
+                          <span>{game.playCount || 0} {t('games.plays')}</span>
+                          <span>{game.viewCount || 0} {locale === 'zh' ? '访问' : 'views'}</span>
+                        </div>
+                        <span className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-black text-white">
+                          {locale === 'zh' ? '打开原作' : 'Open'}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
