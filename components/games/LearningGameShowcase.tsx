@@ -219,14 +219,14 @@ type PendingPenalty = {
   score: number
 }
 
-const width = 920
-const height = 520
-const snakeCols = 12
-const snakeRows = 8
-const snakeCellW = 70
-const snakeCellH = 50
-const snakeOriginX = 75
-const snakeOriginY = 90
+const width = 1040
+const height = 640
+const snakeCols = 16
+const snakeRows = 11
+const snakeCellW = 58
+const snakeCellH = 43
+const snakeOriginX = 56
+const snakeOriginY = 122
 
 export const showcaseGames: ShowcaseGameCard[] = [
   {
@@ -679,11 +679,11 @@ function makeFood(objective: Objective): Pod[] {
   const values = [factor * 2, factor * 3, factor + 1, factor * 4, factor * 5 - 1, factor * 6]
   const cells = [
     { x: 2, y: 1 },
-    { x: 6, y: 1 },
-    { x: 10, y: 1 },
-    { x: 2, y: 5 },
-    { x: 6, y: 5 },
-    { x: 10, y: 5 },
+    { x: 7, y: 1 },
+    { x: 13, y: 1 },
+    { x: 3, y: 5 },
+    { x: 10, y: 7 },
+    { x: 14, y: 9 },
   ]
   return values.map((value, index) => ({
     x: snakeOriginX + cells[index].x * snakeCellW + snakeCellW / 2,
@@ -745,9 +745,9 @@ function makeArcade(id: TemplateId, objective: Objective, round: number): Arcade
     shots: [],
     targets: id === 'blaster' || id === 'creature' ? makeTargets(objective, 7, true) : [],
     snake: [
-      { x: 5, y: 4 },
-      { x: 4, y: 4 },
-      { x: 3, y: 4 },
+      { x: 7, y: 5 },
+      { x: 6, y: 5 },
+      { x: 5, y: 5 },
     ],
     snakeDir: { x: 1, y: 0 },
     nextDir: { x: 1, y: 0 },
@@ -1054,9 +1054,9 @@ function foodCell(food: Pod): Cell {
 
 function resetSnakeRun(sim: Sim) {
   sim.arcade.snake = [
-    { x: 5, y: 4 },
-    { x: 4, y: 4 },
-    { x: 3, y: 4 },
+    { x: 7, y: 5 },
+    { x: 6, y: 5 },
+    { x: 5, y: 5 },
   ]
   sim.arcade.snakeDir = { x: 1, y: 0 }
   sim.arcade.nextDir = { x: 1, y: 0 }
@@ -2056,6 +2056,10 @@ export default function LearningGameShowcase({
   const [showHowToPlay, setShowHowToPlay] = useState(true)
   const [hud, setHud] = useState<Hud>(makeHud(simRef.current))
   const how = howToPlay[activeId]
+  const showcaseLayoutClass =
+    activeId === 'snake'
+      ? 'mb-8 grid gap-5 lg:grid-cols-[0.52fr_1.48fr]'
+      : 'mb-8 grid gap-5 lg:grid-cols-[0.88fr_1.12fr]'
 
   const chooseTemplate = useCallback((id: TemplateId) => {
     setActiveId(id)
@@ -2400,7 +2404,7 @@ export default function LearningGameShowcase({
 
   return (
     <section className="relative">
-      <div className="mb-8 grid gap-5 lg:grid-cols-[0.88fr_1.12fr]">
+      <div className={showcaseLayoutClass}>
         <div className="space-y-5">
           <div className="border-b border-white/10 pb-5">
             <p className="text-sm font-black uppercase tracking-[0.28em] text-white/45">Larry Academy Lab</p>
@@ -2414,7 +2418,7 @@ export default function LearningGameShowcase({
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className={`grid grid-cols-2 gap-3 ${activeId === 'snake' ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>
             {templates.map((template) => {
               const selected = template.id === activeId
               return (
@@ -2461,7 +2465,7 @@ export default function LearningGameShowcase({
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerUp}
-            className="block aspect-[920/520] w-full touch-none rounded-xl border border-white/10 bg-black shadow-inner"
+            className="block aspect-[1040/640] w-full touch-none rounded-xl border border-white/10 bg-black shadow-inner"
           />
           {showHowToPlay && (
             <div className="absolute inset-4 z-20 flex items-center justify-center rounded-xl bg-black/72 p-4 backdrop-blur-md">
