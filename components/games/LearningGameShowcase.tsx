@@ -1419,18 +1419,33 @@ function drawTextPill(ctx: CanvasRenderingContext2D, text: string, x: number, y:
 
 function drawMission(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
   const text = sim.objective.expression ?? `${sim.objective.target}`
+  const isFactorStyle = sim.id === 'maze' || sim.id === 'snake'
+  const label = sim.id === 'maze' ? 'FACTORS OF' : sim.id === 'snake' ? 'MULTIPLES OF' : 'TARGET'
+  const panelWidth = isFactorStyle ? 430 : 380
+  const panelHeight = isFactorStyle ? 88 : 58
   ctx.fillStyle = 'rgba(0,0,0,.52)'
   ctx.strokeStyle = 'rgba(255,255,255,.16)'
-  ctx.lineWidth = 1
-  roundRect(ctx, 24, 22, 380, 58, 18)
+  ctx.lineWidth = isFactorStyle ? 3 : 1
+  if (isFactorStyle) {
+    ctx.shadowColor = template.accent
+    ctx.shadowBlur = 24
+  }
+  roundRect(ctx, 24, 22, panelWidth, panelHeight, 22)
   ctx.fill()
+  if (isFactorStyle) ctx.strokeStyle = template.accent
   ctx.stroke()
+  ctx.shadowBlur = 0
   ctx.fillStyle = template.accent
-  ctx.font = '900 13px system-ui, -apple-system, sans-serif'
-  ctx.fillText('TARGET', 44, 43)
+  ctx.font = `900 ${isFactorStyle ? 16 : 13}px system-ui, -apple-system, sans-serif`
+  ctx.fillText(label, 44, 47)
   ctx.fillStyle = '#ffffff'
-  ctx.font = '900 25px system-ui, -apple-system, sans-serif'
-  ctx.fillText(text, 44, 68)
+  ctx.font = `900 ${isFactorStyle ? 42 : 25}px system-ui, -apple-system, sans-serif`
+  ctx.fillText(text, 44, isFactorStyle ? 88 : 68)
+  if (isFactorStyle) {
+    ctx.fillStyle = 'rgba(255,255,255,.72)'
+    ctx.font = '800 17px system-ui, -apple-system, sans-serif'
+    ctx.fillText(sim.id === 'maze' ? 'Collect only numbers that divide it.' : 'Eat only numbers divisible by it.', 148, 78)
+  }
 
   if (sim.messageZh) {
     ctx.fillStyle = 'rgba(0,0,0,.52)'
@@ -1766,7 +1781,6 @@ function drawBlaster(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
 }
 
 function drawSnake(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
-  drawTextPill(ctx, `Eat multiples of ${sim.objective.target}`, 34, 94, '#ecfccb')
   ctx.strokeStyle = 'rgba(255,255,255,.11)'
   for (let x = 0; x <= snakeCols; x += 1) {
     ctx.beginPath()
@@ -1873,7 +1887,6 @@ function drawMaze(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
   const oy = 105
   const cw = 90
   const ch = 62
-  drawTextPill(ctx, `Collect 3 factors of ${sim.objective.target}`, 34, 94, '#fef9c3')
   for (let y = 0; y < 6; y += 1) {
     for (let x = 0; x < 8; x += 1) {
       const wall = (x === 3 && y < 5) || (y === 2 && x > 1 && x < 7)
@@ -2502,12 +2515,6 @@ export default function LearningGameShowcase({
                       {locale === 'zh' ? activeTemplate.titleZh : activeTemplate.titleEn}
                     </h4>
                   </div>
-                  <button
-                    onClick={closeHowToPlay}
-                    className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-black text-white transition hover:bg-white/15"
-                  >
-                    {locale === 'zh' ? '开始' : 'Start'}
-                  </button>
                 </div>
 
                 <HowToPlayGraphic visual={how.visual} accent={activeTemplate.accent} />
@@ -2532,6 +2539,18 @@ export default function LearningGameShowcase({
                   <span className="mr-2 text-white">{locale === 'zh' ? '学到什么：' : 'Learning:'}</span>
                   {locale === 'zh' ? how.learnZh : how.learnEn}
                 </div>
+
+                <button
+                  onClick={closeHowToPlay}
+                  className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl px-6 py-5 text-lg font-black text-[#06111c] shadow-2xl transition hover:scale-[1.015] active:scale-[0.985]"
+                  style={{
+                    background: `linear-gradient(135deg, ${activeTemplate.accent}, #ffffff 92%)`,
+                    boxShadow: `0 18px 48px ${activeTemplate.accent}55`,
+                  }}
+                >
+                  <span className="flex size-10 items-center justify-center rounded-full bg-black/12 text-xl">▶</span>
+                  <span>{locale === 'zh' ? '开始游戏挑战' : 'Start Game Challenge'}</span>
+                </button>
               </div>
             </div>
           )}
