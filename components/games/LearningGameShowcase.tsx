@@ -16,6 +16,12 @@ export type TemplateId =
   | 'creature'
   | 'maze'
   | 'pinball'
+  | 'marble'
+  | 'seesaw'
+  | 'kitchen'
+  | 'planet'
+  | 'animalRace'
+  | 'jewel'
 type DragKind = 'none' | 'ship' | 'geometry' | 'coaster' | 'chip' | 'blade' | 'atom' | 'aim' | 'paddle'
 
 type Template = {
@@ -51,6 +57,7 @@ type Objective = {
   den?: number
   num?: number
   current?: number
+  values?: number[]
 }
 
 type Pod = {
@@ -124,6 +131,15 @@ type MazeItem = {
   color: string
 }
 
+type RaceAnimal = {
+  label: string
+  value: number
+  speed: number
+  progress: number
+  color: string
+  good: boolean
+}
+
 type Brick = {
   x: number
   y: number
@@ -162,6 +178,20 @@ type Arcade = {
   ballVy: number
   paddleX: number
   bricks: Brick[]
+  seesawLeft: number[]
+  seesawRight: number[]
+  seesawBank: number[]
+  seesawTimer: number
+  kitchenPantry: number[]
+  kitchenPot: number[]
+  kitchenTimer: number
+  planetOrbit: number
+  animalChoice: number
+  raceAnimals: RaceAnimal[]
+  raceFinished: boolean
+  jewelBank: number[]
+  jewelSlots: number[]
+  jewelTimer: number
 }
 
 type Sim = {
@@ -349,9 +379,108 @@ export const showcaseGames: ShowcaseGameCard[] = [
     accent: '#c084fc',
     wash: 'from-purple-400/25 via-indigo-500/10 to-[#10071c]',
   },
+  {
+    id: 'marble',
+    titleZh: '宝石弹珠台',
+    titleEn: 'Gem Marble Table',
+    subject: 'Fast Facts',
+    verbZh: '控制弹板，让宝石弹珠撞进答案靶',
+    verbEn: 'Bounce the gem marble into the answer target',
+    accent: '#22d3ee',
+    wash: 'from-cyan-400/25 via-blue-500/10 to-[#04131b]',
+  },
+  {
+    id: 'seesaw',
+    titleZh: '等式跷跷板',
+    titleEn: 'Equation Seesaw',
+    subject: 'Equations',
+    verbZh: '拖配数字砝码，让两边真正平衡',
+    verbEn: 'Build the matching side so the board balances',
+    accent: '#fb923c',
+    wash: 'from-orange-400/25 via-amber-500/10 to-[#160d05]',
+  },
+  {
+    id: 'kitchen',
+    titleZh: '天才厨房',
+    titleEn: 'Genius Kitchen',
+    subject: 'Word Problems',
+    verbZh: '挑选原材料，按目标数做出数学料理',
+    verbEn: 'Choose ingredients to cook the target number',
+    accent: '#34d399',
+    wash: 'from-emerald-400/25 via-lime-500/10 to-[#06140d]',
+  },
+  {
+    id: 'planet',
+    titleZh: '星球数战',
+    titleEn: 'Planet Number Battle',
+    subject: 'Multiples',
+    verbZh: '驾驶飞船守护星球，收集正确倍数',
+    verbEn: 'Defend planets by collecting matching multiples',
+    accent: '#818cf8',
+    wash: 'from-indigo-400/25 via-sky-500/10 to-[#090b1f]',
+  },
+  {
+    id: 'animalRace',
+    titleZh: '小动物赛跑',
+    titleEn: 'Math Animal Race',
+    subject: 'Estimation',
+    verbZh: '观察数值，预测最接近目标的小选手',
+    verbEn: 'Predict the racer whose value best matches the target',
+    accent: '#f9a8d4',
+    wash: 'from-pink-300/25 via-rose-500/10 to-[#180812]',
+  },
+  {
+    id: 'jewel',
+    titleZh: '白雪公主珠宝拼搭',
+    titleEn: 'Snow Princess Jewels',
+    subject: 'Patterns',
+    verbZh: '选择宝石，拼出目标和与对称皇冠',
+    verbEn: 'Pick jewels to complete the target crown pattern',
+    accent: '#facc15',
+    wash: 'from-yellow-300/25 via-cyan-400/10 to-[#141105]',
+  },
 ]
 
 const templates: Template[] = showcaseGames
+
+export const gameArtAtlasSrc = '/game-assets/math-game-art-atlas.png'
+
+const artAtlas = {
+  src: gameArtAtlasSrc,
+  image: null as HTMLImageElement | null,
+  ready: false,
+}
+
+export const gameArtTiles: Record<TemplateId, { col: number; row: number }> = {
+  starship: { col: 0, row: 0 },
+  geometry: { col: 1, row: 0 },
+  coaster: { col: 2, row: 0 },
+  circuit: { col: 3, row: 0 },
+  fraction: { col: 4, row: 0 },
+  molecule: { col: 5, row: 0 },
+  blaster: { col: 0, row: 1 },
+  snake: { col: 1, row: 1 },
+  tetra: { col: 2, row: 1 },
+  creature: { col: 3, row: 1 },
+  maze: { col: 4, row: 1 },
+  pinball: { col: 5, row: 1 },
+  marble: { col: 0, row: 2 },
+  seesaw: { col: 1, row: 2 },
+  kitchen: { col: 2, row: 2 },
+  planet: { col: 3, row: 2 },
+  animalRace: { col: 4, row: 2 },
+  jewel: { col: 5, row: 2 },
+}
+
+function ensureArtAtlas() {
+  if (typeof window === 'undefined' || artAtlas.image) return
+  const image = new Image()
+  image.src = artAtlas.src
+  image.onload = () => {
+    artAtlas.ready = true
+  }
+  artAtlas.image = image
+}
 
 const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: string[]; stepsEn: string[]; learnZh: string; learnEn: string; visual: string }> = {
   starship: {
@@ -461,6 +590,60 @@ const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: s
     learnZh: '算式判断、角度预判和目标选择一起训练。',
     learnEn: 'Equation judgment, angle prediction, and target selection train together.',
     visual: 'pinball',
+  },
+  marble: {
+    goalZh: '控制宝石弹珠台，让发光弹珠撞进正确答案靶。',
+    goalEn: 'Control the gem table and bounce into the correct answer target.',
+    stepsZh: ['看目标算式', '左右拖动弹板', '让弹珠命中正确宝石靶'],
+    stepsEn: ['Read the expression', 'Drag the paddle left or right', 'Bounce into the correct gem target'],
+    learnZh: '把心算、角度预判和反应速度连在一起。',
+    learnEn: 'Mental math, angle prediction, and reaction timing connect.',
+    visual: 'marble',
+  },
+  seesaw: {
+    goalZh: '用数字砝码让跷跷板两侧相等。',
+    goalEn: 'Use number weights to make both sides equal.',
+    stepsZh: ['看左边总和', '点击底部数字砝码', '右边总和相等就过关'],
+    stepsEn: ['Read the left-side sum', 'Tap number weights', 'Match the right-side total'],
+    learnZh: '等式的核心是平衡，不只是算出一个答案。',
+    learnEn: 'Equations are balance, not just answer hunting.',
+    visual: 'seesaw',
+  },
+  kitchen: {
+    goalZh: '选择原材料，把锅里的数值做成目标料理。',
+    goalEn: 'Choose ingredients to cook the target number.',
+    stepsZh: ['看食谱目标', '点击原材料进锅', '刚好达到目标就上菜'],
+    stepsEn: ['Read the recipe target', 'Tap ingredients into the pot', 'Serve when the total is exact'],
+    learnZh: '把应用题里的“配料、总量、剩余”变成可操作的组合。',
+    learnEn: 'Turns recipe-style word problems into number composition.',
+    visual: 'kitchen',
+  },
+  planet: {
+    goalZh: '驾驶飞船收集正确倍数，给星球护盾充能。',
+    goalEn: 'Pilot the ship into matching multiples to charge the planet shield.',
+    stepsZh: ['看倍数规则', '拖动飞船或按 WASD', '连续收集 3 个正确倍数'],
+    stepsEn: ['Read the multiple rule', 'Drag or press WASD', 'Collect three matching multiples'],
+    learnZh: '倍数识别和快速筛选一起训练。',
+    learnEn: 'Multiple recognition and quick filtering train together.',
+    visual: 'planet',
+  },
+  animalRace: {
+    goalZh: '赛前预测哪个小选手最接近目标数。',
+    goalEn: 'Predict which racer is closest to the target.',
+    stepsZh: ['看目标数', '点击你看好的小选手', '看它冲线验证估算'],
+    stepsEn: ['Read the target', 'Tap your predicted racer', 'Watch the finish test your estimate'],
+    learnZh: '估算、比较和证据判断变成一场比赛。',
+    learnEn: 'Estimation, comparison, and evidence become a race.',
+    visual: 'race',
+  },
+  jewel: {
+    goalZh: '点击宝石，拼出皇冠上的目标和。',
+    goalEn: 'Tap jewels to build the target crown sum.',
+    stepsZh: ['看皇冠目标', '选择 4 颗宝石', '总和正确就点亮皇冠'],
+    stepsEn: ['Read the crown target', 'Choose four jewels', 'Light the crown with the exact sum'],
+    learnZh: '加法组合、模式观察和空间排列一起练。',
+    learnEn: 'Addition composition, pattern spotting, and layout work together.',
+    visual: 'jewel',
   },
 }
 
@@ -616,6 +799,90 @@ function makeObjective(id: TemplateId, level: number, round: number): Objective 
     }
   }
 
+  if (id === 'marble') {
+    const a = 9 + ((round * 2 + level) % 10)
+    const b = 4 + ((round + level * 3) % 8)
+    const c = 3 + ((round * 5 + level) % 9)
+    const target = a * b + c
+    const expression = `${a} x ${b} + ${c}`
+    return {
+      promptZh: `弹珠撞进 ${expression} 的答案靶`,
+      promptEn: `Bounce the marble into ${expression}`,
+      target,
+      expression,
+      a,
+      b,
+      c,
+    }
+  }
+
+  if (id === 'seesaw') {
+    const a = 10 + ((round * 3 + level) % 18)
+    const b = 6 + ((round * 5 + level) % 14)
+    const target = a + b
+    return {
+      promptZh: `让右边数字砝码等于 ${a} + ${b}`,
+      promptEn: `Balance the right side to match ${a} + ${b}`,
+      target,
+      expression: `${a} + ${b}`,
+      a,
+      b,
+    }
+  }
+
+  if (id === 'kitchen') {
+    const values = [
+      4 + ((round + level) % 7),
+      5 + ((round * 2 + level) % 8),
+      6 + ((round * 3 + level) % 9),
+    ]
+    const target = values.reduce((sum, value) => sum + value, 0)
+    return {
+      promptZh: `按食谱做出总量 ${target}`,
+      promptEn: `Cook a recipe with total ${target}`,
+      target,
+      expression: values.join(' + '),
+      values,
+    }
+  }
+
+  if (id === 'planet') {
+    const target = [4, 5, 6, 7, 8, 9, 11, 12][round % 8]
+    return {
+      promptZh: `收集 ${target} 的倍数，为星球护盾充能`,
+      promptEn: `Collect multiples of ${target} to charge the shield`,
+      target,
+      expression: `multiples of ${target}`,
+    }
+  }
+
+  if (id === 'animalRace') {
+    const target = [18, 24, 30, 36, 42, 48, 54, 60][round % 8]
+    return {
+      promptZh: `预测最接近 ${target} 的小选手`,
+      promptEn: `Predict the racer closest to ${target}`,
+      target,
+      expression: `closest to ${target}`,
+    }
+  }
+
+  if (id === 'jewel') {
+    const values = [
+      3 + ((round + level) % 6),
+      4 + ((round * 2 + level) % 7),
+      5 + ((round * 3 + level) % 8),
+      6 + ((round * 4 + level) % 9),
+    ]
+    const target = values.reduce((sum, value) => sum + value, 0)
+    return {
+      promptZh: `拼出皇冠宝石总和 ${target}`,
+      promptEn: `Build a crown with jewel sum ${target}`,
+      target,
+      expression: values.join(' + '),
+      values,
+    }
+  }
+
   const a = 8 + ((round + level) % 8)
   const b = 5 + ((round * 2 + level) % 7)
   const c = 2 + (round % 6)
@@ -735,6 +1002,64 @@ function makeBricks(objective: Objective): Brick[] {
   })
 }
 
+function shuffled<T>(items: T[]) {
+  return [...items].sort(() => Math.random() - 0.5)
+}
+
+function makeNumberBank(correctValues: number[], target: number, count = 8) {
+  const decoys = [target - 1, target + 2, Math.max(1, correctValues[0] + 3), Math.max(1, target - correctValues[0] + 4), correctValues[correctValues.length - 1] + 5]
+  return shuffled(Array.from(new Set([...correctValues, ...decoys])).filter((value) => value > 0)).slice(0, count)
+}
+
+function makeSeesawBank(objective: Objective) {
+  const a = objective.a ?? Math.floor(objective.target / 2)
+  const b = objective.b ?? objective.target - a
+  return makeNumberBank([a, b], objective.target, 7)
+}
+
+function makeKitchenPantry(objective: Objective) {
+  const values = objective.values ?? [6, 7, objective.target - 13]
+  return makeNumberBank(values, objective.target, 8)
+}
+
+function makePlanetTargets(objective: Objective): Pod[] {
+  const factor = objective.target
+  const values = [factor * 2, factor * 3, factor + 2, factor * 4, factor * 5 - 1, factor * 5, factor * 6 + 1, factor * 7]
+  return shuffled(values).map((value, index) => ({
+    x: rand(86, width - 86),
+    y: -70 - index * 74,
+    vx: rand(-32, 32),
+    vy: rand(75, 138),
+    value,
+    good: value % factor === 0,
+    radius: 27,
+    color: pickColor(value + index),
+  }))
+}
+
+function makeRaceAnimals(objective: Objective): RaceAnimal[] {
+  const target = objective.target
+  const offsets = [-9, 0, 6, -4]
+  const labels = ['Fox', 'Panda', 'Rabbit', 'Koala']
+  return shuffled(offsets.map((offset, index) => {
+    const value = target + offset
+    const closeness = Math.max(0, 12 - Math.abs(offset))
+    return {
+      label: labels[index],
+      value,
+      speed: 0.085 + closeness * 0.011 + index * 0.002,
+      progress: 0,
+      color: pickColor(value + index),
+      good: offset === 0,
+    }
+  }))
+}
+
+function makeJewelBank(objective: Objective) {
+  const values = objective.values ?? [4, 5, 6, objective.target - 15]
+  return makeNumberBank(values, objective.target, 9)
+}
+
 function makeArcade(id: TemplateId, objective: Objective, round: number): Arcade {
   return {
     aimX: width / 2,
@@ -743,7 +1068,7 @@ function makeArcade(id: TemplateId, objective: Objective, round: number): Arcade
     playerY: height - 72,
     cooldown: 0,
     shots: [],
-    targets: id === 'blaster' || id === 'creature' ? makeTargets(objective, 7, true) : [],
+    targets: id === 'planet' ? makePlanetTargets(objective) : id === 'blaster' || id === 'creature' ? makeTargets(objective, 7, true) : [],
     snake: [
       { x: 7, y: 5 },
       { x: 6, y: 5 },
@@ -768,7 +1093,21 @@ function makeArcade(id: TemplateId, objective: Objective, round: number): Arcade
     ballVx: 180,
     ballVy: -210,
     paddleX: width / 2,
-    bricks: id === 'pinball' ? makeBricks(objective) : [],
+    bricks: id === 'pinball' || id === 'marble' ? makeBricks(objective) : [],
+    seesawLeft: [objective.a ?? Math.floor(objective.target / 2), objective.b ?? Math.ceil(objective.target / 2)],
+    seesawRight: [],
+    seesawBank: id === 'seesaw' ? makeSeesawBank(objective) : [],
+    seesawTimer: 0,
+    kitchenPantry: id === 'kitchen' ? makeKitchenPantry(objective) : [],
+    kitchenPot: [],
+    kitchenTimer: 0,
+    planetOrbit: 0,
+    animalChoice: -1,
+    raceAnimals: id === 'animalRace' ? makeRaceAnimals(objective) : [],
+    raceFinished: false,
+    jewelBank: id === 'jewel' ? makeJewelBank(objective) : [],
+    jewelSlots: [],
+    jewelTimer: 0,
   }
 }
 
@@ -881,6 +1220,11 @@ function knowledgeText(sim: Sim) {
   if (sim.id === 'tetra') return `lane sum=${o.target}`
   if (sim.id === 'creature') return `${sim.arcade.energy}=${o.target} target sum`
   if (sim.id === 'maze') return `factors divide ${o.target}`
+  if (sim.id === 'seesaw') return `${sim.arcade.seesawRight.reduce((sum, value) => sum + value, 0)}=${o.target} balance`
+  if (sim.id === 'kitchen') return `${sim.arcade.kitchenPot.reduce((sum, value) => sum + value, 0)}=${o.target} recipe`
+  if (sim.id === 'planet') return `multiples of ${o.target}`
+  if (sim.id === 'animalRace') return `closest value=${o.target}`
+  if (sim.id === 'jewel') return `${sim.arcade.jewelSlots.reduce((sum, value) => sum + value, 0)}=${o.target} crown`
   return expression ? `${expression}=${o.target}` : `${o.target}`
 }
 
@@ -1251,6 +1595,169 @@ function updatePinball(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeA
   }
 }
 
+function updateMarble(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) arcade.paddleX -= 430 * dt
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) arcade.paddleX += 430 * dt
+  arcade.paddleX = clamp(arcade.paddleX, 92, width - 92)
+  arcade.ballX += arcade.ballVx * dt
+  arcade.ballY += arcade.ballVy * dt
+  arcade.ballVy += 24 * dt
+  if (arcade.ballX < 34 || arcade.ballX > width - 34) arcade.ballVx *= -1
+  if (arcade.ballY < 58) arcade.ballVy *= -1
+  if (arcade.ballY > height - 60 && Math.abs(arcade.ballX - arcade.paddleX) < 104) {
+    arcade.ballVy = -Math.abs(arcade.ballVy) - 24
+    arcade.ballVx += (arcade.ballX - arcade.paddleX) * 2.15
+    audio.move()
+  }
+  if (arcade.ballY > height + 60) {
+    arcade.ballX = width / 2
+    arcade.ballY = 320
+    arcade.ballVx = rand(-230, 230)
+    arcade.ballVy = -260
+    miss(sim, '宝石弹珠掉落，重新发射', 'Gem marble dropped. Relaunch', audio)
+  }
+  const brick = arcade.bricks.find((candidate) => candidate.alive && Math.abs(arcade.ballX - candidate.x) < 58 && Math.abs(arcade.ballY - candidate.y) < 30)
+  if (!brick) return
+  brick.alive = false
+  arcade.ballVy *= -1
+  arcade.ballVx += rand(-42, 42)
+  sim.mouse.x = brick.x
+  sim.mouse.y = brick.y
+  if (brick.good) {
+    advance(sim, '宝石弹珠命中答案靶', 'Gem marble hit the answer target', '#22d3ee', audio)
+  } else {
+    miss(sim, '撞到了干扰宝石', 'Decoy gem target hit', audio)
+    addBurst(sim, brick.x, brick.y, '#fb7185')
+  }
+}
+
+function updateSeesaw(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const left = arcade.seesawLeft.reduce((sum, value) => sum + value, 0)
+  const right = arcade.seesawRight.reduce((sum, value) => sum + value, 0)
+  if (right === left && arcade.seesawRight.length > 0) {
+    arcade.seesawTimer += dt
+    if (arcade.seesawTimer > 0.45) {
+      sim.mouse.x = width / 2
+      sim.mouse.y = 292
+      advance(sim, '跷跷板平衡，等式成立', 'Seesaw balanced. Equation true', '#fb923c', audio)
+    }
+  } else {
+    arcade.seesawTimer = 0
+  }
+  if (right > left + 8) {
+    arcade.seesawRight = []
+    arcade.seesawTimer = 0
+    miss(sim, '右边太重了，重新配平', 'Right side is too heavy. Rebalance', audio)
+  }
+}
+
+function updateKitchen(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const total = arcade.kitchenPot.reduce((sum, value) => sum + value, 0)
+  if (total === sim.objective.target && arcade.kitchenPot.length > 0) {
+    arcade.kitchenTimer += dt
+    if (arcade.kitchenTimer > 0.42) {
+      sim.mouse.x = 520
+      sim.mouse.y = 310
+      advance(sim, '数学料理刚好出锅', 'Recipe total cooked exactly', '#34d399', audio)
+    }
+  } else {
+    arcade.kitchenTimer = 0
+  }
+  if (total > sim.objective.target) {
+    arcade.kitchenPot = []
+    arcade.kitchenTimer = 0
+    miss(sim, '食材总量超标，重新配方', 'Recipe total overshot. Rebuild it', audio)
+  }
+}
+
+function updatePlanet(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const speed = 300
+  arcade.planetOrbit += dt
+  if (sim.keys.has('ArrowLeft') || sim.keys.has('a')) arcade.playerX -= speed * dt
+  if (sim.keys.has('ArrowRight') || sim.keys.has('d')) arcade.playerX += speed * dt
+  if (sim.keys.has('ArrowUp') || sim.keys.has('w')) arcade.playerY -= speed * dt
+  if (sim.keys.has('ArrowDown') || sim.keys.has('s')) arcade.playerY += speed * dt
+  arcade.playerX = clamp(arcade.playerX, 62, width - 62)
+  arcade.playerY = clamp(arcade.playerY, 150, height - 62)
+  if (arcade.targets.length < 7) arcade.targets = makePlanetTargets(sim.objective)
+  for (const target of arcade.targets) {
+    target.y += target.vy * dt
+    target.x += Math.sin((arcade.planetOrbit + target.value) * 1.7) * 34 * dt
+    if (target.y > height + 60) {
+      target.y = -60
+      target.x = rand(90, width - 90)
+    }
+  }
+  const hit = arcade.targets.find((target) => dist(arcade.playerX, arcade.playerY, target.x, target.y) < target.radius + 30)
+  if (!hit) return
+  sim.mouse.x = hit.x
+  sim.mouse.y = hit.y
+  if (hit.good) {
+    arcade.energy += 1
+    addBurst(sim, hit.x, hit.y, hit.color ?? '#818cf8')
+    arcade.targets = arcade.targets.filter((target) => target !== hit)
+    if (arcade.energy >= 3) {
+      advance(sim, '星球护盾充能完成', 'Planet shield fully charged', '#818cf8', audio)
+    } else {
+      audio.success()
+    }
+  } else {
+    arcade.energy = 0
+    arcade.targets = arcade.targets.filter((target) => target !== hit)
+    miss(sim, '这不是目标倍数，护盾重置', 'Not a matching multiple. Shield reset', audio)
+  }
+}
+
+function updateAnimalRace(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  if (arcade.animalChoice < 0 || arcade.raceFinished) return
+  for (const animal of arcade.raceAnimals) {
+    animal.progress = clamp(animal.progress + animal.speed * dt * (1 + sim.level * 0.035), 0, 1)
+  }
+  const winnerIndex = arcade.raceAnimals.findIndex((animal) => animal.progress >= 1)
+  if (winnerIndex < 0) return
+  arcade.raceFinished = true
+  const winner = arcade.raceAnimals[winnerIndex]
+  sim.mouse.x = 850
+  sim.mouse.y = 168 + winnerIndex * 88
+  if (winner.good && arcade.animalChoice === winnerIndex) {
+    advance(sim, '预测正确，小选手冲线', 'Prediction right. Racer crossed first', '#f9a8d4', audio)
+  } else {
+    miss(sim, '这次预测偏了，再看数值距离', 'Prediction missed. Compare the value distances', audio)
+    window.setTimeout(() => {
+      if (sim.id !== 'animalRace') return
+      sim.arcade.raceAnimals = makeRaceAnimals(sim.objective)
+      sim.arcade.animalChoice = -1
+      sim.arcade.raceFinished = false
+    }, 700)
+  }
+}
+
+function updateJewel(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
+  const arcade = sim.arcade
+  const total = arcade.jewelSlots.reduce((sum, value) => sum + value, 0)
+  if (arcade.jewelSlots.length < 4) {
+    arcade.jewelTimer = 0
+    return
+  }
+  if (total === sim.objective.target) {
+    arcade.jewelTimer += dt
+    if (arcade.jewelTimer > 0.4) {
+      sim.mouse.x = width / 2
+      sim.mouse.y = 246
+      advance(sim, '皇冠宝石拼搭完成', 'Crown jewel pattern completed', '#facc15', audio)
+    }
+  } else {
+    arcade.jewelSlots = []
+    arcade.jewelTimer = 0
+    miss(sim, '宝石总和不对，重新拼搭', 'Jewel sum missed. Rebuild the crown', audio)
+  }
+}
+
 function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio>) {
   if (sim.messageTimer > 0) {
     sim.messageTimer -= dt
@@ -1377,17 +1884,38 @@ function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio
   if (sim.id === 'creature') updateCreature(sim, dt, audio)
   if (sim.id === 'maze') updateMaze(sim, dt, audio)
   if (sim.id === 'pinball') updatePinball(sim, dt, audio)
+  if (sim.id === 'marble') updateMarble(sim, dt, audio)
+  if (sim.id === 'seesaw') updateSeesaw(sim, dt, audio)
+  if (sim.id === 'kitchen') updateKitchen(sim, dt, audio)
+  if (sim.id === 'planet') updatePlanet(sim, dt, audio)
+  if (sim.id === 'animalRace') updateAnimalRace(sim, dt, audio)
+  if (sim.id === 'jewel') updateJewel(sim, dt, audio)
 }
 
 function drawBackground(ctx: CanvasRenderingContext2D, template: Template) {
-  const gradient = ctx.createLinearGradient(0, 0, width, height)
-  gradient.addColorStop(0, '#050816')
-  gradient.addColorStop(0.55, '#111827')
-  gradient.addColorStop(1, '#030712')
-  ctx.fillStyle = gradient
+  const image = artAtlas.ready ? artAtlas.image : null
+  const tile = gameArtTiles[template.id]
+  if (image?.naturalWidth && image.naturalHeight) {
+    const sw = image.naturalWidth / 6
+    const sh = image.naturalHeight / 3
+    ctx.drawImage(image, tile.col * sw, tile.row * sh, sw, sh, 0, 0, width, height)
+  } else {
+    const gradient = ctx.createLinearGradient(0, 0, width, height)
+    gradient.addColorStop(0, '#050816')
+    gradient.addColorStop(0.55, '#111827')
+    gradient.addColorStop(1, '#030712')
+    ctx.fillStyle = gradient
+    ctx.fillRect(0, 0, width, height)
+  }
+
+  const readability = ctx.createLinearGradient(0, 0, width, height)
+  readability.addColorStop(0, 'rgba(2,6,23,.76)')
+  readability.addColorStop(0.46, 'rgba(2,6,23,.28)')
+  readability.addColorStop(1, 'rgba(2,6,23,.68)')
+  ctx.fillStyle = readability
   ctx.fillRect(0, 0, width, height)
 
-  ctx.globalAlpha = 0.18
+  ctx.globalAlpha = 0.1
   ctx.strokeStyle = template.accent
   for (let x = 0; x < width; x += 46) {
     ctx.beginPath()
@@ -1943,6 +2471,260 @@ function drawPinball(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
   ctx.textAlign = 'left'
 }
 
+function drawMarble(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, `Gem target ${sim.objective.expression}`, 34, 94, '#cffafe')
+  for (const brick of arcade.bricks) {
+    if (!brick.alive) continue
+    const glow = ctx.createRadialGradient(brick.x, brick.y, 4, brick.x, brick.y, 54)
+    glow.addColorStop(0, brick.good ? '#ffffff' : brick.color)
+    glow.addColorStop(1, `${brick.good ? template.accent : brick.color}33`)
+    ctx.fillStyle = glow
+    ctx.beginPath()
+    ctx.arc(brick.x, brick.y, 42, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.strokeStyle = brick.good ? '#ffffff' : 'rgba(255,255,255,.28)'
+    ctx.lineWidth = brick.good ? 4 : 2
+    ctx.stroke()
+    ctx.fillStyle = '#ecfeff'
+    ctx.font = '900 18px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(brick.value), brick.x, brick.y + 6)
+  }
+  ctx.fillStyle = '#ecfeff'
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 30
+  ctx.beginPath()
+  ctx.arc(arcade.ballX, arcade.ballY, 16, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.fillStyle = template.accent
+  roundRect(ctx, arcade.paddleX - 96, height - 44, 192, 22, 11)
+  ctx.fill()
+  ctx.textAlign = 'left'
+}
+
+function drawSeesaw(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  const left = arcade.seesawLeft.reduce((sum, value) => sum + value, 0)
+  const right = arcade.seesawRight.reduce((sum, value) => sum + value, 0)
+  const tilt = clamp((right - left) / 42, -0.28, 0.28)
+  drawTextPill(ctx, `Balance ${sim.objective.expression} = ${left}`, 34, 94, '#ffedd5')
+  ctx.save()
+  ctx.translate(width / 2, 310)
+  ctx.rotate(tilt)
+  ctx.fillStyle = '#fed7aa'
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 18
+  roundRect(ctx, -330, -16, 660, 32, 16)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.restore()
+  ctx.fillStyle = 'rgba(0,0,0,.42)'
+  roundRect(ctx, 485, 310, 70, 150, 28)
+  ctx.fill()
+  ctx.fillStyle = template.accent
+  ctx.beginPath()
+  ctx.moveTo(520, 280)
+  ctx.lineTo(575, 462)
+  ctx.lineTo(465, 462)
+  ctx.closePath()
+  ctx.fill()
+
+  const drawWeights = (values: number[], startX: number, y: number, color: string) => {
+    values.forEach((value, index) => {
+      const x = startX + index * 70
+      ctx.fillStyle = color
+      roundRect(ctx, x - 26, y - 34, 52, 60, 14)
+      ctx.fill()
+      ctx.fillStyle = '#111827'
+      ctx.font = '900 18px system-ui, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(String(value), x, y + 4)
+    })
+  }
+  drawWeights(arcade.seesawLeft, 300, 240, '#fdba74')
+  drawWeights(arcade.seesawRight, 632, 240, '#bae6fd')
+  ctx.fillStyle = '#fff7ed'
+  ctx.font = '900 28px system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(`${left}`, 300, 184)
+  ctx.fillText(`${right}`, 706, 184)
+  arcade.seesawBank.forEach((value, index) => {
+    const x = 130 + index * 112
+    ctx.fillStyle = '#fff7ed'
+    roundRect(ctx, x - 38, 500, 76, 62, 18)
+    ctx.fill()
+    ctx.strokeStyle = template.accent
+    ctx.lineWidth = 3
+    ctx.stroke()
+    ctx.fillStyle = '#7c2d12'
+    ctx.font = '900 23px system-ui, sans-serif'
+    ctx.fillText(String(value), x, 539)
+  })
+  ctx.textAlign = 'left'
+}
+
+function drawKitchen(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  const total = arcade.kitchenPot.reduce((sum, value) => sum + value, 0)
+  drawTextPill(ctx, `Recipe total ${sim.objective.target}`, 34, 94, '#dcfce7')
+  ctx.fillStyle = 'rgba(0,0,0,.46)'
+  roundRect(ctx, 350, 192, 340, 230, 44)
+  ctx.fill()
+  ctx.fillStyle = '#bbf7d0'
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 22
+  ctx.beginPath()
+  ctx.ellipse(520, 300, 126, 78, 0, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.shadowBlur = 0
+  ctx.fillStyle = '#064e3b'
+  ctx.font = '900 42px system-ui, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(String(total), 520, 314)
+  ctx.fillStyle = 'rgba(255,255,255,.78)'
+  ctx.font = '900 18px system-ui, sans-serif'
+  ctx.fillText(`target ${sim.objective.target}`, 520, 354)
+  arcade.kitchenPantry.forEach((value, index) => {
+    const x = 96 + index * 106
+    const y = 500
+    ctx.fillStyle = pickColor(value + index)
+    roundRect(ctx, x - 34, y - 34, 68, 68, 22)
+    ctx.fill()
+    ctx.fillStyle = '#052e16'
+    ctx.font = '900 22px system-ui, sans-serif'
+    ctx.fillText(String(value), x, y + 8)
+  })
+  ctx.textAlign = 'left'
+}
+
+function drawPlanet(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, `Collect multiples of ${sim.objective.target} (${arcade.energy}/3)`, 34, 94, '#e0e7ff')
+  ctx.strokeStyle = `rgba(129,140,248,${0.28 + arcade.energy * 0.12})`
+  ctx.lineWidth = 8
+  ctx.beginPath()
+  ctx.arc(width - 210, 210, 92 + Math.sin(arcade.planetOrbit * 4) * 4, 0, Math.PI * 2)
+  ctx.stroke()
+  for (const target of arcade.targets) {
+    ctx.fillStyle = target.good ? '#c7d2fe' : target.color ?? template.accent
+    ctx.shadowColor = target.color ?? template.accent
+    ctx.shadowBlur = 20
+    ctx.beginPath()
+    ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 17px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(target.value), target.x, target.y + 6)
+  }
+  ctx.save()
+  ctx.translate(arcade.playerX, arcade.playerY)
+  ctx.fillStyle = template.accent
+  ctx.shadowColor = template.accent
+  ctx.shadowBlur = 24
+  ctx.beginPath()
+  ctx.moveTo(0, -34)
+  ctx.lineTo(36, 28)
+  ctx.lineTo(0, 12)
+  ctx.lineTo(-36, 28)
+  ctx.closePath()
+  ctx.fill()
+  ctx.restore()
+  ctx.shadowBlur = 0
+  ctx.textAlign = 'left'
+}
+
+function drawAnimalRace(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  drawTextPill(ctx, `Pick closest to ${sim.objective.target}`, 34, 94, '#fce7f3')
+  ctx.strokeStyle = 'rgba(255,255,255,.16)'
+  ctx.lineWidth = 3
+  ctx.setLineDash([16, 10])
+  ctx.beginPath()
+  ctx.moveTo(870, 144)
+  ctx.lineTo(870, 512)
+  ctx.stroke()
+  ctx.setLineDash([])
+  arcade.raceAnimals.forEach((animal, index) => {
+    const y = 160 + index * 88
+    const x = 120 + animal.progress * 740
+    ctx.fillStyle = arcade.animalChoice === index ? 'rgba(249,168,212,.25)' : 'rgba(255,255,255,.06)'
+    roundRect(ctx, 92, y - 34, 804, 68, 24)
+    ctx.fill()
+    ctx.fillStyle = animal.color
+    ctx.shadowColor = animal.color
+    ctx.shadowBlur = 18
+    ctx.beginPath()
+    ctx.arc(x, y, 24, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.beginPath()
+    ctx.arc(x - 14, y - 20, 8, 0, Math.PI * 2)
+    ctx.arc(x + 14, y - 20, 8, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#ffffff'
+    ctx.font = '900 17px system-ui, sans-serif'
+    ctx.textAlign = 'left'
+    ctx.fillText(`${animal.label}: ${animal.value}`, 118, y + 7)
+  })
+}
+
+function drawJewel(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
+  const arcade = sim.arcade
+  const total = arcade.jewelSlots.reduce((sum, value) => sum + value, 0)
+  drawTextPill(ctx, `Crown sum ${total} / ${sim.objective.target}`, 34, 94, '#fef9c3')
+  ctx.strokeStyle = '#fde68a'
+  ctx.lineWidth = 7
+  ctx.beginPath()
+  ctx.moveTo(320, 320)
+  ctx.lineTo(385, 210)
+  ctx.lineTo(460, 310)
+  ctx.lineTo(520, 190)
+  ctx.lineTo(590, 310)
+  ctx.lineTo(660, 210)
+  ctx.lineTo(720, 320)
+  ctx.stroke()
+  arcade.jewelSlots.forEach((value, index) => {
+    const x = 380 + index * 92
+    const y = index % 2 ? 284 : 250
+    ctx.fillStyle = pickColor(value + index)
+    ctx.shadowColor = template.accent
+    ctx.shadowBlur = 28
+    ctx.beginPath()
+    ctx.moveTo(x, y - 28)
+    ctx.lineTo(x + 28, y)
+    ctx.lineTo(x, y + 28)
+    ctx.lineTo(x - 28, y)
+    ctx.closePath()
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 18px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(value), x, y + 6)
+  })
+  arcade.jewelBank.forEach((value, index) => {
+    const x = 92 + index * 94
+    const y = 512
+    ctx.fillStyle = pickColor(value + index)
+    ctx.beginPath()
+    ctx.moveTo(x, y - 30)
+    ctx.lineTo(x + 32, y)
+    ctx.lineTo(x, y + 30)
+    ctx.lineTo(x - 32, y)
+    ctx.closePath()
+    ctx.fill()
+    ctx.fillStyle = '#111827'
+    ctx.font = '900 18px system-ui, sans-serif'
+    ctx.textAlign = 'center'
+    ctx.fillText(String(value), x, y + 7)
+  })
+  ctx.textAlign = 'left'
+}
+
 function drawParticles(ctx: CanvasRenderingContext2D, sim: Sim) {
   for (const p of sim.particles) {
     ctx.globalAlpha = clamp(p.life, 0, 1)
@@ -1985,6 +2767,12 @@ function drawSim(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
   if (sim.id === 'creature') drawCreature(ctx, sim, template)
   if (sim.id === 'maze') drawMaze(ctx, sim, template)
   if (sim.id === 'pinball') drawPinball(ctx, sim, template)
+  if (sim.id === 'marble') drawMarble(ctx, sim, template)
+  if (sim.id === 'seesaw') drawSeesaw(ctx, sim, template)
+  if (sim.id === 'kitchen') drawKitchen(ctx, sim, template)
+  if (sim.id === 'planet') drawPlanet(ctx, sim, template)
+  if (sim.id === 'animalRace') drawAnimalRace(ctx, sim, template)
+  if (sim.id === 'jewel') drawJewel(ctx, sim, template)
   drawParticles(ctx, sim)
 }
 
@@ -1997,8 +2785,40 @@ function getPointer(canvas: HTMLCanvasElement, event: PointerEvent | React.Point
 }
 
 function HowToPlayGraphic({ visual, accent }: { visual: string; accent: string }) {
+  const visualTiles: Record<string, { col: number; row: number }> = {
+    ship: gameArtTiles.starship,
+    grid: gameArtTiles.geometry,
+    curve: gameArtTiles.coaster,
+    circuit: gameArtTiles.circuit,
+    fraction: gameArtTiles.fraction,
+    molecule: gameArtTiles.molecule,
+    blaster: gameArtTiles.blaster,
+    snake: gameArtTiles.snake,
+    tetra: gameArtTiles.tetra,
+    duel: gameArtTiles.creature,
+    maze: gameArtTiles.maze,
+    pinball: gameArtTiles.pinball,
+    marble: gameArtTiles.marble,
+    seesaw: gameArtTiles.seesaw,
+    kitchen: gameArtTiles.kitchen,
+    planet: gameArtTiles.planet,
+    race: gameArtTiles.animalRace,
+    jewel: gameArtTiles.jewel,
+  }
+  const tile = visualTiles[visual]
   return (
     <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10 bg-black/35">
+      {tile && (
+        <div
+          className="absolute inset-0 bg-cover bg-no-repeat opacity-80"
+          style={{
+            backgroundImage: `url(${artAtlas.src})`,
+            backgroundSize: '600% 300%',
+            backgroundPosition: `${(tile.col / 5) * 100}% ${(tile.row / 2) * 100}%`,
+          }}
+        />
+      )}
+      <div className="absolute inset-0 bg-black/35" />
       <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:28px_28px]" />
       {visual === 'grid' && (
         <div className="absolute left-12 top-8 grid grid-cols-5 gap-1">
@@ -2211,6 +3031,7 @@ export default function LearningGameShowcase({
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    ensureArtAtlas()
 
     const resize = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1)
@@ -2310,9 +3131,64 @@ export default function LearningGameShowcase({
       sim.arcade.creatureY = clamp(y, 96, height - 64)
       return
     }
-    if (sim.id === 'pinball') {
+    if (sim.id === 'pinball' || sim.id === 'marble') {
       sim.drag = 'paddle'
       sim.arcade.paddleX = clamp(x, 90, width - 90)
+      return
+    }
+    if (sim.id === 'planet') {
+      sim.arcade.playerX = clamp(x, 62, width - 62)
+      sim.arcade.playerY = clamp(y, 150, height - 62)
+      return
+    }
+    if (sim.id === 'seesaw') {
+      const slotIndex = sim.arcade.seesawRight.findIndex((_, index) => Math.abs(x - (632 + index * 70)) < 34 && Math.abs(y - 240) < 42)
+      if (slotIndex >= 0) {
+        sim.arcade.seesawRight.splice(slotIndex, 1)
+        audio.move()
+        return
+      }
+      const bankIndex = sim.arcade.seesawBank.findIndex((_, index) => Math.abs(x - (130 + index * 112)) < 42 && y > 490 && y < 570)
+      if (bankIndex >= 0 && sim.arcade.seesawRight.length < 4) {
+        sim.arcade.seesawRight.push(sim.arcade.seesawBank[bankIndex])
+        audio.move()
+      }
+      return
+    }
+    if (sim.id === 'kitchen') {
+      if (x > 350 && x < 690 && y > 192 && y < 422) {
+        sim.arcade.kitchenPot.pop()
+        audio.move()
+        return
+      }
+      const ingredientIndex = sim.arcade.kitchenPantry.findIndex((_, index) => Math.abs(x - (96 + index * 106)) < 42 && Math.abs(y - 500) < 46)
+      if (ingredientIndex >= 0 && sim.arcade.kitchenPot.length < 5) {
+        sim.arcade.kitchenPot.push(sim.arcade.kitchenPantry[ingredientIndex])
+        audio.move()
+      }
+      return
+    }
+    if (sim.id === 'animalRace') {
+      const laneIndex = sim.arcade.raceAnimals.findIndex((_, index) => y > 126 + index * 88 && y < 194 + index * 88)
+      if (laneIndex >= 0 && !sim.arcade.raceFinished) {
+        sim.arcade.animalChoice = laneIndex
+        sim.arcade.raceAnimals = sim.arcade.raceAnimals.map((animal) => ({ ...animal, progress: 0 }))
+        audio.move()
+      }
+      return
+    }
+    if (sim.id === 'jewel') {
+      const slotIndex = sim.arcade.jewelSlots.findIndex((_, index) => Math.abs(x - (380 + index * 92)) < 40 && y > 210 && y < 325)
+      if (slotIndex >= 0) {
+        sim.arcade.jewelSlots.splice(slotIndex, 1)
+        audio.move()
+        return
+      }
+      const jewelIndex = sim.arcade.jewelBank.findIndex((_, index) => Math.abs(x - (92 + index * 94)) < 40 && Math.abs(y - 512) < 46)
+      if (jewelIndex >= 0 && sim.arcade.jewelSlots.length < 4) {
+        sim.arcade.jewelSlots.push(sim.arcade.jewelBank[jewelIndex])
+        audio.move()
+      }
     }
   }
 
@@ -2364,8 +3240,12 @@ export default function LearningGameShowcase({
       sim.arcade.creatureX = clamp(x, 64, width - 64)
       sim.arcade.creatureY = clamp(y, 96, height - 64)
     }
-    if (sim.id === 'pinball') {
+    if (sim.id === 'pinball' || sim.id === 'marble') {
       sim.arcade.paddleX = clamp(x, 90, width - 90)
+    }
+    if (sim.id === 'planet' && sim.mouse.down) {
+      sim.arcade.playerX = clamp(x, 62, width - 62)
+      sim.arcade.playerY = clamp(y, 150, height - 62)
     }
   }
 

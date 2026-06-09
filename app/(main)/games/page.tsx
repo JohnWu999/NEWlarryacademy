@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useLanguage } from '@/context/LanguageContext'
-import LearningGameShowcase, { showcaseGames, type TemplateId } from '@/components/games/LearningGameShowcase'
+import LearningGameShowcase, { gameArtAtlasSrc, gameArtTiles, showcaseGames, type TemplateId } from '@/components/games/LearningGameShowcase'
 
 type GameRecord = {
   id: string
@@ -112,7 +112,7 @@ export default function GamesPage() {
               {locale === 'zh' ? '原创互动模板' : 'Original Interactive Templates'}
             </p>
             <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
-              {locale === 'zh' ? '12 个 Larry Academy 可复用学习游戏' : '12 Reusable Larry Academy Learning Games'}
+              {locale === 'zh' ? `${showcaseGames.length} 个 Larry Academy 可复用学习游戏` : `${showcaseGames.length} Reusable Larry Academy Learning Games`}
             </h2>
           </div>
         </div>
@@ -120,6 +120,7 @@ export default function GamesPage() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {showcaseGames.map((game) => {
             const selected = game.id === selectedTemplate
+            const tile = gameArtTiles[game.id]
             return (
               <button
                 key={game.id}
@@ -128,17 +129,17 @@ export default function GamesPage() {
                   selected ? 'border-white/45 bg-white/[0.08] shadow-2xl shadow-white/10' : 'border-white/[0.08] bg-white/[0.025] hover:border-white/24 hover:bg-white/[0.05]'
                 }`}
               >
-                <div className={`relative aspect-video bg-gradient-to-br ${game.wash} p-5`}>
-                  <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.16)_1px,transparent_1px)] [background-size:30px_30px]" />
-                  <div className="relative flex h-full items-center justify-center">
-                    <div className="relative h-24 w-36">
-                      <div className="absolute left-2 top-9 h-8 w-16 rounded-full bg-white shadow-2xl transition group-hover:translate-x-3" />
-                      <div className="absolute right-2 top-4 flex size-20 items-center justify-center rounded-full text-2xl font-black text-black shadow-2xl transition group-hover:scale-110" style={{ backgroundColor: game.accent }}>
-                        {game.id === 'geometry' ? 'A' : game.id === 'fraction' ? '1/2' : game.id === 'circuit' ? 'V' : game.id === 'molecule' ? 'O' : game.id === 'snake' ? '×' : game.id === 'maze' ? 'F' : game.id === 'tetra' ? '+' : '50'}
-                      </div>
-                      <div className="absolute bottom-3 left-20 h-2 w-20 rounded-full" style={{ backgroundColor: game.accent }} />
-                    </div>
-                  </div>
+                <div className="relative aspect-video overflow-hidden bg-black p-5">
+                  <div
+                    className="absolute inset-0 bg-cover bg-no-repeat transition duration-700 group-hover:scale-105"
+                    style={{
+                      backgroundImage: `url(${gameArtAtlasSrc})`,
+                      backgroundSize: '600% 300%',
+                      backgroundPosition: `${(tile.col / 5) * 100}% ${(tile.row / 2) * 100}%`,
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/20" />
+                  <div className="absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,.24)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.24)_1px,transparent_1px)] [background-size:32px_32px]" />
                   <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/70">
                     {game.subject}
                   </div>
