@@ -2041,9 +2041,17 @@ function HowToPlayGraphic({ visual, accent }: { visual: string; accent: string }
 export default function LearningGameShowcase({
   selectedId,
   onActiveChange,
+  compact = false,
+  lockedTemplate = false,
+  completionRounds = 1,
+  onComplete,
 }: {
   selectedId?: TemplateId
   onActiveChange?: (id: TemplateId) => void
+  compact?: boolean
+  lockedTemplate?: boolean
+  completionRounds?: number
+  onComplete?: (record: PendingRecord) => void
 } = {}) {
   const { locale } = useLanguage()
   const audio = useArcadeAudio()
@@ -2052,26 +2060,30 @@ export default function LearningGameShowcase({
   const simRef = useRef<Sim>(makeSim(selectedId ?? 'starship'))
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number | null>(null)
+  const completedRef = useRef(false)
   const seenHowToPlayRef = useRef(new Set<TemplateId>())
   const [showHowToPlay, setShowHowToPlay] = useState(true)
   const [hud, setHud] = useState<Hud>(makeHud(simRef.current))
   const how = howToPlay[activeId]
-  const showcaseLayoutClass =
-    activeId === 'snake'
+  const showcaseLayoutClass = compact
+    ? 'mb-4 grid gap-4'
+    : activeId === 'snake'
       ? 'mb-8 grid gap-5 lg:grid-cols-[0.52fr_1.48fr]'
       : 'mb-8 grid gap-5 lg:grid-cols-[0.88fr_1.12fr]'
 
   const chooseTemplate = useCallback((id: TemplateId) => {
+    if (lockedTemplate) return
     setActiveId(id)
     onActiveChange?.(id)
     if (!seenHowToPlayRef.current.has(id)) {
       setShowHowToPlay(true)
     }
     audio.move()
-  }, [audio, onActiveChange])
+  }, [audio, lockedTemplate, onActiveChange])
 
   const reset = useCallback((id = activeId) => {
     simRef.current = makeSim(id)
+    completedRef.current = false
     setHud(makeHud(simRef.current))
     audio.move()
   }, [activeId, audio])
@@ -2082,9 +2094,12 @@ export default function LearningGameShowcase({
 
   useEffect(() => {
     if (selectedId && selectedId !== activeId) {
-      chooseTemplate(selectedId)
+      setActiveId(selectedId)
+      if (!seenHowToPlayRef.current.has(selectedId)) {
+        setShowHowToPlay(true)
+      }
     }
-  }, [activeId, chooseTemplate, selectedId])
+  }, [activeId, selectedId])
 
   const closeHowToPlay = useCallback(() => {
     seenHowToPlayRef.current.add(activeId)
@@ -2204,6 +2219,10 @@ export default function LearningGameShowcase({
       if (record) {
         simRef.current.pendingRecord = null
         void saveShowcaseRecord(record)
+        if (onComplete && !completedRef.current && record.round >= Math.max(1, completionRounds)) {
+          completedRef.current = true
+          window.setTimeout(() => onComplete(record), 420)
+        }
       }
       const penalty = simRef.current.pendingPenalty
       if (penalty) {
@@ -2224,7 +2243,7 @@ export default function LearningGameShowcase({
       window.removeEventListener('resize', resize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [activeTemplate, audio, saveShowcasePenalty, saveShowcaseRecord, showHowToPlay])
+  }, [activeTemplate, audio, completionRounds, onComplete, saveShowcasePenalty, saveShowcaseRecord, showHowToPlay])
 
   const beginDrag = (x: number, y: number) => {
     const sim = simRef.current
@@ -2405,7 +2424,7 @@ export default function LearningGameShowcase({
   return (
     <section className="relative">
       <div className={showcaseLayoutClass}>
-        <div className="space-y-5">
+        <div className={compact ? 'hidden' : 'space-y-5'}>
           <div className="border-b border-white/10 pb-5">
             <p className="text-sm font-black uppercase tracking-[0.28em] text-white/45">Larry Academy Lab</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-5xl">
@@ -2444,15 +2463,19 @@ export default function LearningGameShowcase({
           </div>
         </div>
 
-        <div className={`relative rounded-2xl border border-white/10 bg-gradient-to-br ${activeTemplate.wash} p-4 shadow-2xl shadow-black/25`}>
+        <div className={`relative rounded-2xl border border-white/10 bg-gradient-to-br ${activeTemplate.wash} ${compact ? 'p-3 shadow-xl shadow-black/20' : 'p-4 shadow-2xl shadow-black/25'}`}>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">{activeTemplate.subject}</p>
-              <h3 className="mt-1 text-2xl font-black text-white">{locale === 'zh' ? activeTemplate.titleZh : activeTemplate.titleEn}</h3>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-white/40">
+                {compact ? (locale === 'zh' ? '本课技能挑战' : 'Lesson Skill Challenge') : activeTemplate.subject}
+              </p>
+              <h3 className={`${compact ? 'mt-1 text-xl' : 'mt-1 text-2xl'} font-black text-white`}>
+                {locale === 'zh' ? activeTemplate.titleZh : activeTemplate.titleEn}
+              </h3>
             </div>
             <button
               onClick={() => reset(activeId)}
-              className="rounded-xl bg-white px-4 py-3 text-sm font-black text-black transition hover:scale-[1.02] active:scale-[0.98]"
+              className={`${compact ? 'rounded-lg px-3 py-2 text-xs' : 'rounded-xl px-4 py-3 text-sm'} bg-white font-black text-black transition hover:scale-[1.02] active:scale-[0.98]`}
             >
               {locale === 'zh' ? '重开' : 'Reset'}
             </button>
@@ -2515,7 +2538,8 @@ export default function LearningGameShowcase({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr]">
+      <div className={`${compact ? 'grid gap-3 sm:grid-cols-3' : 'grid gap-4 lg:grid-cols-[1.4fr_0.6fr_0.6fr_0.6fr]'}`}>
+        {!compact && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-5">
           <div className="text-xs font-black uppercase tracking-[0.22em] text-white/35">
             {locale === 'zh' ? '操作原则' : 'Play Rule'}
@@ -2529,13 +2553,14 @@ export default function LearningGameShowcase({
             </div>
           )}
         </div>
+        )}
         {[
           [locale === 'zh' ? '分数' : 'Score', hud.score],
           [locale === 'zh' ? '连击' : 'Streak', hud.streak],
           [locale === 'zh' ? '等级' : 'Level', hud.level],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-            <div className="text-3xl font-black text-white">{value}</div>
+          <div key={label} className={`${compact ? 'rounded-xl p-3' : 'rounded-2xl p-5'} border border-white/10 bg-white/[0.04]`}>
+            <div className={`${compact ? 'text-xl' : 'text-3xl'} font-black text-white`}>{value}</div>
             <div className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-white/42">{label}</div>
           </div>
         ))}

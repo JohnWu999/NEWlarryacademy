@@ -28,7 +28,7 @@
       "videoFileName": "IB_PYP_G5_Ep01_Math_Toolkit_Fenrir.mp4",
       "isPreview": true,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -337,7 +337,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep01",
+          "templateId": "starship",
+          "insertAfter": 9,
+          "requiredRounds": 1,
+          "titleZh": "The Mathematician's Toolkit 小挑战",
+          "titleEn": "The Mathematician's Toolkit Challenge",
+          "descriptionZh": "驾驶飞船收集正确结果，把运算速度变成反应力。",
+          "descriptionEn": "Pilot the starship and collect correct values to turn computation into quick reaction."
+        }
       }
     },
     {
@@ -354,7 +364,7 @@
       "videoFileName": "IB_PYP_G5_Ep02_Place_Value_Fenrir.mp4",
       "isPreview": true,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -670,7 +680,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep02",
+          "templateId": "starship",
+          "insertAfter": 14,
+          "requiredRounds": 1,
+          "titleZh": "Place Value: From Millions to Billions 小挑战",
+          "titleEn": "Place Value: From Millions to Billions Challenge",
+          "descriptionZh": "驾驶飞船收集正确结果，把运算速度变成反应力。",
+          "descriptionEn": "Pilot the starship and collect correct values to turn computation into quick reaction."
+        }
       }
     },
     {
@@ -687,7 +707,7 @@
       "videoFileName": "IB_PYP_G5_Ep03_Integers_Number_Line_Fenrir.mp4",
       "isPreview": true,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -1009,7 +1029,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep03",
+          "templateId": "maze",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Integers and the Number Line 小挑战",
+          "titleEn": "Integers and the Number Line Challenge",
+          "descriptionZh": "在迷宫里找到可整除、可匹配的数学路径。",
+          "descriptionEn": "Find the divisible, matching math path through the maze."
+        }
       }
     },
     {
@@ -1343,7 +1373,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep04",
+          "templateId": "starship",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Estimation, Rounding, and Reasonableness 小挑战",
+          "titleEn": "Estimation, Rounding, and Reasonableness Challenge",
+          "descriptionZh": "驾驶飞船收集正确结果，把运算速度变成反应力。",
+          "descriptionEn": "Pilot the starship and collect correct values to turn computation into quick reaction."
+        }
       }
     },
     {
@@ -1360,7 +1400,7 @@
       "videoFileName": "IB_PYP_G5_Ep05_Operations_Order_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -1667,7 +1707,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep05",
+          "templateId": "blaster",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Multi-Digit Operations and Order of Operations 小挑战",
+          "titleEn": "Multi-Digit Operations and Order of Operations Challenge",
+          "descriptionZh": "瞄准正确答案，快速清除干扰项。",
+          "descriptionEn": "Aim at the correct value and clear distractors fast."
+        }
       }
     },
     {
@@ -1684,7 +1734,7 @@
       "videoFileName": "IB_PYP_G5_Ep06_Factors_Multiples_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -1994,7 +2044,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep06",
+          "templateId": "snake",
+          "insertAfter": 8,
+          "requiredRounds": 1,
+          "titleZh": "Factors, Multiples, Primes, GCF and LCM 小挑战",
+          "titleEn": "Factors, Multiples, Primes, GCF and LCM Challenge",
+          "descriptionZh": "沿着倍数和因数前进，避开错误路线。",
+          "descriptionEn": "Move through multiples and factors while avoiding wrong paths."
+        }
       }
     },
     {
@@ -2011,7 +2071,7 @@
       "videoFileName": "IB_PYP_G5_Ep07_Equivalent_Fractions_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -2323,7 +2383,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep07",
+          "templateId": "fraction",
+          "insertAfter": 13,
+          "requiredRounds": 1,
+          "titleZh": "Fractions, Equivalent Fractions, and Simplifying 小挑战",
+          "titleEn": "Fractions, Equivalent Fractions, and Simplifying Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -2630,7 +2700,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep08",
+          "templateId": "fraction",
+          "insertAfter": 13,
+          "requiredRounds": 1,
+          "titleZh": "Adding and Subtracting Fractions with Unlike Denominators 小挑战",
+          "titleEn": "Adding and Subtracting Fractions with Unlike Denominators Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -2647,7 +2727,7 @@
       "videoFileName": "IB_PYP_G5_Ep09_Multiplying_Fractions_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -2941,7 +3021,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep09",
+          "templateId": "fraction",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "Multiplying Fractions: Part of a Part 小挑战",
+          "titleEn": "Multiplying Fractions: Part of a Part Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -2958,7 +3048,7 @@
       "videoFileName": "IB_PYP_G5_Ep10_Dividing_Fractions_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -3259,7 +3349,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep10",
+          "templateId": "fraction",
+          "insertAfter": 14,
+          "requiredRounds": 1,
+          "titleZh": "Dividing Fractions: Groups, Measurement, and Reciprocals 小挑战",
+          "titleEn": "Dividing Fractions: Groups, Measurement, and Reciprocals Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -3276,7 +3376,7 @@
       "videoFileName": "IB_PYP_G5_Ep11_Decimal_Place_Value_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -3588,7 +3688,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep11",
+          "templateId": "fraction",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Decimal Place Value: Tenths, Hundredths, and Thousandths 小挑战",
+          "titleEn": "Decimal Place Value: Tenths, Hundredths, and Thousandths Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -3898,7 +4008,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep12",
+          "templateId": "fraction",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Decimal Operations: Add, Subtract, Multiply, and Check 小挑战",
+          "titleEn": "Decimal Operations: Add, Subtract, Multiply, and Check Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -3915,7 +4035,7 @@
       "videoFileName": "IB_PYP_G5_Ep13_Decimal_Division_Unit_Rates_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -4209,7 +4329,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep13",
+          "templateId": "fraction",
+          "insertAfter": 8,
+          "requiredRounds": 1,
+          "titleZh": "Decimal Division and Unit Rates 小挑战",
+          "titleEn": "Decimal Division and Unit Rates Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -4226,7 +4356,7 @@
       "videoFileName": "IB_PYP_G5_Ep14_Percents_Fractions_Decimals_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -4525,7 +4655,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep14",
+          "templateId": "fraction",
+          "insertAfter": 13,
+          "requiredRounds": 1,
+          "titleZh": "Percents, Fractions, and Decimals 小挑战",
+          "titleEn": "Percents, Fractions, and Decimals Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -4542,7 +4682,7 @@
       "videoFileName": "IB_PYP_G5_Ep15_Data_Averages_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -4849,7 +4989,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep15",
+          "templateId": "pinball",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "Data, Graphs, Mean, Median, Mode, and Range 小挑战",
+          "titleEn": "Data, Graphs, Mean, Median, Mode, and Range Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -5175,7 +5325,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep16",
+          "templateId": "coaster",
+          "insertAfter": 9,
+          "requiredRounds": 1,
+          "titleZh": "Patterns, Sequences, and Rules 小挑战",
+          "titleEn": "Patterns, Sequences, and Rules Challenge",
+          "descriptionZh": "调出正确轨迹，让图像、规律和目标值对齐。",
+          "descriptionEn": "Tune the curve so graphs, patterns, and target values line up."
+        }
       }
     },
     {
@@ -5192,7 +5352,7 @@
       "videoFileName": "IB_PYP_G5_Ep17_Variables_Expressions_Equations_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -5506,7 +5666,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep17",
+          "templateId": "coaster",
+          "insertAfter": 14,
+          "requiredRounds": 1,
+          "titleZh": "Variables, Expressions, and Simple Equations 小挑战",
+          "titleEn": "Variables, Expressions, and Simple Equations Challenge",
+          "descriptionZh": "调出正确轨迹，让图像、规律和目标值对齐。",
+          "descriptionEn": "Tune the curve so graphs, patterns, and target values line up."
+        }
       }
     },
     {
@@ -5523,7 +5693,7 @@
       "videoFileName": "IB_PYP_G5_Ep18_Coordinates_Relationship_Graphs_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -5834,7 +6004,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep18",
+          "templateId": "geometry",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Coordinate Planes and Relationship Graphs 小挑战",
+          "titleEn": "Coordinate Planes and Relationship Graphs Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -5851,7 +6031,7 @@
       "videoFileName": "IB_PYP_G5_Ep19_Area_Volume_Composite_Figures_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -6156,7 +6336,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep19",
+          "templateId": "geometry",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Area, Volume, and Composite Figures 小挑战",
+          "titleEn": "Area, Volume, and Composite Figures Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -6477,7 +6667,17 @@
               "incorrect": "Almost. Try asking whether the units and meaning still match."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep20",
+          "templateId": "pinball",
+          "insertAfter": 14,
+          "requiredRounds": 1,
+          "titleZh": "Data, Probability, and the Fall Project 小挑战",
+          "titleEn": "Data, Probability, and the Fall Project Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -6494,7 +6694,7 @@
       "videoFileName": "IB_PYP_G5_Ep21_Advanced_Multi_Step_Modelling_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -6799,7 +6999,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep21",
+          "templateId": "pinball",
+          "insertAfter": 9,
+          "requiredRounds": 1,
+          "titleZh": "Advanced Multi-Step Modelling 小挑战",
+          "titleEn": "Advanced Multi-Step Modelling Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -6816,7 +7026,7 @@
       "videoFileName": "IB_PYP_G5_Ep22_Ratios_Unit_Rates_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -7120,7 +7330,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep22",
+          "templateId": "fraction",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Ratios, Unit Rates, and Equivalent Ratio Tables 小挑战",
+          "titleEn": "Ratios, Unit Rates, and Equivalent Ratio Tables Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -7137,7 +7357,7 @@
       "videoFileName": "IB_PYP_G5_Ep23_Scale_Drawings_Maps_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -7443,7 +7663,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep23",
+          "templateId": "geometry",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Scale Drawings, Maps, and Similar Figures 小挑战",
+          "titleEn": "Scale Drawings, Maps, and Similar Figures Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -7762,7 +7992,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep24",
+          "templateId": "fraction",
+          "insertAfter": 8,
+          "requiredRounds": 1,
+          "titleZh": "Percent Change: Discount, Tax, Tip, and Growth 小挑战",
+          "titleEn": "Percent Change: Discount, Tax, Tip, and Growth Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -7779,7 +8019,7 @@
       "videoFileName": "IB_PYP_G5_Ep25_Financial_Math_Break_Even_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -8085,7 +8325,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep25",
+          "templateId": "creature",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Financial Mathematics: Budget, Profit, Unit Price, and Break-Even 小挑战",
+          "titleEn": "Financial Mathematics: Budget, Profit, Unit Price, and Break-Even Challenge",
+          "descriptionZh": "收集能量，完成预算、变化和多步建模挑战。",
+          "descriptionEn": "Gather energy to solve budget, change, and multi-step modelling challenges."
+        }
       }
     },
     {
@@ -8102,7 +8352,7 @@
       "videoFileName": "IB_PYP_G5_Ep26_Fraction_Decimal_Percent_Integration_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -8397,7 +8647,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep26",
+          "templateId": "fraction",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "Integrated Fraction, Decimal, and Percent Problem Solving 小挑战",
+          "titleEn": "Integrated Fraction, Decimal, and Percent Problem Solving Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -8414,7 +8674,7 @@
       "videoFileName": "IB_PYP_G5_Ep27_Negative_Rational_Numbers_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -8713,7 +8973,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep27",
+          "templateId": "fraction",
+          "insertAfter": 13,
+          "requiredRounds": 1,
+          "titleZh": "Negative Rational Numbers 小挑战",
+          "titleEn": "Negative Rational Numbers Challenge",
+          "descriptionZh": "切出目标分数，把分数、比例和百分数变成可操作的图形。",
+          "descriptionEn": "Slice the target fraction and make fractions, ratios, and percents feel tangible."
+        }
       }
     },
     {
@@ -9027,7 +9297,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep28",
+          "templateId": "geometry",
+          "insertAfter": 9,
+          "requiredRounds": 1,
+          "titleZh": "Coordinate Transformations 小挑战",
+          "titleEn": "Coordinate Transformations Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -9044,7 +9324,7 @@
       "videoFileName": "IB_PYP_G5_Ep29_Linear_Relationships_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -9342,7 +9622,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep29",
+          "templateId": "coaster",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "Linear Relationships 小挑战",
+          "titleEn": "Linear Relationships Challenge",
+          "descriptionZh": "调出正确轨迹，让图像、规律和目标值对齐。",
+          "descriptionEn": "Tune the curve so graphs, patterns, and target values line up."
+        }
       }
     },
     {
@@ -9359,7 +9649,7 @@
       "videoFileName": "IB_PYP_G5_Ep30_Inequalities_Solution_Sets_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -9663,7 +9953,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep30",
+          "templateId": "coaster",
+          "insertAfter": 8,
+          "requiredRounds": 1,
+          "titleZh": "Inequalities and Solution Sets 小挑战",
+          "titleEn": "Inequalities and Solution Sets Challenge",
+          "descriptionZh": "调出正确轨迹，让图像、规律和目标值对齐。",
+          "descriptionEn": "Tune the curve so graphs, patterns, and target values line up."
+        }
       }
     },
     {
@@ -9680,7 +9980,7 @@
       "videoFileName": "IB_PYP_G5_Ep31_Formulas_General_Rules_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -9979,7 +10279,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep31",
+          "templateId": "coaster",
+          "insertAfter": 13,
+          "requiredRounds": 1,
+          "titleZh": "Formulas as General Rules 小挑战",
+          "titleEn": "Formulas as General Rules Challenge",
+          "descriptionZh": "调出正确轨迹，让图像、规律和目标值对齐。",
+          "descriptionEn": "Tune the curve so graphs, patterns, and target values line up."
+        }
       }
     },
     {
@@ -10301,7 +10611,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep32",
+          "templateId": "geometry",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Nets, Surface Area, and Volume 小挑战",
+          "titleEn": "Nets, Surface Area, and Volume Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -10318,7 +10638,7 @@
       "videoFileName": "IB_PYP_G5_Ep33_Angles_Triangles_Quadrilaterals_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -10627,7 +10947,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep33",
+          "templateId": "geometry",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Angles, Triangles, and Quadrilaterals 小挑战",
+          "titleEn": "Angles, Triangles, and Quadrilaterals Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -10644,7 +10974,7 @@
       "videoFileName": "IB_PYP_G5_Ep34_Circles_Symmetry_Pi_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -10953,7 +11283,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep34",
+          "templateId": "geometry",
+          "insertAfter": 14,
+          "requiredRounds": 1,
+          "titleZh": "Circles, Symmetry, and Pi 小挑战",
+          "titleEn": "Circles, Symmetry, and Pi Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -10970,7 +11310,7 @@
       "videoFileName": "IB_PYP_G5_Ep35_Measurement_Conversions_Compound_Units_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 2,
       "ibAlignment": [
@@ -11273,7 +11613,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep35",
+          "templateId": "geometry",
+          "insertAfter": 12,
+          "requiredRounds": 1,
+          "titleZh": "Measurement Conversions and Compound Units 小挑战",
+          "titleEn": "Measurement Conversions and Compound Units Challenge",
+          "descriptionZh": "拖动形状和尺寸，用视觉模型锁定几何关系。",
+          "descriptionEn": "Drag shapes and dimensions to lock the geometry relationship into a visual model."
+        }
       }
     },
     {
@@ -11586,7 +11936,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep36",
+          "templateId": "pinball",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "Data Distributions 小挑战",
+          "titleEn": "Data Distributions Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -11603,7 +11963,7 @@
       "videoFileName": "IB_PYP_G5_Ep37_Probability_Models_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -11901,7 +12261,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep37",
+          "templateId": "pinball",
+          "insertAfter": 9,
+          "requiredRounds": 1,
+          "titleZh": "Probability Models 小挑战",
+          "titleEn": "Probability Models Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -11918,7 +12288,7 @@
       "videoFileName": "IB_PYP_G5_Ep38_Statistical_Investigation_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -12233,7 +12603,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep38",
+          "templateId": "pinball",
+          "insertAfter": 10,
+          "requiredRounds": 1,
+          "titleZh": "Statistical Investigation 小挑战",
+          "titleEn": "Statistical Investigation Challenge",
+          "descriptionZh": "用弹球击中数据目标，感受统计和概率的波动。",
+          "descriptionEn": "Hit data targets with pinball motion and feel variation in statistics and probability."
+        }
       }
     },
     {
@@ -12250,7 +12630,7 @@
       "videoFileName": "IB_PYP_G5_Ep39_Eco_Garden_Design_Challenge_Fenrir.mp4",
       "isPreview": false,
       "hasPractice": true,
-      "hasGame": false,
+      "hasGame": true,
       "rewardsPoints": 132,
       "rewardsGems": 1,
       "ibAlignment": [
@@ -12556,7 +12936,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep39",
+          "templateId": "creature",
+          "insertAfter": 8,
+          "requiredRounds": 1,
+          "titleZh": "Integrated Design Challenge 小挑战",
+          "titleEn": "Integrated Design Challenge Challenge",
+          "descriptionZh": "收集能量，完成预算、变化和多步建模挑战。",
+          "descriptionEn": "Gather energy to solve budget, change, and multi-step modelling challenges."
+        }
       }
     },
     {
@@ -12868,7 +13258,17 @@
               "incorrect": "Good attempt. Use the hint, keep the work clean, and move forward."
             }
           }
-        ]
+        ],
+        "surpriseGame": {
+          "id": "surprise-game-lesson-ib-pyp-g5-ep40",
+          "templateId": "creature",
+          "insertAfter": 11,
+          "requiredRounds": 1,
+          "titleZh": "PYP-to-MYP Mathematics Capstone 小挑战",
+          "titleEn": "PYP-to-MYP Mathematics Capstone Challenge",
+          "descriptionZh": "收集能量，完成预算、变化和多步建模挑战。",
+          "descriptionEn": "Gather energy to solve budget, change, and multi-step modelling challenges."
+        }
       }
     }
   ]

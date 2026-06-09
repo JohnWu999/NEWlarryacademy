@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import PurchaseCourseButton from '@/components/courses/PurchaseCourseButton'
+import LearningGameShowcase, { type TemplateId } from '@/components/games/LearningGameShowcase'
 import { useLanguage } from '@/context/LanguageContext'
 import { getPeerLearningCount } from '@/lib/peer-learning'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
@@ -45,6 +46,19 @@ interface PracticeQuestion {
   }
 }
 
+interface SurprisePracticeGame {
+  id: string
+  templateId: TemplateId
+  insertAfter: number
+  title?: string
+  titleZh?: string
+  titleEn?: string
+  description?: string
+  descriptionZh?: string
+  descriptionEn?: string
+  requiredRounds?: number
+}
+
 interface PracticeConfig {
   title: string
   maxScore: number
@@ -58,8 +72,13 @@ interface PracticeConfig {
     rewatchMessage?: string
     focus?: string
   }
+  surpriseGame?: SurprisePracticeGame
   questions: PracticeQuestion[]
 }
+
+type QuestSequenceItem =
+  | { type: 'question'; id: string }
+  | { type: 'game'; id: string }
 
 interface Lesson {
   id: string
@@ -436,6 +455,27 @@ function getOrderedPracticeQuestions(config: PracticeConfig, questionOrder: stri
   const ordered = questionOrder.map((id) => byId.get(id)).filter(Boolean) as PracticeQuestion[]
   const missing = config.questions.filter((question) => !questionOrder.includes(question.id))
   return [...ordered, ...missing]
+}
+
+function buildQuestSequence(config: PracticeConfig, questionOrder: string[]) {
+  const questionItems = getOrderedPracticeQuestions(config, questionOrder).map((question) => ({
+    type: 'question' as const,
+    id: question.id,
+  }))
+  const game = config.surpriseGame
+  if (!game || !questionItems.length) return questionItems
+
+  const maxInsertAfter = Math.max(1, Math.min(14, questionItems.length - 1))
+  const insertAfter = Math.max(1, Math.min(Number(game.insertAfter || 8), maxInsertAfter))
+  return [
+    ...questionItems.slice(0, insertAfter),
+    { type: 'game' as const, id: game.id },
+    ...questionItems.slice(insertAfter),
+  ]
+}
+
+function getQuestionNumberInSequence(sequence: QuestSequenceItem[], index: number) {
+  return sequence.slice(0, index + 1).filter((item) => item.type === 'question').length
 }
 
 function ChevronLeftIcon() {
@@ -1147,7 +1187,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
   const continueQuest = async (config: PracticeConfig, activity: LessonActivity) => {
     const orderedQuestions = getOrderedPracticeQuestions(config, questQuestionOrder)
-    if (questIndex < orderedQuestions.length - 1) {
+    const questSequence = buildQuestSequence(config, questQuestionOrder)
+    if (questIndex < questSequence.length - 1) {
       setQuestIndex((index) => index + 1)
       setQuestFeedback(null)
       setQuestHintVisible(false)
@@ -1237,6 +1278,18 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     }
   }
 
+  const completeSurpriseGame = (config: PracticeConfig, activity: LessonActivity) => {
+    if (questAutoAdvancing) return
+    setQuestAutoAdvancing(true)
+    setQuestFeedback(null)
+    setQuestHintVisible(false)
+    setQuestEffect({ kind: 'complete', key: Date.now() })
+    playFeedbackTone('complete')
+    window.setTimeout(() => {
+      void continueQuest(config, activity)
+    }, 850)
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-[#070707] text-white">
@@ -1261,7 +1314,12 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const practiceActivity = currentLesson.activities?.find((activity) => activity.type === 'practice' && activity.config)
   const questConfig = parsePracticeConfig(practiceActivity)
   const orderedQuestQuestions = questConfig ? getOrderedPracticeQuestions(questConfig, questQuestionOrder) : []
-  const currentQuestQuestion = orderedQuestQuestions[questIndex]
+  const questSequence = questConfig ? buildQuestSequence(questConfig, questQuestionOrder) : []
+  const currentQuestItem = questSequence[questIndex]
+  const questQuestionById = new Map(orderedQuestQuestions.map((question) => [question.id, question]))
+  const currentQuestQuestion = currentQuestItem?.type === 'question' ? questQuestionById.get(currentQuestItem.id) : undefined
+  const currentSurpriseGame = currentQuestItem?.type === 'game' ? questConfig?.surpriseGame : undefined
+  const currentQuestionNumber = getQuestionNumberInSequence(questSequence, questIndex)
   const currentQuestAnswer = currentQuestQuestion ? questAnswers[currentQuestQuestion.id] : undefined
   const currentQuestChoiceSeed = `${activePracticeId || 'practice'}:${currentQuestQuestion?.id || 'question'}:${questQuestionOrder.join('|')}`
   const currentQuestChoices = currentQuestQuestion ? seededShuffleItems(currentQuestQuestion.choices, currentQuestChoiceSeed) : []
@@ -1565,7 +1623,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             </div>
 
             <div className="order-1 rounded-[28px] border border-white/10 bg-[#f4f1e8] p-5 text-[#171717] shadow-2xl shadow-black/20 sm:p-7 xl:order-1">
-              {questConfig && practiceActivity && currentQuestQuestion ? (
+              {questConfig && practiceActivity && currentQuestItem ? (
                 <>
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -1577,13 +1635,22 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     </div>
                   </div>
 
-                  <div className="mt-5 grid grid-cols-10 gap-1.5">
-                    {orderedQuestQuestions.map((question, index) => {
-                      const answered = Boolean(questAnswers[question.id])
+                  <div
+                    className="mt-5 grid gap-1.5"
+                    style={{ gridTemplateColumns: `repeat(${Math.min(questSequence.length || 1, 16)}, minmax(0, 1fr))` }}
+                  >
+                    {questSequence.map((item, index) => {
+                      const answered = item.type === 'game' ? index < questIndex : Boolean(questAnswers[item.id])
                       return (
                         <div
-                          key={question.id}
-                          className={`h-2 rounded-full ${index === questIndex ? 'bg-blue-600' : answered ? 'bg-emerald-500' : 'bg-[#d8d0c2]'}`}
+                          key={item.id}
+                          className={`h-2 rounded-full ${
+                            index === questIndex
+                              ? item.type === 'game' ? 'bg-violet-600' : 'bg-blue-600'
+                              : answered
+                                ? item.type === 'game' ? 'bg-amber-400' : 'bg-emerald-500'
+                                : 'bg-[#d8d0c2]'
+                          }`}
                         />
                       )
                     })}
@@ -1594,13 +1661,68 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">
                           <SparkIcon />
-                          Question {questIndex + 1} of {orderedQuestQuestions.length}
+                          {currentSurpriseGame
+                            ? 'Surprise game break'
+                            : `Question ${currentQuestionNumber} of ${orderedQuestQuestions.length}`}
                         </div>
-                        <div className="rounded-full bg-[#f7f1e6] px-3 py-1 text-xs font-black text-[#777064]">
-                          +{currentQuestQuestion.points} / -{currentQuestQuestion.penalty}
-                        </div>
+                        {currentQuestQuestion ? (
+                          <div className="rounded-full bg-[#f7f1e6] px-3 py-1 text-xs font-black text-[#777064]">
+                            +{currentQuestQuestion.points} / -{currentQuestQuestion.penalty}
+                          </div>
+                        ) : (
+                          <div className="rounded-full bg-violet-50 px-3 py-1 text-xs font-black text-violet-800">
+                            Play 1 round
+                          </div>
+                        )}
                       </div>
 
+                      {currentSurpriseGame ? (
+                        <div className="relative mt-6 overflow-hidden rounded-[26px] border border-violet-100 bg-[#0a0b12] p-4 text-white shadow-xl shadow-violet-100/30 sm:p-5">
+                          {questEffect?.kind === 'complete' && (
+                            <div key={questEffect.key} className="pointer-events-none absolute inset-0 z-10 quest-fireworks">
+                              <div className="quest-shockwave" />
+                              {[...Array(22)].map((_, index) => (
+                                <span
+                                  key={index}
+                                  className="quest-spark"
+                                  style={{
+                                    left: `${10 + ((index * 31) % 80)}%`,
+                                    top: `${8 + ((index * 19) % 72)}%`,
+                                    animationDelay: `${index * 0.02}s`,
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-cyan-300">
+                                {locale === 'zh' ? '惊喜小游戏' : 'Surprise Game'}
+                              </p>
+                              <h3 className="mt-1 text-2xl font-black tracking-tight">
+                                {locale === 'zh'
+                                  ? currentSurpriseGame.titleZh || currentSurpriseGame.title || '玩一关，继续闯题'
+                                  : currentSurpriseGame.titleEn || currentSurpriseGame.title || 'Play One Round, Then Keep Going'}
+                              </h3>
+                              <p className="mt-2 max-w-2xl text-sm font-bold leading-6 text-white/60">
+                                {locale === 'zh'
+                                  ? currentSurpriseGame.descriptionZh || currentSurpriseGame.description || '用本课知识点完成一个小挑战，过关后自动回到下一题。'
+                                  : currentSurpriseGame.descriptionEn || currentSurpriseGame.description || 'Use this lesson skill in a fast mini-game. Finish one round to return to the next question.'}
+                              </p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/10 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-white/72">
+                              {locale === 'zh' ? '完成后自动继续' : 'Auto-continue'}
+                            </div>
+                          </div>
+                          <LearningGameShowcase
+                            selectedId={currentSurpriseGame.templateId}
+                            lockedTemplate
+                            compact
+                            completionRounds={currentSurpriseGame.requiredRounds || 1}
+                            onComplete={() => completeSurpriseGame(questConfig, practiceActivity)}
+                          />
+                        </div>
+                      ) : currentQuestQuestion ? (
                       <div className="relative mt-6 overflow-hidden">
                         {questEffect && (
                           <div key={questEffect.key} className={`pointer-events-none absolute inset-0 z-10 ${questEffect.kind === 'incorrect' ? 'quest-shake' : 'quest-fireworks'}`}>
@@ -1779,8 +1901,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           )}
                         </div>
                       </div>
+                      ) : null}
 
-                        {(questFeedback || questHintVisible) && (
+                        {currentQuestQuestion && (questFeedback || questHintVisible) && (
                           <div className={`mt-5 rounded-2xl border p-4 text-sm font-bold leading-6 ${questFeedback === 'correct' ? 'border-emerald-100 bg-emerald-50 text-emerald-900' : 'border-amber-100 bg-amber-50 text-amber-950'}`}>
                             <div>{questFeedback === 'correct' ? currentQuestQuestion.encouragement?.correct || 'Correct.' : questFeedback === 'incorrect' ? currentQuestQuestion.encouragement?.incorrect || 'Not quite yet.' : 'Try this hint before checking.'}</div>
                             <div className="mt-2 font-semibold">
@@ -1803,6 +1926,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           </div>
                         )}
 
+                        {currentQuestQuestion && (
                         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                           {questFeedback === 'incorrect' ? (
                             <button
@@ -1810,7 +1934,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                               disabled={questSaving}
                               className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                             >
-                              {questSaving ? 'Saving...' : questIndex === orderedQuestQuestions.length - 1 ? 'Finish quest' : 'Next question'}
+                              {questSaving ? 'Saving...' : questIndex === questSequence.length - 1 ? 'Finish quest' : 'Next question'}
                             </button>
                           ) : (
                             <>
@@ -1819,7 +1943,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                                 disabled={!hasQuestAnswer(currentQuestQuestion, questAnswers[currentQuestQuestion.id]) || questSaving || questAutoAdvancing || Boolean(questFeedback)}
                                 className="inline-flex flex-1 items-center justify-center rounded-2xl bg-[#171717] px-5 py-4 text-sm font-black text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-40"
                               >
-                                {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === orderedQuestQuestions.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
+                                {questSaving ? 'Saving...' : questAutoAdvancing ? (questIndex === questSequence.length - 1 ? 'Finishing quest...' : 'Next question...') : 'Check answer'}
                               </button>
                               <button
                                 onClick={() => {
@@ -1833,6 +1957,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                             </>
                           )}
                         </div>
+                        )}
                     </div>
                   ) : (
                     <div className="relative mt-6 overflow-hidden rounded-3xl bg-white p-5 shadow-sm">
