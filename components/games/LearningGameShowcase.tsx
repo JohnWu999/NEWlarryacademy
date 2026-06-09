@@ -234,8 +234,8 @@ export const showcaseGames: ShowcaseGameCard[] = [
     titleZh: '星际算力战舰',
     titleEn: 'Starship Compute',
     subject: 'Arithmetic',
-    verbZh: '操控飞船拦截正确能量球',
-    verbEn: 'Pilot into the correct energy pod',
+    verbZh: '操控飞船拦截正确数值球',
+    verbEn: 'Pilot into the correct value pod',
     accent: '#38bdf8',
     wash: 'from-sky-500/25 via-indigo-500/15 to-[#07111f]',
   },
@@ -261,11 +261,11 @@ export const showcaseGames: ShowcaseGameCard[] = [
   },
   {
     id: 'circuit',
-    titleZh: '电路黑客',
-    titleEn: 'Circuit Hacker',
-    subject: 'Science',
-    verbZh: '拖入正确电阻点亮电路',
-    verbEn: 'Drag the right resistor into the socket',
+    titleZh: '等式工坊',
+    titleEn: 'Equation Workshop',
+    subject: 'Multiplication',
+    verbZh: '拖入正确因子，让乘法等式成立',
+    verbEn: 'Drag the right factor to complete the equation',
     accent: '#22c55e',
     wash: 'from-emerald-400/25 via-cyan-500/10 to-[#06130f]',
   },
@@ -281,11 +281,11 @@ export const showcaseGames: ShowcaseGameCard[] = [
   },
   {
     id: 'molecule',
-    titleZh: '分子实验室',
-    titleEn: 'Molecule Lab',
-    subject: 'Chemistry',
-    verbZh: '拖拽原子靠近形成目标成键数',
-    verbEn: 'Drag atoms close to form target bonds',
+    titleZh: '图形网络',
+    titleEn: 'Graph Network',
+    subject: 'Graph Math',
+    verbZh: '拖拽节点，形成目标连接数',
+    verbEn: 'Drag nodes to form the target connections',
     accent: '#2dd4bf',
     wash: 'from-teal-400/25 via-blue-500/10 to-[#061217]',
   },
@@ -293,7 +293,7 @@ export const showcaseGames: ShowcaseGameCard[] = [
     id: 'blaster',
     titleZh: '算力弹幕战机',
     titleEn: 'Compute Blaster',
-    subject: 'Arcade',
+    subject: 'Arithmetic',
     verbZh: '移动战机，瞄准并击落正确答案',
     verbEn: 'Move, aim, and shoot the correct answer',
     accent: '#f97316',
@@ -303,7 +303,7 @@ export const showcaseGames: ShowcaseGameCard[] = [
     id: 'snake',
     titleZh: '倍数贪吃蛇',
     titleEn: 'Multiple Snake',
-    subject: 'Classic',
+    subject: 'Multiples',
     verbZh: '操控蛇吃掉符合规则的数字',
     verbEn: 'Steer the snake into matching numbers',
     accent: '#84cc16',
@@ -313,7 +313,7 @@ export const showcaseGames: ShowcaseGameCard[] = [
     id: 'tetra',
     titleZh: '数值俄罗斯方块',
     titleEn: 'Tetra Sum',
-    subject: 'Classic',
+    subject: 'Number Sums',
     verbZh: '移动下落方块，让列和达到目标',
     verbEn: 'Drop blocks so a lane sum hits the target',
     accent: '#60a5fa',
@@ -321,11 +321,11 @@ export const showcaseGames: ShowcaseGameCard[] = [
   },
   {
     id: 'creature',
-    titleZh: '能量对战训练场',
-    titleEn: 'Energy Duel Trainer',
-    subject: 'Battle',
-    verbZh: '移动能量核心，凑够伤害发动攻击',
-    verbEn: 'Move the energy core to charge the right attack',
+    titleZh: '目标和对战',
+    titleEn: 'Target Sum Duel',
+    subject: 'Number Strategy',
+    verbZh: '移动数值核心，凑出目标和',
+    verbEn: 'Move the number core to hit the target sum',
     accent: '#f472b6',
     wash: 'from-pink-400/25 via-purple-500/10 to-[#170617]',
   },
@@ -333,7 +333,7 @@ export const showcaseGames: ShowcaseGameCard[] = [
     id: 'maze',
     titleZh: '因数迷宫',
     titleEn: 'Factor Maze',
-    subject: 'Maze',
+    subject: 'Factors',
     verbZh: '在迷宫里收集正确因数并避开诱饵',
     verbEn: 'Collect factors and dodge decoys in a maze',
     accent: '#facc15',
@@ -343,7 +343,7 @@ export const showcaseGames: ShowcaseGameCard[] = [
     id: 'pinball',
     titleZh: '算术弹球',
     titleEn: 'Equation Pinball',
-    subject: 'Physics',
+    subject: 'Arithmetic',
     verbZh: '移动挡板，让弹球击中正确砖块',
     verbEn: 'Move the paddle and bounce into the answer',
     accent: '#c084fc',
@@ -382,12 +382,12 @@ const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: s
     visual: 'curve',
   },
   circuit: {
-    goalZh: '把正确电阻拖进插槽，点亮电路。',
-    goalEn: 'Drag the right resistor into the socket.',
-    stepsZh: ['看电流和目标电压', '计算 V=I×R', '拖正确电阻'],
-    stepsEn: ['Read current and voltage', 'Use V=I×R', 'Drop the right resistor'],
-    learnZh: '欧姆定律从公式变成电路反馈。',
-    learnEn: 'Ohm law becomes a live circuit reaction.',
+    goalZh: '把正确因子拖进空格，让乘法等式成立。',
+    goalEn: 'Drag the right factor into the blank to complete the multiplication equation.',
+    stepsZh: ['看左边因子和目标积', '心算缺少的因子', '拖入正确数字块'],
+    stepsEn: ['Read the known factor and product', 'Find the missing factor', 'Drop the right number tile'],
+    learnZh: '乘法、除法和等式平衡变成可操作的模型。',
+    learnEn: 'Multiplication, division, and equation balance become a hands-on model.',
     visual: 'circuit',
   },
   fraction: {
@@ -400,12 +400,12 @@ const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: s
     visual: 'fraction',
   },
   molecule: {
-    goalZh: '拖原子靠近，形成指定数量的稳定键。',
-    goalEn: 'Drag atoms close to make stable bonds.',
-    stepsZh: ['看目标成键数', '拖动原子靠近', '稳定 0.5 秒过关'],
-    stepsEn: ['Read the bond target', 'Drag atoms together', 'Hold stable for half a second'],
-    learnZh: '结构关系通过距离和连接被看见。',
-    learnEn: 'Structure appears through distance and bonding.',
+    goalZh: '拖动节点，形成指定数量的连线。',
+    goalEn: 'Drag nodes to create the target number of connections.',
+    stepsZh: ['看目标连接数', '拖动节点靠近', '稳定 0.5 秒过关'],
+    stepsEn: ['Read the connection target', 'Drag nodes together', 'Hold stable for half a second'],
+    learnZh: '图形网络让连接数、结构和关系一眼可见。',
+    learnEn: 'Graph networks make connections, structure, and relationships visible.',
     visual: 'molecule',
   },
   blaster: {
@@ -436,10 +436,10 @@ const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: s
     visual: 'tetra',
   },
   creature: {
-    goalZh: '收集能量，刚好凑出攻击值。',
-    goalEn: 'Collect energy to match the attack value exactly.',
-    stepsZh: ['看目标伤害', '移动能量核心', '凑够就发动攻击'],
-    stepsEn: ['Read target damage', 'Move the energy core', 'Attack when the sum matches'],
+    goalZh: '收集数字，刚好凑出目标和。',
+    goalEn: 'Collect numbers to match the target sum exactly.',
+    stepsZh: ['看目标和', '移动数值核心', '凑到目标立刻过关'],
+    stepsEn: ['Read the target sum', 'Move the number core', 'Finish when the sum matches'],
     learnZh: '加法分解、估算和停止时机合在一起。',
     learnEn: 'Number composition, estimation, and timing work together.',
     visual: 'duel',
@@ -458,8 +458,8 @@ const howToPlay: Record<TemplateId, { goalZh: string; goalEn: string; stepsZh: s
     goalEn: 'Move the paddle so the ball hits the answer brick.',
     stepsZh: ['看算式', '左右移动挡板', '反弹命中答案砖'],
     stepsEn: ['Read the expression', 'Move the paddle', 'Bounce into the answer brick'],
-    learnZh: '算式判断和物理反弹同时发生。',
-    learnEn: 'Equation judgment connects with bounce timing.',
+    learnZh: '算式判断、角度预判和目标选择一起训练。',
+    learnEn: 'Equation judgment, angle prediction, and target selection train together.',
     visual: 'pinball',
   },
 }
@@ -522,8 +522,8 @@ function makeObjective(id: TemplateId, level: number, round: number): Objective 
     const current = [2, 3, 4, 5][round % 4]
     const r = [3, 4, 5, 6, 7, 8][(round + level) % 6]
     return {
-      promptZh: `电流 ${current}A，拖入电阻让电压变成 ${current * r}V`,
-      promptEn: `${current}A current. Drag resistance for ${current * r}V`,
+      promptZh: `${current} × ? = ${current * r}，拖入缺少的因子`,
+      promptEn: `${current} × ? = ${current * r}. Drag the missing factor`,
       target: current * r,
       current,
     }
@@ -553,8 +553,8 @@ function makeObjective(id: TemplateId, level: number, round: number): Objective 
   const requiredBonds = [2, 3, 4, 5][round % 4]
   if (id === 'molecule') {
     return {
-      promptZh: `拖拽原子，形成 ${requiredBonds} 条稳定键`,
-      promptEn: `Drag atoms to create ${requiredBonds} stable bonds`,
+      promptZh: `拖拽节点，形成 ${requiredBonds} 条连接`,
+      promptEn: `Drag nodes to create ${requiredBonds} connections`,
       target: requiredBonds,
     }
   }
@@ -599,10 +599,10 @@ function makeObjective(id: TemplateId, level: number, round: number): Objective 
   if (id === 'creature') {
     const target = [24, 28, 32, 36, 42, 48][round % 6]
     return {
-      promptZh: `收集能量，凑出 ${target} 点攻击`,
-      promptEn: `Collect energy for a ${target} damage attack`,
+      promptZh: `收集数字，凑出目标和 ${target}`,
+      promptEn: `Collect numbers to make target sum ${target}`,
       target,
-      expression: `attack ${target}`,
+      expression: `sum ${target}`,
     }
   }
 
@@ -647,11 +647,11 @@ function makeChips(objective: Objective): Chip[] {
 
 function makeAtoms(requiredBonds: number): Atom[] {
   const atoms: Atom[] = [
-    { id: 0, label: 'O', x: 460, y: 255, vx: 0, vy: 0, radius: 36, color: '#2dd4bf' },
-    { id: 1, label: 'H', x: 255, y: 190, vx: 18, vy: -10, radius: 24, color: '#bae6fd' },
-    { id: 2, label: 'H', x: 690, y: 190, vx: -16, vy: 14, radius: 24, color: '#bae6fd' },
-    { id: 3, label: 'C', x: 255, y: 370, vx: 14, vy: 16, radius: 30, color: '#fef3c7' },
-    { id: 4, label: 'N', x: 690, y: 370, vx: -18, vy: -12, radius: 30, color: '#c4b5fd' },
+    { id: 0, label: 'A', x: 460, y: 255, vx: 0, vy: 0, radius: 36, color: '#2dd4bf' },
+    { id: 1, label: 'B', x: 255, y: 190, vx: 18, vy: -10, radius: 24, color: '#bae6fd' },
+    { id: 2, label: 'C', x: 690, y: 190, vx: -16, vy: 14, radius: 24, color: '#bae6fd' },
+    { id: 3, label: 'D', x: 255, y: 370, vx: 14, vy: 16, radius: 30, color: '#fef3c7' },
+    { id: 4, label: 'E', x: 690, y: 370, vx: -18, vy: -12, radius: 30, color: '#c4b5fd' },
   ]
   return atoms.slice(0, Math.min(5, requiredBonds + 2))
 }
@@ -874,12 +874,12 @@ function knowledgeText(sim: Sim) {
   const expression = o.expression?.replaceAll('x', '×')
   if (sim.id === 'geometry') return `${sim.geometry.w}×${sim.geometry.h}=${sim.geometry.w * sim.geometry.h}`
   if (sim.id === 'coaster') return `y≈${o.target}: graph hits gate`
-  if (sim.id === 'circuit') return `${o.current}A×${sim.circuit.socketR}Ω=${o.target}V`
+  if (sim.id === 'circuit') return `${o.current}×${sim.circuit.socketR}=${o.target}`
   if (sim.id === 'fraction') return `${o.num}/${o.den} of a circle`
-  if (sim.id === 'molecule') return `${getBondCount(sim.molecule.atoms)} stable bonds`
+  if (sim.id === 'molecule') return `${getBondCount(sim.molecule.atoms)} graph connections`
   if (sim.id === 'snake') return `multiple rule: n÷${o.target} has no remainder`
   if (sim.id === 'tetra') return `lane sum=${o.target}`
-  if (sim.id === 'creature') return `${sim.arcade.energy}=${o.target} attack`
+  if (sim.id === 'creature') return `${sim.arcade.energy}=${o.target} target sum`
   if (sim.id === 'maze') return `factors divide ${o.target}`
   return expression ? `${expression}=${o.target}` : `${o.target}`
 }
@@ -1171,10 +1171,10 @@ function updateCreature(sim: Sim, dt: number, audio: ReturnType<typeof useArcade
   arcade.targets = arcade.targets.filter((target) => target !== hit)
   if (arcade.energy === sim.objective.target) {
     arcade.enemyHp = Math.max(0, arcade.enemyHp - 34)
-    advance(sim, '伤害值刚好命中，发动攻击', 'Exact damage charged. Attack launched', '#f472b6', audio)
+    advance(sim, '目标和刚好命中', 'Target sum matched exactly', '#f472b6', audio)
   } else if (arcade.energy > sim.objective.target) {
     arcade.energy = 0
-    miss(sim, '能量超载，攻击失败', 'Energy overloaded', audio)
+    miss(sim, '超过目标和，重新组合', 'Target sum overshot. Rebuild it', audio)
   }
 }
 
@@ -1364,7 +1364,7 @@ function updateSim(sim: Sim, dt: number, audio: ReturnType<typeof useArcadeAudio
       if (sim.molecule.stableTimer > 0.55) {
         sim.mouse.x = width / 2
         sim.mouse.y = height / 2
-        advance(sim, '分子结构稳定', 'Molecular structure stabilized', '#2dd4bf', audio)
+        advance(sim, '图形网络连接完成', 'Graph network completed', '#2dd4bf', audio)
       }
     } else {
       sim.molecule.stableTimer = 0
@@ -1607,23 +1607,21 @@ function drawCircuit(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
   ctx.strokeStyle = isLit ? '#86efac' : 'rgba(255,255,255,.2)'
   ctx.lineWidth = 8
   ctx.beginPath()
-  ctx.moveTo(120, 230)
+  ctx.moveTo(128, 230)
   ctx.lineTo(300, 230)
   ctx.moveTo(520, 230)
-  ctx.lineTo(780, 230)
-  ctx.moveTo(780, 230)
-  ctx.lineTo(780, 340)
-  ctx.lineTo(120, 340)
-  ctx.lineTo(120, 230)
+  ctx.lineTo(790, 230)
   ctx.stroke()
   ctx.fillStyle = isLit ? '#86efac' : 'rgba(255,255,255,.12)'
-  ctx.beginPath()
-  ctx.arc(780, 230, 34 + Math.sin(sim.circuit.pulse * 6) * 4, 0, Math.PI * 2)
+  roundRect(ctx, 690, 190, 180, 88, 24)
   ctx.fill()
   ctx.fillStyle = '#052e16'
-  ctx.font = '900 20px system-ui, sans-serif'
+  ctx.font = '900 26px system-ui, sans-serif'
   ctx.textAlign = 'center'
-  ctx.fillText('V', 780, 237)
+  ctx.fillText(`= ${sim.objective.target}`, 780, 243)
+  ctx.fillStyle = '#ecfdf5'
+  ctx.font = '900 34px system-ui, sans-serif'
+  ctx.fillText(`${sim.objective.current} ×`, 210, 242)
 
   ctx.strokeStyle = template.accent
   ctx.lineWidth = 3
@@ -1633,7 +1631,7 @@ function drawCircuit(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
   ctx.stroke()
   ctx.fillStyle = '#dcfce7'
   ctx.font = '900 18px system-ui, sans-serif'
-  ctx.fillText(sim.circuit.socketR ? `${sim.circuit.socketR} ohm` : 'SOCKET', socket.x, socket.y + 7)
+  ctx.fillText(sim.circuit.socketR ? `× ${sim.circuit.socketR}` : '?', socket.x, socket.y + 7)
   ctx.textAlign = 'left'
 
   for (const chip of sim.circuit.chips) {
@@ -1646,10 +1644,10 @@ function drawCircuit(ctx: CanvasRenderingContext2D, sim: Sim, template: Template
     ctx.fillStyle = '#052e16'
     ctx.font = '900 19px system-ui, sans-serif'
     ctx.textAlign = 'center'
-    ctx.fillText(`${chip.r} ohm`, chip.x, chip.y + 7)
+    ctx.fillText(`${chip.r}`, chip.x, chip.y + 7)
   }
   ctx.textAlign = 'left'
-  drawTextPill(ctx, `${sim.objective.current}A -> ${sim.objective.target}V`, 34, 94, '#dcfce7')
+  drawTextPill(ctx, `${sim.objective.current} × ? = ${sim.objective.target}`, 34, 94, '#dcfce7')
 }
 
 function drawFraction(ctx: CanvasRenderingContext2D, sim: Sim) {
@@ -1724,7 +1722,7 @@ function drawMolecule(ctx: CanvasRenderingContext2D, sim: Sim) {
     ctx.fillText(atom.label, atom.x, atom.y + 7)
   }
   ctx.textAlign = 'left'
-  drawTextPill(ctx, `Bonds ${getBondCount(atoms)} / ${sim.molecule.requiredBonds}`, 34, 94, '#ccfbf1')
+  drawTextPill(ctx, `Connections ${getBondCount(atoms)} / ${sim.molecule.requiredBonds}`, 34, 94, '#ccfbf1')
 }
 
 function drawBlaster(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
@@ -1848,7 +1846,7 @@ function drawTetra(ctx: CanvasRenderingContext2D, sim: Sim) {
 
 function drawCreature(ctx: CanvasRenderingContext2D, sim: Sim, template: Template) {
   const arcade = sim.arcade
-  drawTextPill(ctx, `Charge exact damage ${sim.objective.target}`, 34, 94, '#fce7f3')
+  drawTextPill(ctx, `Make target sum ${sim.objective.target}`, 34, 94, '#fce7f3')
   ctx.fillStyle = 'rgba(0,0,0,.34)'
   roundRect(ctx, width - 230, 96, 170, 26, 13)
   ctx.fill()
@@ -1857,7 +1855,7 @@ function drawCreature(ctx: CanvasRenderingContext2D, sim: Sim, template: Templat
   ctx.fill()
   ctx.fillStyle = '#fce7f3'
   ctx.font = '900 16px system-ui, sans-serif'
-  ctx.fillText(`Energy ${arcade.energy}`, 34, 140)
+  ctx.fillText(`Current sum ${arcade.energy}`, 34, 140)
   for (const target of arcade.targets) {
     ctx.fillStyle = target.color ?? template.accent
     ctx.beginPath()
@@ -2020,9 +2018,12 @@ function HowToPlayGraphic({ visual, accent }: { visual: string; accent: string }
       )}
       {visual === 'circuit' && (
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 144">
-          <path d="M34 72 H112 M204 72 H286 M286 72 V118 H34 V72" fill="none" stroke={accent} strokeWidth="7" strokeLinecap="round" />
-          <rect x="116" y="48" width="88" height="48" rx="14" fill="rgba(255,255,255,.14)" stroke="#fff" />
-          <text x="160" y="80" textAnchor="middle" fill="#fff" fontSize="20" fontWeight="900">R</text>
+          <text x="46" y="82" fill="#fff" fontSize="30" fontWeight="900">6 ×</text>
+          <rect x="122" y="42" width="76" height="58" rx="16" fill="rgba(255,255,255,.14)" stroke={accent} strokeWidth="4" />
+          <text x="160" y="80" textAnchor="middle" fill="#fff" fontSize="30" fontWeight="900">?</text>
+          <text x="214" y="82" fill="#fff" fontSize="30" fontWeight="900">= 42</text>
+          <circle cx="160" cy="116" r="16" fill={accent} />
+          <text x="160" y="122" textAnchor="middle" fill="#04111d" fontSize="17" fontWeight="900">7</text>
         </svg>
       )}
       {visual === 'molecule' && (
@@ -2030,7 +2031,7 @@ function HowToPlayGraphic({ visual, accent }: { visual: string; accent: string }
           <line x1="160" y1="72" x2="88" y2="42" stroke={accent} strokeWidth="7" />
           <line x1="160" y1="72" x2="238" y2="44" stroke={accent} strokeWidth="7" />
           <line x1="160" y1="72" x2="194" y2="118" stroke={accent} strokeWidth="7" />
-          {[ [160,72,'O'], [88,42,'H'], [238,44,'H'], [194,118,'C'] ].map(([x, y, label]) => (
+          {[ [160,72,'A'], [88,42,'B'], [238,44,'C'], [194,118,'D'] ].map(([x, y, label]) => (
             <g key={`${x}-${y}`}>
               <circle cx={x} cy={y} r="24" fill={accent} />
               <text x={x} y={Number(y) + 7} textAnchor="middle" fill="#04111d" fontSize="18" fontWeight="900">{label}</text>
@@ -2378,13 +2379,13 @@ export default function LearningGameShowcase({
           sim.circuit.socketR = chip.r
           chip.x = chip.homeX
           chip.y = chip.homeY
-          const voltage = (sim.objective.current ?? 2) * chip.r
-          if (voltage === sim.objective.target) {
+          const product = (sim.objective.current ?? 2) * chip.r
+          if (product === sim.objective.target) {
             sim.mouse.x = 460
             sim.mouse.y = 230
-            advance(sim, '电路点亮，欧姆定律匹配', 'Circuit lit. Ohm law matched', '#22c55e', audio)
+            advance(sim, '等式成立，缺失因子命中', 'Equation balanced with the missing factor', '#22c55e', audio)
           } else {
-            miss(sim, `${voltage}V 不是目标电压`, `${voltage}V is not the target voltage`, audio)
+            miss(sim, `${sim.objective.current} × ${chip.r} = ${product}，还不是目标积`, `${sim.objective.current} × ${chip.r} = ${product}, not the target product`, audio)
           }
         } else {
           chip.x = chip.homeX
