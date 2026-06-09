@@ -35,6 +35,45 @@ type CourseModule = {
   order: number
 }
 
+type LarryPracticeQuestion = {
+  id: string
+  type: 'multiple-choice' | 'true-false' | 'order-steps' | 'numeric-input' | 'fill-blank' | 'multiple-select' | 'open-response'
+  prompt: string
+  choices: string[]
+  answer?: string | string[]
+  alternativeAnswers?: string[]
+  acceptableKeywords?: string[]
+  answerPreview?: string
+  points: number
+  penalty: number
+  hint: string
+  explanation: string
+  visual?: string
+  inputPlaceholder?: string
+  unit?: string
+  tolerance?: number
+  encouragement?: {
+    correct?: string
+    incorrect?: string
+  }
+}
+
+type LarryPracticeConfig = {
+  title: string
+  maxScore: number
+  passingScore: number
+  rewards: {
+    gemsOnPass: number
+    gemsOnPerfect: number
+    streakBonus: number
+  }
+  reviewAdvice: {
+    rewatchMessage: string
+    focus: string
+  }
+  questions: LarryPracticeQuestion[]
+}
+
 const vodMapPath = path.join(process.cwd(), 'data', 'larry-math-vod-map.json')
 
 const knownTitles = new Map<number, string>([
@@ -198,6 +237,257 @@ function lessonDescription(entry: VodEntry, module: CourseModule, topic: string)
   return `${module.gradeLevel} ${module.title.split(': ')[1]} lesson with Tencent VOD playback. Focus: ${topic}.${sourceName}`
 }
 
+function seededNumber(seed: number, offset: number, min: number, span: number) {
+  return min + ((seed * 37 + offset * 19) % span)
+}
+
+function numericQuestion(
+  id: string,
+  prompt: string,
+  answer: number | string,
+  explanation: string,
+  hint: string,
+  points: number,
+  penalty: number,
+  unit?: string
+): LarryPracticeQuestion {
+  return {
+    id,
+    type: 'numeric-input',
+    prompt,
+    choices: [],
+    answer: String(answer),
+    points,
+    penalty,
+    hint,
+    explanation,
+    inputPlaceholder: 'Type the number',
+    unit,
+    encouragement: {
+      correct: 'Nice. You made the calculation clean.',
+      incorrect: 'Good try. Slow down and rebuild the number relationship.',
+    },
+  }
+}
+
+function multipleChoiceQuestion(
+  id: string,
+  prompt: string,
+  answer: string,
+  distractors: Array<string | number>,
+  explanation: string,
+  hint: string,
+  points: number,
+  penalty: number
+): LarryPracticeQuestion {
+  const choices = [answer, ...distractors.map(String)]
+  return {
+    id,
+    type: 'multiple-choice',
+    prompt,
+    choices,
+    answer,
+    points,
+    penalty,
+    hint,
+    explanation,
+    encouragement: {
+      correct: 'Sharp choice.',
+      incorrect: 'Not yet. Look for the structure before calculating.',
+    },
+  }
+}
+
+function trueFalseQuestion(
+  id: string,
+  prompt: string,
+  answer: 'True' | 'False',
+  explanation: string,
+  hint: string,
+  points: number,
+  penalty: number
+): LarryPracticeQuestion {
+  return {
+    id,
+    type: 'true-false',
+    prompt,
+    choices: ['True', 'False'],
+    answer,
+    points,
+    penalty,
+    hint,
+    explanation,
+    encouragement: {
+      correct: 'Good mathematical judgment.',
+      incorrect: 'Check the claim with a small example first.',
+    },
+  }
+}
+
+function orderQuestion(
+  id: string,
+  prompt: string,
+  answer: string[],
+  explanation: string,
+  hint: string,
+  points: number,
+  penalty: number
+): LarryPracticeQuestion {
+  return {
+    id,
+    type: 'order-steps',
+    prompt,
+    choices: answer,
+    answer,
+    points,
+    penalty,
+    hint,
+    explanation,
+    encouragement: {
+      correct: 'That is a strong solving path.',
+      incorrect: 'Think like Larry: model first, calculate second, check last.',
+    },
+  }
+}
+
+function selectQuestion(
+  id: string,
+  prompt: string,
+  choices: string[],
+  answer: string[],
+  explanation: string,
+  hint: string,
+  points: number,
+  penalty: number
+): LarryPracticeQuestion {
+  return {
+    id,
+    type: 'multiple-select',
+    prompt,
+    choices,
+    answer,
+    points,
+    penalty,
+    hint,
+    explanation,
+    encouragement: {
+      correct: 'Great. You found every matching idea.',
+      incorrect: 'Almost. There may be more than one correct choice.',
+    },
+  }
+}
+
+function reflectionQuestion(
+  id: string,
+  prompt: string,
+  keywords: string[],
+  focus: string
+): LarryPracticeQuestion {
+  return {
+    id,
+    type: 'open-response',
+    prompt,
+    choices: [],
+    acceptableKeywords: keywords,
+    answerPreview: `Use ${keywords.slice(0, 2).join(' and ')} to explain your thinking.`,
+    points: 10,
+    penalty: 0,
+    hint: `Use at least two math words: ${keywords.slice(0, 3).join(', ')}.`,
+    explanation: `A strong answer explains the ${focus} with a number, model, or short reason.`,
+    inputPlaceholder: 'I would start by ... because ...',
+    encouragement: {
+      correct: 'Clear reasoning. That is how math thinking grows.',
+      incorrect: 'Good start. Add one number or model word so your thinking is clearer.',
+    },
+  }
+}
+
+function buildLarryPracticeConfig(entry: VodEntry, module: CourseModule, topic: string, order: number): LarryPracticeConfig {
+  const seed = entry.episode + order
+  const a = seededNumber(seed, 1, 6, 24)
+  const b = seededNumber(seed, 2, 4, 18)
+  const c = seededNumber(seed, 3, 3, 12)
+  const d = seededNumber(seed, 4, 2, 9)
+  const questions: LarryPracticeQuestion[] = []
+
+  if (module.key === 'number-sense') {
+    questions.push(
+      numericQuestion('q1', `Compute mentally: ${a * 10 + b} + ${c * 10 + d}`, a * 10 + b + c * 10 + d, 'Add tens with tens and ones with ones, then combine.', 'Break both numbers into tens and ones.', 6, 2),
+      multipleChoiceQuestion('q2', `Which expression has the same value as ${a} x (${b} + ${c})?`, `${a} x ${b} + ${a} x ${c}`, [`${a} + ${b} x ${c}`, `${a + b} x ${c}`, `${a} x ${b} + ${c}`], 'This uses the distributive property.', 'Multiply the outside number by each part inside the parentheses.', 6, 2),
+      numericQuestion('q3', `A number is ${a * b}. Divide it by ${a}. What do you get?`, b, 'Multiplication and division undo each other.', `Think: ${a} x ? = ${a * b}.`, 8, 3),
+      trueFalseQuestion('q4', `${a + b} + ${c} = ${c} + ${a + b}`, 'True', 'Addition can be reordered without changing the total.', 'Try both sides quickly.', 8, 3),
+      orderQuestion('q5', `Put the mental math steps in order for ${a * 10 + b} - ${c}.`, ['Break the number into tens and ones', 'Subtract the easy part first', 'Adjust the ones', 'Check the answer by adding back'], 'A clean mental method breaks, subtracts, adjusts, and checks.', 'Start with place value.', 10, 3),
+      selectQuestion('q6', `Select all numbers divisible by ${d}.`, [String(d * 2), String(d * 3 + 1), String(d * 4), String(d * 5 + 2)], [String(d * 2), String(d * 4)], 'A number is divisible when it is an exact multiple.', `Look for ${d} times a whole number.`, 10, 4),
+      numericQuestion('q7', `Fill the blank: ${a} x ___ = ${a * c}`, c, 'Use inverse thinking: divide the product by the known factor.', `Ask: how many ${a}s make ${a * c}?`, 12, 4),
+      reflectionQuestion('q8', `What mental math move would make "${topic}" easier to solve?`, ['break apart', 'place value', 'check'], 'mental math strategy')
+    )
+  } else if (module.key === 'word-problem-modeling') {
+    questions.push(
+      numericQuestion('q1', `A club has ${a} rows with ${b} students in each row. How many students are there?`, a * b, 'Rows and equal groups multiply.', 'Draw rows or write equal groups.', 6, 2, 'students'),
+      numericQuestion('q2', `Larry has ${a * 3} stickers. He gives ${b} to a friend and then gets ${c}. How many stickers now?`, a * 3 - b + c, 'Track the story in order: subtract, then add.', 'Write one expression from left to right.', 6, 2, 'stickers'),
+      multipleChoiceQuestion('q3', `Which model best fits a total split equally into ${d} groups?`, 'bar model with equal parts', ['single number line jump', 'random guess table', 'circle graph only'], 'Equal groups are easy to see with equal bar parts.', 'Look for equal parts.', 8, 3),
+      trueFalseQuestion('q4', `If each ticket costs $${d}, then ${a} tickets cost $${a + d}.`, 'False', 'Equal-price tickets use multiplication, not addition.', `Compare ${d} x ${a} with ${a} + ${d}.`, 8, 3),
+      orderQuestion('q5', 'Put the word-problem strategy in the best order.', ['Underline the question', 'List the known numbers', 'Choose a diagram or equation', 'Calculate and check the unit'], 'This keeps the story, model, calculation, and unit connected.', 'Do not calculate before you know what is being asked.', 10, 3),
+      selectQuestion('q6', 'Which are good first moves for a word problem?', ['Draw a bar model', 'Label the unknown', 'Guess without reading', 'Check units'], ['Draw a bar model', 'Label the unknown', 'Check units'], 'Good solvers slow the story down before calculating.', 'Choose actions that make structure visible.', 10, 4),
+      numericQuestion('q7', `A trip is ${a * 5} km. Larry has traveled ${b * 2} km. How many km are left?`, a * 5 - b * 2, 'Remaining distance is total minus traveled.', 'Use total - part.', 12, 4, 'km'),
+      reflectionQuestion('q8', `For "${topic}", what should you draw before calculating?`, ['diagram', 'bar model', 'unknown', 'unit'], 'word-problem model')
+    )
+  } else if (module.key === 'fractions-ratios-percent') {
+    const total = (a + b) * 4
+    const percentBase = c * 20
+    questions.push(
+      numericQuestion('q1', `What is 1/4 of ${total}?`, total / 4, 'One fourth means divide by 4.', 'Split the total into 4 equal parts.', 6, 2),
+      numericQuestion('q2', `${a} out of ${a + b} students chose math. How many did not choose math?`, b, 'The other part is total minus the math group.', 'Use total - part.', 6, 2, 'students'),
+      multipleChoiceQuestion('q3', `Which is equivalent to ${c}/${c * 2}?`, '1/2', ['1/3', '2/3', `${c}/2`], 'The numerator is half of the denominator.', 'Divide top and bottom by the same number.', 8, 3),
+      trueFalseQuestion('q4', `25% of ${percentBase} is ${percentBase / 4}.`, 'True', '25% is one fourth.', 'Change 25% to 1/4.', 8, 3),
+      orderQuestion('q5', `Order the steps for finding ${d * 10}% of ${a * 10}.`, ['Change percent to a fraction or decimal', 'Multiply by the whole', 'Simplify the product', 'Check if the answer size is reasonable'], 'Percent questions become easier after changing the percent form.', 'Start by rewriting the percent.', 10, 3),
+      selectQuestion('q6', 'Select the proportional pairs.', ['2/4 and 1/2', '3/9 and 1/3', '4/5 and 4/10', '6/8 and 3/4'], ['2/4 and 1/2', '3/9 and 1/3', '6/8 and 3/4'], 'Equivalent ratios reduce to the same value.', 'Simplify each pair.', 10, 4),
+      numericQuestion('q7', `A score improves from ${a * 2} to ${a * 2 + b}. How many points did it improve?`, b, 'Improvement is new score minus old score.', 'Subtract the starting value from the ending value.', 12, 4, 'points'),
+      reflectionQuestion('q8', `Which fraction, ratio, or percent model helps explain "${topic}"?`, ['fraction', 'ratio', 'percent', 'whole'], 'proportional reasoning')
+    )
+  } else if (module.key === 'geometry-spatial') {
+    questions.push(
+      numericQuestion('q1', `A rectangle is ${a} cm by ${b} cm. What is its area?`, a * b, 'Rectangle area is length times width.', 'Multiply the two side lengths.', 6, 2, 'cm^2'),
+      numericQuestion('q2', `A square has side length ${d + 3}. What is its perimeter?`, (d + 3) * 4, 'A square has four equal sides.', 'Add the side four times.', 6, 2, 'cm'),
+      multipleChoiceQuestion('q3', 'Which formula finds triangle area?', 'base x height ÷ 2', ['base + height', 'length x width', 'side x 4'], 'A triangle is half of a matching rectangle.', 'Think of a triangle inside a rectangle.', 8, 3),
+      trueFalseQuestion('q4', `A ${a} by ${b} rectangle has the same area as a ${b} by ${a} rectangle.`, 'True', 'Changing the order of multiplication does not change the area.', 'Compare the two products.', 8, 3),
+      orderQuestion('q5', 'Order the geometry solving steps.', ['Identify the shape', 'Mark the known lengths', 'Choose area, perimeter, or angle relationship', 'Compute and include units'], 'Geometry becomes clear after choosing the right relationship.', 'Shape first, formula second.', 10, 3),
+      selectQuestion('q6', 'Select all area units.', ['square cm', 'cm^2', 'meters', 'square inches'], ['square cm', 'cm^2', 'square inches'], 'Area uses square units.', 'Look for square language.', 10, 4),
+      numericQuestion('q7', `A triangle has base ${a} and height ${c}. What is its area?`, (a * c) / 2, 'Triangle area is base times height divided by 2.', 'Find the rectangle area, then take half.', 12, 4, 'square units'),
+      reflectionQuestion('q8', `What diagram would make "${topic}" easier to see?`, ['shape', 'length', 'area', 'angle'], 'geometry model')
+    )
+  } else {
+    const sequenceStart = a + 1
+    questions.push(
+      numericQuestion('q1', `What is the next number: ${sequenceStart}, ${sequenceStart + d}, ${sequenceStart + d * 2}, ___?`, sequenceStart + d * 3, 'The pattern adds the same amount each time.', 'Find the repeated difference.', 6, 2),
+      numericQuestion('q2', `How many ways can you choose 1 snack and 1 drink from ${c} snacks and ${d} drinks?`, c * d, 'Use the multiplication counting principle.', 'Each snack can pair with each drink.', 6, 2, 'ways'),
+      multipleChoiceQuestion('q3', `Which number is a factor of ${a * b}?`, String(a), [a + 1, b + 2, a + b + 1], 'A factor divides the product evenly.', `Because ${a} x ${b} = ${a * b}.`, 8, 3),
+      trueFalseQuestion('q4', `If a number is divisible by 6, it must be divisible by both 2 and 3.`, 'True', 'Since 6 = 2 x 3, divisibility by 6 includes both tests.', 'Break 6 into prime factors.', 8, 3),
+      orderQuestion('q5', 'Order the contest-math attack plan.', ['Try a small case', 'Look for a pattern', 'Write the rule', 'Test the rule on the original problem'], 'Small cases reveal the structure before the full problem.', 'Do not jump straight to the biggest numbers.', 10, 3),
+      selectQuestion('q6', `Select all multiples of ${d}.`, [String(d), String(d + 1), String(d * 3), String(d * 4 + 1)], [String(d), String(d * 3)], 'Multiples are made by multiplying by whole numbers.', `Use ${d} times 1, 2, 3...`, 10, 4),
+      numericQuestion('q7', `The remainder when ${a * b + d} is divided by ${b} is what?`, d % b, 'Subtract the largest multiple of the divisor.', `Since ${a * b} is divisible by ${b}, only the extra ${d} matters.`, 12, 4),
+      reflectionQuestion('q8', `What small case or pattern would you test first for "${topic}"?`, ['small case', 'pattern', 'rule', 'check'], 'contest reasoning')
+    )
+  }
+
+  const maxScore = questions.reduce((sum, question) => sum + question.points, 0)
+  return {
+    title: `${topic} Practice Quest`,
+    maxScore,
+    passingScore: 72,
+    rewards: {
+      gemsOnPass: 0,
+      gemsOnPerfect: 1,
+      streakBonus: 1,
+    },
+    reviewAdvice: {
+      rewatchMessage: 'Replay Larry’s example once, then try the quest again with a cleaner model.',
+      focus: topic,
+    },
+    questions,
+  }
+}
+
 async function archiveLegacyYoutubeLarryMath() {
   const youtubeWhere = {
     course: { courseTrack: 'larry-math' },
@@ -275,6 +565,8 @@ async function main() {
         published: true,
         expectedFeatures: JSON.stringify([
           'Tencent VOD video lessons',
+          'Free public-benefit course access',
+          'Lesson-by-lesson practice quests',
           'Peer-created math explanations',
           'Organized by grade band and skill module',
           'YouTube-free playback for easier access',
@@ -300,6 +592,8 @@ async function main() {
         published: true,
         expectedFeatures: JSON.stringify([
           'Tencent VOD video lessons',
+          'Free public-benefit course access',
+          'Lesson-by-lesson practice quests',
           'Peer-created math explanations',
           'Organized by grade band and skill module',
           'YouTube-free playback for easier access',
@@ -317,6 +611,8 @@ async function main() {
 
     const topic = titleForEpisode(entry)
     const lessonId = `lesson-larry-math-vod-${String(entry.episode).padStart(3, '0')}`
+    const practiceConfig = buildLarryPracticeConfig(entry, courseModule, topic, order)
+    const practiceActivityId = `activity-${lessonId}-practice`
 
     await prisma.lesson.upsert({
       where: { id: lessonId },
@@ -330,10 +626,10 @@ async function main() {
         tencentVodFileId: entry.fileId,
         order,
         duration: entry.durationSeconds ? Math.round(entry.durationSeconds) : 600,
-        isPreview: order <= 3,
-        hasPractice: false,
+        isPreview: true,
+        hasPractice: true,
         hasGame: false,
-        rewardsPoints: 10,
+        rewardsPoints: practiceConfig.maxScore,
         rewardsGems: 0,
         gradeLevel: courseModule.gradeLevel,
         difficulty: courseModule.difficulty,
@@ -349,13 +645,46 @@ async function main() {
         tencentVodFileId: entry.fileId,
         order,
         duration: entry.durationSeconds ? Math.round(entry.durationSeconds) : 600,
-        isPreview: order <= 3,
-        hasPractice: false,
+        isPreview: true,
+        hasPractice: true,
         hasGame: false,
-        rewardsPoints: 10,
+        rewardsPoints: practiceConfig.maxScore,
         rewardsGems: 0,
         gradeLevel: courseModule.gradeLevel,
         difficulty: courseModule.difficulty,
+      },
+    })
+
+    await prisma.lessonActivity.upsert({
+      where: { id: practiceActivityId },
+      update: {
+        courseId: courseModule.id,
+        lessonId,
+        type: 'practice',
+        title: `${topic} Practice Quest`,
+        description: 'A free Larry Math practice quest with drills, models, and one reasoning reflection.',
+        config: JSON.stringify(practiceConfig),
+        provider: 'internal-practice',
+        order: 1,
+        isRequired: false,
+        rewardsPoints: practiceConfig.maxScore,
+        rewardsGems: 0,
+        published: true,
+      },
+      create: {
+        id: practiceActivityId,
+        courseId: courseModule.id,
+        lessonId,
+        type: 'practice',
+        title: `${topic} Practice Quest`,
+        description: 'A free Larry Math practice quest with drills, models, and one reasoning reflection.',
+        config: JSON.stringify(practiceConfig),
+        provider: 'internal-practice',
+        order: 1,
+        isRequired: false,
+        rewardsPoints: practiceConfig.maxScore,
+        rewardsGems: 0,
+        published: true,
       },
     })
   }

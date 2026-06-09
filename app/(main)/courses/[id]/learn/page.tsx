@@ -34,6 +34,8 @@ interface PracticeQuestion {
   hint: string
   explanation: string
   visual?: string
+  visualAsset?: string
+  visualCaption?: string
   inputPlaceholder?: string
   unit?: string
   tolerance?: number
@@ -379,6 +381,7 @@ function isPreviewLesson(lesson: Lesson | undefined, index: number) {
 }
 
 function isLessonUnlocked(course: Course, index: number) {
+  if (isLarryMathCourse(course)) return true
   const lesson = course.lessons[index]
   if (isPreviewLesson(lesson, index)) return true
   if (!course.hasAccess) return false
@@ -397,6 +400,26 @@ function shuffleItems<T>(items: T[]) {
   const shuffled = [...items]
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1))
+    ;[shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]]
+  }
+  return shuffled
+}
+
+function hashString(value: string) {
+  let hash = 2166136261
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index)
+    hash = Math.imul(hash, 16777619)
+  }
+  return Math.abs(hash)
+}
+
+function seededShuffleItems<T>(items: T[], seed: string) {
+  const shuffled = [...items]
+  let state = hashString(seed) || 1
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    state = (state * 1664525 + 1013904223) >>> 0
+    const swapIndex = state % (index + 1)
     ;[shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]]
   }
   return shuffled
@@ -628,6 +651,40 @@ function checkPracticeAnswer(question: PracticeQuestion, value: string | string[
   return accepted.some((answer) => answer === actual || (answer.length >= 4 && actual.includes(answer)) || (actual.length >= 4 && answer.includes(actual)))
 }
 
+function scorePracticeLocally(questions: PracticeQuestion[], answers: { questionId: string; value: string | string[] }[]) {
+  const answersById = new Map(answers.map((answer) => [answer.questionId, answer.value]))
+  const maxScore = questions.reduce((sum, question) => sum + Number(question.points || 0), 0)
+  let rawScore = 0
+  let currentCorrectStreak = 0
+  let maxCorrectStreak = 0
+  const results = questions.map((question) => {
+    const correct = checkPracticeAnswer(question, answersById.get(question.id) || null)
+    currentCorrectStreak = correct ? currentCorrectStreak + 1 : 0
+    maxCorrectStreak = Math.max(maxCorrectStreak, currentCorrectStreak)
+    rawScore += correct ? Number(question.points || 0) : -Number(question.penalty || 0)
+    return {
+      questionId: question.id,
+      correct,
+      points: correct ? Number(question.points || 0) : -Number(question.penalty || 0),
+      explanation: question.explanation || null,
+      hint: question.hint || null,
+    }
+  })
+  const score = Math.max(0, rawScore)
+  const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0
+  return {
+    score,
+    maxScore,
+    percent,
+    completed: answers.length >= questions.length,
+    earnedPoints: score,
+    earnedGems: Math.floor(maxCorrectStreak / 10),
+    maxCorrectStreak,
+    wrongCount: results.filter((result) => !result.correct).length,
+    results,
+  }
+}
+
 function getQuestionLabel(type: PracticeQuestion['type']) {
   const labels: Record<PracticeQuestion['type'], string> = {
     'multiple-choice': 'Choose',
@@ -639,50 +696,6 @@ function getQuestionLabel(type: PracticeQuestion['type']) {
     'open-response': 'Reflect',
   }
   return labels[type] || 'Practice'
-}
-
-function getQuestionKeywords(question: PracticeQuestion) {
-  const source = `${question.prompt} ${question.visual || ''}`.toLowerCase()
-  const scienceTerms = [
-    'evidence',
-    'model',
-    'pattern',
-    'variable',
-    'data',
-    'claim',
-    'reasoning',
-    'force',
-    'energy',
-    'particle',
-    'density',
-    'gravity',
-    'friction',
-    'wave',
-    'light',
-    'heat',
-  ]
-  const foundScience = scienceTerms.filter((term) => source.includes(term)).slice(0, 3)
-  if (foundScience.length) return foundScience.map((term) => term.replace(/^\w/, (letter) => letter.toUpperCase()))
-
-  const mathTerms = [
-    ['percent', '%'],
-    ['ratio', 'ratio'],
-    ['area', 'area'],
-    ['perimeter', 'perimeter'],
-    ['angle', 'angle'],
-    ['triangle', 'triangle'],
-    ['fraction', 'fraction'],
-    ['average', 'average'],
-    ['speed', 'speed'],
-    ['distance', 'distance'],
-    ['time', 'time'],
-  ]
-  const foundMath = mathTerms.filter(([term]) => source.includes(term)).map(([, label]) => label).slice(0, 3)
-  return foundMath.length ? foundMath : ['Model', 'Solve', 'Check']
-}
-
-function getQuestionNumbers(question: PracticeQuestion) {
-  return question.prompt.match(/-?\d+(?:\.\d+)?%?/g)?.slice(0, 5) || []
 }
 
 function MathText({ text }: { text: string }) {
@@ -718,17 +731,16 @@ function MathText({ text }: { text: string }) {
 }
 
 function QuestVisual({ question }: { question: PracticeQuestion }) {
-  const keywords = getQuestionKeywords(question)
-  const numbers = getQuestionNumbers(question)
-  const items = (numbers.length ? numbers : keywords).slice(0, 3)
-  if (!items.length) return null
+  if (!question.visualAsset && !question.visual) return null
+  if (question.visual && !question.visual.startsWith('/')) return null
+  const source = question.visualAsset || question.visual
+  if (!source) return null
   return (
-    <div className="mt-5 flex flex-wrap gap-2">
-      {items.map((item) => (
-        <div key={item} className="rounded-full border border-[#ebe2d3] bg-[#faf7ef] px-3 py-1 text-xs font-black text-[#746a5b]">
-          <MathText text={item} />
-        </div>
-      ))}
+    <div className="mt-5 overflow-hidden rounded-3xl border border-[#eadfcd] bg-[#fffaf1] p-3">
+      <img src={source} alt={question.visualCaption || ''} className="mx-auto max-h-72 w-full object-contain" />
+      {question.visualCaption && (
+        <p className="mt-2 text-center text-xs font-bold text-[#857b69]">{question.visualCaption}</p>
+      )}
     </div>
   )
 }
@@ -1156,13 +1168,16 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers, recordWrongQuestions: false }),
       })
-      if (response.ok) {
-        const result = await response.json()
+      const localOnly = !response.ok
+      if (response.ok || (response.status === 401 && course && isLarryMathCourse(course))) {
+        const result = response.ok
+          ? await response.json()
+          : scorePracticeLocally(orderedQuestions, answers)
         setQuestResult(result)
         setQuestSubmitted(true)
         setQuestEffect({ kind: 'complete', key: Date.now() })
         playFeedbackTone('complete')
-        if (result.earnedPoints > 0 || result.earnedGems > 0) {
+        if (!localOnly && (result.earnedPoints > 0 || result.earnedGems > 0)) {
           window.dispatchEvent(new CustomEvent('larry:reward-earned', {
             detail: {
               points: Number(result.earnedPoints || 0),
@@ -1249,6 +1264,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const orderedQuestQuestions = questConfig ? getOrderedPracticeQuestions(questConfig, questQuestionOrder) : []
   const currentQuestQuestion = orderedQuestQuestions[questIndex]
   const currentQuestAnswer = currentQuestQuestion ? questAnswers[currentQuestQuestion.id] : undefined
+  const currentQuestChoiceSeed = `${activePracticeId || 'practice'}:${currentQuestQuestion?.id || 'question'}:${questQuestionOrder.join('|')}`
+  const currentQuestChoices = currentQuestQuestion ? seededShuffleItems(currentQuestQuestion.choices, currentQuestChoiceSeed) : []
   const openResponseGuide = currentQuestQuestion?.type === 'open-response' ? getOpenResponseGuide(currentQuestQuestion) : null
   const openResponseEvaluation = currentQuestQuestion?.type === 'open-response'
     ? evaluateOpenResponse(currentQuestQuestion, currentQuestAnswer || null)
@@ -1267,21 +1284,22 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const nextLessonUnlocked = currentLessonIndex < course.lessons.length - 1 && isLessonUnlocked(course, currentLessonIndex + 1)
   const nextLessonRequiresPurchase = currentLessonIndex < course.lessons.length - 1 && !course.hasAccess && !isPreviewLesson(course.lessons[currentLessonIndex + 1], currentLessonIndex + 1)
   const unlockCopy = unlockModalCopy[locale]
+  const larryMathCourse = isLarryMathCourse(course)
 
   const learningSteps = [
     {
       title: 'Watch',
-      text: 'Follow Larry’s explanation and pause when the diagram or equation changes.',
+      text: larryMathCourse ? 'Pick any Larry Math episode that looks fun. There is no locked sequence.' : 'Follow Larry’s explanation and pause when the diagram or equation changes.',
       active: true,
     },
     {
       title: 'Practice',
-      text: currentLesson.hasPractice ? 'Complete the quick check below to lock in the method.' : 'A quick check is ready here while the full worksheet is being prepared.',
+      text: currentLesson.hasPractice ? 'Complete the quick quest below to lock in the method.' : 'A quick check is ready here while the full worksheet is being prepared.',
       active: practiceChecked || currentLessonComplete,
     },
     {
       title: 'Apply',
-      text: currentLesson.hasGame ? 'Open the lesson game after practice.' : 'Try the same strategy on a similar problem before moving on.',
+      text: larryMathCourse ? 'Jump to another topic anytime, or replay the video after practice.' : currentLesson.hasGame ? 'Open the lesson game after practice.' : 'Try the same strategy on a similar problem before moving on.',
       active: false,
     },
   ]
@@ -1414,7 +1432,9 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               <div>
                 <h2 className="text-2xl font-black">Course Map</h2>
                 <p className="mt-2 text-sm leading-6 text-gray-500">
-                  {completedLessonCount} of {course.lessons.length} lessons completed. The first {previewLessonCount} lessons are free to preview; paid lessons continue unlocking as you learn.
+                  {larryMathCourse
+                    ? `${completedLessonCount} of ${course.lessons.length} lessons completed. Larry Math is a free public-benefit library, so every lesson is open and you can jump by topic.`
+                    : `${completedLessonCount} of ${course.lessons.length} lessons completed. The first ${previewLessonCount} lessons are free to preview; paid lessons continue unlocking as you learn.`}
                 </p>
               </div>
               <div className="min-w-[180px]">
@@ -1503,7 +1523,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className={`text-xs font-black uppercase tracking-[0.16em] ${active ? 'text-blue-300' : completed ? 'text-emerald-300' : unlocked ? 'text-gray-500' : 'text-gray-700'}`}>
-                          {active ? 'Now Playing' : completed ? 'Completed' : unlocked ? 'Unlocked' : !course.hasAccess && !isPreviewLesson(lesson, index) ? 'Paid Lesson' : 'Locked'}
+                          {active ? 'Now Playing' : completed ? 'Completed' : larryMath ? 'Free Lesson' : unlocked ? 'Unlocked' : !course.hasAccess && !isPreviewLesson(lesson, index) ? 'Paid Lesson' : 'Locked'}
                         </div>
                         {lesson.latestPracticeAttempt?.completed && (
                           <div className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-black text-emerald-300">
@@ -1665,7 +1685,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                               <div>
                                 <div className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-[#777064]">Tap in order</div>
                                 <div className="space-y-2">
-                                  {currentQuestQuestion.choices.map((choice) => {
+                                  {currentQuestChoices.map((choice) => {
                                     const selectedValue = Array.isArray(questAnswers[currentQuestQuestion.id]) ? questAnswers[currentQuestQuestion.id] as string[] : []
                                     const isSelected = selectedValue.includes(choice)
                                     return (
@@ -1721,7 +1741,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                             </div>
                           ) : (
                               <div className="mt-6 space-y-3">
-                              {currentQuestQuestion.choices.map((choice) => {
+                              {currentQuestChoices.map((choice) => {
                                 const selectedValue = questAnswers[currentQuestQuestion.id]
                                 const selectedList = Array.isArray(selectedValue) ? selectedValue : []
                                 const isSelected = currentQuestQuestion.type === 'multiple-select' ? selectedList.includes(choice) : selectedValue === choice
@@ -1870,6 +1890,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                         {questResult?.wrongCount ? (
                           <div className="mt-3 rounded-xl bg-white/70 px-4 py-2 text-xs font-black text-blue-800">
                             {questResult.wrongCount} question{questResult.wrongCount > 1 ? 's were' : ' was'} saved. Review them from Profile.
+                          </div>
+                        ) : null}
+                        {status !== 'authenticated' && larryMathCourse ? (
+                          <div className="mt-3 rounded-xl bg-white/70 px-4 py-2 text-xs font-black text-blue-800">
+                            Free practice complete. Log in when you want Sparks and Gems saved to your profile.
                           </div>
                         ) : null}
                       </div>
