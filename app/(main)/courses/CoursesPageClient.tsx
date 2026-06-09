@@ -32,10 +32,10 @@ const trackCopy: Record<'zh' | 'en', Record<string, TrackCopy>> = {
   zh: {
     'larry-math': {
       title: 'Larry Math',
-      eyebrow: 'Larry 讲课 + Practice + 小游戏',
+      eyebrow: '公益免费开放 · Larry 讲课',
       accent: 'from-blue-500/25 to-cyan-400/15',
-      description: 'Larry Math 围绕 Larry 的讲解视频、技能刷题、Practice 和小游戏组织，让孩子在同龄人的讲解中建立更有信心的数学思维。',
-      cardCopy: '和同龄小讲师一起学数学：Larry 讲解、循环练习和小游戏，让数学不再孤单。',
+      description: 'Larry Math 是 Larry 本人的公益免费数学课程，围绕讲解视频、技能刷题、Practice 和小游戏组织，让孩子在同龄人的讲解中建立更有信心的数学思维。',
+      cardCopy: '全免费公益课程：和同龄小讲师一起学数学，Larry 讲解、循环练习和小游戏，让数学不再孤单。',
     },
     'ib-big-math': {
       title: 'IB Big Math',
@@ -62,10 +62,10 @@ const trackCopy: Record<'zh' | 'en', Record<string, TrackCopy>> = {
   en: {
     'larry-math': {
       title: 'Larry Math',
-      eyebrow: 'Larry lessons + Practice + Games',
+      eyebrow: 'Free public course · Larry lessons',
       accent: 'from-blue-500/25 to-cyan-400/15',
-      description: 'Larry Math focuses on Larry video lessons, skill drills, Practice, and small games that help students build confident math thinking.',
-      cardCopy: 'Learn with a peer teacher: Larry explanations, practice loops, and games that make math less lonely.',
+      description: 'Larry Math is Larry’s fully free public-benefit math course, built around video explanations, skill drills, Practice, and small games that help students build confident math thinking.',
+      cardCopy: 'A fully free public course: learn with a peer teacher through Larry explanations, practice loops, and games.',
     },
     'ib-big-math': {
       title: 'IB Big Math',
@@ -120,6 +120,7 @@ function localizedDescription(course: CourseListItem, locale: 'zh' | 'en') {
 
 function accessLabel(course: CourseListItem, locale: 'zh' | 'en') {
   if (course.status === 'coming-soon') return locale === 'zh' ? '即将开放' : 'Coming Soon'
+  if (course.courseTrack === 'larry-math') return locale === 'zh' ? '公益免费' : 'Free Public Course'
   if (course.accessLevel === 'registered') return locale === 'zh' ? '注册可学' : 'Register to Learn'
   if (course.isFree || course.price <= 0 || course.accessLevel === 'public') return locale === 'zh' ? '公开免费' : 'Free'
   return locale === 'zh' ? `付费课程 $${course.price} USD` : `Paid Course $${course.price} USD`
@@ -127,6 +128,7 @@ function accessLabel(course: CourseListItem, locale: 'zh' | 'en') {
 
 function accessTone(course: CourseListItem) {
   if (course.status === 'coming-soon') return 'bg-white/10 text-white/70 ring-white/10'
+  if (course.courseTrack === 'larry-math') return 'bg-emerald-300 text-[#04140f] ring-emerald-100/50'
   if (course.accessLevel === 'registered') return 'bg-cyan-300 text-[#05131d] ring-cyan-100/50'
   if (course.isFree || course.price <= 0 || course.accessLevel === 'public') return 'bg-emerald-300 text-[#04140f] ring-emerald-100/50'
   return 'bg-amber-300 text-[#1c1003] ring-amber-100/50'

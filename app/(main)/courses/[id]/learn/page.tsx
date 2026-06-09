@@ -851,17 +851,12 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [unlockPromptLesson, setUnlockPromptLesson] = useState<Lesson | null>(null)
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push(`/login?callbackUrl=/courses/${resolvedParams.id}/learn`)
-      return
-    }
+    if (status === 'loading') return
 
-    if (status === 'authenticated') {
-      if (lessonIdFromQuery) {
-        fetchLessonDirectly(lessonIdFromQuery)
-      } else {
-        fetchCourse(resolvedParams.id)
-      }
+    if (lessonIdFromQuery) {
+      fetchLessonDirectly(lessonIdFromQuery)
+    } else {
+      fetchCourse(resolvedParams.id)
     }
   }, [status, resolvedParams.id, lessonIdFromQuery])
 
@@ -1442,6 +1437,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                 const latestAttemptData = parseAttemptData(lesson.latestPracticeAttempt)
                 const theme = lessonCoverThemes[index % lessonCoverThemes.length]
                 const larryMath = isLarryMathCourse(course)
+                const ibMypG6 = course.id === 'course-ib-big-math'
                 const coverUrl = larryMath ? null : getLessonCoverUrl(course, index)
                 const motif = ibMathCardMotifs[index % ibMathCardMotifs.length]
                 return (
@@ -1490,19 +1486,19 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                           <div className="absolute bottom-4 right-5 text-5xl font-black text-white/10">{motif.formula}</div>
                         </div>
                       )}
-                      {!larryMath && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />}
-                      {!larryMath && <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />}
+                      {!larryMath && !ibMypG6 && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/12 to-black/20" />}
+                      {!larryMath && !ibMypG6 && <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_18%,rgba(255,255,255,0.24),transparent_24%)]" />}
                       <div className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-black/35 text-sm font-black text-white ring-1 ring-white/20 backdrop-blur">
                         <LessonCoverMark index={index} completed={completed} unlocked={unlocked} />
                       </div>
-                      {!larryMath && (
+                      {!larryMath && !ibMypG6 && (
                         <div className="absolute bottom-4 left-4 right-4">
                           <div className="line-clamp-2 text-xl font-black leading-tight text-white drop-shadow">
                             {getLessonCardTitle(lesson)}
                           </div>
                         </div>
                       )}
-                      {!larryMath && <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />}
+                      {!larryMath && !ibMypG6 && <div className="absolute right-4 top-4 h-3 w-3 rounded-full shadow-[0_0_28px_currentColor]" style={{ color: theme.accent, backgroundColor: theme.accent }} />}
                     </div>
                     <div className="p-4">
                       <div className="flex items-center justify-between gap-3">

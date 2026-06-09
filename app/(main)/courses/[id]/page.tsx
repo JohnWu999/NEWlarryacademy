@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerLocale } from '@/lib/server-i18n'
 import { getVideoEmbedUrl, getVideoSourceLabel } from '@/lib/video'
 import { getServerSession } from 'next-auth'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -25,6 +26,11 @@ function difficultyLabel(level: string, locale: Locale) {
 }
 
 const previewLessonCount = 3
+const resumeCookiePrefix = 'larry_last_lesson'
+
+function getResumeCookieName(courseId: string) {
+  return `${resumeCookiePrefix}_${courseId.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+}
 
 const detailCopy = {
   zh: {
@@ -99,6 +105,15 @@ function accessCopy(reason: string, price: number, locale: Locale) {
   if (reason === 'coming-soon') return copy.comingSoonAccess
   if (reason === 'login-required') return `${copy.loginRequiredAccess} ${copy.currentPrice}: ${formatUsdPrice(price)}.`
   return `${copy.purchaseRequiredAccess} ${copy.currentPrice}: ${formatUsdPrice(price)}.`
+}
+
+function courseAccessCopy(course: { courseTrack: string; price: number }, reason: string, locale: Locale) {
+  if (course.courseTrack === 'larry-math') {
+    return locale === 'zh'
+      ? 'Larry 本人的公益数学课程，全免费开放，任何孩子都可以直接学习。'
+      : 'Larry Math is Larry’s public-benefit math course, fully free and open to every student.'
+  }
+  return accessCopy(reason, course.price, locale)
 }
 
 function courseTrackLabel(track: string) {
@@ -381,10 +396,13 @@ function plannedCourseStats(course: { id: string; status: string; courseTrack: s
 
 export default async function CourseDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams?: Promise<{ details?: string }>
 }) {
   const { id } = await params
+  const query = await searchParams
   const session = await getServerSession(authOptions)
   const locale = await getServerLocale()
   const copy = detailCopy[locale]
@@ -422,6 +440,13 @@ export default async function CourseDetailPage({
         },
       }).catch(() => null)
     : null
+
+  if (course.status !== 'coming-soon' && course.lessons.length > 0 && query?.details !== '1') {
+    const cookieStore = await cookies()
+    const resumeLessonId = cookieStore.get(getResumeCookieName(course.id))?.value
+    const hasResumeLesson = Boolean(resumeLessonId && course.lessons.some((lesson) => lesson.id === resumeLessonId))
+    redirect(`/courses/${course.id}/learn${hasResumeLesson ? `?lessonId=${encodeURIComponent(resumeLessonId || '')}` : ''}`)
+  }
 
   const heroEmbed = getVideoEmbedUrl(course)
   const coverPath = courseCoverPath(course)
@@ -583,7 +608,7 @@ export default async function CourseDetailPage({
           <aside className="space-y-6">
             <div className="rounded-3xl border border-white/10 bg-white/[0.025] p-6">
               <h2 className="text-2xl font-black">{copy.accessTitle}</h2>
-              <p className="mt-3 text-sm leading-7 text-gray-400">{accessCopy(access.reason, course.price, locale)}</p>
+              <p className="mt-3 text-sm leading-7 text-gray-400">{courseAccessCopy(course, access.reason, locale)}</p>
 
               <div className="mt-6">
                 {access.hasAccess ? (
