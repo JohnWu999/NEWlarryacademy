@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Triangles, Quadrilaterals, and Angle Sums">
+  <defs>
+    <radialGradient id="glow26" cx="74%" cy="26%" r="58%">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity="0.56"/>
+      <stop offset="0.45" stop-color="#a78bfa" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#0b1020" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shade26" x1="0" x2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" rx="40" fill="url(#shade26)"/>
+  <rect width="960" height="540" rx="40" fill="url(#glow26)"/>
+  <g opacity="0.14" stroke="white" stroke-width="1">
+    <line x1="80" y1="68" x2="80" y2="472"/><line x1="156" y1="68" x2="156" y2="472"/><line x1="232" y1="68" x2="232" y2="472"/><line x1="308" y1="68" x2="308" y2="472"/><line x1="384" y1="68" x2="384" y2="472"/><line x1="460" y1="68" x2="460" y2="472"/><line x1="536" y1="68" x2="536" y2="472"/><line x1="612" y1="68" x2="612" y2="472"/><line x1="688" y1="68" x2="688" y2="472"/><line x1="764" y1="68" x2="764" y2="472"/><line x1="840" y1="68" x2="840" y2="472"/>
+    <line x1="76" y1="86" x2="884" y2="86"/><line x1="76" y1="148" x2="884" y2="148"/><line x1="76" y1="210" x2="884" y2="210"/><line x1="76" y1="272" x2="884" y2="272"/><line x1="76" y1="334" x2="884" y2="334"/><line x1="76" y1="396" x2="884" y2="396"/><line x1="76" y1="458" x2="884" y2="458"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="494,282 620,82 742,282" stroke="#a78bfa" stroke-width="8"/>
+      <path d="M494 282 A70 70 0 0 1 533 220" stroke="#5eead4" stroke-width="7"/>
+      <line x1="620" y1="82" x2="620" y2="282" stroke="white" stroke-width="3" opacity="0.45"/>
+    </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="72" y="96" fill="#5eead4" font-size="20" font-weight="900" letter-spacing="8">IB MYP G6 MATH</text>
+    <text x="72" y="148" fill="white" font-size="34" font-weight="900">Lesson 26</text>
+    <text x="72" y="238" fill="white" font-size="52" font-weight="950">Triangles,</text><text x="72" y="296" fill="white" font-size="52" font-weight="950">Quadrilaterals, and Angle</text><text x="72" y="354" fill="white" font-size="52" font-weight="950">Sums</text>
+    <rect x="72" y="438" width="112" height="6" rx="3" fill="#a78bfa"/>
+    <text x="72" y="486" fill="rgba(255,255,255,0.72)" font-size="22" font-weight="800">Spatial reasoning</text>
+  </g>
+</svg>

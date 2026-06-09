@@ -12,6 +12,17 @@ export type PracticeQuestionForGrading = {
   tolerance?: number
   explanation?: string
   hint?: string
+  visualAsset?: string
+  visualCaption?: string
+  grading?: {
+    mode?: string
+    validator?: string
+    accepted_answers?: string[]
+    required_concepts?: string[]
+    tolerance?: number
+    show_answer_on_wrong?: boolean
+    show_answer_after_mastery?: boolean
+  }
 }
 
 export type SubmittedPracticeAnswer = {
@@ -72,7 +83,7 @@ function isOpenResponseCorrect(question: PracticeQuestionForGrading, submittedVa
     return numbers.some((number) => number < target) && numbers.some((number) => number > target)
   }
 
-  const keywords = question.acceptableKeywords || []
+  const keywords = [...(question.acceptableKeywords || []), ...(question.grading?.required_concepts || [])]
   const keywordHits = keywords.filter((keyword) => normalized.includes(normalize(keyword))).length
   return normalized.length >= 18 && (keywords.length === 0 || keywordHits >= Math.min(2, keywords.length))
 }
@@ -87,7 +98,7 @@ export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, su
     const expected = normalizeNumber(String(question.answer))
     const actual = normalizeNumber(Array.isArray(submitted.value) ? submitted.value.join('') : String(submitted.value))
     if (expected === null || actual === null) return false
-    return Math.abs(expected - actual) <= Number(question.tolerance || 0.0001)
+    return Math.abs(expected - actual) <= Number(question.tolerance ?? question.grading?.tolerance ?? 0.0001)
   }
   if (Array.isArray(question.answer)) {
     const expected = question.answer.map(normalize)
@@ -100,7 +111,7 @@ export function isPracticeAnswerCorrect(question: PracticeQuestionForGrading, su
     return expected.length === actual.length && expected.every((value, index) => value === actual[index])
   }
 
-  const accepted = [question.answer, ...(question.alternativeAnswers || [])]
+  const accepted = [question.answer, ...(question.alternativeAnswers || []), ...(question.grading?.accepted_answers || [])]
     .filter((value): value is string => typeof value === 'string')
     .map(normalize)
   const actual = normalize(submittedValue)

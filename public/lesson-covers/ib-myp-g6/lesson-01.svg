@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="The MYP Mathematical Toolkit">
+  <defs>
+    <radialGradient id="glow1" cx="74%" cy="26%" r="58%">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.56"/>
+      <stop offset="0.45" stop-color="#38bdf8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#07111f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shade1" x1="0" x2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" rx="40" fill="url(#shade1)"/>
+  <rect width="960" height="540" rx="40" fill="url(#glow1)"/>
+  <g opacity="0.14" stroke="white" stroke-width="1">
+    <line x1="80" y1="68" x2="80" y2="472"/><line x1="156" y1="68" x2="156" y2="472"/><line x1="232" y1="68" x2="232" y2="472"/><line x1="308" y1="68" x2="308" y2="472"/><line x1="384" y1="68" x2="384" y2="472"/><line x1="460" y1="68" x2="460" y2="472"/><line x1="536" y1="68" x2="536" y2="472"/><line x1="612" y1="68" x2="612" y2="472"/><line x1="688" y1="68" x2="688" y2="472"/><line x1="764" y1="68" x2="764" y2="472"/><line x1="840" y1="68" x2="840" y2="472"/>
+    <line x1="76" y1="86" x2="884" y2="86"/><line x1="76" y1="148" x2="884" y2="148"/><line x1="76" y1="210" x2="884" y2="210"/><line x1="76" y1="272" x2="884" y2="272"/><line x1="76" y1="334" x2="884" y2="334"/><line x1="76" y1="396" x2="884" y2="396"/><line x1="76" y1="458" x2="884" y2="458"/>
+  </g>
+  <g fill="none" stroke-linejoin="round">
+    <path d="M540 92 L720 152 L676 286 L490 286 L444 152 Z" fill="#102842" stroke="#38bdf8" stroke-width="7"/>
+    <circle cx="582" cy="194" r="58" stroke="#f8d66d" stroke-width="6"/>
+    <path d="M548 194 H616 M582 160 V228" stroke="white" stroke-width="6" stroke-linecap="round"/>
+    <text x="704" y="116" fill="#f8d66d" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="900">01</text>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="72" y="96" fill="#f8d66d" font-size="20" font-weight="900" letter-spacing="8">IB MYP G6 MATH</text>
+    <text x="72" y="148" fill="white" font-size="34" font-weight="900">Lesson 1</text>
+    <text x="72" y="238" fill="white" font-size="52" font-weight="950">The MYP Mathematical</text><text x="72" y="296" fill="white" font-size="52" font-weight="950">Toolkit</text>
+    <rect x="72" y="438" width="112" height="6" rx="3" fill="#38bdf8"/>
+    <text x="72" y="486" fill="rgba(255,255,255,0.72)" font-size="22" font-weight="800">Thinking with models</text>
+  </g>
+</svg>

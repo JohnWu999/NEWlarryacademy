@@ -148,6 +148,9 @@ function isLarryMathCourse(course?: Course | null) {
 }
 
 function getLessonCoverUrl(course: Course, index: number) {
+  if (course.id === 'course-ib-big-math') {
+    return `/lesson-covers/ib-myp-g6/lesson-${String(index + 1).padStart(2, '0')}.svg`
+  }
   if (course.id === 'course-ngss-science' || course.id === 'course-ngss-science-g7') return getNgssLessonCover(course.id, index)
   return null
 }

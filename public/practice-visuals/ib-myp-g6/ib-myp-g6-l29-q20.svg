@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" role="img" aria-label="3D measurement model">
+  <rect width="760" height="360" rx="28" fill="#fffdf8"/>
+  <rect x="18" y="18" width="724" height="324" rx="24" fill="#f8fafc" stroke="#e5dccd" stroke-width="3"/>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="44" y="52" fill="#111827" font-size="24" font-weight="800">3D measurement model</text>
+    <rect x="44" y="98" width="120" height="6" rx="3" fill="#2563eb"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <polygon points="250,158 430,158 510,218 330,218" fill="#e0f2fe" stroke="#2563eb" stroke-width="4"/>
+    <polygon points="330,218 510,218 510,294 330,294" fill="#bfdbfe" stroke="#2563eb" stroke-width="4"/>
+    <polygon points="250,158 330,218 330,294 250,232" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>
+    <text x="380" y="136" text-anchor="middle" font-size="22" font-weight="800" fill="#111827">length × width × height</text>
+    <text x="380" y="326" text-anchor="middle" font-size="22" font-weight="800" fill="#111827">volume counts unit cubes inside</text>
+  </g>
+</svg>

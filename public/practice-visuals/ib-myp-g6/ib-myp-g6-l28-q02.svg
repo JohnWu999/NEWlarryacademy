@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" role="img" aria-label="Circle geometry">
+  <rect width="760" height="360" rx="28" fill="#fffdf8"/>
+  <rect x="18" y="18" width="724" height="324" rx="24" fill="#f8fafc" stroke="#e5dccd" stroke-width="3"/>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="44" y="52" fill="#111827" font-size="24" font-weight="800">Circle geometry</text>
+    <rect x="44" y="98" width="120" height="6" rx="3" fill="#d97706"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+      <circle cx="330" cy="210" r="84" fill="#fef3c7" stroke="#d97706" stroke-width="5"/>
+      <line x1="330" y1="210" x2="414" y2="210" stroke="#dc2626" stroke-width="5"/>
+      <path d="M246 210 A84 84 0 1 0 414 210" fill="none" stroke="#2563eb" stroke-width="5"/>
+      <text x="375" y="198" font-size="21" font-weight="800" fill="#dc2626">radius</text>
+      <text x="330" y="322" text-anchor="middle" font-size="22" font-weight="800" fill="#111827">separate radius, diameter, circumference, and area</text>
+    </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="360" viewBox="0 0 760 360" role="img" aria-label="Fraction visual model">
+  <rect width="760" height="360" rx="28" fill="#fffdf8"/>
+  <rect x="18" y="18" width="724" height="324" rx="24" fill="#f8fafc" stroke="#e5dccd" stroke-width="3"/>
+  <g font-family="Inter, Arial, sans-serif">
+    <text x="44" y="52" fill="#111827" font-size="24" font-weight="800">Fraction visual model</text>
+    <rect x="44" y="98" width="120" height="6" rx="3" fill="#2563eb"/>
+  </g>
+  <g font-family="Inter, Arial, sans-serif">
+    <rect x="118" y="154" width="58" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><rect x="180" y="154" width="58" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><rect x="242" y="154" width="58" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><rect x="304" y="154" width="58" height="70" rx="8" fill="#fff" stroke="#2563eb" stroke-width="3"/><rect x="366" y="154" width="58" height="70" rx="8" fill="#fff" stroke="#2563eb" stroke-width="3"/><rect x="428" y="154" width="58" height="70" rx="8" fill="#fff" stroke="#2563eb" stroke-width="3"/><rect x="490" y="154" width="58" height="70" rx="8" fill="#fff" stroke="#2563eb" stroke-width="3"/><rect x="552" y="154" width="58" height="70" rx="8" fill="#fff" stroke="#2563eb" stroke-width="3"/>
+    <rect x="118" y="246" width="58" height="54" rx="8" fill="#dcfce7" stroke="#0f766e" stroke-width="3"/><rect x="180" y="246" width="58" height="54" rx="8" fill="#dcfce7" stroke="#0f766e" stroke-width="3"/><rect x="242" y="246" width="58" height="54" rx="8" fill="#dcfce7" stroke="#0f766e" stroke-width="3"/><rect x="304" y="246" width="58" height="54" rx="8" fill="#dcfce7" stroke="#0f766e" stroke-width="3"/><rect x="366" y="246" width="58" height="54" rx="8" fill="#dcfce7" stroke="#0f766e" stroke-width="3"/><rect x="428" y="246" width="58" height="54" rx="8" fill="#fff" stroke="#0f766e" stroke-width="3"/><rect x="490" y="246" width="58" height="54" rx="8" fill="#fff" stroke="#0f766e" stroke-width="3"/><rect x="552" y="246" width="58" height="54" rx="8" fill="#fff" stroke="#0f766e" stroke-width="3"/>
+    <text x="382" y="138" text-anchor="middle" font-size="22" font-weight="800" fill="#2563eb">same-size pieces</text>
+    <text x="382" y="332" text-anchor="middle" font-size="22" font-weight="800" fill="#0f766e">combine or compare the shaded parts</text>
+  </g>
+</svg>
