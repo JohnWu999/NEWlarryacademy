@@ -556,12 +556,11 @@ function getOpenResponseGuide(question: PracticeQuestion) {
     }
   }
 
-  const keywords = (question.acceptableKeywords || []).slice(0, 3)
   return {
     label: 'Answer format',
     placeholder: question.inputPlaceholder || 'I think ... because ...',
     helper: 'Write one clear sentence. Use math words, a number, or a model from the problem.',
-    checks: keywords.length ? ['A complete thought', `Use: ${keywords.join(', ')}`, 'Explain why'] : ['A complete thought', 'Use a number or model', 'Explain why'],
+    checks: ['A complete thought', 'Use a number or model', 'Explain why'],
   }
 }
 
