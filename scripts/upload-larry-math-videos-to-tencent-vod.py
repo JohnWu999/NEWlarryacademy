@@ -24,7 +24,7 @@ COURSE_ID = "course-larry-math-class-library"
 LIBRARY_ID = "larry-math-class-library"
 MIN_MULTIPART_UPLOAD_SIZE = 6 * 1024 * 1024
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".m4v"}
-EPISODE_RE = re.compile(r"larry\s*math\s*class\s*(\d+)", re.IGNORECASE)
+EPISODE_RE = re.compile(r"larry\s*math(?:\s*class)?\s*(\d+)", re.IGNORECASE)
 
 
 def upload_cos_with_small_file_fix(cos_client, local_path, bucket, cos_path, max_thread, progress_callback):
@@ -89,10 +89,11 @@ def load_credentials():
 
 
 def episode_from_name(path):
-    match = EPISODE_RE.search(path.name)
-    if not match:
-        return None
-    return int(match.group(1))
+    for part in [path.name, *reversed(path.parts)]:
+        match = EPISODE_RE.search(part)
+        if match:
+            return int(match.group(1))
+    return None
 
 
 def collect_video_files(source_root):
@@ -191,9 +192,11 @@ def compress_video(source_path, output_path, logger, dry_run=False):
     return output_path
 
 
-def build_manifest(source_root, compressed_root, compress_missing, logger, dry_run=False, probe_duration=False, skip_unavailable=False):
+def build_manifest(source_root, compressed_root, compress_missing, logger, dry_run=False, probe_duration=False, skip_unavailable=False, only_episodes=None):
     main, compressed, duplicates = collect_video_files(source_root)
     episodes = sorted(set(main) | set(compressed))
+    if only_episodes:
+        episodes = [episode for episode in episodes if episode in only_episodes]
     selected = []
     missing_compressed = []
     unavailable_source_episodes = []
@@ -393,6 +396,7 @@ def main():
     log_path = LOG_DIR / f"larry-math-{datetime.now().strftime('%Y%m%d-%H%M%S')}.jsonl"
     logger = make_logger(log_path)
     logger("run_start", {"sourceRoot": str(source_root), "compressedRoot": str(compressed_root), "dryRun": args.dry_run})
+    only_episodes = parse_episode_filter(args.only_episodes)
     manifest = build_manifest(
         source_root,
         compressed_root,
@@ -401,6 +405,7 @@ def main():
         dry_run=args.dry_run,
         probe_duration=args.probe_duration,
         skip_unavailable=args.skip_unavailable,
+        only_episodes=only_episodes,
     )
     logger(
         "manifest_done",
@@ -414,7 +419,6 @@ def main():
         logger("run_done", {"mode": "manifest-only", "logPath": str(log_path)})
         return
 
-    only_episodes = parse_episode_filter(args.only_episodes)
     vod_map = upload_manifest(
         manifest,
         logger,
