@@ -164,6 +164,20 @@ async function main() {
 
   const ngssCourses = [
     {
+      id: 'course-ngss-science-g4',
+      title: 'NGSS Science Grade 4',
+      description: 'A complete Grade 4 NGSS science pathway with structure and function, plant and animal systems, senses and response, energy, waves, light, Earth surface change, fossils, natural resources, hazards, and engineering design.',
+      gradeLevel: 'G4',
+      thumbnailUrl: '/course-covers/ngss-g4-cover.png',
+      status: 'active',
+      isFree: false,
+      accessLevel: 'paid',
+      price: 19,
+      difficultyLevel: 'beginner',
+      expectedFeatures: ['20 phenomenon lessons', '200 practice questions', 'Vocabulary in context', 'Everyday applications and CER reasoning'],
+      duration: 300,
+    },
+    {
       id: 'course-ngss-science',
       title: 'NGSS Science Grade 6',
       description: 'A future-facing Grade 6 NGSS science course built around phenomena, virtual labs, evidence-based explanations, interactive practice, and student curiosity.',
@@ -207,7 +221,7 @@ async function main() {
     },
   ]
 
-  const [ngssScience, ngssScienceG7, ngssScienceG8] = await Promise.all(ngssCourses.map((course) => prisma.course.upsert({
+  const [ngssScienceG4, ngssScience, ngssScienceG7, ngssScienceG8] = await Promise.all(ngssCourses.map((course) => prisma.course.upsert({
     where: { id: course.id },
     update: {
       title: course.title,
@@ -553,7 +567,7 @@ async function main() {
     })
   }
 
-  console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScience.title, ngssScienceG7.title, ngssScienceG8.title)
+  console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScienceG4.title, ngssScience.title, ngssScienceG7.title, ngssScienceG8.title)
   console.log('Seeding completed!')
 }
 

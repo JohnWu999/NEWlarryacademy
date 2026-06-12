@@ -157,6 +157,32 @@ const showcaseCourses: CourseShowcase[] = [
     },
   },
   {
+    id: 'ngss-g4',
+    href: '/courses/course-ngss-science-g4',
+    image: '/course-covers/ngss-g4-cover.png',
+    tone: 'from-emerald-200 via-cyan-300 to-blue-400',
+    glow: 'rgba(34, 211, 238, 0.24)',
+    stats: { lessons: '20', questions: '200' },
+    copy: {
+      zh: {
+        title: 'NGSS Science G4',
+        eyebrow: '小学科学探险',
+        line: '从结构与功能、感官反应到能量、波、地球变化和工程设计。',
+        detail: '20 节现象视频配套 200 道练习，定义、应用、证据推理和开放表达一步步展开。',
+        preview: '前 3 课免费试学',
+        cta: '试学 G4 科学',
+      },
+      en: {
+        title: 'NGSS Science G4',
+        eyebrow: 'Elementary science adventure',
+        line: 'Structure, function, senses, energy, waves, Earth change, and engineering design.',
+        detail: '20 phenomenon lessons with 200 scaffolded questions across vocabulary, application, evidence, and reflection.',
+        preview: 'First 3 lessons free',
+        cta: 'Try G4 science',
+      },
+    },
+  },
+  {
     id: 'ngss-g6',
     href: '/courses/course-ngss-science',
     image: '/lesson-covers/ngss-g6/lesson-11.jpg',

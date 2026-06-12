@@ -20,6 +20,7 @@
     "db:import:ib-g5": "tsx scripts/import-ib-g5-course.ts",
     "db:import:ngss-g6": "tsx scripts/import-ngss-g6-course.ts",
     "db:import:ngss-g7": "tsx scripts/import-ngss-g7-course.ts",
+    "db:import:ngss-g4": "tsx scripts/import-ngss-g4-course.ts",
     "db:import:ib-myp-g6": "node scripts/import-ib-myp-g6-course.mjs",
     "db:import:larry-math-vod": "tsx scripts/import-larry-math-vod-course.ts",
     "stripe:sync-courses": "tsx scripts/sync-stripe-course-products.ts",
@@ -29,6 +30,7 @@
     "data:ib-myp-g6": "node scripts/generate-ib-myp-g6-course-data.mjs",
     "data:ngss-g6": "node scripts/generate-ngss-g6-course-data.mjs",
     "data:ngss-g7": "node scripts/generate-ngss-g7-course-data.mjs",
+    "data:ngss-g4": "node scripts/generate-ngss-g4-course-data.mjs",
     "db:sync-larry-tags": "node scripts/sync-lark-base.js",
     "db:studio": "prisma studio",
     "db:ensure-qa-user": "tsx scripts/ensure-wularry-user.ts"

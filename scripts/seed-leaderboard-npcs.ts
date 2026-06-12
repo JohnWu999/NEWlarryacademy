@@ -39,6 +39,7 @@ const npcProfiles: NpcProfile[] = [
 const activeCourseIds = [
   'course-ib-pyp-g4',
   'course-ib-pyp-g5-math',
+  'course-ngss-science-g4',
   'course-ngss-science',
   'course-ngss-science-g7',
   'course-larry-math-g3-g4-number-sense',

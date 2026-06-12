@@ -154,6 +154,9 @@ const lessonCoverThemes = [
 ]
 
 function getNgssLessonCover(courseId: string, index: number) {
+  if (courseId === 'course-ngss-science-g4') {
+    return `/lesson-covers/ngss-g4/lesson-${String(index + 1).padStart(2, '0')}.jpg`
+  }
   if (courseId === 'course-ngss-science-g7') {
     return `/lesson-covers/ngss-g7/lesson-${String(index + 1).padStart(2, '0')}.jpg`
   }
@@ -172,7 +175,7 @@ function getLessonCoverUrl(course: Course, index: number) {
   if (course.id === 'course-ib-big-math') {
     return `/lesson-covers/ib-myp-g6/lesson-${String(index + 1).padStart(2, '0')}.svg`
   }
-  if (course.id === 'course-ngss-science' || course.id === 'course-ngss-science-g7') return getNgssLessonCover(course.id, index)
+  if (course.id === 'course-ngss-science-g4' || course.id === 'course-ngss-science' || course.id === 'course-ngss-science-g7') return getNgssLessonCover(course.id, index)
   return null
 }
 
