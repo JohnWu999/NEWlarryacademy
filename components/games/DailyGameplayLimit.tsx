@@ -9,6 +9,12 @@ const storageKey = 'larryAcademy_dailyGameplayLimit'
 type StoredUsage = {
   date: string
   usedSeconds: number
+  bonusSeconds?: number
+}
+
+type GameTimeAddedDetail = {
+  seconds?: number
+  persisted?: boolean
 }
 
 function todayKey() {
@@ -17,22 +23,25 @@ function todayKey() {
 
 function readUsage(): StoredUsage {
   if (typeof window === 'undefined') {
-    return { date: todayKey(), usedSeconds: 0 }
+    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0 }
   }
 
   try {
     const parsed = JSON.parse(localStorage.getItem(storageKey) || 'null') as StoredUsage | null
     const date = todayKey()
     if (!parsed || parsed.date !== date) {
-      return { date, usedSeconds: 0 }
+      return { date, usedSeconds: 0, bonusSeconds: 0 }
     }
 
+    const bonusSeconds = Math.max(0, Math.floor(Number(parsed.bonusSeconds) || 0))
+    const allowanceSeconds = dailyLimitSeconds + bonusSeconds
     return {
       date,
-      usedSeconds: Math.min(dailyLimitSeconds, Math.max(0, Math.floor(Number(parsed.usedSeconds) || 0))),
+      usedSeconds: Math.min(allowanceSeconds, Math.max(0, Math.floor(Number(parsed.usedSeconds) || 0))),
+      bonusSeconds,
     }
   } catch {
-    return { date: todayKey(), usedSeconds: 0 }
+    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0 }
   }
 }
 
@@ -51,12 +60,14 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const { locale } = useLanguage()
   const [loaded, setLoaded] = useState(false)
   const [usedSeconds, setUsedSeconds] = useState(0)
+  const [bonusSeconds, setBonusSeconds] = useState(0)
 
   useEffect(() => {
     const usage = readUsage()
     saveUsage(usage)
     const hydrateTimer = window.setTimeout(() => {
       setUsedSeconds(usage.usedSeconds)
+      setBonusSeconds(Math.max(0, Number(usage.bonusSeconds || 0)))
       setLoaded(true)
     }, 0)
 
@@ -64,22 +75,57 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   }, [])
 
   useEffect(() => {
-    if (!active || !loaded || usedSeconds >= dailyLimitSeconds) return
+    const allowanceSeconds = dailyLimitSeconds + bonusSeconds
+    if (!active || !loaded || usedSeconds >= allowanceSeconds) return
 
     const timer = window.setInterval(() => {
       const usage = readUsage()
+      const allowanceSeconds = dailyLimitSeconds + Number(usage.bonusSeconds || 0)
       const nextUsage = {
         date: usage.date,
-        usedSeconds: Math.min(dailyLimitSeconds, usage.usedSeconds + 1),
+        usedSeconds: Math.min(allowanceSeconds, usage.usedSeconds + 1),
+        bonusSeconds: Math.max(0, Number(usage.bonusSeconds || 0)),
       }
       saveUsage(nextUsage)
       setUsedSeconds(nextUsage.usedSeconds)
+      setBonusSeconds(nextUsage.bonusSeconds)
     }, 1000)
 
     return () => window.clearInterval(timer)
-  }, [active, loaded, usedSeconds])
+  }, [active, loaded, usedSeconds, bonusSeconds])
 
-  const remainingSeconds = Math.max(0, dailyLimitSeconds - usedSeconds)
+  useEffect(() => {
+    const handleGameTimeAdded = (event: Event) => {
+      const detail = (event as CustomEvent<GameTimeAddedDetail>).detail || {}
+      if (detail.persisted) {
+        const usage = readUsage()
+        setUsedSeconds(usage.usedSeconds)
+        setBonusSeconds(Math.max(0, Number(usage.bonusSeconds || 0)))
+        setLoaded(true)
+        return
+      }
+
+      const addedSeconds = Math.max(0, Math.floor(Number(detail.seconds || 0)))
+      if (!addedSeconds) return
+
+      const usage = readUsage()
+      const nextUsage = {
+        date: usage.date,
+        usedSeconds: usage.usedSeconds,
+        bonusSeconds: Math.max(0, Number(usage.bonusSeconds || 0)) + addedSeconds,
+      }
+      saveUsage(nextUsage)
+      setUsedSeconds(nextUsage.usedSeconds)
+      setBonusSeconds(nextUsage.bonusSeconds)
+      setLoaded(true)
+    }
+
+    window.addEventListener('larry:game-time-added', handleGameTimeAdded)
+    return () => window.removeEventListener('larry:game-time-added', handleGameTimeAdded)
+  }, [])
+
+  const allowanceSeconds = dailyLimitSeconds + bonusSeconds
+  const remainingSeconds = Math.max(0, allowanceSeconds - usedSeconds)
   const isLocked = loaded && remainingSeconds <= 0
   const timerTone = remainingSeconds <= 60 ? 'border-rose-300/40 bg-rose-500/20 text-rose-50' : 'border-white/15 bg-black/55 text-white'
 

@@ -7,6 +7,40 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useLanguage } from '@/context/LanguageContext'
 import type { Locale } from '@/lib/i18n'
 
+const dailyGameplayStorageKey = 'larryAcademy_dailyGameplayLimit'
+
+function todayKey() {
+  return new Date().toLocaleDateString('en-CA')
+}
+
+function addLocalGameTimeBonus(seconds: number) {
+  if (typeof window === 'undefined') return
+
+  const date = todayKey()
+  const addedSeconds = Math.max(0, Math.floor(seconds))
+  if (!addedSeconds) return
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(dailyGameplayStorageKey) || 'null') as {
+      date?: string
+      usedSeconds?: number
+      bonusSeconds?: number
+    } | null
+    const current = parsed?.date === date ? parsed : null
+    window.localStorage.setItem(dailyGameplayStorageKey, JSON.stringify({
+      date,
+      usedSeconds: Math.max(0, Math.floor(Number(current?.usedSeconds) || 0)),
+      bonusSeconds: Math.max(0, Math.floor(Number(current?.bonusSeconds) || 0)) + addedSeconds,
+    }))
+  } catch {
+    window.localStorage.setItem(dailyGameplayStorageKey, JSON.stringify({
+      date,
+      usedSeconds: 0,
+      bonusSeconds: addedSeconds,
+    }))
+  }
+}
+
 export default function Navbar() {
   const { data: session } = useSession()
   const { locale, setLocale, t } = useLanguage()
@@ -15,6 +49,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [rewards, setRewards] = useState({ points: 0, gems: 0 })
   const [rewardBurst, setRewardBurst] = useState<{ points: number; gems: number; key: number } | null>(null)
+  const [exchangeState, setExchangeState] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
+  const [gemExchangeState, setGemExchangeState] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
   const pathname = usePathname()
 
   const handleLocaleChange = (nextLocale: Locale) => {
@@ -32,8 +68,10 @@ export default function Navbar() {
 
   useEffect(() => {
     if (!session) {
-      setRewards({ points: 0, gems: 0 })
-      return
+      const resetTimer = window.setTimeout(() => {
+        setRewards({ points: 0, gems: 0 })
+      }, 0)
+      return () => window.clearTimeout(resetTimer)
     }
 
     let active = true
@@ -133,6 +171,82 @@ export default function Navbar() {
     { name: t('nav.about'), href: '/about' },
   ]
 
+  const exchangeGemForGameTime = async () => {
+    if (exchangeState === 'saving' || rewards.gems < 1) return
+
+    setExchangeState('saving')
+    try {
+      const response = await fetch('/api/rewards/exchange-game-time', {
+        method: 'POST',
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok || !result) {
+        setExchangeState('error')
+        window.setTimeout(() => setExchangeState('idle'), 1800)
+        return
+      }
+
+      const nextGems = Number(result.gems ?? Math.max(0, rewards.gems - 1))
+      const addedSeconds = Number(result.addedSeconds || 60)
+      setRewards((current) => ({ ...current, gems: Math.max(0, nextGems) }))
+      addLocalGameTimeBonus(addedSeconds)
+      window.dispatchEvent(new CustomEvent('larry:game-time-added', {
+        detail: { seconds: addedSeconds, persisted: true },
+      }))
+      setExchangeState('success')
+      window.setTimeout(() => setExchangeState('idle'), 1800)
+    } catch {
+      setExchangeState('error')
+      window.setTimeout(() => setExchangeState('idle'), 1800)
+    }
+  }
+
+  const exchangeSparksForGem = async () => {
+    if (gemExchangeState === 'saving' || rewards.points < 50) return
+
+    setGemExchangeState('saving')
+    try {
+      const response = await fetch('/api/rewards/exchange-gem', {
+        method: 'POST',
+      })
+      const result = await response.json().catch(() => null)
+      if (!response.ok || !result) {
+        setGemExchangeState('error')
+        window.setTimeout(() => setGemExchangeState('idle'), 1800)
+        return
+      }
+
+      setRewards({
+        points: Math.max(0, Number(result.points || 0)),
+        gems: Math.max(0, Number(result.gems || 0)),
+      })
+      setRewardBurst({ points: 0, gems: 1, key: Date.now() })
+      window.setTimeout(() => setRewardBurst(null), 1400)
+      setGemExchangeState('success')
+      window.setTimeout(() => setGemExchangeState('idle'), 1800)
+    } catch {
+      setGemExchangeState('error')
+      window.setTimeout(() => setGemExchangeState('idle'), 1800)
+    }
+  }
+
+  const exchangeLabel = exchangeState === 'saving'
+    ? (locale === 'zh' ? '兑换中' : 'Adding')
+    : exchangeState === 'success'
+      ? '+1 min'
+      : exchangeState === 'error'
+        ? (locale === 'zh' ? '失败' : 'Retry')
+        : '+1 min'
+  const exchangeTitle = locale === 'zh' ? '用 1 个 Gem 兑换 1 分钟游戏时间' : 'Trade 1 Gem for 1 minute of game time'
+  const gemExchangeLabel = gemExchangeState === 'saving'
+    ? (locale === 'zh' ? '兑换中' : 'Trading')
+    : gemExchangeState === 'success'
+      ? '+1 Gem'
+      : gemExchangeState === 'error'
+        ? (locale === 'zh' ? '失败' : 'Retry')
+        : '50→Gem'
+  const gemExchangeTitle = locale === 'zh' ? '用 50 个 Spark 兑换 1 个 Gem' : 'Trade 50 Sparks for 1 Gem'
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled ? 'bg-[#050505]/80 backdrop-blur-lg border-b border-white/10 py-3' : 'bg-transparent py-5'
@@ -228,6 +342,26 @@ export default function Navbar() {
                     <img src="/reward-icons/spark.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.points}</span>
                   </Link>
+                  <button
+                    type="button"
+                    onClick={exchangeGemForGameTime}
+                    disabled={exchangeState === 'saving' || rewards.gems < 1}
+                    title={exchangeTitle}
+                    aria-label={exchangeTitle}
+                    className={`exchange-button exchange-time-button ${exchangeState === 'success' ? 'exchange-success' : ''} ${exchangeState === 'error' ? 'exchange-error' : ''}`}
+                  >
+                    {exchangeLabel}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={exchangeSparksForGem}
+                    disabled={gemExchangeState === 'saving' || rewards.points < 50}
+                    title={gemExchangeTitle}
+                    aria-label={gemExchangeTitle}
+                    className={`exchange-button exchange-gem-button ${gemExchangeState === 'success' ? 'exchange-success' : ''} ${gemExchangeState === 'error' ? 'exchange-error' : ''}`}
+                  >
+                    {gemExchangeLabel}
+                  </button>
                 </div>
                 <Link
                   href="/profile"
@@ -305,6 +439,22 @@ export default function Navbar() {
                       <span className="reward-count">{rewards.points}</span>
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={exchangeGemForGameTime}
+                    disabled={exchangeState === 'saving' || rewards.gems < 1}
+                    className={`mx-4 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-45 ${exchangeState === 'success' ? 'border-emerald-300/35 bg-emerald-400/15 text-emerald-100' : ''} ${exchangeState === 'error' ? 'border-rose-300/35 bg-rose-400/15 text-rose-100' : ''}`}
+                  >
+                    {exchangeLabel} · {locale === 'zh' ? '1 Gem 换游戏时间' : '1 Gem for game time'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={exchangeSparksForGem}
+                    disabled={gemExchangeState === 'saving' || rewards.points < 50}
+                    className={`mx-4 rounded-full border border-amber-300/25 bg-amber-400/10 px-4 py-2 text-xs font-black text-amber-100 transition hover:bg-amber-400/20 disabled:cursor-not-allowed disabled:opacity-45 ${gemExchangeState === 'success' ? 'border-emerald-300/35 bg-emerald-400/15 text-emerald-100' : ''} ${gemExchangeState === 'error' ? 'border-rose-300/35 bg-rose-400/15 text-rose-100' : ''}`}
+                  >
+                    {gemExchangeLabel} · {locale === 'zh' ? '50 Spark 换 1 Gem' : '50 Sparks for 1 Gem'}
+                  </button>
                   <Link href="/profile" className="px-4 py-3 text-gray-400" onClick={() => setMobileMenuOpen(false)}>{t('nav.profile')}</Link>
                   <button onClick={() => signOut({ callbackUrl: '/' })} className="text-left px-4 py-3 text-red-500 font-bold">{t('nav.logout')}</button>
                 </>
@@ -369,6 +519,57 @@ export default function Navbar() {
           line-height: 1;
           font-variant-numeric: tabular-nums;
           text-shadow: 0 1px 10px rgba(0,0,0,0.35);
+        }
+        .exchange-button {
+          position: absolute;
+          right: -0.72rem;
+          z-index: 4;
+          min-width: 3.55rem;
+          height: 1.55rem;
+          border-radius: 999px;
+          border: 1px solid rgba(103, 232, 249, 0.38);
+          background: rgba(8, 47, 73, 0.94);
+          color: #cffafe;
+          font-size: 0.62rem;
+          font-weight: 950;
+          line-height: 1;
+          letter-spacing: 0;
+          box-shadow: 0 10px 26px rgba(8, 47, 73, 0.36), inset 0 1px 0 rgba(255,255,255,0.15);
+          transition: transform 160ms ease, opacity 160ms ease, border-color 160ms ease, background 160ms ease;
+        }
+        .exchange-button:hover:not(:disabled) {
+          transform: translateY(-1px) scale(1.04);
+          border-color: rgba(165, 243, 252, 0.72);
+          background: rgba(14, 116, 144, 0.96);
+        }
+        .exchange-button:disabled {
+          cursor: not-allowed;
+          opacity: 0.52;
+        }
+        .exchange-time-button {
+          top: -0.82rem;
+        }
+        .exchange-gem-button {
+          top: -2.48rem;
+          min-width: 4.15rem;
+          border-color: rgba(252, 211, 77, 0.42);
+          background: rgba(92, 52, 10, 0.96);
+          color: #fef3c7;
+          box-shadow: 0 10px 26px rgba(92, 52, 10, 0.36), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+        .exchange-gem-button:hover:not(:disabled) {
+          border-color: rgba(253, 230, 138, 0.74);
+          background: rgba(180, 83, 9, 0.96);
+        }
+        .exchange-success {
+          border-color: rgba(110, 231, 183, 0.62);
+          background: rgba(6, 95, 70, 0.96);
+          color: #d1fae5;
+        }
+        .exchange-error {
+          border-color: rgba(253, 164, 175, 0.62);
+          background: rgba(136, 19, 55, 0.96);
+          color: #ffe4e6;
         }
         .reward-fly-chip {
           position: relative;

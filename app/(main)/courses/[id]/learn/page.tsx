@@ -144,6 +144,9 @@ const practiceChoices = [
   'Skip the setup and calculate from the largest number first.',
 ]
 
+const CORRECT_STREAK_GEM_INTERVAL = 5
+const SPARKS_PER_CORRECT_QUESTION = 5
+
 const lessonCoverThemes = [
   { background: 'radial-gradient(circle at 20% 18%, rgba(96, 165, 250, 0.82), transparent 28%), linear-gradient(135deg, #071326 0%, #123f6c 52%, #0a1018 100%)', accent: '#60a5fa' },
   { background: 'radial-gradient(circle at 78% 22%, rgba(45, 212, 191, 0.78), transparent 30%), linear-gradient(135deg, #071914 0%, #0f5a4b 50%, #09110f 100%)', accent: '#2dd4bf' },
@@ -712,6 +715,7 @@ function scorePracticeLocally(questions: PracticeQuestion[], answers: { question
       hint: question.hint || null,
     }
   })
+  const correctCount = results.filter((result) => result.correct).length
   const score = Math.max(0, rawScore)
   const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0
   return {
@@ -719,8 +723,9 @@ function scorePracticeLocally(questions: PracticeQuestion[], answers: { question
     maxScore,
     percent,
     completed: answers.length >= questions.length,
-    earnedPoints: score,
-    earnedGems: Math.floor(maxCorrectStreak / 10),
+    earnedPoints: correctCount * SPARKS_PER_CORRECT_QUESTION,
+    earnedGems: Math.floor(maxCorrectStreak / CORRECT_STREAK_GEM_INTERVAL),
+    correctCount,
     maxCorrectStreak,
     wrongCount: results.filter((result) => !result.correct).length,
     results,
@@ -1249,6 +1254,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                   answers,
                   results: result.results || [],
                   percent: result.percent,
+                  correctCount: result.correctCount,
                   maxCorrectStreak: result.maxCorrectStreak,
                 }),
               },
@@ -1264,6 +1270,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
                       answers,
                       results: result.results || [],
                       percent: result.percent,
+                      correctCount: result.correctCount,
                       maxCorrectStreak: result.maxCorrectStreak,
                     }),
                   },

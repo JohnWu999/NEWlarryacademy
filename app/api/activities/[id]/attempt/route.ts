@@ -22,6 +22,23 @@ type SubmittedAnswer = {
   value: string | string[]
 }
 
+const CORRECT_STREAK_GEM_INTERVAL = 5
+const SPARKS_PER_CORRECT_QUESTION = 5
+
+function getCorrectCountFromAttemptData(data?: string | null) {
+  try {
+    const parsed = data ? JSON.parse(data) : null
+    if (typeof parsed?.correctCount === 'number') {
+      return Math.max(0, Math.floor(parsed.correctCount))
+    }
+    if (Array.isArray(parsed?.results)) {
+      return parsed.results.filter((result: { correct?: boolean }) => result.correct).length
+    }
+  } catch {}
+
+  return 0
+}
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -67,6 +84,7 @@ export async function POST(
       }
     })
     const wrongResults = results.filter((result) => !result.correct)
+    const correctCount = results.length - wrongResults.length
 
     const score = Math.max(0, rawScore)
     const percent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0
@@ -74,21 +92,18 @@ export async function POST(
 
     const previousAttempts = await prisma.userActivityAttempt.findMany({
       where: { userId: user.id, activityId: activity.id },
-      select: { score: true, earnedGems: true, completed: true, data: true },
+      select: { earnedGems: true, completed: true, data: true },
     })
 
-    const previousBest = previousAttempts.reduce((best, attempt) => Math.max(best, attempt.score || 0), 0)
-    const pointsDelta = Math.max(0, score - previousBest)
-    const previousBestStreakGems = previousAttempts.reduce((best, attempt) => {
-      try {
-        const data = attempt.data ? JSON.parse(attempt.data) : null
-        return Math.max(best, Math.floor(Number(data?.maxCorrectStreak || 0) / 10))
-      } catch {
-        return best
-      }
+    const previousBestCorrectCount = previousAttempts.reduce((best, attempt) => {
+      return Math.max(best, getCorrectCountFromAttemptData(attempt.data))
     }, 0)
-    const streakGems = completed ? Math.floor(maxCorrectStreak / 10) : 0
-    const earnedGems = Math.max(0, streakGems - previousBestStreakGems)
+    const pointsDelta = Math.max(0, (correctCount - previousBestCorrectCount) * SPARKS_PER_CORRECT_QUESTION)
+    const previouslyAwardedStreakGems = previousAttempts.reduce((total, attempt) => {
+      return total + Math.max(0, Number(attempt.earnedGems || 0))
+    }, 0)
+    const streakGems = completed ? Math.floor(maxCorrectStreak / CORRECT_STREAK_GEM_INTERVAL) : 0
+    const earnedGems = Math.max(0, streakGems - previouslyAwardedStreakGems)
 
     const attempt = await prisma.userActivityAttempt.create({
       data: {
@@ -104,6 +119,7 @@ export async function POST(
           results,
           rawScore,
           percent,
+          correctCount,
           maxCorrectStreak,
         }),
       },
@@ -125,10 +141,10 @@ export async function POST(
           userId: user.id,
           type: 'points',
           amount: pointsDelta,
-          reason: 'Practice score improvement',
+          reason: 'Practice correct answers',
           sourceType: 'activity',
           sourceId: activity.id,
-          metadata: JSON.stringify({ attemptId: attempt.id, score, maxScore }),
+          metadata: JSON.stringify({ attemptId: attempt.id, score, maxScore, correctCount, sparksPerCorrectQuestion: SPARKS_PER_CORRECT_QUESTION }),
         },
       })
     }
@@ -139,7 +155,7 @@ export async function POST(
           userId: user.id,
           type: 'gems',
           amount: earnedGems,
-          reason: '10-correct streak milestone',
+          reason: '5-correct streak milestone',
           sourceType: 'activity',
           sourceId: activity.id,
           metadata: JSON.stringify({ attemptId: attempt.id, score, maxScore, maxCorrectStreak }),
@@ -254,6 +270,7 @@ export async function POST(
       completed,
       earnedPoints: pointsDelta,
       earnedGems,
+      correctCount,
       maxCorrectStreak,
       wrongCount: wrongResults.length,
       results,
