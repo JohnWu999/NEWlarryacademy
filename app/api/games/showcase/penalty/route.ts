@@ -19,7 +19,7 @@ const penaltySchema = z.object({
     'maze',
     'pinball',
   ]),
-  penalty: z.number().int().min(1).max(200),
+  penalty: z.number().int().min(1).max(100000),
   reason: z.string().max(120).optional(),
   score: z.number().int().min(0).max(100000).optional(),
 })

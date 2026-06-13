@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
+import DailyGameplayLimit from '@/components/games/DailyGameplayLimit'
 
 export type TemplateId =
   | 'starship'
@@ -200,6 +201,7 @@ type Sim = {
   level: number
   score: number
   streak: number
+  wrongStreak: number
   startedAt: number
   pendingRecord: PendingRecord | null
   pendingPenalty: PendingPenalty | null
@@ -1119,6 +1121,7 @@ function makeSim(id: TemplateId, level = 1): Sim {
     level,
     score: 0,
     streak: 0,
+    wrongStreak: 0,
     startedAt: Date.now(),
     pendingRecord: null,
     pendingPenalty: null,
@@ -1247,6 +1250,7 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
   addKnowledgeBurst(sim, color)
   sim.score += 120 + sim.streak * 25
   sim.streak += 1
+  sim.wrongStreak = 0
   sim.round += 1
   sim.level = 1 + Math.floor(sim.round / 4)
   sim.pendingRecord = {
@@ -1274,6 +1278,7 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
 }
 
 function miss(sim: Sim, zh: string, en: string, audio: ReturnType<typeof useArcadeAudio>) {
+  sim.wrongStreak += 1
   const scorePenalty = Math.min(95, 35 + sim.level * 8 + Math.floor(sim.score * 0.04))
   sim.score = Math.max(0, sim.score - scorePenalty)
   sim.streak = 0
@@ -1282,7 +1287,7 @@ function miss(sim: Sim, zh: string, en: string, audio: ReturnType<typeof useArca
   sim.messageTimer = 1.1
   sim.pendingPenalty = {
     templateId: sim.id,
-    penalty: Math.max(4, Math.round(scorePenalty / 5)),
+    penalty: sim.id === 'starship' ? sim.wrongStreak : Math.max(4, Math.round(scorePenalty / 5)),
     reason: zh,
     score: sim.score,
   }
@@ -3316,6 +3321,7 @@ export default function LearningGameShowcase({
   }
 
   return (
+    <DailyGameplayLimit>
     <section className="relative">
       <div className={showcaseLayoutClass}>
         <div className={compact ? 'hidden' : 'space-y-5'}>
@@ -3476,5 +3482,6 @@ export default function LearningGameShowcase({
         </button>
       )}
     </section>
+    </DailyGameplayLimit>
   )
 }

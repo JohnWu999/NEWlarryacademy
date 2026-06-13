@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 import Link from 'next/link'
+import DailyGameplayLimit from '@/components/games/DailyGameplayLimit'
 
 export default function EvenBubbleBlastPage() {
   const { t, locale } = useLanguage()
@@ -395,37 +396,39 @@ export default function EvenBubbleBlastPage() {
           </div>
         </div>
 
-        <div className="relative rounded-[40px] bg-white/[0.02] border border-white/[0.08] backdrop-blur-3xl overflow-hidden shadow-2xl shadow-blue-500/10">
-          <canvas
-            ref={canvasRef}
-            width={844}
-            height={475}
-            className="w-full h-auto cursor-crosshair block"
-            onPointerDown={(e) => handlePointer(e.clientX, e.clientY)}
-          />
+        <DailyGameplayLimit>
+          <div className="relative rounded-[40px] bg-white/[0.02] border border-white/[0.08] backdrop-blur-3xl overflow-hidden shadow-2xl shadow-blue-500/10">
+            <canvas
+              ref={canvasRef}
+              width={844}
+              height={475}
+              className="w-full h-auto cursor-crosshair block"
+              onPointerDown={(e) => handlePointer(e.clientX, e.clientY)}
+            />
 
-          {gameOver && (
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center text-center p-10 animate-in fade-in duration-500">
-              <div className="text-6xl mb-6 animate-bounce">🎮</div>
-              <h2 className="text-5xl font-black mb-4 tracking-tighter text-white">{locale === 'zh' ? '游戏结束' : 'GAME OVER'}</h2>
-              <p className="text-xl text-gray-400 mb-10">{locale === 'zh' ? '最终得分' : 'Final Score'}: <span className="text-blue-400 font-bold">{score}</span></p>
-              <div className="flex gap-4">
-                <button
-                  onClick={restart}
-                  className="px-10 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all active:scale-95 shadow-lg shadow-blue-600/30"
-                >
-                  {locale === 'zh' ? '再玩一次' : 'Play Again'}
-                </button>
-                <Link
-                  href="/games"
-                  className="px-10 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white border border-white/10 font-bold transition-all"
-                >
-                  {locale === 'zh' ? '退出' : 'Exit'}
-                </Link>
+            {gameOver && (
+              <div className="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center text-center p-10 animate-in fade-in duration-500">
+                <div className="text-6xl mb-6 animate-bounce">🎮</div>
+                <h2 className="text-5xl font-black mb-4 tracking-tighter text-white">{locale === 'zh' ? '游戏结束' : 'GAME OVER'}</h2>
+                <p className="text-xl text-gray-400 mb-10">{locale === 'zh' ? '最终得分' : 'Final Score'}: <span className="text-blue-400 font-bold">{score}</span></p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={restart}
+                    className="px-10 py-4 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all active:scale-95 shadow-lg shadow-blue-600/30"
+                  >
+                    {locale === 'zh' ? '再玩一次' : 'Play Again'}
+                  </button>
+                  <Link
+                    href="/games"
+                    className="px-10 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white border border-white/10 font-bold transition-all"
+                  >
+                    {locale === 'zh' ? '退出' : 'Exit'}
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </DailyGameplayLimit>
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/[0.05]">
