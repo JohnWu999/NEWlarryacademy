@@ -1,5 +1,17 @@
 # Course Publish Log
 
+## 2026-06-13 - Larry Math 183 Publish
+
+- Course/library: `course-larry-math-g6-g8-amc8-reasoning` / Larry Math G6-G8: AMC 8 Logic & Number Theory
+- Source video: `/Users/johnwu/Documents/自动视频剪辑项目/output/Larry 小讲师/Larry_Math_183_Positive_Factors_of_23232_小讲师成片.mp4`
+- Library copy: `/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 183_compressed.mp4`
+- Tencent VOD: uploaded episode `183` with FileId `5001834806527297000`
+- VOD URL: `https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/ceb2e6d85001834806527297000/QpMgAddbTBAA.mp4`
+- Course import: local SQLite lesson `lesson-larry-math-vod-183` added at order `62` with Tencent VOD playback and practice activity `activity-lesson-larry-math-vod-183-practice`
+- Content check: prime factorization `23,232 = 2^6 x 3 x 11^2`; positive factor count `42`; practice max score `72`
+- Verification: VOD URL returned HTTP `200` with `Content-Type: video/mp4` and `Content-Length: 727226976`
+- Detailed run log: `docs/vod-upload-logs/larry-math-183-single-20260613-093353.jsonl`
+
 ## 2026-06-04 - Larry Math VOD Upload Pass 1
 
 - Course/library: `course-larry-math-class-library` / Larry Math Class Library

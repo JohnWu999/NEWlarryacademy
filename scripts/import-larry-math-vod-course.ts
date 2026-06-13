@@ -134,6 +134,7 @@ const knownTitles = new Map<number, string>([
   [129, 'Pythagorean Theorem Equal Area Puzzle'],
   [162, 'Triangle Area Ratio Puzzle'],
   [163, 'Average Speed Word Problems'],
+  [183, 'Positive Factors of 23,232'],
 ])
 
 const modules: Record<ModuleKey, CourseModule> = {
@@ -403,6 +404,98 @@ function reflectionQuestion(
 }
 
 function buildLarryPracticeConfig(entry: VodEntry, module: CourseModule, topic: string, order: number): LarryPracticeConfig {
+  if (entry.episode === 183) {
+    const questions: LarryPracticeQuestion[] = [
+      numericQuestion(
+        'q1',
+        'When 23,232 is divided by 2 repeatedly, what is the exponent of 2 in its prime factorization?',
+        6,
+        '23,232 = 2^6 x 363, so the exponent of 2 is 6.',
+        'Keep halving until the remaining number is odd.',
+        6,
+        2
+      ),
+      multipleChoiceQuestion(
+        'q2',
+        'Which prime factorization is correct for 23,232?',
+        '2^6 x 3 x 11^2',
+        ['2^5 x 3^2 x 11', '2^6 x 3^2 x 11', '2^4 x 3 x 11^3'],
+        '23,232 = 64 x 363 = 2^6 x 3 x 121 = 2^6 x 3 x 11^2.',
+        'After removing 2^6, factor 363.',
+        8,
+        3
+      ),
+      numericQuestion(
+        'q3',
+        'How many positive factors does 23,232 have?',
+        42,
+        'The exponents are 6, 1, and 2, so the count is (6+1)(1+1)(2+1)=7 x 2 x 3=42.',
+        'For n = p^a q^b r^c, use (a + 1)(b + 1)(c + 1).',
+        10,
+        4
+      ),
+      trueFalseQuestion(
+        'q4',
+        'To count the positive factors of 2^6 x 3^1 x 11^2, you multiply 6 x 1 x 2.',
+        'False',
+        'You multiply (6+1)(1+1)(2+1), because each prime can appear from exponent 0 up to its maximum exponent.',
+        'Each exponent includes the choice of using zero copies of that prime.',
+        8,
+        3
+      ),
+      orderQuestion(
+        'q5',
+        'Put the divisor-count strategy in the best order.',
+        ['Break 23,232 into prime factors', 'Write the factorization with exponents', 'Add 1 to each exponent', 'Multiply the results'],
+        'A clean path is factorize, record exponents, count choices for each prime, then multiply the choices.',
+        'Factor first. Count choices only after the exponents are clear.',
+        10,
+        3
+      ),
+      selectQuestion(
+        'q6',
+        'Select all numbers that are factors of 23,232.',
+        ['64', '121', '125', '13', '242'],
+        ['64', '121', '242'],
+        '64 = 2^6, 121 = 11^2, and 242 = 2 x 11^2 all fit inside the prime factorization. 125 and 13 do not.',
+        'Use the prime factorization 2^6 x 3 x 11^2.',
+        10,
+        4
+      ),
+      numericQuestion(
+        'q7',
+        'How many positive factors of 23,232 are perfect squares?',
+        8,
+        'For 2^6, even exponents are 0,2,4,6: 4 choices. For 3^1: only 0, so 1 choice. For 11^2: 0 or 2, so 2 choices. Total: 4 x 1 x 2 = 8.',
+        'For a square factor, each prime exponent must be even.',
+        10,
+        4
+      ),
+      reflectionQuestion(
+        'q8',
+        'Explain in one or two sentences why the answer is 42, not 9.',
+        ['exponents', 'zero', 'choices', 'multiply', 'prime factorization'],
+        'divisor-count reasoning'
+      ),
+    ]
+    const maxScore = questions.reduce((sum, question) => sum + question.points, 0)
+    return {
+      title: 'Positive Factors of 23,232 Practice Quest',
+      maxScore,
+      passingScore: 72,
+      rewards: {
+        gemsOnPass: 0,
+        gemsOnPerfect: 1,
+        streakBonus: 1,
+      },
+      reviewAdvice: {
+        rewatchMessage: "Replay Larry's factorization example once, then rebuild the exponent choices.",
+        focus: 'Positive Factors of 23,232',
+      },
+      questions,
+    }
+  }
+
   const seed = entry.episode + order
   const a = seededNumber(seed, 1, 6, 24)
   const b = seededNumber(seed, 2, 4, 18)

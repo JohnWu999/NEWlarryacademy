@@ -1516,5 +1516,16 @@
     "sizeBytes": 160512548,
     "durationSeconds": null,
     "uploadedAt": "2026-06-11T14:26:58.124404+00:00"
+  },
+  "larry-math-class-183": {
+    "episode": 183,
+    "title": "Larry Math Class 183: Positive Factors of 23,232",
+    "fileId": "5001834806527297000",
+    "mediaUrl": "https://1395848846.vod-qcloud.com/c4bbdde1vodsh1395848846/ceb2e6d85001834806527297000/QpMgAddbTBAA.mp4",
+    "sourcePath": "/Users/johnwu/Library/Mobile Documents/com~apple~CloudDocs/Larry 学习资料/数学小讲师视频库/compressed/Larry Math Class 183_compressed.mp4",
+    "sourceFileName": "Larry Math Class 183_compressed.mp4",
+    "sizeBytes": 727226976,
+    "durationSeconds": 665.643,
+    "uploadedAt": "2026-06-13T01:35:45.248393+00:00"
   }
 }
