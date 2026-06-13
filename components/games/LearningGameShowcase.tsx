@@ -2902,6 +2902,7 @@ export default function LearningGameShowcase({
   const completedRef = useRef(false)
   const seenHowToPlayRef = useRef(new Set<TemplateId>())
   const [showHowToPlay, setShowHowToPlay] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [hud, setHud] = useState<Hud>(makeHud(simRef.current))
   const how = howToPlay[activeId]
   const showcaseLayoutClass = compact
@@ -2914,6 +2915,7 @@ export default function LearningGameShowcase({
     if (lockedTemplate) return
     setActiveId(id)
     onActiveChange?.(id)
+    setIsPlaying(false)
     if (!seenHowToPlayRef.current.has(id)) {
       setShowHowToPlay(true)
     }
@@ -2927,6 +2929,12 @@ export default function LearningGameShowcase({
     audio.move()
   }, [activeId, audio])
 
+  const stop = useCallback(() => {
+    reset(activeId)
+    setIsPlaying(false)
+    setShowHowToPlay(true)
+  }, [activeId, reset])
+
   useEffect(() => {
     reset(activeId)
   }, [activeId, reset])
@@ -2934,6 +2942,7 @@ export default function LearningGameShowcase({
   useEffect(() => {
     if (selectedId && selectedId !== activeId) {
       setActiveId(selectedId)
+      setIsPlaying(false)
       if (!seenHowToPlayRef.current.has(selectedId)) {
         setShowHowToPlay(true)
       }
@@ -2945,6 +2954,7 @@ export default function LearningGameShowcase({
     simRef.current.startedAt = Date.now()
     simRef.current.keys.clear()
     setShowHowToPlay(false)
+    setIsPlaying(true)
   }, [activeId])
 
   const saveShowcaseRecord = useCallback(async (record: PendingRecord) => {
@@ -3052,7 +3062,7 @@ export default function LearningGameShowcase({
     const loop = (time: number) => {
       const dt = Math.min(0.035, (time - last) / 1000)
       last = time
-      if (!showHowToPlay) {
+      if (isPlaying) {
         updateSim(simRef.current, dt, audio)
       }
       const record = simRef.current.pendingRecord
@@ -3083,7 +3093,7 @@ export default function LearningGameShowcase({
       window.removeEventListener('resize', resize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [activeTemplate, audio, completionRounds, onComplete, saveShowcasePenalty, saveShowcaseRecord, showHowToPlay])
+  }, [activeTemplate, audio, completionRounds, isPlaying, onComplete, saveShowcasePenalty, saveShowcaseRecord])
 
   const beginDrag = (x: number, y: number) => {
     const sim = simRef.current
@@ -3321,7 +3331,7 @@ export default function LearningGameShowcase({
   }
 
   return (
-    <DailyGameplayLimit>
+    <DailyGameplayLimit active={isPlaying}>
     <section className="relative">
       <div className={showcaseLayoutClass}>
         <div className={compact ? 'hidden' : 'space-y-5'}>
@@ -3374,10 +3384,10 @@ export default function LearningGameShowcase({
               </h3>
             </div>
             <button
-              onClick={() => reset(activeId)}
+              onClick={stop}
               className={`${compact ? 'rounded-lg px-3 py-2 text-xs' : 'rounded-xl px-4 py-3 text-sm'} bg-white font-black text-black transition hover:scale-[1.02] active:scale-[0.98]`}
             >
-              {locale === 'zh' ? '重开' : 'Reset'}
+              {locale === 'zh' ? '停止' : 'Stop'}
             </button>
           </div>
           <canvas

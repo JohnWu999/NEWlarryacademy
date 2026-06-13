@@ -47,7 +47,7 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainder.toString().padStart(2, '0')}`
 }
 
-export default function DailyGameplayLimit({ children }: { children: ReactNode }) {
+export default function DailyGameplayLimit({ active = true, children }: { active?: boolean; children: ReactNode }) {
   const { locale } = useLanguage()
   const [loaded, setLoaded] = useState(false)
   const [usedSeconds, setUsedSeconds] = useState(0)
@@ -64,7 +64,7 @@ export default function DailyGameplayLimit({ children }: { children: ReactNode }
   }, [])
 
   useEffect(() => {
-    if (!loaded || usedSeconds >= dailyLimitSeconds) return
+    if (!active || !loaded || usedSeconds >= dailyLimitSeconds) return
 
     const timer = window.setInterval(() => {
       const usage = readUsage()
@@ -77,7 +77,7 @@ export default function DailyGameplayLimit({ children }: { children: ReactNode }
     }, 1000)
 
     return () => window.clearInterval(timer)
-  }, [loaded, usedSeconds])
+  }, [active, loaded, usedSeconds])
 
   const remainingSeconds = Math.max(0, dailyLimitSeconds - usedSeconds)
   const isLocked = loaded && remainingSeconds <= 0
@@ -93,7 +93,7 @@ export default function DailyGameplayLimit({ children }: { children: ReactNode }
 
   return (
     <div className="relative">
-      <div className={`absolute right-3 top-3 z-30 rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md ${timerTone}`}>
+      <div className={`absolute left-3 top-3 z-30 rounded-2xl border px-4 py-2 text-left shadow-2xl backdrop-blur-md ${timerTone}`}>
         <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
         <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
       </div>
