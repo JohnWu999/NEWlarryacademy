@@ -201,10 +201,8 @@ type Sim = {
   level: number
   score: number
   streak: number
-  wrongStreak: number
   startedAt: number
   pendingRecord: PendingRecord | null
-  pendingPenalty: PendingPenalty | null
   objective: Objective
   messageZh: string
   messageEn: string
@@ -242,13 +240,6 @@ type PendingRecord = {
   level: number
   round: number
   duration: number
-}
-
-type PendingPenalty = {
-  templateId: TemplateId
-  penalty: number
-  reason: string
-  score: number
 }
 
 const width = 1040
@@ -1121,10 +1112,8 @@ function makeSim(id: TemplateId, level = 1): Sim {
     level,
     score: 0,
     streak: 0,
-    wrongStreak: 0,
     startedAt: Date.now(),
     pendingRecord: null,
-    pendingPenalty: null,
     objective,
     messageZh: '',
     messageEn: '',
@@ -1250,7 +1239,6 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
   addKnowledgeBurst(sim, color)
   sim.score += 120 + sim.streak * 25
   sim.streak += 1
-  sim.wrongStreak = 0
   sim.round += 1
   sim.level = 1 + Math.floor(sim.round / 4)
   sim.pendingRecord = {
@@ -1278,19 +1266,12 @@ function advance(sim: Sim, zh: string, en: string, color: string, audio: ReturnT
 }
 
 function miss(sim: Sim, zh: string, en: string, audio: ReturnType<typeof useArcadeAudio>) {
-  sim.wrongStreak += 1
   const scorePenalty = Math.min(95, 35 + sim.level * 8 + Math.floor(sim.score * 0.04))
   sim.score = Math.max(0, sim.score - scorePenalty)
   sim.streak = 0
   sim.messageZh = zh
   sim.messageEn = en
   sim.messageTimer = 1.1
-  sim.pendingPenalty = {
-    templateId: sim.id,
-    penalty: sim.id === 'starship' ? sim.wrongStreak : Math.max(4, Math.round(scorePenalty / 5)),
-    reason: zh,
-    score: sim.score,
-  }
   audio.miss()
 }
 
@@ -2982,31 +2963,6 @@ export default function LearningGameShowcase({
     }
   }, [])
 
-  const saveShowcasePenalty = useCallback(async (penalty: PendingPenalty) => {
-    try {
-      const response = await fetch('/api/games/showcase/penalty', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(penalty),
-      })
-      if (!response.ok) return
-
-      const result = await response.json()
-      if (result?.saved && result.deductedPoints > 0) {
-        window.dispatchEvent(
-          new CustomEvent('larry:reward-earned', {
-            detail: {
-              points: -Number(result.deductedPoints || 0),
-              gems: 0,
-            },
-          })
-        )
-      }
-    } catch (error) {
-      console.warn('Unable to save showcase game penalty', error)
-    }
-  }, [])
-
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const sim = simRef.current
@@ -3074,11 +3030,6 @@ export default function LearningGameShowcase({
           window.setTimeout(() => onComplete(record), 420)
         }
       }
-      const penalty = simRef.current.pendingPenalty
-      if (penalty) {
-        simRef.current.pendingPenalty = null
-        void saveShowcasePenalty(penalty)
-      }
       drawSim(ctx, simRef.current, activeTemplate)
       hudTimer += dt
       if (hudTimer > 0.12) {
@@ -3093,7 +3044,7 @@ export default function LearningGameShowcase({
       window.removeEventListener('resize', resize)
       if (rafRef.current) cancelAnimationFrame(rafRef.current)
     }
-  }, [activeTemplate, audio, completionRounds, isPlaying, onComplete, saveShowcasePenalty, saveShowcaseRecord])
+  }, [activeTemplate, audio, completionRounds, isPlaying, onComplete, saveShowcaseRecord])
 
   const beginDrag = (x: number, y: number) => {
     const sim = simRef.current
