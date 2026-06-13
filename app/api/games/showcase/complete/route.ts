@@ -20,6 +20,7 @@ const showcaseTemplates = {
 } as const
 
 const GAME_COMPLETION_SPARKS = 5
+const GAME_COMPLETION_GEMS = 0
 
 const completeSchema = z.object({
   templateId: z.enum([
@@ -43,10 +44,9 @@ const completeSchema = z.object({
   round: z.number().int().min(0).max(9999).optional(),
 })
 
-function calculateRewards(level: number, streak: number) {
+function calculateRewards() {
   const points = GAME_COMPLETION_SPARKS
-  const gems = streak >= 8 || level >= 4 ? 1 : 0
-  return { points, gems }
+  return { points, gems: GAME_COMPLETION_GEMS }
 }
 
 export async function POST(request: NextRequest) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     const gameId = `showcase-${body.templateId}`
     const level = body.level ?? 1
     const streak = body.streak ?? 0
-    const rewards = calculateRewards(level, streak)
+    const rewards = calculateRewards()
 
     if (!session?.user?.email) {
       await prisma.game.upsert({

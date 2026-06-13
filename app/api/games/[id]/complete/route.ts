@@ -15,12 +15,12 @@ const completeSchema = z.object({
 })
 
 const GAME_COMPLETION_SPARKS = 5
+const GAME_COMPLETION_GEMS = 0
 
-function calculateRewards(score: number, maxScore: number, streak: number) {
+function calculateRewards(score: number, maxScore: number) {
   const ratio = Math.max(0, Math.min(score / maxScore, 1))
   const points = GAME_COMPLETION_SPARKS
-  const gems = ratio >= 0.95 || streak >= 10 ? 1 : 0
-  return { points, gems, ratio }
+  return { points, gems: GAME_COMPLETION_GEMS, ratio }
 }
 
 export async function POST(
@@ -31,7 +31,7 @@ export async function POST(
     const { id } = await params
     const body = completeSchema.parse(await request.json())
     const session = await getServerSession(authOptions)
-    const rewards = calculateRewards(body.score, body.maxScore, body.streak ?? 0)
+    const rewards = calculateRewards(body.score, body.maxScore)
 
     await prisma.game.update({
       where: { id },

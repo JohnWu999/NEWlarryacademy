@@ -544,7 +544,7 @@ export default function MathArcade({ game }: { game: GameLike }) {
                   <div className="text-xs font-black uppercase tracking-[0.16em] text-blue-400">Points</div>
                 </div>
                 <div className="rounded-2xl bg-amber-50 p-5 text-center">
-                  <div className="text-3xl font-black text-amber-700">{saving ? '...' : reward?.earnedGems ?? (bestStreak >= 10 ? 1 : 0)}</div>
+                  <div className="text-3xl font-black text-amber-700">{saving ? '...' : reward?.earnedGems ?? 0}</div>
                   <div className="text-xs font-black uppercase tracking-[0.16em] text-amber-400">Gems</div>
                 </div>
               </div>
