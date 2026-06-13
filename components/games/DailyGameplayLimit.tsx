@@ -49,6 +49,17 @@ function saveUsage(usage: StoredUsage) {
   localStorage.setItem(storageKey, JSON.stringify(usage))
 }
 
+function consumeResetRequest() {
+  if (typeof window === 'undefined') return
+
+  const url = new URL(window.location.href)
+  if (url.searchParams.get('resetGameplayTime') !== '1') return
+
+  localStorage.removeItem(storageKey)
+  url.searchParams.delete('resetGameplayTime')
+  window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`)
+}
+
 function formatTime(seconds: number) {
   const safeSeconds = Math.max(0, seconds)
   const minutes = Math.floor(safeSeconds / 60)
@@ -63,6 +74,7 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const [bonusSeconds, setBonusSeconds] = useState(0)
 
   useEffect(() => {
+    consumeResetRequest()
     const usage = readUsage()
     saveUsage(usage)
     const hydrateTimer = window.setTimeout(() => {
