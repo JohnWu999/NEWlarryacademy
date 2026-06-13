@@ -342,26 +342,34 @@ export default function Navbar() {
                     <img src="/reward-icons/spark.png" alt="" className="reward-icon block size-7 shrink-0 object-contain" />
                     <span className="reward-count">{rewards.points}</span>
                   </Link>
-                  <button
-                    type="button"
-                    onClick={exchangeGemForGameTime}
-                    disabled={exchangeState === 'saving' || rewards.gems < 1}
-                    title={exchangeTitle}
-                    aria-label={exchangeTitle}
-                    className={`exchange-button exchange-time-button ${exchangeState === 'success' ? 'exchange-success' : ''} ${exchangeState === 'error' ? 'exchange-error' : ''}`}
-                  >
-                    {exchangeLabel}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={exchangeSparksForGem}
-                    disabled={gemExchangeState === 'saving' || rewards.points < 50}
-                    title={gemExchangeTitle}
-                    aria-label={gemExchangeTitle}
-                    className={`exchange-button exchange-gem-button ${gemExchangeState === 'success' ? 'exchange-success' : ''} ${gemExchangeState === 'error' ? 'exchange-error' : ''}`}
-                  >
-                    {gemExchangeLabel}
-                  </button>
+                  <div className="exchange-panel" aria-label={locale === 'zh' ? '奖励兑换说明' : 'Reward exchange options'}>
+                    <div className="exchange-row">
+                      <span className="exchange-copy">{locale === 'zh' ? '加 1 分钟会抵掉 1 个 Gem' : '+1 minute costs 1 Gem'}</span>
+                      <button
+                        type="button"
+                        onClick={exchangeGemForGameTime}
+                        disabled={exchangeState === 'saving' || rewards.gems < 1}
+                        title={exchangeTitle}
+                        aria-label={exchangeTitle}
+                        className={`exchange-button exchange-time-button ${exchangeState === 'success' ? 'exchange-success' : ''} ${exchangeState === 'error' ? 'exchange-error' : ''}`}
+                      >
+                        {exchangeLabel}
+                      </button>
+                    </div>
+                    <div className="exchange-row">
+                      <span className="exchange-copy">{locale === 'zh' ? '50 个 Spark 可以换 1 个 Gem' : '50 Sparks can trade for 1 Gem'}</span>
+                      <button
+                        type="button"
+                        onClick={exchangeSparksForGem}
+                        disabled={gemExchangeState === 'saving' || rewards.points < 50}
+                        title={gemExchangeTitle}
+                        aria-label={gemExchangeTitle}
+                        className={`exchange-button exchange-gem-button ${gemExchangeState === 'success' ? 'exchange-success' : ''} ${gemExchangeState === 'error' ? 'exchange-error' : ''}`}
+                      >
+                        {gemExchangeLabel}
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 <Link
                   href="/profile"
@@ -445,7 +453,7 @@ export default function Navbar() {
                     disabled={exchangeState === 'saving' || rewards.gems < 1}
                     className={`mx-4 rounded-full border border-cyan-300/25 bg-cyan-400/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/20 disabled:cursor-not-allowed disabled:opacity-45 ${exchangeState === 'success' ? 'border-emerald-300/35 bg-emerald-400/15 text-emerald-100' : ''} ${exchangeState === 'error' ? 'border-rose-300/35 bg-rose-400/15 text-rose-100' : ''}`}
                   >
-                    {exchangeLabel} · {locale === 'zh' ? '1 Gem 换游戏时间' : '1 Gem for game time'}
+                    {exchangeLabel} · {locale === 'zh' ? '加 1 分钟会抵掉 1 个 Gem' : '+1 minute costs 1 Gem'}
                   </button>
                   <button
                     type="button"
@@ -453,7 +461,7 @@ export default function Navbar() {
                     disabled={gemExchangeState === 'saving' || rewards.points < 50}
                     className={`mx-4 rounded-full border border-amber-300/25 bg-amber-400/10 px-4 py-2 text-xs font-black text-amber-100 transition hover:bg-amber-400/20 disabled:cursor-not-allowed disabled:opacity-45 ${gemExchangeState === 'success' ? 'border-emerald-300/35 bg-emerald-400/15 text-emerald-100' : ''} ${gemExchangeState === 'error' ? 'border-rose-300/35 bg-rose-400/15 text-rose-100' : ''}`}
                   >
-                    {gemExchangeLabel} · {locale === 'zh' ? '50 Spark 换 1 Gem' : '50 Sparks for 1 Gem'}
+                    {gemExchangeLabel} · {locale === 'zh' ? '50 个 Spark 可以换 1 个 Gem' : '50 Sparks can trade for 1 Gem'}
                   </button>
                   <Link href="/profile" className="px-4 py-3 text-gray-400" onClick={() => setMobileMenuOpen(false)}>{t('nav.profile')}</Link>
                   <button onClick={() => signOut({ callbackUrl: '/' })} className="text-left px-4 py-3 text-red-500 font-bold">{t('nav.logout')}</button>
@@ -520,10 +528,38 @@ export default function Navbar() {
           font-variant-numeric: tabular-nums;
           text-shadow: 0 1px 10px rgba(0,0,0,0.35);
         }
-        .exchange-button {
+        .exchange-panel {
           position: absolute;
-          right: -0.72rem;
+          right: 0;
+          top: calc(100% + 0.62rem);
           z-index: 4;
+          display: grid;
+          width: min(23rem, calc(100vw - 2rem));
+          gap: 0.35rem;
+          border-radius: 1rem;
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          background: rgba(5, 9, 18, 0.82);
+          padding: 0.42rem;
+          box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+          backdrop-filter: blur(14px);
+        }
+        .exchange-row {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+          gap: 0.5rem;
+          min-height: 1.9rem;
+        }
+        .exchange-copy {
+          min-width: 0;
+          color: rgba(255, 255, 255, 0.76);
+          font-size: 0.68rem;
+          font-weight: 850;
+          line-height: 1.18;
+          letter-spacing: 0;
+          text-align: right;
+        }
+        .exchange-button {
           min-width: 3.55rem;
           height: 1.55rem;
           border-radius: 999px;
@@ -546,11 +582,7 @@ export default function Navbar() {
           cursor: not-allowed;
           opacity: 0.52;
         }
-        .exchange-time-button {
-          top: -0.82rem;
-        }
         .exchange-gem-button {
-          top: -2.48rem;
           min-width: 4.15rem;
           border-color: rgba(252, 211, 77, 0.42);
           background: rgba(92, 52, 10, 0.96);
