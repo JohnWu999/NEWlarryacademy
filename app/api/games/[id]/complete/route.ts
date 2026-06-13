@@ -14,9 +14,11 @@ const completeSchema = z.object({
   mode: z.string().max(80).optional(),
 })
 
+const GAME_COMPLETION_SPARKS = 5
+
 function calculateRewards(score: number, maxScore: number, streak: number) {
   const ratio = Math.max(0, Math.min(score / maxScore, 1))
-  const points = Math.max(5, Math.round(ratio * 80 + Math.min(streak, 12) * 3))
+  const points = GAME_COMPLETION_SPARKS
   const gems = ratio >= 0.95 || streak >= 10 ? 1 : 0
   return { points, gems, ratio }
 }

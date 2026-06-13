@@ -19,6 +19,8 @@ const showcaseTemplates = {
   pinball: { title: '质数弹球台', subject: 'Prime Numbers' },
 } as const
 
+const GAME_COMPLETION_SPARKS = 5
+
 const completeSchema = z.object({
   templateId: z.enum([
     'starship',
@@ -41,11 +43,8 @@ const completeSchema = z.object({
   round: z.number().int().min(0).max(9999).optional(),
 })
 
-function calculateRewards(score: number, level: number, streak: number) {
-  const levelBonus = Math.min(level, 12) * 4
-  const streakBonus = Math.min(streak, 15) * 3
-  const scoreBonus = Math.min(Math.floor(score / 180), 70)
-  const points = Math.max(8, scoreBonus + levelBonus + streakBonus)
+function calculateRewards(level: number, streak: number) {
+  const points = GAME_COMPLETION_SPARKS
   const gems = streak >= 8 || level >= 4 ? 1 : 0
   return { points, gems }
 }
@@ -58,7 +57,7 @@ export async function POST(request: NextRequest) {
     const gameId = `showcase-${body.templateId}`
     const level = body.level ?? 1
     const streak = body.streak ?? 0
-    const rewards = calculateRewards(body.score, level, streak)
+    const rewards = calculateRewards(level, streak)
 
     if (!session?.user?.email) {
       await prisma.game.upsert({
