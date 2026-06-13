@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import { useLanguage } from '@/context/LanguageContext'
 
 const dailyLimitSeconds = 10 * 60
@@ -67,6 +67,10 @@ function saveTimerCorner(corner: TimerCorner) {
   localStorage.setItem(timerCornerStorageKey, corner)
 }
 
+function getNearestTimerCorner(clientX: number, clientY: number): TimerCorner {
+  return `${clientY < window.innerHeight / 2 ? 'top' : 'bottom'}-${clientX < window.innerWidth / 2 ? 'left' : 'right'}` as TimerCorner
+}
+
 function consumeResetRequest() {
   if (typeof window === 'undefined') return
 
@@ -92,6 +96,9 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const [bonusSeconds, setBonusSeconds] = useState(0)
   const [timerCorner, setTimerCorner] = useState<TimerCorner>('top-left')
   const [dragPoint, setDragPoint] = useState<{ x: number; y: number } | null>(null)
+  const [isDraggingTimer, setIsDraggingTimer] = useState(false)
+  const isDraggingTimerRef = useRef(false)
+  const lastTimerPointRef = useRef<{ x: number; y: number } | null>(null)
 
   useEffect(() => {
     consumeResetRequest()
@@ -157,6 +164,42 @@ export default function DailyGameplayLimit({ active = true, children }: { active
     return () => window.removeEventListener('larry:game-time-added', handleGameTimeAdded)
   }, [])
 
+  useEffect(() => {
+    const finishTimerDrag = (event: PointerEvent) => {
+      if (!isDraggingTimerRef.current) return
+
+      const pointer = event.type === 'pointercancel' && lastTimerPointRef.current
+        ? lastTimerPointRef.current
+        : { x: event.clientX, y: event.clientY }
+      const nextCorner = getNearestTimerCorner(pointer.x, pointer.y)
+      setTimerCorner(nextCorner)
+      saveTimerCorner(nextCorner)
+      isDraggingTimerRef.current = false
+      lastTimerPointRef.current = null
+      setIsDraggingTimer(false)
+      setDragPoint(null)
+    }
+
+    const moveTimer = (event: PointerEvent) => {
+      if (!isDraggingTimerRef.current) return
+      const nextCorner = getNearestTimerCorner(event.clientX, event.clientY)
+      lastTimerPointRef.current = { x: event.clientX, y: event.clientY }
+      setDragPoint({ x: event.clientX, y: event.clientY })
+      setTimerCorner(nextCorner)
+      saveTimerCorner(nextCorner)
+    }
+
+    window.addEventListener('pointermove', moveTimer)
+    window.addEventListener('pointerup', finishTimerDrag)
+    window.addEventListener('pointercancel', finishTimerDrag)
+
+    return () => {
+      window.removeEventListener('pointermove', moveTimer)
+      window.removeEventListener('pointerup', finishTimerDrag)
+      window.removeEventListener('pointercancel', finishTimerDrag)
+    }
+  }, [])
+
   const allowanceSeconds = dailyLimitSeconds + bonusSeconds
   const remainingSeconds = Math.max(0, allowanceSeconds - usedSeconds)
   const isLocked = loaded && remainingSeconds <= 0
@@ -168,23 +211,13 @@ export default function DailyGameplayLimit({ active = true, children }: { active
     'bottom-right': 'bottom-3 right-3',
   }[timerCorner]
 
-  const handleTimerPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handleTimerPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.preventDefault()
     event.currentTarget.setPointerCapture(event.pointerId)
+    isDraggingTimerRef.current = true
+    lastTimerPointRef.current = { x: event.clientX, y: event.clientY }
+    setIsDraggingTimer(true)
     setDragPoint({ x: event.clientX, y: event.clientY })
-  }
-
-  const handleTimerPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragPoint) return
-    setDragPoint({ x: event.clientX, y: event.clientY })
-  }
-
-  const handleTimerPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragPoint) return
-
-    const nextCorner: TimerCorner = `${event.clientY < window.innerHeight / 2 ? 'top' : 'bottom'}-${event.clientX < window.innerWidth / 2 ? 'left' : 'right'}` as TimerCorner
-    setTimerCorner(nextCorner)
-    saveTimerCorner(nextCorner)
-    setDragPoint(null)
   }
 
   const lockCopy = useMemo(() => ({
@@ -199,17 +232,11 @@ export default function DailyGameplayLimit({ active = true, children }: { active
     <div className="relative">
       <div
         onPointerDown={handleTimerPointerDown}
-        onPointerMove={handleTimerPointerMove}
-        onPointerUp={handleTimerPointerUp}
-        onPointerCancel={() => setDragPoint(null)}
-        className={`group fixed z-[80] touch-none select-none rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md transition-[box-shadow,background-color,border-color] ${timerTone} ${dragPoint ? 'cursor-grabbing' : `cursor-grab ${timerCornerClass}`}`}
+        className={`fixed z-[80] touch-none select-none rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md transition-[box-shadow,background-color,border-color] ${timerTone} ${isDraggingTimer ? 'cursor-grabbing' : `cursor-grab ${timerCornerClass}`}`}
         style={dragPoint ? { left: dragPoint.x, top: dragPoint.y, transform: 'translate(-50%, -50%)' } : undefined}
       >
         <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
         <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
-        <div className="pointer-events-none absolute left-0 top-[calc(100%+0.45rem)] w-44 rounded-xl border border-white/12 bg-black/80 px-3 py-2 text-left text-[11px] font-black leading-4 text-white/72 opacity-0 shadow-2xl backdrop-blur-md transition duration-150 group-hover:opacity-100">
-          {locale === 'zh' ? '拖动计时器可以移动位置。' : 'Drag the timer to move it.'}
-        </div>
       </div>
 
       {isLocked ? (
