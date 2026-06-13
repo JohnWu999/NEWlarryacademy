@@ -151,9 +151,11 @@ export default function DailyGameplayLimit({ active = true, children }: { active
 
   return (
     <div className="relative">
-      <div className={`pointer-events-none absolute right-3 top-3 z-30 rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md ${timerTone}`}>
-        <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
-        <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
+      <div className="mb-3 flex justify-end">
+        <div className={`rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md ${timerTone}`}>
+          <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
+          <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
+        </div>
       </div>
 
       {isLocked ? (
