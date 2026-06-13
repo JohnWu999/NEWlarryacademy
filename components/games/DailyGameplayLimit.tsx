@@ -13,6 +13,7 @@ type StoredUsage = {
   date: string
   usedSeconds: number
   bonusSeconds?: number
+  visited?: boolean
 }
 
 type GameTimeAddedDetail = {
@@ -24,16 +25,37 @@ function todayKey() {
   return new Date().toLocaleDateString('en-CA')
 }
 
+function dateNumber(date: string) {
+  const [year, month, day] = date.split('-').map(Number)
+  if (!year || !month || !day) return null
+  return Date.UTC(year, month - 1, day) / 86400000
+}
+
+function isYesterday(storedDate: string, date: string) {
+  const storedDay = dateNumber(storedDate)
+  const currentDay = dateNumber(date)
+  return storedDay !== null && currentDay !== null && currentDay - storedDay === 1
+}
+
+function carriedSecondsFrom(usage: StoredUsage, date: string) {
+  if (!usage.visited || !isYesterday(usage.date, date)) return 0
+
+  const bonusSeconds = Math.max(0, Math.floor(Number(usage.bonusSeconds) || 0))
+  const allowanceSeconds = dailyLimitSeconds + bonusSeconds
+  const usedSeconds = Math.min(allowanceSeconds, Math.max(0, Math.floor(Number(usage.usedSeconds) || 0)))
+  return Math.max(0, allowanceSeconds - usedSeconds)
+}
+
 function readUsage(): StoredUsage {
   if (typeof window === 'undefined') {
-    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0 }
+    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0, visited: false }
   }
 
   try {
     const parsed = JSON.parse(localStorage.getItem(storageKey) || 'null') as StoredUsage | null
     const date = todayKey()
     if (!parsed || parsed.date !== date) {
-      return { date, usedSeconds: 0, bonusSeconds: 0 }
+      return { date, usedSeconds: 0, bonusSeconds: parsed ? carriedSecondsFrom(parsed, date) : 0, visited: false }
     }
 
     const bonusSeconds = Math.max(0, Math.floor(Number(parsed.bonusSeconds) || 0))
@@ -42,9 +64,10 @@ function readUsage(): StoredUsage {
       date,
       usedSeconds: Math.min(allowanceSeconds, Math.max(0, Math.floor(Number(parsed.usedSeconds) || 0))),
       bonusSeconds,
+      visited: Boolean(parsed.visited),
     }
   } catch {
-    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0 }
+    return { date: todayKey(), usedSeconds: 0, bonusSeconds: 0, visited: false }
   }
 }
 
@@ -102,7 +125,7 @@ export default function DailyGameplayLimit({ active = true, children }: { active
 
   useEffect(() => {
     consumeResetRequest()
-    const usage = readUsage()
+    const usage = { ...readUsage(), visited: true }
     saveUsage(usage)
     const hydrateTimer = window.setTimeout(() => {
       setUsedSeconds(usage.usedSeconds)
@@ -125,6 +148,7 @@ export default function DailyGameplayLimit({ active = true, children }: { active
         date: usage.date,
         usedSeconds: Math.min(allowanceSeconds, usage.usedSeconds + 1),
         bonusSeconds: Math.max(0, Number(usage.bonusSeconds || 0)),
+        visited: true,
       }
       saveUsage(nextUsage)
       setUsedSeconds(nextUsage.usedSeconds)
@@ -153,6 +177,7 @@ export default function DailyGameplayLimit({ active = true, children }: { active
         date: usage.date,
         usedSeconds: usage.usedSeconds,
         bonusSeconds: Math.max(0, Number(usage.bonusSeconds || 0)) + addedSeconds,
+        visited: true,
       }
       saveUsage(nextUsage)
       setUsedSeconds(nextUsage.usedSeconds)
@@ -223,8 +248,8 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const lockCopy = useMemo(() => ({
     title: locale === 'zh' ? '今天的游戏时间已用完' : 'Gameplay time is finished for today',
     body: locale === 'zh'
-      ? '每天最多可以玩 10 分钟游戏。明天再回来继续挑战。'
-      : 'You can play games for up to 10 minutes each day. Come back tomorrow to keep playing.',
+      ? '每天有 10 分钟基础游戏时间；如果昨天进入过游戏，没用完的时间会结转到今天。明天再回来继续挑战。'
+      : 'You get 10 base minutes each day; if you entered games yesterday, unused time carries into today. Come back tomorrow to keep playing.',
     timerLabel: locale === 'zh' ? '今日剩余' : 'Today left',
   }), [locale])
 

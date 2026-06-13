@@ -25,18 +25,21 @@ function addLocalGameTimeBonus(seconds: number) {
       date?: string
       usedSeconds?: number
       bonusSeconds?: number
+      visited?: boolean
     } | null
     const current = parsed?.date === date ? parsed : null
     window.localStorage.setItem(dailyGameplayStorageKey, JSON.stringify({
       date,
       usedSeconds: Math.max(0, Math.floor(Number(current?.usedSeconds) || 0)),
       bonusSeconds: Math.max(0, Math.floor(Number(current?.bonusSeconds) || 0)) + addedSeconds,
+      visited: Boolean(current?.visited),
     }))
   } catch {
     window.localStorage.setItem(dailyGameplayStorageKey, JSON.stringify({
       date,
       usedSeconds: 0,
       bonusSeconds: addedSeconds,
+      visited: false,
     }))
   }
 }
