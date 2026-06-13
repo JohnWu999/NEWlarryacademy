@@ -528,6 +528,14 @@ export default function Navbar() {
           font-variant-numeric: tabular-nums;
           text-shadow: 0 1px 10px rgba(0,0,0,0.35);
         }
+        #larry-reward-hud::after {
+          content: '';
+          position: absolute;
+          top: 100%;
+          right: 0;
+          width: min(23rem, calc(100vw - 2rem));
+          height: 0.8rem;
+        }
         .exchange-panel {
           position: absolute;
           right: 0;
@@ -542,6 +550,17 @@ export default function Navbar() {
           padding: 0.42rem;
           box-shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
           backdrop-filter: blur(14px);
+          opacity: 0;
+          pointer-events: none;
+          transform: translateY(-0.35rem) scale(0.98);
+          transform-origin: top right;
+          transition: opacity 160ms ease, transform 160ms ease;
+        }
+        #larry-reward-hud:hover .exchange-panel,
+        #larry-reward-hud:focus-within .exchange-panel {
+          opacity: 1;
+          pointer-events: auto;
+          transform: translateY(0) scale(1);
         }
         .exchange-row {
           display: grid;

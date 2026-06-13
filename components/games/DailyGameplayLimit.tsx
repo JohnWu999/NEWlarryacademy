@@ -5,6 +5,9 @@ import { useLanguage } from '@/context/LanguageContext'
 
 const dailyLimitSeconds = 10 * 60
 const storageKey = 'larryAcademy_dailyGameplayLimit'
+const timerCornerStorageKey = 'larryAcademy_gameplayTimerCorner'
+
+type TimerCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 
 type StoredUsage = {
   date: string
@@ -49,6 +52,21 @@ function saveUsage(usage: StoredUsage) {
   localStorage.setItem(storageKey, JSON.stringify(usage))
 }
 
+function readTimerCorner(): TimerCorner {
+  if (typeof window === 'undefined') return 'top-left'
+
+  const value = localStorage.getItem(timerCornerStorageKey)
+  if (value === 'top-left' || value === 'top-right' || value === 'bottom-left' || value === 'bottom-right') {
+    return value
+  }
+
+  return 'top-left'
+}
+
+function saveTimerCorner(corner: TimerCorner) {
+  localStorage.setItem(timerCornerStorageKey, corner)
+}
+
 function consumeResetRequest() {
   if (typeof window === 'undefined') return
 
@@ -72,6 +90,8 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const [loaded, setLoaded] = useState(false)
   const [usedSeconds, setUsedSeconds] = useState(0)
   const [bonusSeconds, setBonusSeconds] = useState(0)
+  const [timerCorner, setTimerCorner] = useState<TimerCorner>('top-left')
+  const [dragPoint, setDragPoint] = useState<{ x: number; y: number } | null>(null)
 
   useEffect(() => {
     consumeResetRequest()
@@ -80,6 +100,7 @@ export default function DailyGameplayLimit({ active = true, children }: { active
     const hydrateTimer = window.setTimeout(() => {
       setUsedSeconds(usage.usedSeconds)
       setBonusSeconds(Math.max(0, Number(usage.bonusSeconds || 0)))
+      setTimerCorner(readTimerCorner())
       setLoaded(true)
     }, 0)
 
@@ -140,6 +161,31 @@ export default function DailyGameplayLimit({ active = true, children }: { active
   const remainingSeconds = Math.max(0, allowanceSeconds - usedSeconds)
   const isLocked = loaded && remainingSeconds <= 0
   const timerTone = remainingSeconds <= 60 ? 'border-rose-300/40 bg-rose-500/20 text-rose-50' : 'border-white/15 bg-black/55 text-white'
+  const timerCornerClass = {
+    'top-left': 'left-3 top-3',
+    'top-right': 'right-3 top-3',
+    'bottom-left': 'bottom-3 left-3',
+    'bottom-right': 'bottom-3 right-3',
+  }[timerCorner]
+
+  const handleTimerPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setDragPoint({ x: event.clientX, y: event.clientY })
+  }
+
+  const handleTimerPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragPoint) return
+    setDragPoint({ x: event.clientX, y: event.clientY })
+  }
+
+  const handleTimerPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragPoint) return
+
+    const nextCorner: TimerCorner = `${event.clientY < window.innerHeight / 2 ? 'top' : 'bottom'}-${event.clientX < window.innerWidth / 2 ? 'left' : 'right'}` as TimerCorner
+    setTimerCorner(nextCorner)
+    saveTimerCorner(nextCorner)
+    setDragPoint(null)
+  }
 
   const lockCopy = useMemo(() => ({
     title: locale === 'zh' ? '今天的游戏时间已用完' : 'Gameplay time is finished for today',
@@ -151,10 +197,18 @@ export default function DailyGameplayLimit({ active = true, children }: { active
 
   return (
     <div className="relative">
-      <div className="mb-3 flex justify-end">
-        <div className={`rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md ${timerTone}`}>
-          <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
-          <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
+      <div
+        onPointerDown={handleTimerPointerDown}
+        onPointerMove={handleTimerPointerMove}
+        onPointerUp={handleTimerPointerUp}
+        onPointerCancel={() => setDragPoint(null)}
+        className={`group fixed z-[80] touch-none select-none rounded-2xl border px-4 py-2 text-right shadow-2xl backdrop-blur-md transition-[box-shadow,background-color,border-color] ${timerTone} ${dragPoint ? 'cursor-grabbing' : `cursor-grab ${timerCornerClass}`}`}
+        style={dragPoint ? { left: dragPoint.x, top: dragPoint.y, transform: 'translate(-50%, -50%)' } : undefined}
+      >
+        <div className="text-[10px] font-black uppercase tracking-[0.18em] opacity-65">{lockCopy.timerLabel}</div>
+        <div className="text-xl font-black tabular-nums">{loaded ? formatTime(remainingSeconds) : '10:00'}</div>
+        <div className="pointer-events-none absolute left-0 top-[calc(100%+0.45rem)] w-44 rounded-xl border border-white/12 bg-black/80 px-3 py-2 text-left text-[11px] font-black leading-4 text-white/72 opacity-0 shadow-2xl backdrop-blur-md transition duration-150 group-hover:opacity-100">
+          {locale === 'zh' ? '拖动计时器可以移动位置。' : 'Drag the timer to move it.'}
         </div>
       </div>
 
