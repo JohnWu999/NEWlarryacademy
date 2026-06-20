@@ -2,14 +2,14 @@ import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 
 export default withAuth(
-  function proxy(req) {
+  function proxy() {
     return NextResponse.next()
   },
   {
     callbacks: {
       authorized: ({ token, req }) => {
         // Protect specific routes
-        const protectedPaths = ['/profile', '/dashboard', '/courses/learn']
+        const protectedPaths = ['/profile', '/dashboard', '/courses/learn', '/admin']
         const pathname = req.nextUrl.pathname
 
         const isProtected = protectedPaths.some(path =>
@@ -31,5 +31,6 @@ export const config = {
     '/profile/:path*',
     '/dashboard/:path*',
     '/courses/learn/:path*',
+    '/admin/:path*',
   ],
 }

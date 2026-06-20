@@ -43,6 +43,7 @@ model User {
   lessonProgress    UserLessonProgress[]
   activityAttempts  UserActivityAttempt[]
   wrongQuestions    WrongQuestion[]
+  customerLearningEvents CustomerLearningEvent[]
 }
 
 model Account {
@@ -339,6 +340,62 @@ model RewardTransaction {
   createdAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============ Admin Analytics Models ============
+
+model Visitor {
+  id          String   @id @default(cuid())
+  visitorKey String   @unique
+  firstSeenAt DateTime @default(now())
+  lastSeenAt DateTime @updatedAt
+  lastPath    String?
+  userAgent   String?
+  referrer    String?
+  ipHash      String?
+
+  events VisitorEvent[]
+
+  @@index([lastSeenAt])
+}
+
+model VisitorEvent {
+  id          String   @id @default(cuid())
+  visitorId   String
+  visitorKey  String
+  day         String
+  eventType   String   @default("pageview")
+  path        String
+  referrer    String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  visitor Visitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+
+  @@index([day, createdAt])
+  @@index([visitorId, createdAt])
+  @@index([path])
+}
+
+model CustomerLearningEvent {
+  id            String   @id @default(cuid())
+  userId        String
+  day           String
+  eventType     String
+  courseId      String?
+  courseTitle   String?
+  lessonId      String?
+  lessonTitle   String?
+  activityId    String?
+  activityTitle String?
+  metadata      String?
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([day, createdAt])
+  @@index([userId, day])
+  @@index([courseId, lessonId])
 }
 
 // ============ Shop & Product Models ============

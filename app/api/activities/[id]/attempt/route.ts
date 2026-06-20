@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { shanghaiDay } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { isPracticeAnswerCorrect, serializePracticeValue } from '@/lib/practiceGrading'
 
@@ -57,7 +58,13 @@ export async function POST(
     const user = await prisma.user.findUnique({ where: { email: session.user.email } })
     if (!user) return NextResponse.json({ error: '用户不存在' }, { status: 404 })
 
-    const activity = await prisma.lessonActivity.findUnique({ where: { id } })
+    const activity = await prisma.lessonActivity.findUnique({
+      where: { id },
+      include: {
+        course: { select: { title: true } },
+        lesson: { select: { title: true } },
+      },
+    })
     if (!activity?.config) {
       return NextResponse.json({ error: '练习不存在' }, { status: 404 })
     }
@@ -159,6 +166,31 @@ export async function POST(
           sourceType: 'activity',
           sourceId: activity.id,
           metadata: JSON.stringify({ attemptId: attempt.id, score, maxScore, maxCorrectStreak }),
+        },
+      })
+    }
+
+    if (completed) {
+      await prisma.customerLearningEvent.create({
+        data: {
+          userId: user.id,
+          day: shanghaiDay(),
+          eventType: activity.type === 'quiz' ? 'quiz_completed' : 'practice_completed',
+          courseId: activity.courseId,
+          courseTitle: activity.course.title,
+          lessonId: activity.lessonId,
+          lessonTitle: activity.lesson?.title || null,
+          activityId: activity.id,
+          activityTitle: activity.title,
+          metadata: JSON.stringify({
+            score,
+            maxScore,
+            percent,
+            correctCount,
+            maxCorrectStreak,
+            earnedPoints: pointsDelta,
+            earnedGems,
+          }),
         },
       })
     }

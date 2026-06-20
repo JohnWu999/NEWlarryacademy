@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { shanghaiDay } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
@@ -63,11 +64,11 @@ export async function POST(
     const course = await prisma.course.findUnique({ where: { id: courseId } })
     if (!course) return NextResponse.json({ error: '课程不存在' }, { status: 404 })
 
-    let requestedLesson: { id: string; order: number; duration: number | null; isPreview: boolean } | null = null
+    let requestedLesson: { id: string; title: string; order: number; duration: number | null; isPreview: boolean } | null = null
     if (validatedData.lessonId) {
       requestedLesson = await prisma.lesson.findFirst({
         where: { id: validatedData.lessonId, courseId },
-        select: { id: true, order: true, duration: true, isPreview: true },
+        select: { id: true, title: true, order: true, duration: true, isPreview: true },
       })
       if (!requestedLesson) return NextResponse.json({ error: '课节不存在' }, { status: 404 })
     }
@@ -117,6 +118,24 @@ export async function POST(
     }
 
     const progress = await recalculateCourseProgress(user.id, courseId, lastWatchedPosition)
+
+    if (requestedLesson) {
+      await prisma.customerLearningEvent.create({
+        data: {
+          userId: user.id,
+          day: shanghaiDay(),
+          eventType: validatedData.completed ? 'lesson_completed' : 'lesson_progress',
+          courseId: course.id,
+          courseTitle: course.title,
+          lessonId: requestedLesson.id,
+          lessonTitle: requestedLesson.title,
+          metadata: JSON.stringify({
+            progressPercentage: validatedData.completed ? 100 : Number(validatedData.lessonProgressPercentage || 0),
+            lastWatchedPosition,
+          }),
+        },
+      })
+    }
 
     return NextResponse.json(progress)
   } catch (error) {
