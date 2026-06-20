@@ -380,6 +380,8 @@ model VisitorEvent {
 model CustomerLearningEvent {
   id            String   @id @default(cuid())
   userId        String
+  userEmail     String?
+  userName      String?
   day           String
   eventType     String
   courseId      String?
@@ -395,6 +397,7 @@ model CustomerLearningEvent {
 
   @@index([day, createdAt])
   @@index([userId, day])
+  @@index([userEmail])
   @@index([courseId, lessonId])
 }
 

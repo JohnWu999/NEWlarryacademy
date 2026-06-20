@@ -269,8 +269,8 @@ export default async function AdminPage() {
                     <tr key={event.id}>
                       <td className="px-4 py-3 text-xs font-bold text-white/45">{formatTime(event.createdAt)}</td>
                       <td className="px-4 py-3">
-                        <div className="font-bold">{event.user.name || 'Student'}</div>
-                        <div className="text-xs text-white/42">{event.user.email}</div>
+                        <div className="font-bold">{event.userName || event.user.name || 'Student'}</div>
+                        <div className="text-xs text-white/42">{event.userEmail || event.user.email}</div>
                       </td>
                       <td className="px-4 py-3 text-white/64">{labelForEvent(event.eventType)}</td>
                       <td className="px-4 py-3">

@@ -174,6 +174,8 @@ export async function POST(
       await prisma.customerLearningEvent.create({
         data: {
           userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
           day: shanghaiDay(),
           eventType: activity.type === 'quiz' ? 'quiz_completed' : 'practice_completed',
           courseId: activity.courseId,
