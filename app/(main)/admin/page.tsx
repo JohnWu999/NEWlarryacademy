@@ -24,6 +24,15 @@ function labelForEvent(type: string) {
   return labels[type] || type
 }
 
+function formatMoney(amount?: number | null, currency?: string | null) {
+  if (typeof amount !== 'number') return '—'
+  const normalizedCurrency = (currency || 'CNY').toUpperCase()
+  return `${normalizedCurrency} ${amount.toLocaleString('zh-CN', {
+    minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`
+}
+
 function safeJson(value?: string | null) {
   try {
     return value ? JSON.parse(value) as Record<string, unknown> : null
@@ -61,7 +70,7 @@ export default async function AdminPage() {
   since.setDate(since.getDate() - 13)
   const today = shanghaiDay()
 
-  const [totalVisitors, visitorEvents, latestVisitors, learningEvents] = await Promise.all([
+  const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords] = await Promise.all([
     prisma.visitor.count(),
     prisma.visitorEvent.findMany({
       where: { createdAt: { gte: since } },
@@ -91,6 +100,24 @@ export default async function AdminPage() {
       take: 500,
       include: {
         user: { select: { email: true, name: true } },
+      },
+    }),
+    prisma.userPurchasedCourse.findMany({
+      orderBy: { purchasedAt: 'desc' },
+      take: 200,
+      include: {
+        user: { select: { email: true, name: true, subscriptionStatus: true } },
+        course: { select: { title: true, price: true, accessLevel: true } },
+        order: {
+          select: {
+            id: true,
+            amount: true,
+            currency: true,
+            status: true,
+            paymentMethod: true,
+            createdAt: true,
+          },
+        },
       },
     }),
   ])
@@ -128,6 +155,17 @@ export default async function AdminPage() {
 
   const todayVisitors = visitorDaily.find((row) => row.day === today)?.visitors || 0
   const todayLearningUsers = learningDaily.find((row) => row.day === today)?.users || 0
+  const paidUserCount = new Set(paidRecords.map((record) => record.userId)).size
+  const activePaidRecords = paidRecords.filter((record) => record.status === 'active').length
+  const paidRevenueByCurrency = paidRecords.reduce((map, record) => {
+    if (record.order?.status !== 'paid') return map
+    const currency = (record.order.currency || 'CNY').toUpperCase()
+    map.set(currency, (map.get(currency) || 0) + record.order.amount)
+    return map
+  }, new Map<string, number>())
+  const paidRevenueText = Array.from(paidRevenueByCurrency.entries())
+    .map(([currency, amount]) => formatMoney(amount, currency))
+    .join(' · ') || '—'
 
   return (
     <div className="min-h-dvh bg-[#050505] px-4 py-28 text-white sm:px-6">
@@ -140,12 +178,14 @@ export default async function AdminPage() {
           <div className="text-sm font-bold text-white/48">Asia/Shanghai · 最近 14 天</div>
         </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-4">
+        <div className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
           {[
             ['今日不同访客', todayVisitors],
             ['总访客', totalVisitors],
             ['今日学习客户', todayLearningUsers],
             ['学习事件', learningEvents.length],
+            ['付费用户', paidUserCount],
+            ['有效付费课程', activePaidRecords],
           ].map(([label, value]) => (
             <div key={label} className="border border-white/10 bg-white/[0.045] px-5 py-4">
               <div className="text-2xl font-black tabular-nums">{value}</div>
@@ -153,6 +193,77 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        <section className="mt-8">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-black">付费用户记录</h2>
+              <p className="mt-1 text-xs font-bold text-white/40">最近 200 条课程购买 / 开通记录</p>
+            </div>
+            <div className="text-sm font-black text-emerald-300">已支付订单金额：{paidRevenueText}</div>
+          </div>
+          <div className="overflow-x-auto border border-white/10">
+            <table className="w-full min-w-[1080px] text-left text-sm">
+              <thead className="bg-white/[0.06] text-xs uppercase tracking-[0.14em] text-white/44">
+                <tr>
+                  <th className="px-4 py-3">开通时间</th>
+                  <th className="px-4 py-3">用户</th>
+                  <th className="px-4 py-3">课程</th>
+                  <th className="px-4 py-3">来源 / 状态</th>
+                  <th className="px-4 py-3">订单</th>
+                  <th className="px-4 py-3 text-right">金额</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/8">
+                {paidRecords.length ? paidRecords.map((record) => (
+                  <tr key={record.id}>
+                    <td className="px-4 py-3 text-xs font-bold text-white/45">
+                      <div>{formatTime(record.purchasedAt)}</div>
+                      {record.expiresAt ? (
+                        <div className="mt-1 text-white/30">到期 {formatTime(record.expiresAt)}</div>
+                      ) : null}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-bold">{record.user.name || 'Customer'}</div>
+                      <div className="text-xs text-white/42">{record.user.email}</div>
+                      <div className="mt-1 text-[11px] font-bold uppercase tracking-[0.12em] text-white/28">
+                        {record.user.subscriptionStatus}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-bold">{record.course.title}</div>
+                      <div className="text-xs text-white/42">
+                        {record.course.accessLevel} · 标价 {formatMoney(record.course.price, record.order?.currency)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="font-black text-white/78">{record.status}</div>
+                      <div className="text-xs text-white/42">{record.source}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {record.order ? (
+                        <>
+                          <div className="font-bold">{record.order.status}</div>
+                          <div className="text-xs text-white/42">
+                            {record.order.paymentMethod || 'payment'} · {formatTime(record.order.createdAt)}
+                          </div>
+                          <div className="mt-1 max-w-[14rem] truncate text-[11px] text-white/28">{record.order.id}</div>
+                        </>
+                      ) : (
+                        <span className="text-white/35">无订单记录</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-black tabular-nums">
+                      {record.order ? formatMoney(record.order.amount, record.order.currency) : '—'}
+                    </td>
+                  </tr>
+                )) : (
+                  <tr><td className="px-4 py-6 text-white/45" colSpan={6}>还没有付费或开通记录。</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <div className="mt-8 grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
           <section>
