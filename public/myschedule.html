@@ -476,6 +476,180 @@
 
     .calendar-section { margin-top: 24px; }
 
+    .calendar-source-note {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin: 34px 0 18px;
+      padding: 20px 22px;
+      border: 1px solid #cddedc;
+      border-radius: var(--radius-md);
+      background: var(--teal-soft);
+    }
+
+    .calendar-source-note p {
+      max-width: 760px;
+      margin: 0;
+      color: #315d5b;
+      font-size: 13px;
+    }
+
+    .calendar-links {
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .calendar-links a {
+      padding: 8px 11px;
+      border-radius: 999px;
+      color: var(--teal);
+      background: rgba(255,255,255,.78);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .calendar-links a:hover,
+    .calendar-links a:focus-visible {
+      color: var(--white);
+      background: var(--teal);
+      outline: none;
+    }
+
+    .calendar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      margin: 22px 0 18px;
+      color: var(--ink-soft);
+      font-size: 11px;
+      font-weight: 720;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--orange-soft);
+      box-shadow: inset 0 0 0 1px rgba(231,111,61,.38);
+    }
+
+    .legend-dot.project {
+      background: var(--teal-soft);
+      box-shadow: inset 0 0 0 1px rgba(24,124,120,.38);
+    }
+
+    .legend-dot.special {
+      background: #fff3d4;
+      box-shadow: inset 0 0 0 1px rgba(201,150,47,.5);
+    }
+
+    .month-calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .month-card {
+      min-width: 0;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 8px 24px rgba(16,45,79,.035);
+    }
+
+    .month-card.has-event {
+      border-color: #c8d5dc;
+      background: var(--white);
+    }
+
+    .month-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .month-title strong {
+      font-size: 15px;
+      letter-spacing: -.01em;
+    }
+
+    .month-title span {
+      color: #8390a0;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .month-weekdays,
+    .month-days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .month-weekdays {
+      margin-bottom: 5px;
+      color: #8d98a5;
+      font-size: 8px;
+      font-weight: 850;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      display: grid;
+      min-height: 27px;
+      place-items: center;
+      border-radius: 7px;
+      color: var(--ink-soft);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .calendar-day.empty { visibility: hidden; }
+
+    .calendar-day.is-break {
+      color: #8b4022;
+      background: var(--orange-soft);
+      box-shadow: inset 0 0 0 1px rgba(231,111,61,.28);
+    }
+
+    .calendar-day.is-project {
+      color: #175e5b;
+      background: var(--teal-soft);
+      box-shadow: inset 0 0 0 1px rgba(24,124,120,.28);
+    }
+
+    .calendar-day.is-special {
+      color: #7b5b16;
+      background: #fff3d4;
+      box-shadow: inset 0 0 0 1px rgba(201,150,47,.38);
+    }
+
+    .calendar-swipe-hint {
+      display: none;
+      margin: 8px 0 0;
+      color: #8390a0;
+      font-size: 11px;
+    }
+
+    .key-dates-title {
+      margin: 42px 0 0;
+      font-size: 24px;
+    }
+
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -560,6 +734,8 @@
       .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 0; gap: 24px; }
       .milestone { padding: 20px; border-top: 2px solid var(--ink); }
       .milestone::before { top: -7px; left: 20px; }
+      .calendar-source-note { align-items: flex-start; flex-direction: column; }
+      .month-calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .closing { grid-template-columns: 1fr; }
     }
@@ -581,6 +757,21 @@
       .workload-wrap { margin-top: 64px; padding: 28px 22px; }
       .bar-row { grid-template-columns: 70px minmax(0,1fr) 68px; gap: 9px; }
       .timeline { grid-template-columns: 1fr; }
+      .calendar-source-note { padding: 18px; }
+      .calendar-links { width: 100%; }
+      .month-calendar-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(290px, 86vw);
+        margin-inline: -12px;
+        padding: 0 12px 14px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .month-calendar-grid::-webkit-scrollbar { display: none; }
+      .month-card { scroll-snap-align: start; }
+      .calendar-swipe-hint { display: block; }
       .calendar-grid { grid-template-columns: 1fr; }
       .closing { padding: 34px 25px; }
       footer { flex-direction: column; }
@@ -764,21 +955,40 @@
     <section class="calendar-section" id="calendar">
       <div class="section-head">
         <div>
-          <span class="section-kicker">05 · Planning calendar</span>
-          <h2>School breaks &amp; project windows.</h2>
+          <span class="section-kicker">05 · Huitong school calendar</span>
+          <h2>The 2026–27 school year, month by month.</h2>
         </div>
-        <p>Use longer breaks for recovery, family plans, competitions, and focused projects—not simply as extra weekly workload.</p>
+        <p>A full-year English calendar showing Huitong-specific holidays, project periods, exchange time, and summer vacation.</p>
       </div>
 
+      <div class="calendar-source-note">
+        <p><strong>Calendar scope:</strong> school-specific dates are taken from Larry’s Huitong planning document. The Shenzhen Education Bureau calendar is linked as an external framework; where dates differ, the Huitong dates shown here govern this plan.</p>
+        <div class="calendar-links">
+          <a href="https://en.huitongschool.cn/" target="_blank" rel="noreferrer">Official Huitong School ↗</a>
+          <a href="https://szeb.sz.gov.cn/attachment/1/1714/1714118/12783896.pdf" target="_blank" rel="noreferrer">Shenzhen calendar ↗</a>
+        </div>
+      </div>
+
+      <div class="calendar-legend" aria-label="Calendar legend">
+        <span class="legend-item"><span class="legend-dot"></span>School holiday</span>
+        <span class="legend-item"><span class="legend-dot project"></span>Project / exchange period</span>
+        <span class="legend-item"><span class="legend-dot special"></span>Special date</span>
+      </div>
+
+      <div class="month-calendar-grid" id="huitong-calendar" aria-label="Huitong School calendar from August 2026 to August 2027"></div>
+      <p class="calendar-swipe-hint">Swipe to move through the school year →</p>
+
+      <h3 class="key-dates-title">Key dates</h3>
+
       <div class="calendar-grid">
-        <div class="date-card"><time>25 Sep – 6 Oct</time><strong>Mid-Autumn Festival &amp; National Day Holiday</strong></div>
-        <div class="date-card"><time>21 – 31 Dec</time><strong>Winter Project Period</strong></div>
-        <div class="date-card"><time>1 – 12 Feb</time><strong>Chinese New Year</strong></div>
-        <div class="date-card"><time>5 – 9 Apr</time><strong>Tomb-Sweeping Festival &amp; Spring Project Period</strong></div>
-        <div class="date-card"><time>1 May</time><strong>Labour Day</strong><span class="date-note">Date TBC</span></div>
-        <div class="date-card"><time>9 Jun</time><strong>Dragon Boat Festival</strong><span class="date-note">G1–9 students only</span></div>
-        <div class="date-card"><time>14 Jun – 9 Jul</time><strong>Social Practice &amp; Educational Exchange Month</strong></div>
-        <div class="date-card"><time>10 Jul – 13 Aug</time><strong>Summer Vacation</strong></div>
+        <div class="date-card"><time datetime="2026-09-25">25 Sep – 6 Oct 2026</time><strong>Mid-Autumn Festival &amp; National Day Holiday</strong></div>
+        <div class="date-card"><time datetime="2026-12-21">21 – 31 Dec 2026</time><strong>Winter Project Period</strong></div>
+        <div class="date-card"><time datetime="2027-02-01">1 – 12 Feb 2027</time><strong>Chinese New Year</strong></div>
+        <div class="date-card"><time datetime="2027-04-05">5 – 9 Apr 2027</time><strong>Tomb-Sweeping Festival &amp; Spring Project Period</strong></div>
+        <div class="date-card"><time datetime="2027-05-01">1 May 2027</time><strong>Labour Day</strong><span class="date-note">Date TBC</span></div>
+        <div class="date-card"><time datetime="2027-06-09">9 Jun 2027</time><strong>Dragon Boat Festival</strong><span class="date-note">G1–9 students only</span></div>
+        <div class="date-card"><time datetime="2027-06-14">14 Jun – 9 Jul 2027</time><strong>Social Practice &amp; Educational Exchange Month</strong></div>
+        <div class="date-card"><time datetime="2027-07-10">10 Jul – 13 Aug 2027</time><strong>Summer Vacation</strong></div>
       </div>
     </section>
 
@@ -792,5 +1002,84 @@
     <span>© 2026 Larry Academy · Student Development Portfolio</span>
     <span>Prepared from Larry Wu’s academic and extracurricular plan</span>
   </footer>
+  <script>
+    (() => {
+      const calendarRoot = document.querySelector("#huitong-calendar");
+      if (!calendarRoot) return;
+
+      const monthNames = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      const weekdayNames = ["M", "T", "W", "T", "F", "S", "S"];
+      const events = [
+        { start: "2026-09-25", end: "2026-10-06", type: "break", label: "Mid-Autumn Festival & National Day Holiday" },
+        { start: "2026-12-21", end: "2026-12-31", type: "project", label: "Winter Project Period" },
+        { start: "2027-02-01", end: "2027-02-12", type: "break", label: "Chinese New Year" },
+        { start: "2027-04-05", end: "2027-04-09", type: "project", label: "Tomb-Sweeping Festival & Spring Project Period" },
+        { start: "2027-05-01", end: "2027-05-01", type: "special", label: "Labour Day — date to be confirmed" },
+        { start: "2027-06-09", end: "2027-06-09", type: "special", label: "Dragon Boat Festival — G1–9 students only" },
+        { start: "2027-06-14", end: "2027-07-09", type: "project", label: "Social Practice & Educational Exchange Month" },
+        { start: "2027-07-10", end: "2027-08-13", type: "break", label: "Summer Vacation" }
+      ];
+
+      const months = [];
+      for (let offset = 0; offset < 13; offset += 1) {
+        const monthIndex = 7 + offset;
+        months.push({ year: 2026 + Math.floor(monthIndex / 12), month: monthIndex % 12 });
+      }
+
+      const dateKey = (year, month, day) =>
+        `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+      months.forEach(({ year, month }) => {
+        const card = document.createElement("article");
+        card.className = "month-card";
+        card.setAttribute("aria-label", `${monthNames[month]} ${year}`);
+
+        const title = document.createElement("div");
+        title.className = "month-title";
+        title.innerHTML = `<strong>${monthNames[month]}</strong><span>${year}</span>`;
+        card.appendChild(title);
+
+        const weekdays = document.createElement("div");
+        weekdays.className = "month-weekdays";
+        weekdayNames.forEach((name) => {
+          const dayName = document.createElement("span");
+          dayName.textContent = name;
+          weekdays.appendChild(dayName);
+        });
+        card.appendChild(weekdays);
+
+        const days = document.createElement("div");
+        days.className = "month-days";
+        const firstWeekday = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
+        const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+
+        for (let blank = 0; blank < firstWeekday; blank += 1) {
+          const empty = document.createElement("span");
+          empty.className = "calendar-day empty";
+          days.appendChild(empty);
+        }
+
+        for (let day = 1; day <= daysInMonth; day += 1) {
+          const key = dateKey(year, month, day);
+          const event = events.find((item) => key >= item.start && key <= item.end);
+          const cell = document.createElement("span");
+          cell.className = `calendar-day${event ? ` is-${event.type}` : ""}`;
+          cell.textContent = String(day);
+          cell.setAttribute("aria-label", `${monthNames[month]} ${day}, ${year}${event ? ` — ${event.label}` : ""}`);
+          if (event) {
+            cell.title = event.label;
+            card.classList.add("has-event");
+          }
+          days.appendChild(cell);
+        }
+
+        card.appendChild(days);
+        calendarRoot.appendChild(card);
+      });
+    })();
+  </script>
 </body>
 </html>
