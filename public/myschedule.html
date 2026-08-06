@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Larry Wu's 2026-2027 academic and extracurricular development plan.">
+  <meta name="theme-color" content="#102d4f">
+  <title>Larry Wu — Learning &amp; Activities Plan</title>
+  <style>
+    :root {
+      --ink: #102d4f;
+      --ink-soft: #4d6075;
+      --paper: #f7f5ef;
+      --white: #ffffff;
+      --line: #dfe4e7;
+      --orange: #e76f3d;
+      --orange-soft: #fff0e8;
+      --teal: #187c78;
+      --teal-soft: #e6f5f2;
+      --blue-soft: #eaf1f7;
+      --gold: #c9962f;
+      --shadow: 0 18px 50px rgba(16, 45, 79, 0.09);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 4%, rgba(231, 111, 61, 0.08), transparent 23rem),
+        radial-gradient(circle at 92% 19%, rgba(24, 124, 120, 0.08), transparent 27rem),
+        var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 26px 0 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      font-weight: 760;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 37px;
+      height: 37px;
+      place-items: center;
+      border-radius: 12px;
+      color: var(--white);
+      background: var(--ink);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+    }
+
+    .updated {
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(300px, 0.82fr);
+      gap: 38px;
+      min-height: 510px;
+      padding: 70px;
+      border-radius: 36px;
+      color: var(--white);
+      background: var(--ink);
+      box-shadow: var(--shadow);
+    }
+
+    .hero::before,
+    .hero::after {
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      top: -150px;
+      right: -95px;
+      width: 430px;
+      height: 430px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 0 0 75px rgba(255,255,255,.025), 0 0 0 150px rgba(255,255,255,.018);
+    }
+
+    .hero::after {
+      right: 31%;
+      bottom: -40px;
+      width: 135px;
+      height: 135px;
+      background: var(--orange);
+      opacity: .92;
+      filter: blur(.2px);
+    }
+
+    .hero-copy,
+    .hero-panel { position: relative; z-index: 1; }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: #f5ba9d;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin: 0;
+      font-size: clamp(45px, 6.4vw, 76px);
+      line-height: .98;
+      letter-spacing: -.055em;
+    }
+
+    .hero-lead {
+      max-width: 650px;
+      margin: 28px 0 0;
+      color: rgba(255,255,255,.78);
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.55;
+    }
+
+    .hero-panel {
+      align-self: end;
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 24px;
+      background: rgba(255,255,255,.09);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-panel-label {
+      margin-bottom: 17px;
+      color: rgba(255,255,255,.62);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .hero-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hero-stat {
+      min-height: 103px;
+      padding: 17px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.09);
+    }
+
+    .hero-stat strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 25px;
+      line-height: 1.05;
+    }
+
+    .hero-stat span {
+      color: rgba(255,255,255,.67);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .jumpbar {
+      position: sticky;
+      z-index: 10;
+      top: 14px;
+      display: flex;
+      gap: 8px;
+      width: fit-content;
+      max-width: 100%;
+      margin: 24px auto 0;
+      padding: 8px;
+      overflow-x: auto;
+      border: 1px solid rgba(16,45,79,.08);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 10px 35px rgba(16,45,79,.08);
+      backdrop-filter: blur(14px);
+      scrollbar-width: none;
+    }
+
+    .jumpbar::-webkit-scrollbar { display: none; }
+
+    .jumpbar a {
+      flex: 0 0 auto;
+      padding: 9px 15px;
+      border-radius: 999px;
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 720;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    .jumpbar a:hover,
+    .jumpbar a:focus-visible {
+      color: var(--ink);
+      background: var(--blue-soft);
+      outline: none;
+    }
+
+    main { padding: 88px 0 70px; }
+
+    section { scroll-margin-top: 92px; }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .78fr) minmax(280px, .42fr);
+      gap: 42px;
+      align-items: end;
+      margin-bottom: 30px;
+    }
+
+    .section-kicker {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 820;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.04;
+      letter-spacing: -.045em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 16px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .focus-card {
+      grid-column: span 4;
+      display: flex;
+      flex-direction: column;
+      min-height: 435px;
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 10px 30px rgba(16,45,79,.045);
+    }
+
+    .focus-card.wide { grid-column: span 6; min-height: 400px; }
+
+    .card-number {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 24px;
+      place-items: center;
+      border-radius: 13px;
+      color: var(--ink);
+      background: var(--blue-soft);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .focus-card:nth-child(2) .card-number,
+    .focus-card:nth-child(5) .card-number { background: var(--orange-soft); }
+    .focus-card:nth-child(3) .card-number,
+    .focus-card:nth-child(4) .card-number { background: var(--teal-soft); }
+
+    h3 {
+      margin: 0 0 9px;
+      font-size: 26px;
+      line-height: 1.12;
+      letter-spacing: -.03em;
+    }
+
+    .card-summary {
+      min-height: 50px;
+      margin: 0 0 24px;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .fact-list {
+      display: grid;
+      gap: 13px;
+      margin: 0;
+    }
+
+    .fact {
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .fact dt {
+      margin-bottom: 4px;
+      color: #738193;
+      font-size: 10px;
+      font-weight: 830;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .fact dd {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .goal {
+      margin-top: auto;
+      padding: 16px 17px;
+      border-radius: 15px;
+      color: #7b3b1f;
+      background: var(--orange-soft);
+      font-size: 13px;
+    }
+
+    .goal strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--orange);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .workload-wrap {
+      display: grid;
+      grid-template-columns: minmax(260px, .68fr) minmax(0, 1.32fr);
+      gap: 34px;
+      margin-top: 86px;
+      padding: 44px;
+      border-radius: 32px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .workload-intro h2 { font-size: clamp(32px, 4.1vw, 49px); }
+
+    .workload-intro p {
+      margin: 18px 0 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .bars { display: grid; gap: 17px; align-content: center; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 84px;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .bar-label,
+    .bar-value { font-size: 13px; font-weight: 740; }
+    .bar-value { color: var(--ink-soft); text-align: right; }
+
+    .bar-track {
+      height: 11px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #eef1f2;
+    }
+
+    .bar-fill {
+      display: block;
+      width: var(--w);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--ink);
+    }
+
+    .bar-row:nth-child(2) .bar-fill { background: var(--orange); }
+    .bar-row:nth-child(3) .bar-fill { background: var(--teal); }
+    .bar-row:nth-child(4) .bar-fill { background: var(--gold); }
+    .bar-row:nth-child(5) .bar-fill { background: #7f6bb1; }
+
+    .milestones {
+      margin-top: 94px;
+      padding: 70px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      margin-top: 42px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .milestone {
+      position: relative;
+      padding: 28px 20px 0 0;
+    }
+
+    .milestone::before {
+      position: absolute;
+      top: -7px;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      content: "";
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 0 2px var(--orange);
+    }
+
+    .milestone time {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--orange);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .milestone strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .milestone span {
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .calendar-section { margin-top: 24px; }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .date-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.72);
+    }
+
+    .date-card time {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .date-card strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .date-note {
+      display: inline-block;
+      margin-top: 9px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: #7b3b1f;
+      background: var(--orange-soft);
+      font-size: 10px;
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
+    .closing {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(260px, .55fr);
+      gap: 30px;
+      align-items: center;
+      margin-top: 86px;
+      padding: 50px;
+      border-radius: 30px;
+      color: var(--white);
+      background: var(--teal);
+    }
+
+    .closing h2 { max-width: 700px; font-size: clamp(31px, 4.5vw, 51px); }
+
+    .closing p {
+      margin: 0;
+      padding: 18px 20px;
+      border-radius: 16px;
+      color: rgba(255,255,255,.82);
+      background: rgba(255,255,255,.1);
+      font-size: 13px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 28px 0 40px;
+      color: #708093;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding: 50px 38px; }
+      .hero-panel { width: min(440px, 100%); }
+      .section-head { grid-template-columns: 1fr; gap: 18px; }
+      .focus-card { grid-column: span 6; }
+      .focus-card:last-child { grid-column: span 12; }
+      .workload-wrap { grid-template-columns: 1fr; }
+      .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 0; gap: 24px; }
+      .milestone { padding: 20px; border-top: 2px solid var(--ink); }
+      .milestone::before { top: -7px; left: 20px; }
+      .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .closing { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 24px, 1180px); }
+      .topbar { padding-top: 16px; }
+      .updated { display: none; }
+      .hero { padding: 40px 25px; border-radius: 26px; }
+      h1 { font-size: 46px; }
+      .hero::after { right: -55px; bottom: 70px; }
+      .hero-panel { padding: 18px; }
+      .jumpbar { justify-content: flex-start; margin-top: 16px; border-radius: 18px; }
+      main { padding-top: 64px; }
+      .focus-card,
+      .focus-card.wide,
+      .focus-card:last-child { grid-column: span 12; min-height: auto; padding: 25px; }
+      .goal { margin-top: 26px; }
+      .workload-wrap { margin-top: 64px; padding: 28px 22px; }
+      .bar-row { grid-template-columns: 70px minmax(0,1fr) 68px; gap: 9px; }
+      .timeline { grid-template-columns: 1fr; }
+      .calendar-grid { grid-template-columns: 1fr; }
+      .closing { padding: 34px 25px; }
+      footer { flex-direction: column; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .shell { width: 100%; }
+      .topbar { padding-top: 0; }
+      .jumpbar { display: none; }
+      .hero { min-height: auto; padding: 34px; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      main { padding: 40px 0; }
+      .focus-card,
+      .workload-wrap,
+      .closing { box-shadow: none; break-inside: avoid; }
+      .focus-card { min-height: auto; }
+      .timeline { break-inside: avoid; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="topbar">
+      <a class="brand" href="https://larryacademy.com" aria-label="Larry Academy home">
+        <span class="brand-mark">LA</span>
+        <span>Larry Academy</span>
+      </a>
+      <span class="updated">Plan period: August 2026 – Summer 2027</span>
+    </div>
+
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Student Development Portfolio · 2026–27</p>
+        <h1>Larry Wu’s learning &amp; activities plan.</h1>
+        <p class="hero-lead">A balanced year built around strong academics, disciplined practice, athletic growth, and hands-on exploration.</p>
+      </div>
+
+      <aside class="hero-panel" aria-label="Plan overview">
+        <div class="hero-panel-label">At a glance</div>
+        <div class="hero-stat-grid">
+          <div class="hero-stat"><strong>6</strong><span>focus areas across academics, sport, and STEM</span></div>
+          <div class="hero-stat"><strong>3–5</strong><span>English books planned each month</span></div>
+          <div class="hero-stat"><strong>190 → 300</strong><span>Larry’s Math Class episode goal</span></div>
+          <div class="hero-stat"><strong>2027</strong><span>milestone year for AMC8, Latin, and language goals</span></div>
+        </div>
+      </aside>
+    </div>
+
+    <nav class="jumpbar" aria-label="Page sections">
+      <a href="#academics">Academics</a>
+      <a href="#activities">Activities</a>
+      <a href="#weekly">Weekly plan</a>
+      <a href="#milestones">Milestones</a>
+      <a href="#calendar">School calendar</a>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section id="academics">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">01 · Academic foundation</span>
+          <h2>Strong evidence. Clear next steps.</h2>
+        </div>
+        <p>Each area connects current performance with a practical weekly commitment and a visible 2027 milestone.</p>
+      </div>
+
+      <div class="card-grid">
+        <article class="focus-card">
+          <span class="card-number">01</span>
+          <h3>English</h3>
+          <p class="card-summary">Build advanced reading fluency and steady writing habits.</p>
+          <dl class="fact-list">
+            <div class="fact"><dt>MAP · Grade 4 Spring</dt><dd>Reading 242 · Language Usage 245</dd></div>
+            <div class="fact"><dt>TOEFL Junior · Feb 2026</dt><dd>Listening 300 · Reading 295 · Language Usage 290</dd></div>
+            <div class="fact"><dt>Weekly rhythm</dt><dd>30 minutes of reading daily · 3–5 books/month · 1 hour of writing/week</dd></div>
+          </dl>
+          <div class="goal"><strong>Next milestone</strong>Language proficiency target: 5.5–6.0 by Summer 2027. Specific test to be confirmed.</div>
+        </article>
+
+        <article class="focus-card">
+          <span class="card-number">02</span>
+          <h3>Mathematics</h3>
+          <p class="card-summary">Deepen problem-solving through instruction, club work, and independent practice.</p>
+          <dl class="fact-list">
+            <div class="fact"><dt>MAP · Grade 4 Spring</dt><dd>Mathematics 260</dd></div>
+            <div class="fact"><dt>Achievement</dt><dd>Math Kangaroo G3–4 · Third Place, 2025</dd></div>
+            <div class="fact"><dt>Weekly rhythm</dt><dd>Think Academy 3 hrs · Math Club 1 hr · AMC8 self-practice 3 hrs</dd></div>
+          </dl>
+          <div class="goal"><strong>Next milestone</strong>AMC8 Honor Roll by March 2027 · 300 Larry’s Math Class episodes by Winter 2027.</div>
+        </article>
+
+        <article class="focus-card">
+          <span class="card-number">03</span>
+          <h3>Latin</h3>
+          <p class="card-summary">Move from app-based foundations to structured language study and competition readiness.</p>
+          <dl class="fact-list">
+            <div class="fact"><dt>Foundation</dt><dd>Completed all planned Duolingo sessions</dd></div>
+            <div class="fact"><dt>Weekly rhythm</dt><dd>Small-group lesson 1.5 hrs · Homework 1 hr</dd></div>
+            <div class="fact"><dt>Development focus</dt><dd>Vocabulary · Grammar · Reading accuracy</dd></div>
+          </dl>
+          <div class="goal"><strong>Next milestone</strong>NLE Beginning Gold Medal in Spring 2027 · NLE Latin I Gold Medal in Winter 2027.</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="activities" style="margin-top:94px">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">02 · Activities &amp; exploration</span>
+          <h2>Practice beyond the classroom.</h2>
+        </div>
+        <p>Athletics develops resilience and focus; STEM work turns curiosity into things Larry can build and share.</p>
+      </div>
+
+      <div class="card-grid">
+        <article class="focus-card wide">
+          <span class="card-number">04</span>
+          <h3>Squash</h3>
+          <p class="card-summary">A structured training program combining individual coaching, team practice, and match experience.</p>
+          <dl class="fact-list">
+            <div class="fact"><dt>Progress · Sep 2025–Aug 2026</dt><dd>Advanced from beginner level 1.0 to 2.0</dd></div>
+            <div class="fact"><dt>Weekly rhythm</dt><dd>1:1 coaching 2 hrs · Junior class 4 hrs</dd></div>
+            <div class="fact"><dt>Competition rhythm</dt><dd>2–3 hours per month</dd></div>
+          </dl>
+          <div class="goal"><strong>Next milestone</strong>Pass the Senior Class assessment and advance to Court 4.</div>
+        </article>
+
+        <article class="focus-card wide">
+          <span class="card-number">05</span>
+          <h3>STEM pathway</h3>
+          <p class="card-summary">Choose one primary pathway to protect depth and keep the overall schedule sustainable.</p>
+          <dl class="fact-list">
+            <div class="fact"><dt>Option A · Maker</dt><dd>Continue 2–3 hours/week of hands-on building, extending experience developed from 2023–2026.</dd></div>
+            <div class="fact"><dt>Option B · AI coding</dt><dd>Develop LarryAcademy.com as a student-led coding and product project.</dd></div>
+            <div class="fact"><dt>Decision point</dt><dd>Final weekly allocation and project milestone are still to be confirmed.</dd></div>
+          </dl>
+          <div class="goal"><strong>Planning note</strong>Select one lead project first; add the second only if weekly academic and athletic commitments remain healthy.</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="workload-wrap" id="weekly">
+      <div class="workload-intro">
+        <span class="section-kicker">03 · Weekly commitment</span>
+        <h2>A readable view of the weekly load.</h2>
+        <p>Approximate planned hours. English assumes 30 minutes of daily reading; squash competition time is tracked separately. The AI coding pathway remains TBD.</p>
+      </div>
+      <div class="bars" aria-label="Approximate weekly hours by activity">
+        <div class="bar-row"><span class="bar-label">English</span><span class="bar-track"><span class="bar-fill" style="--w:64%"></span></span><span class="bar-value">4.5 hrs</span></div>
+        <div class="bar-row"><span class="bar-label">Math</span><span class="bar-track"><span class="bar-fill" style="--w:100%"></span></span><span class="bar-value">7 hrs</span></div>
+        <div class="bar-row"><span class="bar-label">Latin</span><span class="bar-track"><span class="bar-fill" style="--w:36%"></span></span><span class="bar-value">2.5 hrs</span></div>
+        <div class="bar-row"><span class="bar-label">Squash</span><span class="bar-track"><span class="bar-fill" style="--w:86%"></span></span><span class="bar-value">6 hrs +</span></div>
+        <div class="bar-row"><span class="bar-label">Maker</span><span class="bar-track"><span class="bar-fill" style="--w:36%"></span></span><span class="bar-value">2–3 hrs</span></div>
+      </div>
+    </section>
+
+    <section class="milestones" id="milestones">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">04 · Milestone map</span>
+          <h2>One year, five visible checkpoints.</h2>
+        </div>
+        <p>Milestones are written as targets, not guarantees. They create focus while leaving room to adjust the plan as Larry develops.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="milestone"><time>August 2026</time><strong>Establish the baseline</strong><span>190 math episodes; squash level 2.0; start the new weekly rhythm.</span></div>
+        <div class="milestone"><time>Winter 2027</time><strong>Math &amp; Latin progress</strong><span>Reach 300 math episodes and target NLE Latin I Gold.</span></div>
+        <div class="milestone"><time>March 2027</time><strong>AMC8 checkpoint</strong><span>Work toward Honor Roll through consistent independent practice.</span></div>
+        <div class="milestone"><time>Spring 2027</time><strong>NLE Beginning</strong><span>Target a Gold Medal with structured lesson and homework practice.</span></div>
+        <div class="milestone"><time>Summer 2027</time><strong>Language review</strong><span>Assess readiness for the 5.5–6.0 proficiency target; confirm the test first.</span></div>
+      </div>
+    </section>
+
+    <section class="calendar-section" id="calendar">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">05 · Planning calendar</span>
+          <h2>School breaks &amp; project windows.</h2>
+        </div>
+        <p>Use longer breaks for recovery, family plans, competitions, and focused projects—not simply as extra weekly workload.</p>
+      </div>
+
+      <div class="calendar-grid">
+        <div class="date-card"><time>25 Sep – 6 Oct</time><strong>Mid-Autumn Festival &amp; National Day Holiday</strong></div>
+        <div class="date-card"><time>21 – 31 Dec</time><strong>Winter Project Period</strong></div>
+        <div class="date-card"><time>1 – 12 Feb</time><strong>Chinese New Year</strong></div>
+        <div class="date-card"><time>5 – 9 Apr</time><strong>Tomb-Sweeping Festival &amp; Spring Project Period</strong></div>
+        <div class="date-card"><time>1 May</time><strong>Labour Day</strong><span class="date-note">Date TBC</span></div>
+        <div class="date-card"><time>9 Jun</time><strong>Dragon Boat Festival</strong><span class="date-note">G1–9 students only</span></div>
+        <div class="date-card"><time>14 Jun – 9 Jul</time><strong>Social Practice &amp; Educational Exchange Month</strong></div>
+        <div class="date-card"><time>10 Jul – 13 Aug</time><strong>Summer Vacation</strong></div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Ambitious enough to inspire. Structured enough to sustain.</h2>
+      <p>This is a working development plan based on information available in August 2026. “TBD” items should be reviewed before the term begins, then the overall workload should be revisited each month.</p>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>© 2026 Larry Academy · Student Development Portfolio</span>
+    <span>Prepared from Larry Wu’s academic and extracurricular plan</span>
+  </footer>
+</body>
+</html>
