@@ -43,6 +43,8 @@ export async function createCheckoutSession(params: {
   cancelUrl: string
   customerEmail?: string
   metadata?: Record<string, string>
+  phoneNumberCollection?: boolean
+  paymentMethodTypes?: Stripe.Checkout.SessionCreateParams.PaymentMethodType[]
 }) {
   try {
     const session = await getStripe().checkout.sessions.create({
@@ -52,6 +54,12 @@ export async function createCheckoutSession(params: {
       cancel_url: params.cancelUrl,
       customer_email: params.customerEmail,
       metadata: params.metadata,
+      phone_number_collection: params.phoneNumberCollection ? { enabled: true } : undefined,
+      payment_method_types: params.paymentMethodTypes,
+      payment_method_options: params.paymentMethodTypes?.includes('wechat_pay')
+        ? { wechat_pay: { client: 'web' } }
+        : undefined,
+      expires_at: Math.floor(Date.now() / 1000) + (30 * 60),
     })
     return { success: true as const, sessionId: session.id, url: session.url }
   } catch (error) {

@@ -4,15 +4,15 @@ import { getServerLocale } from '@/lib/server-i18n'
 const copy = {
   zh: {
     title: '支付已提交',
-    body: 'Stripe 确认成功后，课程权限会通过 webhook 自动开通。若页面刚返回时还没有权限，请稍等几秒后刷新。',
+    body: 'Stripe 确认成功后，订单会自动更新。课程将自动开通；实物商品会按订单中的颜色与收货信息安排制作和发货。',
     profile: '查看我的学习',
-    courses: '返回课程',
+    courses: '继续浏览',
   },
   en: {
     title: 'Payment Submitted',
-    body: 'After Stripe confirms the payment, course access will be granted automatically through the webhook. If access is not visible immediately, wait a few seconds and refresh.',
+    body: 'After Stripe confirms payment, your order updates automatically. Course access is granted, while physical products move into production and shipping.',
     profile: 'View My Learning',
-    courses: 'Back to Courses',
+    courses: 'Keep browsing',
   },
 }
 
@@ -38,7 +38,7 @@ export default async function PaymentSuccessPage({
           <Link href="/profile" className="rounded-2xl bg-blue-600 px-6 py-3 font-bold text-white">
             {text.profile}
           </Link>
-          <Link href="/courses" className="rounded-2xl bg-white/10 px-6 py-3 font-bold text-white">
+          <Link href="/shop" className="rounded-2xl bg-white/10 px-6 py-3 font-bold text-white">
             {text.courses}
           </Link>
         </div>

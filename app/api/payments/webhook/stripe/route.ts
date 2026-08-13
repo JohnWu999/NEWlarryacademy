@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { constructWebhookEvent } from '@/lib/payments/stripe'
 import { prisma } from '@/lib/prisma'
 import Stripe from 'stripe'
+import { releaseProductReservations } from '@/lib/shop'
 
 async function fulfillPaidCheckoutSession(session: Stripe.Checkout.Session) {
   const orderId = session.metadata?.orderId
@@ -103,15 +104,22 @@ export async function POST(request: NextRequest) {
         break
       }
 
+      case 'checkout.session.async_payment_failed': {
+        const session = event.data.object as Stripe.Checkout.Session
+        const orderId = session.metadata?.orderId
+        if (orderId) {
+          await releaseProductReservations(orderId, 'failed')
+          console.log(`Order ${orderId} async payment failed`)
+        }
+        break
+      }
+
       case 'checkout.session.expired': {
         const session = event.data.object as Stripe.Checkout.Session
         const orderId = session.metadata?.orderId
 
         if (orderId) {
-          await prisma.order.update({
-            where: { id: orderId },
-            data: { status: 'cancelled' },
-          })
+          await releaseProductReservations(orderId, 'cancelled')
           console.log(`Order ${orderId} expired`)
         }
         break

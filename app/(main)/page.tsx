@@ -105,6 +105,32 @@ const homeCopy: Record<Locale, {
 
 const showcaseCourses: CourseShowcase[] = [
   {
+    id: 'xiaowenhao-stand',
+    href: '/shop/xiaowenhao-ai-tutor-stand',
+    image: '/products/xiaowenhao-ai-tutor-stand.png',
+    tone: 'from-amber-200 via-fuchsia-300 to-cyan-300',
+    glow: 'rgba(168, 85, 247, 0.34)',
+    stats: { lessons: '¥49', questions: '+¥8' },
+    copy: {
+      zh: {
+        title: '小问号 AI Tutor 支架',
+        eyebrow: 'No. 001 · 每周限量 10 个',
+        line: '让每个问号，成为感叹号。为 AI 时代的学习桌面而生。',
+        detail: '问号代表提出好问题，Key 代表找到答案，DNA 代表知识帮助人类进化。',
+        preview: '¥49 + ¥8 运费',
+        cta: '查看并购买',
+      },
+      en: {
+        title: 'Little Question Mark AI Tutor Stand',
+        eyebrow: 'No. 001 · Only 10 each week',
+        line: 'Turn every question mark into an exclamation mark—made for the AI-era learning desk.',
+        detail: 'The question mark asks, the Key unlocks an answer, and the DNA helix represents knowledge helping humanity evolve.',
+        preview: '¥49 + ¥8 shipping',
+        cta: 'View and buy',
+      },
+    },
+  },
+  {
     id: 'ib-g4',
     href: '/courses/course-ib-pyp-g4',
     image: '/course-covers/ib-g4-cover.svg',
@@ -310,7 +336,7 @@ export default function HomePage() {
   const { locale, t } = useLanguage()
   const activeLocale: Locale = locale === 'zh' ? 'zh' : 'en'
   const copy = homeCopy[activeLocale]
-  const [activeIndex, setActiveIndex] = useState(2)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -473,16 +499,15 @@ export default function HomePage() {
                 const isActive = index === activeIndex
 
                 return (
-                  <button
+                  <Link
                     key={course.id}
-                    type="button"
-                    onClick={() => setActiveIndex(index)}
+                    href={course.href}
                     className={`group overflow-hidden rounded-3xl border text-left transition ${
                       isActive
                         ? 'border-cyan-300/70 bg-white/[0.08] shadow-lg shadow-cyan-500/10'
                         : 'border-white/10 bg-white/[0.035]'
                     }`}
-                    aria-pressed={isActive}
+                    aria-label={courseCopy.cta}
                   >
                     <div className="relative aspect-[16/11] overflow-hidden">
                       <Image
@@ -501,7 +526,7 @@ export default function HomePage() {
                         <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-300">{courseCopy.line}</p>
                       </div>
                     </div>
-                  </button>
+                  </Link>
                 )
               })}
             </div>
@@ -560,7 +585,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            {showcaseCourses.slice(0, 4).map((course) => {
+            {showcaseCourses.filter((course) => course.id !== 'xiaowenhao-stand').slice(0, 4).map((course) => {
               const courseCopy = course.copy[activeLocale]
 
               return (

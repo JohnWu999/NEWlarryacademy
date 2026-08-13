@@ -170,6 +170,7 @@ export default function Navbar() {
     { name: t('nav.home'), href: '/' },
     { name: t('nav.courses'), href: '/subjects' },
     { name: t('nav.tools'), href: '/tools' },
+    { name: t('nav.shop'), href: '/shop' },
     { name: t('nav.games'), href: '/games' },
     { name: t('nav.about'), href: '/about' },
   ]

@@ -4,14 +4,14 @@ import { getServerLocale } from '@/lib/server-i18n'
 const copy = {
   zh: {
     title: '支付未完成',
-    body: '这次没有产生课程授权。你可以回到课程页重新开通，或先浏览公开免费课程。',
-    courses: '返回课程',
+    body: '这次付款没有完成。若是实物商品，预留库存会在付款会话到期后自动释放。你可以返回重新购买。',
+    courses: '返回 3D 模型',
     profile: '我的账户',
   },
   en: {
     title: 'Payment Not Completed',
-    body: 'No course access was granted for this attempt. You can return to the course page to try again or browse free preview lessons first.',
-    courses: 'Back to Courses',
+    body: 'Payment was not completed. Reserved physical inventory is released automatically when the checkout session expires. You can return and try again.',
+    courses: 'Back to 3D Models',
     profile: 'My Account',
   },
 }
@@ -31,7 +31,7 @@ export default async function PaymentCancelPage() {
           {text.body}
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link href="/courses" className="rounded-2xl bg-blue-600 px-6 py-3 font-bold text-white">
+          <Link href="/shop" className="rounded-2xl bg-blue-600 px-6 py-3 font-bold text-white">
             {text.courses}
           </Link>
           <Link href="/profile" className="rounded-2xl bg-white/10 px-6 py-3 font-bold text-white">
