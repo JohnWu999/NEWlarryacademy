@@ -12,6 +12,18 @@ export const productColorLabels: Record<ProductColor, { zh: string; en: string }
   yellow: { zh: '黄色', en: 'Yellow' },
 }
 
+export function xiaowenhaoWeeklyCapacity(date = new Date()) {
+  const extraStock = Math.max(0, Number.parseInt(process.env.XIAOWENHAO_EXTRA_STOCK || '0', 10) || 0)
+  const extraStockUntil = process.env.XIAOWENHAO_EXTRA_STOCK_UNTIL
+    ? new Date(process.env.XIAOWENHAO_EXTRA_STOCK_UNTIL)
+    : null
+  const extraIsActive = extraStockUntil
+    && !Number.isNaN(extraStockUntil.getTime())
+    && date < extraStockUntil
+
+  return XIAOWENHAO_WEEKLY_LIMIT + (extraIsActive ? extraStock : 0)
+}
+
 function currentWeekStart(date = new Date()) {
   const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
   const day = start.getUTCDay() || 7
@@ -24,10 +36,15 @@ export async function ensureCurrentWeeklyStock(productId: string) {
     return prisma.product.findUnique({ where: { id: productId } })
   }
 
+  const now = new Date()
+  const pendingCutoff = new Date(now.getTime() - (31 * 60 * 1000))
   const activeOrders = await prisma.order.findMany({
     where: {
-      createdAt: { gte: currentWeekStart() },
-      status: { in: ['pending', 'paid'] },
+      createdAt: { gte: currentWeekStart(now) },
+      OR: [
+        { status: 'paid' },
+        { status: 'pending', createdAt: { gte: pendingCutoff } },
+      ],
     },
     select: { items: true },
   })
@@ -41,7 +58,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
     ), 0)
   }, 0)
 
-  const stock = Math.max(0, XIAOWENHAO_WEEKLY_LIMIT - reserved)
+  const stock = Math.max(0, xiaowenhaoWeeklyCapacity(now) - reserved)
   return prisma.product.upsert({
     where: { id: XIAOWENHAO_PRODUCT_ID },
     update: {

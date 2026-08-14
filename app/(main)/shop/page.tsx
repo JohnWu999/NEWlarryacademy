@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, XIAOWENHAO_WEEKLY_LIMIT } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
 import { getServerLocale } from '@/lib/server-i18n'
 
 export const dynamic = 'force-dynamic'
@@ -12,6 +12,7 @@ export default async function ShopPage() {
   ])
 
   const zh = locale === 'zh'
+  const weeklyCapacity = xiaowenhaoWeeklyCapacity()
 
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-28 text-white">
@@ -73,7 +74,7 @@ export default async function ShopPage() {
                 <div className="sm:text-right">
                   <p className="text-sm text-white/45">{zh ? '本周剩余' : 'Remaining this week'}</p>
                   <p className={`mt-1 text-3xl font-black ${product.stock > 3 ? 'text-emerald-300' : 'text-amber-300'}`}>
-                    {product.stock} <span className="text-sm text-white/40">/ {XIAOWENHAO_WEEKLY_LIMIT}</span>
+                    {product.stock} <span className="text-sm text-white/40">/ {weeklyCapacity}</span>
                   </p>
                 </div>
               </div>
