@@ -1,13 +1,6 @@
 export function isAdminUser(user?: { email?: string | null; role?: string | null } | null) {
   if (!user?.email) return false
-  if (user.role === 'admin') return true
-
-  const adminEmails = (process.env.ADMIN_EMAILS || '')
-    .split(',')
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean)
-
-  return adminEmails.includes(user.email.toLowerCase())
+  return user.email.toLowerCase() === 'larry999@gmail.com'
 }
 
 export function shanghaiDay(date = new Date()) {

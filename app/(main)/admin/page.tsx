@@ -1,8 +1,10 @@
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { isAdminUser, shanghaiDay } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
+import ProductOrdersTable from '@/components/admin/ProductOrdersTable'
 
 function formatTime(date: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -41,6 +43,37 @@ function safeJson(value?: string | null) {
   }
 }
 
+function shippingFromMetadata(metadata?: string | null) {
+  const parsed = safeJson(metadata)
+  const shipping = parsed?.shipping
+  return shipping && typeof shipping === 'object'
+    ? shipping as {
+      recipientName?: string
+      phone?: string
+      country?: string
+      region?: string
+      city?: string
+      addressLine1?: string
+      addressLine2?: string
+      postalCode?: string
+    }
+    : null
+}
+
+function productItemsLabel(itemsJson: string) {
+  const items = safeJson(itemsJson)
+  if (!Array.isArray(items)) return 'AI Tutor 摄像头架子'
+
+  return items
+    .filter((item) => item && typeof item === 'object' && (item as { type?: string }).type === 'product')
+    .map((item) => {
+      const product = item as { name?: string; quantity?: number; color?: string }
+      const color = product.color ? ` · ${product.color}` : ''
+      return `${product.name || 'AI Tutor 摄像头架子'}${color} x${product.quantity || 1}`
+    })
+    .join(' · ') || 'AI Tutor 摄像头架子'
+}
+
 export default async function AdminPage() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) {
@@ -59,7 +92,7 @@ export default async function AdminPage() {
           <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-300">Admin only</p>
           <h1 className="mt-3 text-3xl font-black">没有后台权限</h1>
           <p className="mt-4 text-sm leading-6 text-white/60">
-            请把你的账号 role 设为 admin，或在服务器环境变量 ADMIN_EMAILS 中加入你的邮箱。
+            Larry Academy 后台现在只允许 larry999@gmail.com 这个账号访问。
           </p>
         </div>
       </div>
@@ -70,7 +103,7 @@ export default async function AdminPage() {
   since.setDate(since.getDate() - 13)
   const today = shanghaiDay()
 
-  const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords] = await Promise.all([
+  const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords, productOrders] = await Promise.all([
     prisma.visitor.count(),
     prisma.visitorEvent.findMany({
       where: { createdAt: { gte: since } },
@@ -120,6 +153,14 @@ export default async function AdminPage() {
         },
       },
     }),
+    prisma.order.findMany({
+      where: { items: { contains: '"type":"product"' } },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+      include: {
+        user: { select: { email: true, name: true } },
+      },
+    }),
   ])
 
   const visitorDaily = Array.from(
@@ -166,6 +207,25 @@ export default async function AdminPage() {
   const paidRevenueText = Array.from(paidRevenueByCurrency.entries())
     .map(([currency, amount]) => formatMoney(amount, currency))
     .join(' · ') || '—'
+  const shippedOrders = productOrders.filter((order) => order.shippingStatus === 'shipped').length
+  const pendingShipments = productOrders.filter((order) => order.status === 'paid' && order.shippingStatus !== 'shipped').length
+  const productOrderRows = productOrders.map((order) => {
+    const shipping = shippingFromMetadata(order.metadata)
+    return {
+      id: order.id,
+      createdAtLabel: formatTime(order.createdAt),
+      amountLabel: formatMoney(order.amount, order.currency),
+      status: order.status,
+      paymentMethod: order.paymentMethod,
+      shippingStatus: order.shippingStatus,
+      trackingNumber: order.trackingNumber,
+      shippedAtLabel: order.shippedAt ? formatTime(order.shippedAt) : null,
+      customerName: order.user.name || shipping?.recipientName || 'Customer',
+      customerEmail: order.user.email,
+      itemsLabel: productItemsLabel(order.items),
+      shipping,
+    }
+  })
 
   return (
     <div className="min-h-dvh bg-[#050505] px-4 py-28 text-white sm:px-6">
@@ -178,7 +238,7 @@ export default async function AdminPage() {
           <div className="text-sm font-bold text-white/48">Asia/Shanghai · 最近 14 天</div>
         </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-6 grid gap-3 md:grid-cols-3 xl:grid-cols-7">
           {[
             ['今日不同访客', todayVisitors],
             ['总访客', totalVisitors],
@@ -186,6 +246,7 @@ export default async function AdminPage() {
             ['学习事件', learningEvents.length],
             ['付费用户', paidUserCount],
             ['有效付费课程', activePaidRecords],
+            ['待发货订单', pendingShipments],
           ].map(([label, value]) => (
             <div key={label} className="border border-white/10 bg-white/[0.045] px-5 py-4">
               <div className="text-2xl font-black tabular-nums">{value}</div>
@@ -193,6 +254,24 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        <section className="mt-8">
+          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-xl font-black">订单</h2>
+              <p className="mt-1 text-xs font-bold text-white/40">
+                AI Tutor 摄像头架子订单 · 已发货 {shippedOrders} · 待发货 {pendingShipments}
+              </p>
+            </div>
+            <Link
+              href="/api/admin/orders/export"
+              className="inline-flex h-10 items-center justify-center bg-emerald-300 px-4 text-xs font-black text-black transition hover:bg-emerald-200"
+            >
+              导出订单 CSV
+            </Link>
+          </div>
+          <ProductOrdersTable orders={productOrderRows} />
+        </section>
 
         <section className="mt-8">
           <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
