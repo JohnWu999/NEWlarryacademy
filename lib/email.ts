@@ -11,6 +11,7 @@ type ShipmentEmail = {
   orderId: string
   trackingNumber: string
   itemsLabel: string
+  testMode?: boolean
 }
 
 function smtpReady() {
@@ -89,13 +90,15 @@ export async function sendShipmentEmail({
   orderId,
   trackingNumber,
   itemsLabel,
+  testMode = false,
 }: ShipmentEmail) {
   if (!smtpReady()) {
     return { delivered: false, reason: 'SMTP is not configured' }
   }
 
-  const subject = '你的小问号已经启程｜Larry Academy 发货通知'
+  const subject = `${testMode ? '【测试邮件·非真实发货】' : ''}你的小问号已经启程｜Larry Academy 发货通知`
   const text = [
+    ...(testMode ? ['【这是一封测试邮件，不代表订单已真实发货。】', ''] : []),
     `亲爱的 ${recipientName}：`,
     '',
     '今天，你的小问号离开了我们的工作台。',
@@ -126,6 +129,7 @@ export async function sendShipmentEmail({
           <h1 style="margin:0;font-size:30px;line-height:1.35;">你的小问号，已经启程。</h1>
         </div>
         <div style="padding:34px 38px;">
+          ${testMode ? '<div style="margin:0 0 22px;padding:12px 16px;border:1px solid #f5b942;border-radius:12px;background:#fff8df;color:#7a4b00;font-weight:800;">测试邮件 · 不代表订单已真实发货</div>' : ''}
           <p style="margin:0 0 18px;font-size:17px;">亲爱的 <strong>${safeName}</strong>：</p>
           <p style="margin:0 0 16px;">今天，你的小问号离开了我们的工作台。它带着 3D 打印留下的独特纹理，也带着我们对每一个好问题的期待，正在向你出发。</p>
           <div style="margin:25px 0;padding:20px 22px;border:1px solid #e1e6f2;border-radius:18px;background:#f8f9fd;">
