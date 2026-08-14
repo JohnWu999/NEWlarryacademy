@@ -45,11 +45,14 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
   const router = useRouter()
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  async function saveShipment(orderId: string, shipped: boolean, formData: FormData) {
+  async function saveShipment(orderId: string, formData: FormData) {
     setPendingId(orderId)
     setError('')
+    setSuccess('')
+    const shipped = formData.get('shipped') === 'on'
     try {
       const response = await fetch(`/api/admin/orders/${orderId}`, {
         method: 'PATCH',
@@ -64,6 +67,9 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
         setError(result?.error || '保存订单发货信息失败')
         return
       }
+      setSuccess(result?.notificationSent
+        ? '发货信息已保存，通知邮件已发送给收货人。'
+        : '发货信息已保存。')
       startTransition(() => router.refresh())
     } catch {
       setError('网络连接失败，订单发货信息没有保存')
@@ -76,6 +82,9 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
     <div>
       {error ? (
         <div className="mb-3 border border-rose-300/20 bg-rose-300/10 px-4 py-3 text-sm font-bold text-rose-100">{error}</div>
+      ) : null}
+      {success ? (
+        <div className="mb-3 border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">{success}</div>
       ) : null}
       <div className="overflow-x-auto border border-white/10">
         <table className="w-full min-w-[1280px] text-left text-sm">
@@ -122,13 +131,13 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                   <td className="px-4 py-4 align-top">
                     <form
                       className="flex min-w-[18rem] items-center gap-3"
-                      action={(formData) => saveShipment(order.id, !shipped, formData)}
+                      action={(formData) => saveShipment(order.id, formData)}
                     >
                       <label className="flex shrink-0 items-center gap-2 text-xs font-black text-white/70">
                         <input
                           type="checkbox"
-                          checked={shipped}
-                          onChange={(event) => event.currentTarget.form?.requestSubmit()}
+                          name="shipped"
+                          defaultChecked={shipped}
                           className="h-4 w-4 accent-emerald-400"
                           aria-label="标记为已发货"
                         />
@@ -137,7 +146,8 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                       <input
                         name="trackingNumber"
                         defaultValue={order.trackingNumber || ''}
-                        placeholder="输入 shipping 单号"
+                        placeholder="输入物流单号"
+                        required
                         className="h-10 min-w-0 flex-1 border border-white/10 bg-black/30 px-3 text-xs font-bold text-white outline-none placeholder:text-white/25 focus:border-cyan-300/45"
                       />
                       <button
