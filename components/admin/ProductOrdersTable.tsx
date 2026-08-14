@@ -26,8 +26,15 @@ type ProductOrder = {
   customerName: string
   customerEmail: string
   itemsLabel: string
+  productColor: 'blue' | 'purple' | 'yellow' | null
   shipping: ShippingInfo | null
 }
+
+const productColorStyles = {
+  blue: { text: 'text-blue-300', badge: 'border-blue-300/30 bg-blue-300/10 text-blue-200', label: '蓝色' },
+  purple: { text: 'text-violet-300', badge: 'border-violet-300/30 bg-violet-300/10 text-violet-200', label: '紫色' },
+  yellow: { text: 'text-amber-300', badge: 'border-amber-300/30 bg-amber-300/10 text-amber-200', label: '黄色' },
+} as const
 
 function addressLine(shipping: ShippingInfo | null) {
   if (!shipping) return '未填写'
@@ -102,6 +109,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
             {orders.length ? orders.map((order) => {
               const shipped = order.shippingStatus === 'shipped'
               const saving = pendingId === order.id || isPending
+              const colorStyle = order.productColor ? productColorStyles[order.productColor] : null
               return (
                 <tr key={order.id} className={shipped ? 'bg-emerald-300/[0.025]' : undefined}>
                   <td className="px-4 py-4 align-top text-xs font-bold text-white/45">
@@ -113,7 +121,12 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                     <div className="text-xs text-white/42">{order.customerEmail}</div>
                   </td>
                   <td className="px-4 py-4 align-top">
-                    <div className="font-bold">{order.itemsLabel}</div>
+                    <div className={`font-black ${colorStyle?.text || 'text-white'}`}>{order.itemsLabel}</div>
+                    {colorStyle ? (
+                      <span className={`mt-2 inline-flex border px-2 py-1 text-[11px] font-black ${colorStyle.badge}`}>
+                        {colorStyle.label}
+                      </span>
+                    ) : null}
                     <div className="mt-1 text-xs font-black text-emerald-300">{order.amountLabel}</div>
                   </td>
                   <td className="px-4 py-4 align-top">
@@ -162,7 +175,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                 </tr>
               )
             }) : (
-              <tr><td className="px-4 py-6 text-white/45" colSpan={6}>还没有 AI Tutor 支架订单。</td></tr>
+              <tr><td className="px-4 py-6 text-white/45" colSpan={6}>暂时没有待处理的 AI Tutor 支架订单。</td></tr>
             )}
           </tbody>
         </table>

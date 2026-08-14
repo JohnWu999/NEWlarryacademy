@@ -60,18 +60,27 @@ function shippingFromMetadata(metadata?: string | null) {
     : null
 }
 
-function productItemsLabel(itemsJson: string) {
+function productItemsDisplay(itemsJson: string) {
   const items = safeJson(itemsJson)
-  if (!Array.isArray(items)) return 'AI Tutor 摄像头架子'
+  if (!Array.isArray(items)) return { label: 'AI Tutor 摄像头架子', color: null }
 
-  return items
+  const productItems = items
     .filter((item) => item && typeof item === 'object' && (item as { type?: string }).type === 'product')
+  const firstColor = (productItems[0] as { color?: string } | undefined)?.color?.toLowerCase()
+  const color: 'blue' | 'purple' | 'yellow' | null = firstColor === 'blue' || firstColor === 'purple' || firstColor === 'yellow'
+    ? firstColor
+    : null
+  const colorLabels: Record<string, string> = { blue: '蓝色', purple: '紫色', yellow: '黄色' }
+
+  const label = productItems
     .map((item) => {
       const product = item as { name?: string; quantity?: number; color?: string }
-      const color = product.color ? ` · ${product.color}` : ''
-      return `${product.name || 'AI Tutor 摄像头架子'}${color} x${product.quantity || 1}`
+      const itemColor = product.color ? ` · ${colorLabels[product.color] || product.color}` : ''
+      return `${product.name || 'AI Tutor 摄像头架子'}${itemColor} x${product.quantity || 1}`
     })
     .join(' · ') || 'AI Tutor 摄像头架子'
+
+  return { label, color }
 }
 
 export default async function AdminPage() {
@@ -107,7 +116,7 @@ export default async function AdminPage() {
     prisma.visitor.count(),
     prisma.visitorEvent.findMany({
       where: { createdAt: { gte: since } },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
       take: 2500,
       select: {
         day: true,
@@ -212,8 +221,9 @@ export default async function AdminPage() {
     .join(' · ') || '—'
   const shippedOrders = productOrders.filter((order) => order.shippingStatus === 'shipped').length
   const pendingShipments = productOrders.filter((order) => order.shippingStatus !== 'shipped').length
-  const productOrderRows = productOrders.map((order) => {
+  const productOrderRows = productOrders.filter((order) => order.shippingStatus !== 'shipped').map((order) => {
     const shipping = shippingFromMetadata(order.metadata)
+    const itemDisplay = productItemsDisplay(order.items)
     return {
       id: order.id,
       createdAtLabel: formatTime(order.createdAt),
@@ -225,7 +235,8 @@ export default async function AdminPage() {
       shippedAtLabel: order.shippedAt ? formatTime(order.shippedAt) : null,
       customerName: order.user.name || shipping?.recipientName || 'Customer',
       customerEmail: order.user.email,
-      itemsLabel: productItemsLabel(order.items),
+      itemsLabel: itemDisplay.label,
+      productColor: itemDisplay.color,
       shipping,
     }
   })
@@ -263,7 +274,7 @@ export default async function AdminPage() {
             <div>
               <h2 className="text-xl font-black">订单</h2>
               <p className="mt-1 text-xs font-bold text-white/40">
-                AI Tutor 摄像头架子订单 · 已发货 {shippedOrders} · 待发货 {pendingShipments}
+                待处理订单按下单时间从早到晚排列 · 已发货 {shippedOrders} · 待发货 {pendingShipments}
               </p>
             </div>
             <Link

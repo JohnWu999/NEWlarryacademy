@@ -65,7 +65,7 @@ export async function GET() {
       status: 'paid',
       items: { contains: '"type":"product"' },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: 'asc' },
     take: 1000,
     include: {
       user: { select: { email: true, name: true } },
