@@ -1,6 +1,6 @@
 export function isAdminUser(user?: { email?: string | null; role?: string | null } | null) {
   if (!user?.email) return false
-  return user.email.toLowerCase() === 'larry999@gmail.com'
+  return user.email.toLowerCase() === 'wularry999@gmail.com'
 }
 
 export function shanghaiDay(date = new Date()) {

@@ -92,7 +92,7 @@ export default async function AdminPage() {
           <p className="text-xs font-black uppercase tracking-[0.22em] text-rose-300">Admin only</p>
           <h1 className="mt-3 text-3xl font-black">没有后台权限</h1>
           <p className="mt-4 text-sm leading-6 text-white/60">
-            Larry Academy 后台现在只允许 larry999@gmail.com 这个账号访问。
+            Larry Academy 后台现在只允许 wularry999@gmail.com 这个账号访问。
           </p>
         </div>
       </div>
