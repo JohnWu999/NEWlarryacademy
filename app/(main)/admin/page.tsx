@@ -116,7 +116,7 @@ export default async function AdminPage() {
     prisma.visitor.count(),
     prisma.visitorEvent.findMany({
       where: { createdAt: { gte: since } },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: 'desc' },
       take: 2500,
       select: {
         day: true,
@@ -167,7 +167,7 @@ export default async function AdminPage() {
         status: 'paid',
         items: { contains: '"type":"product"' },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
       take: 200,
       include: {
         user: { select: { email: true, name: true } },
@@ -226,6 +226,7 @@ export default async function AdminPage() {
     const itemDisplay = productItemsDisplay(order.items)
     return {
       id: order.id,
+      createdAtIso: order.createdAt.toISOString(),
       createdAtLabel: formatTime(order.createdAt),
       amountLabel: formatMoney(order.amount, order.currency),
       status: order.status,

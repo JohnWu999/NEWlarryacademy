@@ -16,6 +16,7 @@ type ShippingInfo = {
 
 type ProductOrder = {
   id: string
+  createdAtIso: string
   createdAtLabel: string
   amountLabel: string
   status: string
@@ -54,6 +55,9 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isPending, startTransition] = useTransition()
+  const orderedOrders = [...orders].sort((a, b) => (
+    new Date(a.createdAtIso).getTime() - new Date(b.createdAtIso).getTime()
+  ))
 
   async function saveShipment(orderId: string, formData: FormData) {
     setPendingId(orderId)
@@ -106,7 +110,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
             </tr>
           </thead>
           <tbody className="divide-y divide-white/8">
-            {orders.length ? orders.map((order) => {
+            {orderedOrders.length ? orderedOrders.map((order) => {
               const shipped = order.shippingStatus === 'shipped'
               const saving = pendingId === order.id || isPending
               const colorStyle = order.productColor ? productColorStyles[order.productColor] : null
