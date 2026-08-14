@@ -154,7 +154,10 @@ export default async function AdminPage() {
       },
     }),
     prisma.order.findMany({
-      where: { items: { contains: '"type":"product"' } },
+      where: {
+        status: 'paid',
+        items: { contains: '"type":"product"' },
+      },
       orderBy: { createdAt: 'desc' },
       take: 200,
       include: {
@@ -208,7 +211,7 @@ export default async function AdminPage() {
     .map(([currency, amount]) => formatMoney(amount, currency))
     .join(' · ') || '—'
   const shippedOrders = productOrders.filter((order) => order.shippingStatus === 'shipped').length
-  const pendingShipments = productOrders.filter((order) => order.status === 'paid' && order.shippingStatus !== 'shipped').length
+  const pendingShipments = productOrders.filter((order) => order.shippingStatus !== 'shipped').length
   const productOrderRows = productOrders.map((order) => {
     const shipping = shippingFromMetadata(order.metadata)
     return {

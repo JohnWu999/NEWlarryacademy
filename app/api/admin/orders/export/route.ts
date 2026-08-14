@@ -61,7 +61,10 @@ export async function GET() {
   }
 
   const orders = await prisma.order.findMany({
-    where: { items: { contains: '"type":"product"' } },
+    where: {
+      status: 'paid',
+      items: { contains: '"type":"product"' },
+    },
     orderBy: { createdAt: 'desc' },
     take: 1000,
     include: {
