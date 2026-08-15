@@ -4,6 +4,7 @@ export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
 export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
 export const XIAOWENHAO_SHIPPING_FEE_CNY = 8
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
+export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 2
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
 export type ProductColor = (typeof PRODUCT_COLORS)[number]
 
@@ -44,6 +45,12 @@ export function xiaowenhaoWeeklyCapacity(date = new Date()) {
   return XIAOWENHAO_WEEKLY_LIMIT + (extraIsActive ? extraStock : 0)
 }
 
+export function xiaowenhaoProductWeeklyCapacity(productId: string, date = new Date()) {
+  return productId === XIAOWENHAO_RAINBOW_PRODUCT_ID
+    ? XIAOWENHAO_RAINBOW_WEEKLY_LIMIT
+    : xiaowenhaoWeeklyCapacity(date)
+}
+
 function currentWeekStart(date = new Date()) {
   const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
   const day = start.getUTCDay() || 7
@@ -80,7 +87,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
     ), 0)
   }, 0)
 
-  const stock = Math.max(0, xiaowenhaoWeeklyCapacity(now) - reserved)
+  const stock = Math.max(0, xiaowenhaoProductWeeklyCapacity(productId, now) - reserved)
   return prisma.product.upsert({
     where: { id: productId },
     update: {

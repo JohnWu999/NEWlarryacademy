@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, XIAOWENHAO_RAINBOW_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, XIAOWENHAO_RAINBOW_PRODUCT_ID, xiaowenhaoProductWeeklyCapacity, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
 import { getServerLocale } from '@/lib/server-i18n'
 
 export const dynamic = 'force-dynamic'
@@ -14,6 +14,7 @@ export default async function ShopPage() {
 
   const zh = locale === 'zh'
   const weeklyCapacity = xiaowenhaoWeeklyCapacity()
+  const rainbowWeeklyCapacity = xiaowenhaoProductWeeklyCapacity(XIAOWENHAO_RAINBOW_PRODUCT_ID)
 
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-28 text-white">
@@ -33,7 +34,7 @@ export default async function ShopPage() {
             </div>
             <div className="rounded-3xl border border-amber-300/20 bg-amber-300/10 px-6 py-4 text-amber-100">
               <p className="text-xs font-bold uppercase tracking-[0.2em]">Weekly drop</p>
-              <p className="mt-1 text-2xl font-black">{zh ? '每周仅做 10 个' : 'Only 10 made weekly'}</p>
+              <p className="mt-1 text-2xl font-black">{zh ? '每周限量制作' : 'Limited weekly batches'}</p>
             </div>
           </div>
         </div>
@@ -132,7 +133,7 @@ export default async function ShopPage() {
                 <div className="sm:text-right">
                   <p className="text-sm text-white/45">{zh ? '本周剩余' : 'Remaining this week'}</p>
                   <p className={`mt-1 text-3xl font-black ${rainbowProduct.stock > 3 ? 'text-emerald-300' : 'text-amber-300'}`}>
-                    {rainbowProduct.stock} <span className="text-sm text-white/40">/ {weeklyCapacity}</span>
+                    {rainbowProduct.stock} <span className="text-sm text-white/40">/ {rainbowWeeklyCapacity}</span>
                   </p>
                 </div>
               </div>

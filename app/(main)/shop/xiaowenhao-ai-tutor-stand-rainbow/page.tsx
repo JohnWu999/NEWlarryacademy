@@ -2,14 +2,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductPurchaseForm from '../xiaowenhao-ai-tutor-stand/ProductPurchaseForm'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_RAINBOW_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, XIAOWENHAO_RAINBOW_PRODUCT_ID, xiaowenhaoProductWeeklyCapacity } from '@/lib/shop'
 
 export const dynamic = 'force-dynamic'
 
 export default async function XiaowenhaoRainbowProductPage() {
   const product = await ensureCurrentWeeklyStock(XIAOWENHAO_RAINBOW_PRODUCT_ID)
   if (!product || !product.published) notFound()
-  const weeklyCapacity = xiaowenhaoWeeklyCapacity()
+  const weeklyCapacity = xiaowenhaoProductWeeklyCapacity(XIAOWENHAO_RAINBOW_PRODUCT_ID)
 
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-24 text-white">
