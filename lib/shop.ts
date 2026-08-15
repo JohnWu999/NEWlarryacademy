@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 
 export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
+export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
 export const XIAOWENHAO_SHIPPING_FEE_CNY = 8
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
@@ -10,6 +11,25 @@ export const productColorLabels: Record<ProductColor, { zh: string; en: string }
   blue: { zh: '蓝色', en: 'Blue' },
   purple: { zh: '紫色', en: 'Purple' },
   yellow: { zh: '黄色', en: 'Yellow' },
+}
+
+const standProducts = {
+  [XIAOWENHAO_PRODUCT_ID]: {
+    name: '小问号 AI Tutor 支架',
+    description: '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
+    price: () => Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
+    imageUrl: '/products/xiaowenhao-ai-tutor-stand.png',
+  },
+  [XIAOWENHAO_RAINBOW_PRODUCT_ID]: {
+    name: '小问号 AI Tutor 支架 · 炫彩款',
+    description: '同款螺旋一体成型摄像头支架，采用青蓝、橙黄与粉紫自然过渡的炫彩材质，每一个都有独特的渐变纹理。',
+    price: () => 99,
+    imageUrl: '/products/xiaowenhao-ai-tutor-stand-rainbow.png',
+  },
+} as const
+
+export function isXiaowenhaoStandProduct(productId: string) {
+  return productId in standProducts
 }
 
 export function xiaowenhaoWeeklyCapacity(date = new Date()) {
@@ -32,9 +52,11 @@ function currentWeekStart(date = new Date()) {
 }
 
 export async function ensureCurrentWeeklyStock(productId: string) {
-  if (productId !== XIAOWENHAO_PRODUCT_ID) {
+  if (!isXiaowenhaoStandProduct(productId)) {
     return prisma.product.findUnique({ where: { id: productId } })
   }
+
+  const productConfig = standProducts[productId as keyof typeof standProducts]
 
   const now = new Date()
   const pendingCutoff = new Date(now.getTime() - (31 * 60 * 1000))
@@ -52,7 +74,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
   const reserved = activeOrders.reduce((total, order) => {
     const items = JSON.parse(order.items) as ReservedOrderItem[]
     return total + items.reduce((orderTotal, item) => (
-      item.type === 'product' && item.id === XIAOWENHAO_PRODUCT_ID
+      item.type === 'product' && item.id === productId
         ? orderTotal + Math.max(1, item.quantity || 1)
         : orderTotal
     ), 0)
@@ -60,24 +82,24 @@ export async function ensureCurrentWeeklyStock(productId: string) {
 
   const stock = Math.max(0, xiaowenhaoWeeklyCapacity(now) - reserved)
   return prisma.product.upsert({
-    where: { id: XIAOWENHAO_PRODUCT_ID },
+    where: { id: productId },
     update: {
-      name: '小问号 AI Tutor 支架',
-      description: '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
-      price: Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
+      name: productConfig.name,
+      description: productConfig.description,
+      price: productConfig.price(),
       category: '3d-models',
-      imageUrl: '/products/xiaowenhao-ai-tutor-stand.png',
+      imageUrl: productConfig.imageUrl,
       stock,
       featured: true,
       published: true,
     },
     create: {
-      id: XIAOWENHAO_PRODUCT_ID,
-      name: '小问号 AI Tutor 支架',
-      description: '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
-      price: Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
+      id: productId,
+      name: productConfig.name,
+      description: productConfig.description,
+      price: productConfig.price(),
       category: '3d-models',
-      imageUrl: '/products/xiaowenhao-ai-tutor-stand.png',
+      imageUrl: productConfig.imageUrl,
       stock,
       featured: true,
       published: true,

@@ -560,13 +560,23 @@ async function main() {
       '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
       Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
     ],
+    [
+      'product-xiaowenhao-ai-tutor-stand-rainbow',
+      '小问号 AI Tutor 支架 · 炫彩款',
+      '同款螺旋一体成型摄像头支架，采用青蓝、橙黄与粉紫自然过渡的炫彩材质，每一个都有独特的渐变纹理。',
+      99,
+    ],
     ['product-geometry-kit', '几何基础套装', '包含立方体、圆柱体、球体等基础几何模型，适合初学者', 198],
     ['product-algebra-kit', '代数可视化套装', '用 3D 模型演示方程式和函数关系，帮助理解抽象概念', 268],
     ['product-advanced-kit', '高级数学套装', '适合高年级学生的高级数学概念模型', 358],
   ] as const
 
   for (const [id, name, description, price] of products) {
-    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand'
+    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand' || id === 'product-xiaowenhao-ai-tutor-stand-rainbow'
+    const isRainbowStand = id === 'product-xiaowenhao-ai-tutor-stand-rainbow'
+    const standImageUrl = isRainbowStand
+      ? '/products/xiaowenhao-ai-tutor-stand-rainbow.png'
+      : '/products/xiaowenhao-ai-tutor-stand.png'
     await prisma.product.upsert({
       where: { id },
       update: {
@@ -574,7 +584,7 @@ async function main() {
         description,
         price,
         category: isXiaowenhaoStand ? '3d-models' : '3d-tools',
-        imageUrl: isXiaowenhaoStand ? '/products/xiaowenhao-ai-tutor-stand.png' : undefined,
+        imageUrl: isXiaowenhaoStand ? standImageUrl : undefined,
         ...(!isXiaowenhaoStand ? { stock: 30 } : {}),
         featured: true,
         published: true,
@@ -585,7 +595,7 @@ async function main() {
         description,
         price,
         category: isXiaowenhaoStand ? '3d-models' : '3d-tools',
-        imageUrl: isXiaowenhaoStand ? '/products/xiaowenhao-ai-tutor-stand.png' : null,
+        imageUrl: isXiaowenhaoStand ? standImageUrl : null,
         stock: isXiaowenhaoStand ? 10 : 30,
         featured: true,
         published: true,

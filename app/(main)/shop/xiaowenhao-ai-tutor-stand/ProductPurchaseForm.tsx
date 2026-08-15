@@ -18,10 +18,14 @@ export default function ProductPurchaseForm({
   productId,
   price,
   initialStock,
+  callbackUrl = '/shop/xiaowenhao-ai-tutor-stand',
+  colorSelection = true,
 }: {
   productId: string
   price: number
   initialStock: number
+  callbackUrl?: string
+  colorSelection?: boolean
 }) {
   const { status } = useSession()
   const router = useRouter()
@@ -32,7 +36,7 @@ export default function ProductPurchaseForm({
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/shop/xiaowenhao-ai-tutor-stand')
+      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
       return
     }
 
@@ -45,7 +49,7 @@ export default function ProductPurchaseForm({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{ type: 'product', id: productId, quantity: 1, color }],
+          items: [{ type: 'product', id: productId, quantity: 1, ...(colorSelection ? { color } : {}) }],
           paymentMethod: 'stripe',
           shipping: {
             recipientName: data.get('recipientName'),
@@ -62,7 +66,7 @@ export default function ProductPurchaseForm({
 
       const result = await response.json().catch(() => null)
       if (response.status === 401) {
-        router.push('/login?callbackUrl=/shop/xiaowenhao-ai-tutor-stand')
+        router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
         return
       }
       if (!response.ok || !result?.paymentUrl) {
@@ -79,7 +83,7 @@ export default function ProductPurchaseForm({
 
   return (
     <form className="mt-8 space-y-8" onSubmit={handleSubmit}>
-      <fieldset>
+      {colorSelection && <fieldset>
         <legend className="text-sm font-black">1. 选择颜色</legend>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {colors.map((option) => (
@@ -99,10 +103,10 @@ export default function ProductPurchaseForm({
             </label>
           ))}
         </div>
-      </fieldset>
+      </fieldset>}
 
       <fieldset>
-        <legend className="text-sm font-black">2. 收货信息</legend>
+        <legend className="text-sm font-black">{colorSelection ? '2' : '1'}. 收货信息</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="text-xs font-bold text-white/55">
             收货人姓名 *
@@ -143,7 +147,7 @@ export default function ProductPurchaseForm({
         <div className="flex gap-4">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-lg" aria-hidden="true">⌁</span>
           <div>
-            <h2 className="text-sm font-black text-emerald-100">3. 安全付款</h2>
+            <h2 className="text-sm font-black text-emerald-100">{colorSelection ? '3' : '2'}. 安全付款</h2>
             <p className="mt-2 text-xs leading-6 text-white/50">
               下一步将进入 Stripe 托管支付页，可选择微信支付或银行卡。Larry Academy 不会接触或保存您的完整卡号与安全码。
             </p>
@@ -176,7 +180,7 @@ export default function ProductPurchaseForm({
         <span>商品 ¥{price.toFixed(0)} + 运费 ¥8</span>
         <span className="text-white">合计 ¥{(price + 8).toFixed(0)}</span>
       </div>
-      <p className="text-center text-[11px] leading-5 text-white/30">运费为固定 ¥8。提交即表示您确认颜色与收货信息无误。付款会话保留库存 30 分钟。</p>
+      <p className="text-center text-[11px] leading-5 text-white/30">运费为固定 ¥8。提交即表示您确认{colorSelection ? '颜色与' : ''}收货信息无误。付款会话保留库存 30 分钟。</p>
     </form>
   )
 }

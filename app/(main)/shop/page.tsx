@@ -1,14 +1,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, XIAOWENHAO_RAINBOW_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
 import { getServerLocale } from '@/lib/server-i18n'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ShopPage() {
-  const [locale, product] = await Promise.all([
+  const [locale, product, rainbowProduct] = await Promise.all([
     getServerLocale(),
     ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_RAINBOW_PRODUCT_ID),
   ])
 
   const zh = locale === 'zh'
@@ -93,6 +94,61 @@ export default async function ShopPage() {
           </article>
         ) : (
           <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-white/60">商品即将上线。</div>
+        )}
+
+        {rainbowProduct && (
+          <article className="mt-8 grid overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-cyan-950/25 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="relative aspect-square min-h-[28rem] overflow-hidden bg-white">
+              <Image
+                src={rainbowProduct.imageUrl || '/products/xiaowenhao-ai-tutor-stand-rainbow.png'}
+                alt="小问号 AI Tutor 支架炫彩款产品图"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 45vw"
+              />
+              <div className="absolute left-5 top-5 rounded-full border border-white/35 bg-black/55 px-4 py-2 text-sm font-bold backdrop-blur-xl">
+                Color Edition · {zh ? '炫彩款' : 'Rainbow edition'}
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
+              <p className="text-sm font-black uppercase tracking-[0.22em] text-cyan-300">Xiaowenhao AI Tutor</p>
+              <h2 className="mt-4 text-3xl font-black sm:text-5xl">{rainbowProduct.name}</h2>
+              <p className="mt-5 max-w-xl text-base leading-8 text-white/60">{rainbowProduct.description}</p>
+
+              <div className="mt-8 flex flex-wrap gap-2">
+                {['青蓝橙粉渐变', '独特色彩纹理', '螺旋一体成型', '稳固圆底座'].map((label) => (
+                  <span key={label} className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/75">
+                    {label}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-col gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-sm text-white/45">{zh ? '产品价格' : 'Price'}</p>
+                  <p className="mt-1 text-4xl font-black">¥{rainbowProduct.price.toFixed(0)} <span className="text-sm text-white/35">+ ¥8 运费</span></p>
+                </div>
+                <div className="sm:text-right">
+                  <p className="text-sm text-white/45">{zh ? '本周剩余' : 'Remaining this week'}</p>
+                  <p className={`mt-1 text-3xl font-black ${rainbowProduct.stock > 3 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                    {rainbowProduct.stock} <span className="text-sm text-white/40">/ {weeklyCapacity}</span>
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href="/shop/xiaowenhao-ai-tutor-stand-rainbow"
+                className={`mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl px-7 text-base font-black transition ${
+                  rainbowProduct.stock > 0
+                    ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-fuchsia-500 text-white shadow-lg shadow-cyan-500/20 hover:-translate-y-0.5 hover:brightness-110'
+                    : 'pointer-events-none bg-white/10 text-white/35'
+                }`}
+              >
+                {rainbowProduct.stock > 0 ? (zh ? '购买炫彩款' : 'Buy rainbow edition') : (zh ? '本周已售罄' : 'Sold out this week')}
+              </Link>
+            </div>
+          </article>
         )}
       </section>
     </div>
