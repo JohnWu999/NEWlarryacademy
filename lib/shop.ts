@@ -3,8 +3,8 @@ import { prisma } from '@/lib/prisma'
 export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
 export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
 export const XIAOWENHAO_SHIPPING_FEE_CNY = 8
-export const XIAOWENHAO_WEEKLY_LIMIT = 10
-export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 2
+export const XIAOWENHAO_WEEKLY_LIMIT = 15
+export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 3
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
 export type ProductColor = (typeof PRODUCT_COLORS)[number]
 
