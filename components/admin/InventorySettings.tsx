@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 type InventoryProduct = {
   name: string
-  weeklyLimit: number
   stock: number
 }
 
@@ -36,8 +35,8 @@ export default function InventorySettings({
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          regularWeeklyLimit: Number(data.get('regularWeeklyLimit')),
-          rainbowWeeklyLimit: Number(data.get('rainbowWeeklyLimit')),
+          regularStock: Number(data.get('regularStock')),
+          rainbowStock: Number(data.get('rainbowStock')),
         }),
       })
       const result = await response.json().catch(() => null)
@@ -45,7 +44,7 @@ export default function InventorySettings({
         setError(result?.error || '库存保存失败')
         return
       }
-      setMessage(`库存已保存：常规款每周 ${result.regular.weeklyLimit} 个，炫彩款每周 ${result.rainbow.weeklyLimit} 个。`)
+      setMessage(`当前库存已保存：常规款 ${result.regular.stock} 个，炫彩款 ${result.rainbow.stock} 个。`)
       startTransition(() => router.refresh())
     } catch {
       setError('网络连接失败，库存没有保存')
@@ -55,8 +54,8 @@ export default function InventorySettings({
   }
 
   const products = [
-    { key: 'regularWeeklyLimit', product: regular },
-    { key: 'rainbowWeeklyLimit', product: rainbow },
+    { key: 'regularStock', product: regular },
+    { key: 'rainbowStock', product: rainbow },
   ] as const
 
   return (
@@ -66,10 +65,10 @@ export default function InventorySettings({
           <div key={key} className={`flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between ${index ? 'border-t border-white/10 md:border-l md:border-t-0' : ''}`}>
             <div>
               <div className="font-black">{product.name}</div>
-              <div className="mt-1 text-xs font-bold text-white/45">当前可售：{product.stock} 个</div>
+              <div className="mt-1 text-xs font-bold text-white/45">商店当前显示：{product.stock} 个</div>
             </div>
             <label className="flex items-center gap-3 text-xs font-black text-white/60">
-              每周总库存
+              当前可售库存
               <input
                 type="number"
                 name={key}
@@ -77,7 +76,7 @@ export default function InventorySettings({
                 max="10000"
                 step="1"
                 required
-                defaultValue={product.weeklyLimit}
+                defaultValue={product.stock}
                 className={inputClass}
               />
             </label>
@@ -89,7 +88,7 @@ export default function InventorySettings({
         <div aria-live="polite" className="text-xs font-bold">
           {error ? <span className="text-rose-300">{error}</span> : null}
           {message ? <span className="text-emerald-300">{message}</span> : null}
-          {!error && !message ? <span className="text-white/40">当前可售会自动扣除本周已付款和付款中的订单。</span> : null}
+          {!error && !message ? <span className="text-white/40">保存后商店立即显示这个数量；新订单会自动扣减，取消会自动加回。</span> : null}
         </div>
         <button
           type="submit"

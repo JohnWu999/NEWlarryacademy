@@ -48,14 +48,6 @@ export function xiaowenhaoProductWeeklyCapacity(productId: string) {
     : xiaowenhaoWeeklyCapacity()
 }
 
-function parseReservedOrderItems(itemsJson: string) {
-  try {
-    return JSON.parse(itemsJson) as ReservedOrderItem[]
-  } catch {
-    return []
-  }
-}
-
 function currentWeekStart(date = new Date()) {
   const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()))
   const day = start.getUTCDay() || 7
@@ -63,26 +55,8 @@ function currentWeekStart(date = new Date()) {
   return start
 }
 
-async function reservedWeeklyInventory(productId: string, date = new Date()) {
-  const pendingCutoff = new Date(date.getTime() - (31 * 60 * 1000))
-  const activeOrders = await prisma.order.findMany({
-    where: {
-      createdAt: { gte: currentWeekStart(date) },
-      OR: [
-        { status: 'paid' },
-        { status: 'pending', createdAt: { gte: pendingCutoff } },
-      ],
-    },
-    select: { items: true },
-  })
-
-  return activeOrders.reduce((total, order) => (
-    total + parseReservedOrderItems(order.items).reduce((orderTotal, item) => (
-      item.type === 'product' && item.id === productId
-        ? orderTotal + Math.max(1, item.quantity || 1)
-        : orderTotal
-    ), 0)
-  ), 0)
+function stockWeekKey(date = new Date()) {
+  return currentWeekStart(date).toISOString().slice(0, 10)
 }
 
 export async function ensureCurrentWeeklyStock(productId: string) {
@@ -92,14 +66,14 @@ export async function ensureCurrentWeeklyStock(productId: string) {
 
   const productConfig = standProducts[productId as keyof typeof standProducts]
 
-  const now = new Date()
   const existingProduct = await prisma.product.findUnique({
     where: { id: productId },
-    select: { weeklyLimit: true },
+    select: { stock: true, stockWeek: true, weeklyLimit: true },
   })
   const weeklyLimit = existingProduct?.weeklyLimit ?? xiaowenhaoProductWeeklyCapacity(productId)
-  const reserved = await reservedWeeklyInventory(productId, now)
-  const stock = Math.max(0, weeklyLimit - reserved)
+  const currentStockWeek = stockWeekKey()
+  const stock = existingProduct?.stock ?? weeklyLimit
+  const stockNeedsWeeklyReset = Boolean(existingProduct?.stockWeek && existingProduct.stockWeek !== currentStockWeek)
   return prisma.product.upsert({
     where: { id: productId },
     update: {
@@ -108,7 +82,8 @@ export async function ensureCurrentWeeklyStock(productId: string) {
       price: productConfig.price(),
       category: '3d-models',
       imageUrl: productConfig.imageUrl,
-      stock,
+      stock: stockNeedsWeeklyReset ? weeklyLimit : stock,
+      stockWeek: currentStockWeek,
       weeklyLimit,
       featured: true,
       published: true,
@@ -120,27 +95,28 @@ export async function ensureCurrentWeeklyStock(productId: string) {
       price: productConfig.price(),
       category: '3d-models',
       imageUrl: productConfig.imageUrl,
-      stock,
+      stock: weeklyLimit,
+      stockWeek: currentStockWeek,
+      weeklyLimit,
       featured: true,
       published: true,
     },
   })
 }
 
-export async function setProductWeeklyLimit(productId: string, weeklyLimit: number) {
+export async function setProductAvailableStock(productId: string, stock: number) {
   if (!isXiaowenhaoStandProduct(productId)) {
     throw new Error('UNSUPPORTED_PRODUCT')
   }
 
   await ensureCurrentWeeklyStock(productId)
-  const reserved = await reservedWeeklyInventory(productId)
   return prisma.product.update({
     where: { id: productId },
     data: {
-      weeklyLimit,
-      stock: Math.max(0, weeklyLimit - reserved),
+      stock,
+      stockWeek: stockWeekKey(),
     },
-    select: { id: true, name: true, weeklyLimit: true, stock: true },
+    select: { id: true, name: true, stock: true },
   })
 }
 
