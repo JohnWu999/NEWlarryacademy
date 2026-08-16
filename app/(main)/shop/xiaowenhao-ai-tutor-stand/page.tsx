@@ -73,7 +73,7 @@ export default async function XiaowenhaoProductPage() {
                 </div>
                 <p className="mt-2 text-sm font-black text-white/70">合计 ¥{(product.price + 8).toFixed(0)}</p>
               </div>
-              <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">每周小批量制作 10 个，三种颜色共享库存。</p>
+              <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">每周小批量制作 {product.weeklyLimit ?? 10} 个，三种颜色共享库存。</p>
             </div>
 
             <ProductPurchaseForm

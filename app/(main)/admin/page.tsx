@@ -5,6 +5,12 @@ import { authOptions } from '@/lib/auth'
 import { isAdminUser, shanghaiDay } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import ProductOrdersTable from '@/components/admin/ProductOrdersTable'
+import InventorySettings from '@/components/admin/InventorySettings'
+import {
+  ensureCurrentWeeklyStock,
+  XIAOWENHAO_PRODUCT_ID,
+  XIAOWENHAO_RAINBOW_PRODUCT_ID,
+} from '@/lib/shop'
 
 function formatTime(date: Date) {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -111,6 +117,10 @@ export default async function AdminPage() {
   const since = new Date()
   since.setDate(since.getDate() - 13)
   const today = shanghaiDay()
+  const [regularProduct, rainbowProduct] = await Promise.all([
+    ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_RAINBOW_PRODUCT_ID),
+  ])
 
   const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords, productOrders] = await Promise.all([
     prisma.visitor.count(),
@@ -269,6 +279,25 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+
+        <section className="mt-8">
+          <div className="mb-3">
+            <h2 className="text-xl font-black">每周库存设置</h2>
+            <p className="mt-1 text-xs font-bold text-white/40">修改后立即影响商店显示和下单库存校验</p>
+          </div>
+          <InventorySettings
+            regular={{
+              name: regularProduct?.name || '小问号 AI Tutor 支架',
+              weeklyLimit: regularProduct?.weeklyLimit ?? 10,
+              stock: regularProduct?.stock ?? 0,
+            }}
+            rainbow={{
+              name: rainbowProduct?.name || '小问号 AI Tutor 支架 · 炫彩款',
+              weeklyLimit: rainbowProduct?.weeklyLimit ?? 3,
+              stock: rainbowProduct?.stock ?? 0,
+            }}
+          />
+        </section>
 
         <section className="mt-8">
           <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

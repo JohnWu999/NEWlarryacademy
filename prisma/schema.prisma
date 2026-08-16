@@ -416,6 +416,8 @@ model Product {
   category    String
   imageUrl    String?
   stock       Int      @default(0)
+  stockWeek   String?
+  weeklyLimit Int?
   featured    Boolean  @default(false)
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())

@@ -32,7 +32,9 @@ export default async function ShopPage() {
             <div className="rounded-3xl border border-amber-300/20 bg-amber-300/10 px-6 py-4 text-amber-100">
               <p className="text-xs font-bold uppercase tracking-[0.2em]">Weekly drop</p>
               <p className="mt-1 text-xl font-black sm:text-2xl">
-                {zh ? '常规款每周 10 个 · 炫彩款每周 3 个' : '10 classic · 3 rainbow each week'}
+                {zh
+                  ? `常规款每周 ${product?.weeklyLimit ?? 10} 个 · 炫彩款每周 ${rainbowProduct?.weeklyLimit ?? 3} 个`
+                  : `${product?.weeklyLimit ?? 10} classic · ${rainbowProduct?.weeklyLimit ?? 3} rainbow each week`}
               </p>
             </div>
           </div>

@@ -597,6 +597,7 @@ async function main() {
         category: isXiaowenhaoStand ? '3d-models' : '3d-tools',
         imageUrl: isXiaowenhaoStand ? standImageUrl : null,
         stock: isRainbowStand ? 3 : isXiaowenhaoStand ? 10 : 30,
+        weeklyLimit: isRainbowStand ? 3 : isXiaowenhaoStand ? 10 : null,
         featured: true,
         published: true,
       },
