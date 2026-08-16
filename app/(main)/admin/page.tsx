@@ -62,6 +62,7 @@ function shippingFromMetadata(metadata?: string | null) {
       addressLine1?: string
       addressLine2?: string
       postalCode?: string
+      deliveryMethod?: 'cainiao' | 'sf'
     }
     : null
 }

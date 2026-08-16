@@ -56,9 +56,9 @@ export default async function XiaowenhaoRainbowProductPage() {
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/35">Price</p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <p className="text-4xl font-black">¥{product.price.toFixed(0)}</p>
-                  <p className="text-sm font-bold text-amber-200">+ ¥8 运费</p>
+                  <p className="text-sm font-bold text-amber-200">+ ¥8 起运费</p>
                 </div>
-                <p className="mt-2 text-sm font-black text-white/70">合计 ¥{(product.price + 8).toFixed(0)}</p>
+                <p className="mt-2 text-sm font-black text-white/70">合计 ¥{(product.price + 8).toFixed(0)} 起</p>
               </div>
               <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">炫彩材料自然渐变，每个成品的色彩分布会略有不同。</p>
             </div>

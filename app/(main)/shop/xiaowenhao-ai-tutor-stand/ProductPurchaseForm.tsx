@@ -5,11 +5,17 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 type Color = 'blue' | 'purple' | 'yellow'
+type DeliveryMethod = 'cainiao' | 'sf'
 
 const colors: Array<{ id: Color; label: string; swatch: string; ring: string }> = [
   { id: 'blue', label: '蓝色', swatch: 'bg-[#4f8cff]', ring: 'peer-checked:ring-[#78a8ff]' },
   { id: 'purple', label: '紫色', swatch: 'bg-[#9b6cff]', ring: 'peer-checked:ring-[#b698ff]' },
   { id: 'yellow', label: '黄色', swatch: 'bg-[#f3c84c]', ring: 'peer-checked:ring-[#ffe184]' },
+]
+
+const deliveryMethods: Array<{ id: DeliveryMethod; label: string; fee: number; note: string }> = [
+  { id: 'cainiao', label: '菜鸟', fee: 8, note: '普通配送' },
+  { id: 'sf', label: '顺丰', fee: 18, note: '顺丰配送' },
 ]
 
 const fieldClass = 'mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/25 px-4 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
@@ -30,8 +36,10 @@ export default function ProductPurchaseForm({
   const { status } = useSession()
   const router = useRouter()
   const [color, setColor] = useState<Color>('blue')
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('cainiao')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const shippingFee = deliveryMethods.find((method) => method.id === deliveryMethod)?.fee ?? 8
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -52,6 +60,7 @@ export default function ProductPurchaseForm({
           items: [{ type: 'product', id: productId, quantity: 1, ...(colorSelection ? { color } : {}) }],
           paymentMethod: 'stripe',
           shipping: {
+            deliveryMethod,
             recipientName: data.get('recipientName'),
             phone: data.get('phone'),
             country: data.get('country'),
@@ -106,7 +115,32 @@ export default function ProductPurchaseForm({
       </fieldset>}
 
       <fieldset>
-        <legend className="text-sm font-black">{colorSelection ? '2' : '1'}. 收货信息</legend>
+        <legend className="text-sm font-black">{colorSelection ? '2' : '1'}. 选择配送方式</legend>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          {deliveryMethods.map((method) => (
+            <label key={method.id} className="cursor-pointer">
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value={method.id}
+                checked={deliveryMethod === method.id}
+                onChange={() => setDeliveryMethod(method.id)}
+                className="peer sr-only"
+              />
+              <span className="flex min-h-24 flex-col justify-center border border-white/10 bg-white/[0.035] px-5 transition hover:bg-white/[0.06] peer-checked:border-cyan-300/60 peer-checked:bg-cyan-300/10 peer-checked:ring-2 peer-checked:ring-cyan-300/25">
+                <span className="flex items-baseline justify-between gap-3">
+                  <span className="text-base font-black text-white">{method.label}</span>
+                  <span className="text-lg font-black text-cyan-200">¥{method.fee}</span>
+                </span>
+                <span className="mt-1 text-xs font-bold text-white/40">{method.note}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="text-sm font-black">{colorSelection ? '3' : '2'}. 收货信息</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="text-xs font-bold text-white/55">
             收货人姓名 *
@@ -147,7 +181,7 @@ export default function ProductPurchaseForm({
         <div className="flex gap-4">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-lg" aria-hidden="true">⌁</span>
           <div>
-            <h2 className="text-sm font-black text-emerald-100">{colorSelection ? '3' : '2'}. 安全付款</h2>
+            <h2 className="text-sm font-black text-emerald-100">{colorSelection ? '4' : '3'}. 安全付款</h2>
             <p className="mt-2 text-xs leading-6 text-white/50">
               下一步将进入 Stripe 托管支付页，可选择微信支付或银行卡。Larry Academy 不会接触或保存您的完整卡号与安全码。
             </p>
@@ -174,13 +208,13 @@ export default function ProductPurchaseForm({
             ? '正在创建安全订单…'
             : status === 'unauthenticated'
               ? '登录后购买'
-              : `前往安全支付 · ¥${(price + 8).toFixed(0)}`}
+              : `前往安全支付 · ¥${(price + shippingFee).toFixed(0)}`}
       </button>
       <div className="flex items-center justify-between rounded-xl bg-white/[0.035] px-4 py-3 text-xs font-bold text-white/45">
-        <span>商品 ¥{price.toFixed(0)} + 运费 ¥8</span>
-        <span className="text-white">合计 ¥{(price + 8).toFixed(0)}</span>
+        <span>商品 ¥{price.toFixed(0)} + {deliveryMethod === 'sf' ? '顺丰' : '菜鸟'}运费 ¥{shippingFee}</span>
+        <span className="text-white">合计 ¥{(price + shippingFee).toFixed(0)}</span>
       </div>
-      <p className="text-center text-[11px] leading-5 text-white/30">运费为固定 ¥8。提交即表示您确认{colorSelection ? '颜色与' : ''}收货信息无误。付款会话保留库存 30 分钟。</p>
+      <p className="text-center text-[11px] leading-5 text-white/30">菜鸟运费 ¥8，顺丰运费 ¥18。提交即表示您确认{colorSelection ? '颜色、' : ''}配送方式与收货信息无误。付款会话保留库存 30 分钟。</p>
     </form>
   )
 }

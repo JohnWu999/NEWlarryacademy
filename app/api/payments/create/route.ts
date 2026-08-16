@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { createCheckoutSession } from '@/lib/payments/stripe'
 import { z } from 'zod'
 import Stripe from 'stripe'
-import { ensureCurrentWeeklyStock, productColorLabels, PRODUCT_COLORS, XIAOWENHAO_PRODUCT_ID, XIAOWENHAO_SHIPPING_FEE_CNY } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, productColorLabels, PRODUCT_COLORS, SHIPPING_METHODS, shippingMethodDetails, XIAOWENHAO_PRODUCT_ID } from '@/lib/shop'
 
 const createPaymentSchema = z.object({
   items: z.array(
@@ -18,6 +18,7 @@ const createPaymentSchema = z.object({
   ),
   paymentMethod: z.enum(['stripe', 'alipay', 'wechat']),
   shipping: z.object({
+    deliveryMethod: z.enum(SHIPPING_METHODS).default('cainiao'),
     recipientName: z.string().trim().min(2).max(80),
     phone: z.string().trim().min(6).max(30),
     country: z.string().trim().min(2).max(60),
@@ -149,7 +150,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '实物商品目前请使用 Stripe 安全支付' }, { status: 400 })
     }
     const currency = hasProduct ? 'CNY' : 'USD'
-    if (hasProduct) totalAmount += XIAOWENHAO_SHIPPING_FEE_CNY
+    const deliveryMethod = validatedData.shipping?.deliveryMethod || 'cainiao'
+    const shipping = shippingMethodDetails[deliveryMethod]
+    if (hasProduct) totalAmount += shipping.fee
 
     // Reserve physical inventory atomically while Stripe Checkout is active.
     const order = await prisma.$transaction(async (tx) => {
@@ -202,8 +205,8 @@ export async function POST(request: NextRequest) {
         lineItems.push({
           price_data: {
             currency: 'cny',
-            product_data: { name: '运费 · Shipping' },
-            unit_amount: XIAOWENHAO_SHIPPING_FEE_CNY * 100,
+            product_data: { name: `${shipping.label}运费 · Shipping` },
+            unit_amount: shipping.fee * 100,
           },
           quantity: 1,
         })
@@ -236,6 +239,8 @@ export async function POST(request: NextRequest) {
           orderId: order.id,
           paymentUrl: result.url,
           paymentMethod: validatedData.paymentMethod,
+          deliveryMethod,
+          shippingFee: shipping.fee,
         })
       } else {
         if (hasProduct) {

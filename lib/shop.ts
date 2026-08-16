@@ -2,7 +2,12 @@ import { prisma } from '@/lib/prisma'
 
 export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
 export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
-export const XIAOWENHAO_SHIPPING_FEE_CNY = 8
+export const SHIPPING_METHODS = ['cainiao', 'sf'] as const
+export type ShippingMethod = (typeof SHIPPING_METHODS)[number]
+export const shippingMethodDetails: Record<ShippingMethod, { label: string; fee: number }> = {
+  cainiao: { label: '菜鸟', fee: 8 },
+  sf: { label: '顺丰', fee: 18 },
+}
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
 export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 3
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const

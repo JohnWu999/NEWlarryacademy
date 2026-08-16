@@ -13,6 +13,7 @@ type ShippingInfo = {
   addressLine1?: string
   addressLine2?: string
   postalCode?: string
+  deliveryMethod?: 'cainiao' | 'sf'
 }
 
 type OrderItem = {
@@ -81,6 +82,7 @@ export async function GET() {
       '收货人姓名',
       '电话号码',
       '收货地址',
+      '配送方式',
       '商品',
       '金额',
       '币种',
@@ -104,6 +106,7 @@ export async function GET() {
         metadata?.shipping?.recipientName || '',
         metadata?.shipping?.phone || '',
         formatAddress(metadata?.shipping),
+        metadata?.shipping?.deliveryMethod === 'sf' ? '顺丰' : '菜鸟',
         itemLabel,
         order.amount,
         order.currency,
