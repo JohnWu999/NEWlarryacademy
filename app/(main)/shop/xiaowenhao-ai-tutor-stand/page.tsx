@@ -2,15 +2,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductPurchaseForm from './ProductPurchaseForm'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID, xiaowenhaoWeeklyCapacity } from '@/lib/shop'
+import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID } from '@/lib/shop'
 
 export const dynamic = 'force-dynamic'
 
 export default async function XiaowenhaoProductPage() {
   const product = await ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID)
   if (!product || !product.published) notFound()
-  const weeklyCapacity = xiaowenhaoWeeklyCapacity()
-
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-24 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -43,7 +41,7 @@ export default async function XiaowenhaoProductPage() {
                 No. 001 · 首发产品
               </span>
               <span className={`rounded-full px-4 py-2 text-sm font-black ${product.stock > 0 ? 'bg-emerald-400/10 text-emerald-200' : 'bg-rose-400/10 text-rose-200'}`}>
-                {product.stock > 0 ? `本周剩余 ${product.stock} / ${weeklyCapacity}` : '本周已售罄'}
+                {product.stock > 0 ? `本周剩余 ${product.stock} 个` : '本周已售罄'}
               </span>
             </div>
 

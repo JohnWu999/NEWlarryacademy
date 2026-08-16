@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
 export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
 export const XIAOWENHAO_SHIPPING_FEE_CNY = 8
-export const XIAOWENHAO_WEEKLY_LIMIT = 15
+export const XIAOWENHAO_WEEKLY_LIMIT = 10
 export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 3
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
 export type ProductColor = (typeof PRODUCT_COLORS)[number]
@@ -33,22 +33,14 @@ export function isXiaowenhaoStandProduct(productId: string) {
   return productId in standProducts
 }
 
-export function xiaowenhaoWeeklyCapacity(date = new Date()) {
-  const extraStock = Math.max(0, Number.parseInt(process.env.XIAOWENHAO_EXTRA_STOCK || '0', 10) || 0)
-  const extraStockUntil = process.env.XIAOWENHAO_EXTRA_STOCK_UNTIL
-    ? new Date(process.env.XIAOWENHAO_EXTRA_STOCK_UNTIL)
-    : null
-  const extraIsActive = extraStockUntil
-    && !Number.isNaN(extraStockUntil.getTime())
-    && date < extraStockUntil
-
-  return XIAOWENHAO_WEEKLY_LIMIT + (extraIsActive ? extraStock : 0)
+export function xiaowenhaoWeeklyCapacity() {
+  return XIAOWENHAO_WEEKLY_LIMIT
 }
 
-export function xiaowenhaoProductWeeklyCapacity(productId: string, date = new Date()) {
+export function xiaowenhaoProductWeeklyCapacity(productId: string) {
   return productId === XIAOWENHAO_RAINBOW_PRODUCT_ID
     ? XIAOWENHAO_RAINBOW_WEEKLY_LIMIT
-    : xiaowenhaoWeeklyCapacity(date)
+    : xiaowenhaoWeeklyCapacity()
 }
 
 function currentWeekStart(date = new Date()) {
@@ -87,7 +79,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
     ), 0)
   }, 0)
 
-  const stock = Math.max(0, xiaowenhaoProductWeeklyCapacity(productId, now) - reserved)
+  const stock = Math.max(0, xiaowenhaoProductWeeklyCapacity(productId) - reserved)
   return prisma.product.upsert({
     where: { id: productId },
     update: {
