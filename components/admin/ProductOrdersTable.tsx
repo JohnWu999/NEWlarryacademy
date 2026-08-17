@@ -24,6 +24,7 @@ type ProductOrder = {
   paymentMethod: string | null
   shippingStatus: string
   trackingNumber: string | null
+  shippedAtIso: string | null
   shippedAtLabel: string | null
   customerName: string
   customerEmail: string
@@ -52,13 +53,20 @@ function addressLine(shipping: ShippingInfo | null) {
 
 export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] }) {
   const router = useRouter()
+  const [view, setView] = useState<'pending' | 'shipped'>('pending')
   const [pendingId, setPendingId] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [isPending, startTransition] = useTransition()
-  const orderedOrders = [...orders].sort((a, b) => (
-    new Date(a.createdAtIso).getTime() - new Date(b.createdAtIso).getTime()
-  ))
+  const pendingCount = orders.filter((order) => order.shippingStatus !== 'shipped').length
+  const shippedCount = orders.filter((order) => order.shippingStatus === 'shipped').length
+  const orderedOrders = orders
+    .filter((order) => view === 'shipped'
+      ? order.shippingStatus === 'shipped'
+      : order.shippingStatus !== 'shipped')
+    .sort((a, b) => view === 'shipped'
+      ? new Date(b.shippedAtIso || b.createdAtIso).getTime() - new Date(a.shippedAtIso || a.createdAtIso).getTime()
+      : new Date(a.createdAtIso).getTime() - new Date(b.createdAtIso).getTime())
 
   async function saveShipment(orderId: string, formData: FormData) {
     setPendingId(orderId)
@@ -98,6 +106,26 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
       {success ? (
         <div className="mb-3 border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">{success}</div>
       ) : null}
+      <div className="mb-3 inline-flex border border-white/10 bg-white/[0.035] p-1" role="tablist" aria-label="订单发货状态">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'pending'}
+          onClick={() => setView('pending')}
+          className={`h-9 px-4 text-xs font-black transition ${view === 'pending' ? 'bg-white text-black' : 'text-white/55 hover:text-white'}`}
+        >
+          待发货 {pendingCount}
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'shipped'}
+          onClick={() => setView('shipped')}
+          className={`h-9 px-4 text-xs font-black transition ${view === 'shipped' ? 'bg-emerald-300 text-black' : 'text-white/55 hover:text-white'}`}
+        >
+          已发货 {shippedCount}
+        </button>
+      </div>
       <div className="overflow-x-auto border border-white/10">
         <table className="w-full min-w-[1280px] text-left text-sm">
           <thead className="bg-white/[0.06] text-xs uppercase tracking-[0.14em] text-white/44">
@@ -183,7 +211,11 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                 </tr>
               )
             }) : (
-              <tr><td className="px-4 py-6 text-white/45" colSpan={6}>暂时没有待处理的 AI Tutor 支架订单。</td></tr>
+              <tr>
+                <td className="px-4 py-6 text-white/45" colSpan={6}>
+                  {view === 'shipped' ? '暂时没有已发货的 AI Tutor 支架订单。' : '暂时没有待处理的 AI Tutor 支架订单。'}
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
