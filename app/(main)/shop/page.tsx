@@ -91,15 +91,23 @@ export default async function ShopPage() {
 
         {product ? (
           <article className="mt-10 grid overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-violet-950/30 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="relative aspect-[4/5] min-h-[30rem] overflow-hidden bg-[#171a3d]">
-              <Image
-                src={product.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png'}
-                alt="小问号 AI Tutor 支架 2.0 宣传图"
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 45vw"
-              />
+            <div className="relative grid grid-cols-2 gap-px self-center overflow-hidden bg-white/10">
+              {[
+                { src: product.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png', label: 'Style 01' },
+                { src: '/products/xiaowenhao-ai-tutor-stand-2-style-02.png', label: 'Style 02' },
+              ].map((style, index) => (
+                <div key={style.src} className="relative aspect-[4/5] overflow-hidden bg-[#171a3d]">
+                  <Image
+                    src={style.src}
+                    alt={`小问号 AI Tutor 支架 2.0 炫彩款 ${style.label}`}
+                    fill
+                    priority={index === 0}
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 50vw, 23vw"
+                  />
+                  <span className="absolute bottom-3 left-3 rounded-full border border-white/20 bg-black/55 px-3 py-1.5 text-[11px] font-black backdrop-blur-xl">{style.label}</span>
+                </div>
+              ))}
               <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/45 px-4 py-2 text-sm font-bold backdrop-blur-xl">
                 2.0 · {zh ? '全新升级' : 'Upgraded'}
               </div>
@@ -109,6 +117,11 @@ export default async function ShopPage() {
               <p className="text-sm font-black uppercase tracking-[0.22em] text-violet-300">Xiaowenhao AI Tutor</p>
               <h2 className="mt-4 text-3xl font-black sm:text-5xl">小问号 AI Tutor 支架 2.0 · 炫彩款</h2>
               <p className="mt-5 max-w-xl text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号，两个型号分别管理库存。</p>
+              <p className="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.07] px-5 py-3 text-sm font-bold leading-6 text-fuchsia-100">
+                {zh
+                  ? '随机盲盒发货：每一种 Style 都很精美，收到哪一种，都是一份惊喜。'
+                  : 'Mystery style shipment: every finish is beautiful, and whichever one arrives is a delightful surprise.'}
+              </p>
 
               <div className="mt-8 flex flex-wrap gap-2">
                 {['产品自带摄像头可选', '解决原来的高度问题', '炫彩款', '顺丰配送'].map((label) => (
