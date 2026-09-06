@@ -9,7 +9,6 @@ import InventorySettings from '@/components/admin/InventorySettings'
 import {
   ensureCurrentWeeklyStock,
   XIAOWENHAO_PRODUCT_ID,
-  XIAOWENHAO_RAINBOW_PRODUCT_ID,
 } from '@/lib/shop'
 
 function formatTime(date: Date) {
@@ -118,10 +117,7 @@ export default async function AdminPage() {
   const since = new Date()
   since.setDate(since.getDate() - 13)
   const today = shanghaiDay()
-  const [regularProduct, rainbowProduct] = await Promise.all([
-    ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID),
-    ensureCurrentWeeklyStock(XIAOWENHAO_RAINBOW_PRODUCT_ID),
-  ])
+  const product = await ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID)
 
   const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords, productOrders] = await Promise.all([
     prisma.visitor.count(),
@@ -288,13 +284,9 @@ export default async function AdminPage() {
             <p className="mt-1 text-xs font-bold text-white/40">直接修改商店显示的可售数量，保存后立即生效</p>
           </div>
           <InventorySettings
-            regular={{
-              name: regularProduct?.name || '小问号 AI Tutor 支架',
-              stock: regularProduct?.stock ?? 0,
-            }}
-            rainbow={{
-              name: rainbowProduct?.name || '小问号 AI Tutor 支架 · 炫彩款',
-              stock: rainbowProduct?.stock ?? 0,
+            product={{
+              name: product?.name || '小问号 AI Tutor 支架 2.0',
+              stock: product?.stock ?? 0,
             }}
           />
         </section>

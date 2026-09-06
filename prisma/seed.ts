@@ -555,15 +555,9 @@ async function main() {
 
   const products = [
     [
-      'product-xiaowenhao-ai-tutor-stand',
-      '小问号 AI Tutor 支架',
-      '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
-      Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
-    ],
-    [
-      'product-xiaowenhao-ai-tutor-stand-rainbow',
-      '小问号 AI Tutor 支架 · 炫彩款',
-      '同款螺旋一体成型摄像头支架，采用青蓝、橙黄与粉紫自然过渡的炫彩材质，每一个都有独特的渐变纹理。',
+      'product-xiaowenhao-ai-tutor-stand-2',
+      '小问号 AI Tutor 支架 2.0',
+      '升级高度的桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，可选择蓝色、紫色或黄色。',
       99,
     ],
     ['product-geometry-kit', '几何基础套装', '包含立方体、圆柱体、球体等基础几何模型，适合初学者', 198],
@@ -572,11 +566,8 @@ async function main() {
   ] as const
 
   for (const [id, name, description, price] of products) {
-    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand' || id === 'product-xiaowenhao-ai-tutor-stand-rainbow'
-    const isRainbowStand = id === 'product-xiaowenhao-ai-tutor-stand-rainbow'
-    const standImageUrl = isRainbowStand
-      ? '/products/xiaowenhao-ai-tutor-stand-rainbow.png'
-      : '/products/xiaowenhao-ai-tutor-stand.png'
+    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand-2'
+    const standImageUrl = '/products/xiaowenhao-ai-tutor-stand-2.png'
     await prisma.product.upsert({
       where: { id },
       update: {
@@ -596,13 +587,25 @@ async function main() {
         price,
         category: isXiaowenhaoStand ? '3d-models' : '3d-tools',
         imageUrl: isXiaowenhaoStand ? standImageUrl : null,
-        stock: isRainbowStand ? 3 : isXiaowenhaoStand ? 10 : 30,
-        weeklyLimit: isRainbowStand ? 3 : isXiaowenhaoStand ? 10 : null,
+        stock: isXiaowenhaoStand ? 10 : 30,
+        weeklyLimit: isXiaowenhaoStand ? 10 : null,
         featured: true,
         published: true,
       },
     })
   }
+
+  await prisma.product.updateMany({
+    where: {
+      id: {
+        in: [
+          'product-xiaowenhao-ai-tutor-stand',
+          'product-xiaowenhao-ai-tutor-stand-rainbow',
+        ],
+      },
+    },
+    data: { featured: false, published: false },
+  })
 
   console.log('Courses:', larryMath.title, ibBigMath.title, ibBigMathG7.title, ibBigMathG8.title, ngssScienceG4.title, ngssScience.title, ngssScienceG7.title, ngssScienceG8.title)
   console.log('Seeding completed!')

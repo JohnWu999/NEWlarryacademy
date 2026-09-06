@@ -5,7 +5,16 @@ import { prisma } from '@/lib/prisma'
 import { createCheckoutSession } from '@/lib/payments/stripe'
 import { z } from 'zod'
 import Stripe from 'stripe'
-import { ensureCurrentWeeklyStock, productColorLabels, PRODUCT_COLORS, SHIPPING_METHODS, shippingMethodDetails, XIAOWENHAO_PRODUCT_ID } from '@/lib/shop'
+import {
+  ensureCurrentWeeklyStock,
+  productColorLabels,
+  productModelDetails,
+  PRODUCT_COLORS,
+  PRODUCT_MODELS,
+  SHIPPING_METHODS,
+  shippingMethodDetails,
+  XIAOWENHAO_PRODUCT_ID,
+} from '@/lib/shop'
 
 const createPaymentSchema = z.object({
   items: z.array(
@@ -14,6 +23,7 @@ const createPaymentSchema = z.object({
       id: z.string(),
       quantity: z.number().int().min(1).max(10).optional(),
       color: z.enum(PRODUCT_COLORS).optional(),
+      model: z.enum(PRODUCT_MODELS).optional(),
     })
   ),
   paymentMethod: z.enum(['stripe', 'alipay', 'wechat']),
@@ -64,6 +74,7 @@ export async function POST(request: NextRequest) {
       price: number
       quantity: number
       color?: (typeof PRODUCT_COLORS)[number]
+      model?: (typeof PRODUCT_MODELS)[number]
       stripePriceId?: string | null
     }> = []
 
@@ -123,17 +134,23 @@ export async function POST(request: NextRequest) {
             { status: 409 }
           )
         }
-        if (product.id === XIAOWENHAO_PRODUCT_ID && !item.color) {
-          return NextResponse.json({ error: '请选择支架颜色' }, { status: 400 })
+        if (product.id === XIAOWENHAO_PRODUCT_ID && (!item.color || !item.model)) {
+          return NextResponse.json({ error: '请选择支架型号和颜色' }, { status: 400 })
         }
-        totalAmount += product.price * quantity
+        const selectedModel = product.id === XIAOWENHAO_PRODUCT_ID ? item.model : undefined
+        const productPrice = selectedModel ? productModelDetails[selectedModel].price : product.price
+        const productName = selectedModel
+          ? `${product.name} · ${productModelDetails[selectedModel].zh}`
+          : product.name
+        totalAmount += productPrice * quantity
         orderItems.push({
           type: 'product',
           id: product.id,
-          name: product.name,
-          price: product.price,
+          name: productName,
+          price: productPrice,
           quantity,
           color: item.color,
+          model: selectedModel,
         })
       }
     }
@@ -146,11 +163,15 @@ export async function POST(request: NextRequest) {
     if (hasProduct && !validatedData.shipping) {
       return NextResponse.json({ error: '请填写完整的收货信息' }, { status: 400 })
     }
+    const hasXiaowenhao2 = orderItems.some((item) => item.type === 'product' && item.id === XIAOWENHAO_PRODUCT_ID)
+    if (hasXiaowenhao2 && validatedData.shipping?.deliveryMethod !== 'sf') {
+      return NextResponse.json({ error: '小问号支架 2.0 使用顺丰配送，运费为 ¥18' }, { status: 400 })
+    }
     if (hasProduct && validatedData.paymentMethod !== 'stripe') {
       return NextResponse.json({ error: '实物商品目前请使用 Stripe 安全支付' }, { status: 400 })
     }
     const currency = hasProduct ? 'CNY' : 'USD'
-    const deliveryMethod = validatedData.shipping?.deliveryMethod || 'cainiao'
+    const deliveryMethod = hasXiaowenhao2 ? 'sf' : (validatedData.shipping?.deliveryMethod || 'cainiao')
     const shipping = shippingMethodDetails[deliveryMethod]
     if (hasProduct) totalAmount += shipping.fee
 

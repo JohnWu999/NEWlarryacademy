@@ -1,7 +1,10 @@
 import { prisma } from '@/lib/prisma'
 
-export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand'
-export const XIAOWENHAO_RAINBOW_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-rainbow'
+export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2'
+const LEGACY_XIAOWENHAO_PRODUCT_IDS = [
+  'product-xiaowenhao-ai-tutor-stand',
+  'product-xiaowenhao-ai-tutor-stand-rainbow',
+] as const
 export const SHIPPING_METHODS = ['cainiao', 'sf'] as const
 export type ShippingMethod = (typeof SHIPPING_METHODS)[number]
 export const shippingMethodDetails: Record<ShippingMethod, { label: string; fee: number }> = {
@@ -9,9 +12,10 @@ export const shippingMethodDetails: Record<ShippingMethod, { label: string; fee:
   sf: { label: '顺丰', fee: 18 },
 }
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
-export const XIAOWENHAO_RAINBOW_WEEKLY_LIMIT = 3
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
 export type ProductColor = (typeof PRODUCT_COLORS)[number]
+export const PRODUCT_MODELS = ['stand-only', 'with-camera'] as const
+export type ProductModel = (typeof PRODUCT_MODELS)[number]
 
 export const productColorLabels: Record<ProductColor, { zh: string; en: string }> = {
   blue: { zh: '蓝色', en: 'Blue' },
@@ -19,18 +23,17 @@ export const productColorLabels: Record<ProductColor, { zh: string; en: string }
   yellow: { zh: '黄色', en: 'Yellow' },
 }
 
+export const productModelDetails: Record<ProductModel, { zh: string; en: string; price: number }> = {
+  'stand-only': { zh: '不带摄像头', en: 'Stand only', price: 99 },
+  'with-camera': { zh: '带摄像头', en: 'With camera', price: 169 },
+}
+
 const standProducts = {
   [XIAOWENHAO_PRODUCT_ID]: {
-    name: '小问号 AI Tutor 支架',
-    description: '为桌面 AI 学习设计的 3D 打印摄像头支架。螺旋一体成型，圆形稳固底座，提供蓝色、紫色和黄色三种选择。',
-    price: () => Number(process.env.XIAOWENHAO_STAND_PRICE_CNY || 49),
-    imageUrl: '/products/xiaowenhao-ai-tutor-stand.png',
-  },
-  [XIAOWENHAO_RAINBOW_PRODUCT_ID]: {
-    name: '小问号 AI Tutor 支架 · 炫彩款',
-    description: '同款螺旋一体成型摄像头支架，采用青蓝、橙黄与粉紫自然过渡的炫彩材质，每一个都有独特的渐变纹理。',
-    price: () => 99,
-    imageUrl: '/products/xiaowenhao-ai-tutor-stand-rainbow.png',
+    name: '小问号 AI Tutor 支架 2.0',
+    description: '升级高度的桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，可选择蓝色、紫色或黄色。',
+    price: () => productModelDetails['stand-only'].price,
+    imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
   },
 } as const
 
@@ -43,9 +46,7 @@ export function xiaowenhaoWeeklyCapacity() {
 }
 
 export function xiaowenhaoProductWeeklyCapacity(productId: string) {
-  return productId === XIAOWENHAO_RAINBOW_PRODUCT_ID
-    ? XIAOWENHAO_RAINBOW_WEEKLY_LIMIT
-    : xiaowenhaoWeeklyCapacity()
+  return productId === XIAOWENHAO_PRODUCT_ID ? xiaowenhaoWeeklyCapacity() : 0
 }
 
 function currentWeekStart(date = new Date()) {
@@ -66,15 +67,22 @@ export async function ensureCurrentWeeklyStock(productId: string) {
 
   const productConfig = standProducts[productId as keyof typeof standProducts]
 
-  const existingProduct = await prisma.product.findUnique({
-    where: { id: productId },
-    select: { stock: true, stockWeek: true, weeklyLimit: true },
-  })
+  const [existingProduct, legacyProduct] = await Promise.all([
+    prisma.product.findUnique({
+      where: { id: productId },
+      select: { stock: true, stockWeek: true, weeklyLimit: true },
+    }),
+    prisma.product.findUnique({
+      where: { id: LEGACY_XIAOWENHAO_PRODUCT_IDS[0] },
+      select: { stock: true, stockWeek: true },
+    }),
+  ])
   const weeklyLimit = existingProduct?.weeklyLimit ?? xiaowenhaoProductWeeklyCapacity(productId)
   const currentStockWeek = stockWeekKey()
-  const stock = existingProduct?.stock ?? weeklyLimit
+  const legacyStockIsCurrent = legacyProduct?.stockWeek === currentStockWeek
+  const stock = existingProduct?.stock ?? (legacyStockIsCurrent ? legacyProduct.stock : weeklyLimit)
   const stockNeedsWeeklyReset = Boolean(existingProduct?.stockWeek && existingProduct.stockWeek !== currentStockWeek)
-  return prisma.product.upsert({
+  const product = await prisma.product.upsert({
     where: { id: productId },
     update: {
       name: productConfig.name,
@@ -102,6 +110,15 @@ export async function ensureCurrentWeeklyStock(productId: string) {
       published: true,
     },
   })
+
+  // Keep historical order relations intact while removing the 1.0 and rainbow
+  // products from every public sales surface.
+  await prisma.product.updateMany({
+    where: { id: { in: [...LEGACY_XIAOWENHAO_PRODUCT_IDS] } },
+    data: { featured: false, published: false },
+  })
+
+  return product
 }
 
 export async function setProductAvailableStock(productId: string, stock: number) {
