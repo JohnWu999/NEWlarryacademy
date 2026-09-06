@@ -280,8 +280,8 @@ export default async function AdminPage() {
 
         <section className="mt-8">
           <div className="mb-3">
-            <h2 className="text-xl font-black">当前库存设置</h2>
-            <p className="mt-1 text-xs font-bold text-white/40">直接修改商店显示的可售数量，保存后立即生效</p>
+            <h2 className="text-xl font-black">小问号支架 2.0 库存</h2>
+            <p className="mt-1 text-xs font-bold text-white/40">这里只管理 2.0 炫彩款；旧版库存入口已移除</p>
           </div>
           <InventorySettings
             product={{

@@ -5,6 +5,21 @@ import { getServerLocale } from '@/lib/server-i18n'
 
 export const dynamic = 'force-dynamic'
 
+const legacyProducts = [
+  {
+    name: '小问号 AI Tutor 支架 1.0',
+    image: '/products/xiaowenhao-ai-tutor-stand.png',
+    description: '小问号支架的第一代经典设计，现已停止销售。',
+    descriptionEn: 'The original first-generation Xiaowenhao stand, now retired from sale.',
+  },
+  {
+    name: '小问号 AI Tutor 支架 1.0 · 炫彩款',
+    image: '/products/xiaowenhao-ai-tutor-stand-rainbow.png',
+    description: '第一代炫彩特别款，现作为设计历程保留展示。',
+    descriptionEn: 'The first-generation rainbow edition, preserved as part of the design story.',
+  },
+]
+
 export default async function ShopPage() {
   const [locale, product] = await Promise.all([
     getServerLocale(),
@@ -37,6 +52,34 @@ export default async function ShopPage() {
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          {legacyProducts.map((legacy) => (
+            <article key={legacy.name} className="grid overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.025] opacity-75 sm:grid-cols-[0.75fr_1.25fr]">
+              <div className="relative aspect-square min-h-56 overflow-hidden bg-[#14162b] grayscale-[35%]">
+                <Image
+                  src={legacy.image}
+                  alt={legacy.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 24vw"
+                />
+                <div className="absolute inset-0 bg-black/15" />
+                <div className="absolute left-4 top-4 rounded-full border border-rose-200/30 bg-rose-500/80 px-4 py-2 text-sm font-black text-white shadow-lg backdrop-blur-xl">
+                  {zh ? '绝版' : 'Discontinued'}
+                </div>
+              </div>
+              <div className="flex flex-col justify-center p-6 sm:p-8">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-white/35">Archive · 1.0</p>
+                <h2 className="mt-3 text-2xl font-black text-white/75">{legacy.name}</h2>
+                <p className="mt-3 text-sm leading-6 text-white/40">{zh ? legacy.description : legacy.descriptionEn}</p>
+                <div className="mt-6 inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-5 text-sm font-black text-white/35">
+                  {zh ? '绝版 · 不再销售' : 'Discontinued · Not for sale'}
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
 
         {product ? (
@@ -89,7 +132,7 @@ export default async function ShopPage() {
                     : 'pointer-events-none bg-white/10 text-white/35'
                 }`}
               >
-                {product.stock > 0 ? (zh ? '选择颜色并购买' : 'Choose a color & buy') : (zh ? '本周已售罄' : 'Sold out this week')}
+                {product.stock > 0 ? (zh ? '选择型号并购买' : 'Choose a model & buy') : (zh ? '本周已售罄' : 'Sold out this week')}
               </Link>
             </div>
           </article>

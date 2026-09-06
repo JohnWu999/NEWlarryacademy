@@ -64,7 +64,7 @@ export default function InventorySettings({ product }: { product: InventoryProdu
           {!error && !message ? <span className="text-white/40">保存后立即生效；新订单自动扣减，取消自动加回。</span> : null}
         </div>
         <button type="submit" disabled={saving || isPending} className="h-11 shrink-0 bg-cyan-300 px-5 text-sm font-black text-black transition hover:bg-cyan-200 disabled:opacity-50">
-          {saving || isPending ? '保存中' : '保存库存'}
+          {saving || isPending ? '保存中' : '修改 2.0 库存'}
         </button>
       </div>
     </form>
