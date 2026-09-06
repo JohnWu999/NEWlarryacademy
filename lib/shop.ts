@@ -30,8 +30,8 @@ export const productModelDetails: Record<ProductModel, { zh: string; en: string;
 
 const standProducts = {
   [XIAOWENHAO_PRODUCT_ID]: {
-    name: '小问号 AI Tutor 支架 2.0',
-    description: '升级高度的桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，可选择蓝色、紫色或黄色。',
+    name: '小问号 AI Tutor 支架 2.0 · 炫彩款',
+    description: '升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
     price: () => productModelDetails['stand-only'].price,
     imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
   },

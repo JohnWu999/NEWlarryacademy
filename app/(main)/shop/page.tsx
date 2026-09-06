@@ -61,7 +61,7 @@ export default async function ShopPage() {
               <p className="mt-5 max-w-xl text-base leading-8 text-white/60">{product.description}</p>
 
               <div className="mt-8 flex flex-wrap gap-2">
-                {['产品自带摄像头可选', '解决原来的高度问题', '顺丰配送', '三种颜色'].map((label) => (
+                {['产品自带摄像头可选', '解决原来的高度问题', '炫彩款', '顺丰配送'].map((label) => (
                   <span key={label} className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/75">
                     {label}
                   </span>

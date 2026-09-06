@@ -30,7 +30,7 @@ export default async function XiaowenhaoProductPage() {
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs font-bold text-white/60">
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">高度升级</div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">摄像头可选</div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">炫彩款</div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">Design by 睿哥</div>
             </div>
           </section>

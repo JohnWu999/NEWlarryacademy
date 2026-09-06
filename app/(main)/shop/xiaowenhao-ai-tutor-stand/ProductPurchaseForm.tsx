@@ -4,14 +4,7 @@ import { FormEvent, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
-type Color = 'blue' | 'purple' | 'yellow'
 type StandModel = 'stand-only' | 'with-camera'
-
-const colors: Array<{ id: Color; label: string; swatch: string; ring: string }> = [
-  { id: 'blue', label: '蓝色', swatch: 'bg-[#4f8cff]', ring: 'peer-checked:ring-[#78a8ff]' },
-  { id: 'purple', label: '紫色', swatch: 'bg-[#9b6cff]', ring: 'peer-checked:ring-[#b698ff]' },
-  { id: 'yellow', label: '黄色', swatch: 'bg-[#f3c84c]', ring: 'peer-checked:ring-[#ffe184]' },
-]
 
 const models: Array<{ id: StandModel; label: string; price: number; note: string }> = [
   { id: 'with-camera', label: '带摄像头', price: 169, note: '支架与摄像头完整套装' },
@@ -31,7 +24,6 @@ export default function ProductPurchaseForm({
   const { status } = useSession()
   const router = useRouter()
   const [model, setModel] = useState<StandModel>('with-camera')
-  const [color, setColor] = useState<Color>('blue')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const selectedModel = models.find((option) => option.id === model) ?? models[0]
@@ -53,7 +45,7 @@ export default function ProductPurchaseForm({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{ type: 'product', id: productId, quantity: 1, color, model }],
+          items: [{ type: 'product', id: productId, quantity: 1, model }],
           paymentMethod: 'stripe',
           shipping: {
             deliveryMethod: 'sf',
@@ -114,32 +106,10 @@ export default function ProductPurchaseForm({
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend className="text-sm font-black">2. 选择颜色</legend>
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {colors.map((option) => (
-            <label key={option.id} className="cursor-pointer">
-              <input
-                type="radio"
-                name="color"
-                value={option.id}
-                checked={color === option.id}
-                onChange={() => setColor(option.id)}
-                className="peer sr-only"
-              />
-              <span className={`flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] text-sm font-black text-white/65 ring-0 transition hover:bg-white/[0.06] peer-checked:border-white/30 peer-checked:bg-white/[0.09] peer-checked:text-white peer-checked:ring-2 ${option.ring}`}>
-                <span className={`h-8 w-8 rounded-full border-2 border-white/35 shadow-lg ${option.swatch}`} />
-                {option.label}
-              </span>
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
       <section className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.07] p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-black text-amber-100">3. 配送方式</h2>
+            <h2 className="text-sm font-black text-amber-100">2. 配送方式</h2>
             <p className="mt-1 text-xs font-bold text-white/45">本产品统一使用顺丰配送</p>
           </div>
           <div className="text-right">
@@ -150,7 +120,7 @@ export default function ProductPurchaseForm({
       </section>
 
       <fieldset>
-        <legend className="text-sm font-black">4. 收货信息</legend>
+        <legend className="text-sm font-black">3. 收货信息</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="text-xs font-bold text-white/55">收货人姓名 *<input name="recipientName" autoComplete="name" required maxLength={80} className={fieldClass} placeholder="请输入姓名" /></label>
           <label className="text-xs font-bold text-white/55">电话号码 *<input name="phone" type="tel" autoComplete="tel" required maxLength={30} className={fieldClass} placeholder="含国家或地区代码" /></label>
@@ -164,7 +134,7 @@ export default function ProductPurchaseForm({
       </fieldset>
 
       <section className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-5">
-        <h2 className="text-sm font-black text-emerald-100">5. 安全付款</h2>
+        <h2 className="text-sm font-black text-emerald-100">4. 安全付款</h2>
         <p className="mt-2 text-xs leading-6 text-white/50">下一步进入 Stripe 托管支付页，可选择微信支付或银行卡。Larry Academy 不会接触或保存您的完整卡号与安全码。</p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-black">
           <span className="rounded-full bg-[#07c160]/15 px-3 py-1.5 text-[#8af0af]">微信支付 WeChat Pay</span>
@@ -185,7 +155,7 @@ export default function ProductPurchaseForm({
         <span>{selectedModel.label} ¥{selectedModel.price} + 顺丰运费 ¥18</span>
         <span className="text-base font-black text-white">合计 ¥{total}</span>
       </div>
-      <p className="text-center text-[11px] leading-5 text-white/30">¥18 明确为顺丰运费。提交即表示您确认型号、颜色与收货信息无误。付款会话保留库存 30 分钟。</p>
+      <p className="text-center text-[11px] leading-5 text-white/30">本产品统一为炫彩款；¥18 明确为顺丰运费。提交即表示您确认型号与收货信息无误。付款会话保留库存 30 分钟。</p>
     </form>
   )
 }

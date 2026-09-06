@@ -114,7 +114,7 @@ const showcaseCourses: CourseShowcase[] = [
     copy: {
       zh: {
         title: '小问号 AI Tutor 支架 2.0',
-        eyebrow: '高度升级 · 摄像头可选',
+        eyebrow: '炫彩款 · 高度升级 · 摄像头可选',
         line: '让每个问号，成为感叹号。升级高度，为 AI 时代的学习桌面而生。',
         detail: '带摄像头款 ¥169，不带摄像头款 ¥99；两款均加 ¥18 顺丰运费。',
         preview: '¥99 / ¥169 + ¥18 顺丰运费',
@@ -122,7 +122,7 @@ const showcaseCourses: CourseShowcase[] = [
       },
       en: {
         title: 'Little Question Mark AI Tutor Stand 2.0',
-        eyebrow: 'Upgraded height · Camera optional',
+        eyebrow: 'Rainbow finish · Upgraded height · Camera optional',
         line: 'Turn every question mark into an exclamation mark—with an upgraded height for the AI-era learning desk.',
         detail: '¥169 with camera or ¥99 stand-only; both ship by SF Express for ¥18.',
         preview: '¥99 / ¥169 + ¥18 SF Express',

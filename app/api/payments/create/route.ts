@@ -134,8 +134,8 @@ export async function POST(request: NextRequest) {
             { status: 409 }
           )
         }
-        if (product.id === XIAOWENHAO_PRODUCT_ID && (!item.color || !item.model)) {
-          return NextResponse.json({ error: '请选择支架型号和颜色' }, { status: 400 })
+        if (product.id === XIAOWENHAO_PRODUCT_ID && !item.model) {
+          return NextResponse.json({ error: '请选择支架型号' }, { status: 400 })
         }
         const selectedModel = product.id === XIAOWENHAO_PRODUCT_ID ? item.model : undefined
         const productPrice = selectedModel ? productModelDetails[selectedModel].price : product.price

@@ -285,7 +285,7 @@ export default async function AdminPage() {
           </div>
           <InventorySettings
             product={{
-              name: product?.name || '小问号 AI Tutor 支架 2.0',
+              name: product?.name || '小问号 AI Tutor 支架 2.0 · 炫彩款',
               stock: product?.stock ?? 0,
             }}
           />
