@@ -6,11 +6,13 @@ import { isAdminUser } from '@/lib/admin'
 import { prisma } from '@/lib/prisma'
 import {
   setProductAvailableStock,
-  XIAOWENHAO_PRODUCT_ID,
+  XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
+  XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
 } from '@/lib/shop'
 
 const inventorySchema = z.object({
-  stock: z.number().int().min(0).max(10000),
+  standOnlyStock: z.number().int().min(0).max(10000),
+  withCameraStock: z.number().int().min(0).max(10000),
 })
 
 export async function PATCH(request: NextRequest) {
@@ -31,10 +33,16 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: '库存必须是 0 到 10000 之间的整数' }, { status: 400 })
   }
 
-  const product = await setProductAvailableStock(
-    XIAOWENHAO_PRODUCT_ID,
-    parsedBody.data.stock
-  )
+  const [standOnly, withCamera] = await Promise.all([
+    setProductAvailableStock(
+      XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
+      parsedBody.data.standOnlyStock
+    ),
+    setProductAvailableStock(
+      XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
+      parsedBody.data.withCameraStock
+    ),
+  ])
 
-  return NextResponse.json({ product })
+  return NextResponse.json({ standOnly, withCamera })
 }

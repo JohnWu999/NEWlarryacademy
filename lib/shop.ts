@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 
-export const XIAOWENHAO_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2'
+export const XIAOWENHAO_STAND_ONLY_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2'
+export const XIAOWENHAO_WITH_CAMERA_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2-with-camera'
+export const XIAOWENHAO_PRODUCT_ID = XIAOWENHAO_STAND_ONLY_PRODUCT_ID
 const LEGACY_XIAOWENHAO_PRODUCT_IDS = [
   'product-xiaowenhao-ai-tutor-stand',
   'product-xiaowenhao-ai-tutor-stand-rainbow',
@@ -23,16 +25,22 @@ export const productColorLabels: Record<ProductColor, { zh: string; en: string }
   yellow: { zh: '黄色', en: 'Yellow' },
 }
 
-export const productModelDetails: Record<ProductModel, { zh: string; en: string; price: number }> = {
-  'stand-only': { zh: '不带摄像头', en: 'Stand only', price: 99 },
-  'with-camera': { zh: '带摄像头', en: 'With camera', price: 169 },
+export const productModelDetails: Record<ProductModel, { zh: string; en: string; price: number; productId: string }> = {
+  'stand-only': { zh: '不带摄像头', en: 'Stand only', price: 99, productId: XIAOWENHAO_STAND_ONLY_PRODUCT_ID },
+  'with-camera': { zh: '带摄像头', en: 'With camera', price: 169, productId: XIAOWENHAO_WITH_CAMERA_PRODUCT_ID },
 }
 
 const standProducts = {
   [XIAOWENHAO_PRODUCT_ID]: {
-    name: '小问号 AI Tutor 支架 2.0 · 炫彩款',
-    description: '升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
+    name: '小问号 AI Tutor 支架 2.0 · 炫彩款（不带摄像头）',
+    description: '升级高度的炫彩桌面 AI 学习支架，不含摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
     price: () => productModelDetails['stand-only'].price,
+    imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
+  },
+  [XIAOWENHAO_WITH_CAMERA_PRODUCT_ID]: {
+    name: '小问号 AI Tutor 支架 2.0 · 炫彩款（带摄像头）',
+    description: '升级高度的炫彩桌面 AI 学习支架，包含摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
+    price: () => productModelDetails['with-camera'].price,
     imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
   },
 } as const
@@ -46,7 +54,7 @@ export function xiaowenhaoWeeklyCapacity() {
 }
 
 export function xiaowenhaoProductWeeklyCapacity(productId: string) {
-  return productId === XIAOWENHAO_PRODUCT_ID ? xiaowenhaoWeeklyCapacity() : 0
+  return isXiaowenhaoStandProduct(productId) ? xiaowenhaoWeeklyCapacity() : 0
 }
 
 function currentWeekStart(date = new Date()) {
@@ -79,7 +87,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
   ])
   const weeklyLimit = existingProduct?.weeklyLimit ?? xiaowenhaoProductWeeklyCapacity(productId)
   const currentStockWeek = stockWeekKey()
-  const legacyStockIsCurrent = legacyProduct?.stockWeek === currentStockWeek
+  const legacyStockIsCurrent = productId === XIAOWENHAO_STAND_ONLY_PRODUCT_ID && legacyProduct?.stockWeek === currentStockWeek
   const stock = existingProduct?.stock ?? (legacyStockIsCurrent ? legacyProduct.stock : weeklyLimit)
   const stockNeedsWeeklyReset = Boolean(existingProduct?.stockWeek && existingProduct.stockWeek !== currentStockWeek)
   const product = await prisma.product.upsert({

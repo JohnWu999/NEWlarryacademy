@@ -7,13 +7,13 @@ import { z } from 'zod'
 import Stripe from 'stripe'
 import {
   ensureCurrentWeeklyStock,
+  isXiaowenhaoStandProduct,
   productColorLabels,
   productModelDetails,
   PRODUCT_COLORS,
   PRODUCT_MODELS,
   SHIPPING_METHODS,
   shippingMethodDetails,
-  XIAOWENHAO_PRODUCT_ID,
 } from '@/lib/shop'
 
 const createPaymentSchema = z.object({
@@ -134,19 +134,19 @@ export async function POST(request: NextRequest) {
             { status: 409 }
           )
         }
-        if (product.id === XIAOWENHAO_PRODUCT_ID && !item.model) {
+        if (isXiaowenhaoStandProduct(product.id) && !item.model) {
           return NextResponse.json({ error: '请选择支架型号' }, { status: 400 })
         }
-        const selectedModel = product.id === XIAOWENHAO_PRODUCT_ID ? item.model : undefined
+        if (item.model && productModelDetails[item.model].productId !== product.id) {
+          return NextResponse.json({ error: '支架型号与商品不匹配' }, { status: 400 })
+        }
+        const selectedModel = isXiaowenhaoStandProduct(product.id) ? item.model : undefined
         const productPrice = selectedModel ? productModelDetails[selectedModel].price : product.price
-        const productName = selectedModel
-          ? `${product.name} · ${productModelDetails[selectedModel].zh}`
-          : product.name
         totalAmount += productPrice * quantity
         orderItems.push({
           type: 'product',
           id: product.id,
-          name: productName,
+          name: product.name,
           price: productPrice,
           quantity,
           color: item.color,
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
     if (hasProduct && !validatedData.shipping) {
       return NextResponse.json({ error: '请填写完整的收货信息' }, { status: 400 })
     }
-    const hasXiaowenhao2 = orderItems.some((item) => item.type === 'product' && item.id === XIAOWENHAO_PRODUCT_ID)
+    const hasXiaowenhao2 = orderItems.some((item) => item.type === 'product' && isXiaowenhaoStandProduct(item.id))
     if (hasXiaowenhao2 && validatedData.shipping?.deliveryMethod !== 'sf') {
       return NextResponse.json({ error: '小问号支架 2.0 使用顺丰配送，运费为 ¥18' }, { status: 400 })
     }

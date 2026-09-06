@@ -8,7 +8,8 @@ import ProductOrdersTable from '@/components/admin/ProductOrdersTable'
 import InventorySettings from '@/components/admin/InventorySettings'
 import {
   ensureCurrentWeeklyStock,
-  XIAOWENHAO_PRODUCT_ID,
+  XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
+  XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
 } from '@/lib/shop'
 
 function formatTime(date: Date) {
@@ -117,7 +118,10 @@ export default async function AdminPage() {
   const since = new Date()
   since.setDate(since.getDate() - 13)
   const today = shanghaiDay()
-  const product = await ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID)
+  const [standOnlyProduct, withCameraProduct] = await Promise.all([
+    ensureCurrentWeeklyStock(XIAOWENHAO_STAND_ONLY_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_WITH_CAMERA_PRODUCT_ID),
+  ])
 
   const [totalVisitors, visitorEvents, latestVisitors, learningEvents, paidRecords, productOrders] = await Promise.all([
     prisma.visitor.count(),
@@ -284,9 +288,13 @@ export default async function AdminPage() {
             <p className="mt-1 text-xs font-bold text-white/40">这里只管理 2.0 炫彩款；旧版库存入口已移除</p>
           </div>
           <InventorySettings
-            product={{
-              name: product?.name || '小问号 AI Tutor 支架 2.0 · 炫彩款',
-              stock: product?.stock ?? 0,
+            standOnly={{
+              name: standOnlyProduct?.name || '小问号支架 2.0 · 不带摄像头',
+              stock: standOnlyProduct?.stock ?? 0,
+            }}
+            withCamera={{
+              name: withCameraProduct?.name || '小问号支架 2.0 · 带摄像头',
+              stock: withCameraProduct?.stock ?? 0,
             }}
           />
         </section>

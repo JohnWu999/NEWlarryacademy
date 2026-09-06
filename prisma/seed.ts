@@ -556,9 +556,15 @@ async function main() {
   const products = [
     [
       'product-xiaowenhao-ai-tutor-stand-2',
-      '小问号 AI Tutor 支架 2.0 · 炫彩款',
-      '升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
+      '小问号 AI Tutor 支架 2.0 · 炫彩款（不带摄像头）',
+      '升级高度的炫彩桌面 AI 学习支架，不含摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
       99,
+    ],
+    [
+      'product-xiaowenhao-ai-tutor-stand-2-with-camera',
+      '小问号 AI Tutor 支架 2.0 · 炫彩款（带摄像头）',
+      '升级高度的炫彩桌面 AI 学习支架，包含摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
+      169,
     ],
     ['product-geometry-kit', '几何基础套装', '包含立方体、圆柱体、球体等基础几何模型，适合初学者', 198],
     ['product-algebra-kit', '代数可视化套装', '用 3D 模型演示方程式和函数关系，帮助理解抽象概念', 268],
@@ -566,7 +572,7 @@ async function main() {
   ] as const
 
   for (const [id, name, description, price] of products) {
-    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand-2'
+    const isXiaowenhaoStand = id === 'product-xiaowenhao-ai-tutor-stand-2' || id === 'product-xiaowenhao-ai-tutor-stand-2-with-camera'
     const standImageUrl = '/products/xiaowenhao-ai-tutor-stand-2.png'
     await prisma.product.upsert({
       where: { id },

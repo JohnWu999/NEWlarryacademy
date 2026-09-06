@@ -15,18 +15,23 @@ const shippingFee = 18
 const fieldClass = 'mt-2 h-12 w-full rounded-xl border border-white/10 bg-black/25 px-4 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
 export default function ProductPurchaseForm({
-  productId,
-  initialStock,
+  standOnly,
+  withCamera,
 }: {
-  productId: string
-  initialStock: number
+  standOnly: { productId: string; stock: number }
+  withCamera: { productId: string; stock: number }
 }) {
   const { status } = useSession()
   const router = useRouter()
-  const [model, setModel] = useState<StandModel>('with-camera')
+  const [model, setModel] = useState<StandModel>(withCamera.stock > 0 ? 'with-camera' : 'stand-only')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const modelInventory = {
+    'stand-only': standOnly,
+    'with-camera': withCamera,
+  }
   const selectedModel = models.find((option) => option.id === model) ?? models[0]
+  const selectedInventory = modelInventory[selectedModel.id]
   const total = selectedModel.price + shippingFee
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -45,7 +50,7 @@ export default function ProductPurchaseForm({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{ type: 'product', id: productId, quantity: 1, model }],
+          items: [{ type: 'product', id: selectedInventory.productId, quantity: 1, model }],
           paymentMethod: 'stripe',
           shipping: {
             deliveryMethod: 'sf',
@@ -91,15 +96,19 @@ export default function ProductPurchaseForm({
                 value={option.id}
                 checked={model === option.id}
                 onChange={() => setModel(option.id)}
+                disabled={modelInventory[option.id].stock < 1}
                 className="peer sr-only"
               />
-              <span className="flex min-h-28 flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.035] px-5 transition hover:bg-white/[0.06] peer-checked:border-cyan-300/60 peer-checked:bg-cyan-300/10 peer-checked:ring-2 peer-checked:ring-cyan-300/25">
+              <span className="flex min-h-28 flex-col justify-center rounded-2xl border border-white/10 bg-white/[0.035] px-5 transition hover:bg-white/[0.06] peer-checked:border-cyan-300/60 peer-checked:bg-cyan-300/10 peer-checked:ring-2 peer-checked:ring-cyan-300/25 peer-disabled:cursor-not-allowed peer-disabled:opacity-45">
                 <span className="flex items-baseline justify-between gap-3">
                   <span className="text-base font-black text-white">{option.label}</span>
                   <span className="text-2xl font-black text-cyan-200">¥{option.price}</span>
                 </span>
                 <span className="mt-2 text-xs font-bold text-white/45">{option.note}</span>
                 <span className="mt-1 text-xs font-black text-amber-200">+ ¥18 顺丰运费</span>
+                <span className={`mt-2 text-xs font-black ${modelInventory[option.id].stock > 0 ? 'text-emerald-200' : 'text-rose-200'}`}>
+                  {modelInventory[option.id].stock > 0 ? `剩余 ${modelInventory[option.id].stock} 个` : '本型号已售罄'}
+                </span>
               </span>
             </label>
           ))}
@@ -146,10 +155,10 @@ export default function ProductPurchaseForm({
 
       <button
         type="submit"
-        disabled={loading || initialStock < 1 || status === 'loading'}
+        disabled={loading || selectedInventory.stock < 1 || status === 'loading'}
         className="flex min-h-16 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500 to-violet-500 px-7 text-base font-black text-white shadow-xl shadow-violet-500/20 transition hover:-translate-y-0.5 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
       >
-        {initialStock < 1 ? '本周已售罄' : loading ? '正在创建安全订单…' : status === 'unauthenticated' ? '登录后购买' : `前往安全支付 · ¥${total}`}
+        {selectedInventory.stock < 1 ? '本型号已售罄' : loading ? '正在创建安全订单…' : status === 'unauthenticated' ? '登录后购买' : `前往安全支付 · ¥${total}`}
       </button>
       <div className="flex items-center justify-between rounded-xl bg-white/[0.035] px-4 py-3 text-xs font-bold text-white/50">
         <span>{selectedModel.label} ¥{selectedModel.price} + 顺丰运费 ¥18</span>

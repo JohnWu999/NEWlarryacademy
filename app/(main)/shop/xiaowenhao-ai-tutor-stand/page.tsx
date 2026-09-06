@@ -2,13 +2,20 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductPurchaseForm from './ProductPurchaseForm'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID } from '@/lib/shop'
+import {
+  ensureCurrentWeeklyStock,
+  XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
+  XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
+} from '@/lib/shop'
 
 export const dynamic = 'force-dynamic'
 
 export default async function XiaowenhaoProductPage() {
-  const product = await ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID)
-  if (!product || !product.published) notFound()
+  const [standOnly, withCamera] = await Promise.all([
+    ensureCurrentWeeklyStock(XIAOWENHAO_STAND_ONLY_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_WITH_CAMERA_PRODUCT_ID),
+  ])
+  if (!standOnly?.published || !withCamera?.published) notFound()
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-24 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -20,7 +27,7 @@ export default async function XiaowenhaoProductPage() {
           <section className="lg:sticky lg:top-24">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#171a3d] shadow-2xl shadow-violet-950/30">
               <Image
-                src={product.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png'}
+                src={standOnly.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png'}
                 alt="小问号 AI Tutor 支架 2.0 宣传图"
                 fill
                 priority
@@ -40,13 +47,14 @@ export default async function XiaowenhaoProductPage() {
               <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
                 小问号支架 · 2.0 版本
               </span>
-              <span className={`rounded-full px-4 py-2 text-sm font-black ${product.stock > 0 ? 'bg-emerald-400/10 text-emerald-200' : 'bg-rose-400/10 text-rose-200'}`}>
-                {product.stock > 0 ? `本周剩余 ${product.stock} 个` : '本周已售罄'}
-              </span>
+              <div className="flex flex-wrap justify-end gap-2 text-xs font-black">
+                <span className={`rounded-full px-4 py-2 ${withCamera.stock > 0 ? 'bg-emerald-400/10 text-emerald-200' : 'bg-rose-400/10 text-rose-200'}`}>带摄像头：{withCamera.stock} 个</span>
+                <span className={`rounded-full px-4 py-2 ${standOnly.stock > 0 ? 'bg-emerald-400/10 text-emerald-200' : 'bg-rose-400/10 text-rose-200'}`}>不带摄像头：{standOnly.stock} 个</span>
+              </div>
             </div>
 
-            <h1 className="mt-7 text-4xl font-black leading-tight sm:text-5xl">{product.name}</h1>
-            <p className="mt-5 text-base leading-8 text-white/60">{product.description}</p>
+            <h1 className="mt-7 text-4xl font-black leading-tight sm:text-5xl">小问号 AI Tutor 支架 2.0 · 炫彩款</h1>
+            <p className="mt-5 text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号；两个型号分别计算库存。</p>
             <blockquote className="mt-6 border-l-2 border-violet-300 pl-5 text-lg font-bold text-white/85">
               让每个问号，成为感叹号。
             </blockquote>
@@ -60,12 +68,12 @@ export default async function XiaowenhaoProductPage() {
                 </div>
                 <p className="mt-2 text-sm font-black text-white/70">不带摄像头 ¥117 · 带摄像头 ¥187（含运费）</p>
               </div>
-              <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">每周小批量制作 {product.weeklyLimit ?? 10} 个，三种颜色共享库存。</p>
+              <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">带摄像头与不带摄像头型号分别管理库存。</p>
             </div>
 
             <ProductPurchaseForm
-              productId={product.id}
-              initialStock={product.stock}
+              standOnly={{ productId: standOnly.id, stock: standOnly.stock }}
+              withCamera={{ productId: withCamera.id, stock: withCamera.stock }}
             />
           </section>
         </div>

@@ -1,6 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ensureCurrentWeeklyStock, XIAOWENHAO_PRODUCT_ID } from '@/lib/shop'
+import {
+  ensureCurrentWeeklyStock,
+  XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
+  XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
+} from '@/lib/shop'
 import { getServerLocale } from '@/lib/server-i18n'
 
 export const dynamic = 'force-dynamic'
@@ -21,12 +25,15 @@ const legacyProducts = [
 ]
 
 export default async function ShopPage() {
-  const [locale, product] = await Promise.all([
+  const [locale, standOnly, withCamera] = await Promise.all([
     getServerLocale(),
-    ensureCurrentWeeklyStock(XIAOWENHAO_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_STAND_ONLY_PRODUCT_ID),
+    ensureCurrentWeeklyStock(XIAOWENHAO_WITH_CAMERA_PRODUCT_ID),
   ])
 
   const zh = locale === 'zh'
+  const product = standOnly
+  const hasStock = Boolean((standOnly?.stock ?? 0) > 0 || (withCamera?.stock ?? 0) > 0)
   return (
     <div className="min-h-dvh bg-[#070913] pb-24 pt-28 text-white">
       <section className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -47,8 +54,8 @@ export default async function ShopPage() {
               <p className="text-xs font-bold uppercase tracking-[0.2em]">Weekly drop</p>
               <p className="mt-1 text-xl font-black sm:text-2xl">
                 {zh
-                  ? `2.0 版本每周限量 ${product?.weeklyLimit ?? 10} 个`
-                  : `Only ${product?.weeklyLimit ?? 10} version 2.0 stands each week`}
+                  ? `2.0 两个型号分别管理库存`
+                  : 'Separate inventory for each 2.0 model'}
               </p>
             </div>
           </div>
@@ -100,8 +107,8 @@ export default async function ShopPage() {
 
             <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
               <p className="text-sm font-black uppercase tracking-[0.22em] text-violet-300">Xiaowenhao AI Tutor</p>
-              <h2 className="mt-4 text-3xl font-black sm:text-5xl">{product.name}</h2>
-              <p className="mt-5 max-w-xl text-base leading-8 text-white/60">{product.description}</p>
+              <h2 className="mt-4 text-3xl font-black sm:text-5xl">小问号 AI Tutor 支架 2.0 · 炫彩款</h2>
+              <p className="mt-5 max-w-xl text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号，两个型号分别管理库存。</p>
 
               <div className="mt-8 flex flex-wrap gap-2">
                 {['产品自带摄像头可选', '解决原来的高度问题', '炫彩款', '顺丰配送'].map((label) => (
@@ -118,21 +125,22 @@ export default async function ShopPage() {
                 </div>
                 <div className="sm:text-right">
                   <p className="text-sm text-white/45">{zh ? '本周剩余' : 'Remaining this week'}</p>
-                  <p className={`mt-1 text-3xl font-black ${product.stock > 3 ? 'text-emerald-300' : 'text-amber-300'}`}>
-                    {product.stock} <span className="text-sm text-white/40">{zh ? '个' : 'left'}</span>
-                  </p>
+                  <div className="mt-2 space-y-1 text-sm font-black">
+                    <p className={withCamera && withCamera.stock > 0 ? 'text-emerald-300' : 'text-amber-300'}>{zh ? '带摄像头' : 'With camera'}：{withCamera?.stock ?? 0}</p>
+                    <p className={standOnly.stock > 0 ? 'text-emerald-300' : 'text-amber-300'}>{zh ? '不带摄像头' : 'Stand only'}：{standOnly.stock}</p>
+                  </div>
                 </div>
               </div>
 
               <Link
                 href="/shop/xiaowenhao-ai-tutor-stand"
                 className={`mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl px-7 text-base font-black transition ${
-                  product.stock > 0
+                  hasStock
                     ? 'bg-gradient-to-r from-blue-500 to-violet-500 text-white shadow-lg shadow-violet-500/20 hover:-translate-y-0.5 hover:brightness-110'
                     : 'pointer-events-none bg-white/10 text-white/35'
                 }`}
               >
-                {product.stock > 0 ? (zh ? '选择型号并购买' : 'Choose a model & buy') : (zh ? '本周已售罄' : 'Sold out this week')}
+                {hasStock ? (zh ? '选择型号并购买' : 'Choose a model & buy') : (zh ? '本周已售罄' : 'Sold out this week')}
               </Link>
             </div>
           </article>
