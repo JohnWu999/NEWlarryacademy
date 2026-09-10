@@ -62,7 +62,7 @@ function shippingFromMetadata(metadata?: string | null) {
       addressLine1?: string
       addressLine2?: string
       postalCode?: string
-      deliveryMethod?: 'cainiao' | 'sf'
+      deliveryMethod?: 'free' | 'cainiao' | 'sf'
     }
     : null
 }
@@ -302,7 +302,7 @@ export default async function AdminPage() {
         <section className="mt-8">
           <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-xl font-black">订单</h2>
+              <h2 className="text-xl font-black">实物商品订单</h2>
               <p className="mt-1 text-xs font-bold text-white/40">
                 查看待处理订单和过往已发货记录 · 已发货 {shippedOrders} · 待发货 {pendingShipments}
               </p>

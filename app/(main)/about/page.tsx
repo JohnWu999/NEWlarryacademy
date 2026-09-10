@@ -1,6 +1,7 @@
 'use client'
 
 import { useLanguage } from '@/context/LanguageContext'
+import Link from 'next/link'
 
 export default function AboutPage() {
   const { t, locale } = useLanguage()
@@ -51,18 +52,19 @@ export default function AboutPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-[0.9fr_1.1fr] lg:grid-cols-1">
-              <figure className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+              <Link href="/shop/walking-in-ages" className="group overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] transition hover:-translate-y-1 hover:border-blue-300/35">
                 <img
                   src="/about/larry-book.jpg"
                   alt={locale === 'zh' ? 'Larry 手捧《七岁行欧洲》' : 'Larry holding Walking in Ages'}
-                  className="aspect-[1.28] w-full object-cover"
+                  className="aspect-[1.28] w-full object-cover transition duration-700 group-hover:scale-[1.025]"
                 />
                 <figcaption className="border-t border-white/10 p-4">
                   <p className="text-lg font-black text-white">{t('about.book.title')}</p>
                   <p className="mt-1 text-sm font-bold text-blue-200">{t('about.book.subtitle')}</p>
                   <p className="mt-3 text-sm leading-6 text-gray-400">{t('about.book.desc')}</p>
+                  <p className="mt-4 text-sm font-black text-blue-300">{locale === 'zh' ? '查看新书介绍·¥55 包邮 →' : 'Discover the book · ¥55 with free shipping →'}</p>
                 </figcaption>
-              </figure>
+              </Link>
 
               <figure className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
                 <img

@@ -20,7 +20,7 @@ export default async function XiaowenhaoProductPage() {
     <div className="min-h-dvh bg-[#070913] pb-24 pt-24 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Link href="/shop" className="inline-flex items-center gap-2 py-5 text-sm font-bold text-white/50 transition hover:text-white">
-          <span aria-hidden="true">←</span> 返回 3D 模型
+          <span aria-hidden="true">←</span> 返回我的产品
         </Link>
 
         <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">

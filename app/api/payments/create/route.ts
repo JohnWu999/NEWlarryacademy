@@ -7,6 +7,7 @@ import { z } from 'zod'
 import Stripe from 'stripe'
 import {
   ensureCurrentWeeklyStock,
+  isWalkingInAgesBook,
   isXiaowenhaoStandProduct,
   productColorLabels,
   productModelDetails,
@@ -164,14 +165,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '请填写完整的收货信息' }, { status: 400 })
     }
     const hasXiaowenhao2 = orderItems.some((item) => item.type === 'product' && isXiaowenhaoStandProduct(item.id))
+    const hasWalkingInAgesBook = orderItems.some((item) => item.type === 'product' && isWalkingInAgesBook(item.id))
     if (hasXiaowenhao2 && validatedData.shipping?.deliveryMethod !== 'sf') {
       return NextResponse.json({ error: '小问号支架 2.0 使用顺丰配送，运费为 ¥18' }, { status: 400 })
+    }
+    if (hasWalkingInAgesBook && validatedData.shipping?.deliveryMethod !== 'free') {
+      return NextResponse.json({ error: '《七岁行欧洲》为包邮商品' }, { status: 400 })
     }
     if (hasProduct && validatedData.paymentMethod !== 'stripe') {
       return NextResponse.json({ error: '实物商品目前请使用 Stripe 安全支付' }, { status: 400 })
     }
     const currency = hasProduct ? 'CNY' : 'USD'
-    const deliveryMethod = hasXiaowenhao2 ? 'sf' : (validatedData.shipping?.deliveryMethod || 'cainiao')
+    const deliveryMethod = hasXiaowenhao2 ? 'sf' : hasWalkingInAgesBook ? 'free' : (validatedData.shipping?.deliveryMethod || 'cainiao')
     const shipping = shippingMethodDetails[deliveryMethod]
     if (hasProduct) totalAmount += shipping.fee
 

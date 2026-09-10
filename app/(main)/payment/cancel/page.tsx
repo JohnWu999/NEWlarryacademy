@@ -5,13 +5,13 @@ const copy = {
   zh: {
     title: '支付未完成',
     body: '这次付款没有完成。若是实物商品，预留库存会在付款会话到期后自动释放。你可以返回重新购买。',
-    courses: '返回 3D 模型',
+    courses: '返回我的产品',
     profile: '我的账户',
   },
   en: {
     title: 'Payment Not Completed',
     body: 'Payment was not completed. Reserved physical inventory is released automatically when the checkout session expires. You can return and try again.',
-    courses: 'Back to 3D Models',
+    courses: 'Back to My Product',
     profile: 'My Account',
   },
 }

@@ -12,7 +12,7 @@ type ShippingInfo = {
   addressLine1?: string
   addressLine2?: string
   postalCode?: string
-  deliveryMethod?: 'cainiao' | 'sf'
+  deliveryMethod?: 'free' | 'cainiao' | 'sf'
 }
 
 type ProductOrder = {
@@ -164,7 +164,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                   </td>
                   <td className="px-4 py-4 align-top">
                     <div className="mb-2 inline-flex border border-cyan-300/20 bg-cyan-300/10 px-2 py-1 text-[11px] font-black text-cyan-100">
-                      {order.shipping?.deliveryMethod === 'sf' ? '顺丰 · ¥18' : '菜鸟 · ¥8'}
+                      {order.shipping?.deliveryMethod === 'free' ? '包邮 · ¥0' : order.shipping?.deliveryMethod === 'sf' ? '顺丰 · ¥18' : '菜鸟 · ¥8'}
                     </div>
                     <div className="font-bold">{order.shipping?.recipientName || '未填写姓名'}</div>
                     <div className="mt-1 text-xs text-white/55">{order.shipping?.phone || '未填写电话'}</div>
@@ -213,7 +213,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
             }) : (
               <tr>
                 <td className="px-4 py-6 text-white/45" colSpan={6}>
-                  {view === 'shipped' ? '暂时没有已发货的 AI Tutor 支架订单。' : '暂时没有待处理的 AI Tutor 支架订单。'}
+                  {view === 'shipped' ? '暂时没有已发货的实物商品订单。' : '暂时没有待处理的实物商品订单。'}
                 </td>
               </tr>
             )}

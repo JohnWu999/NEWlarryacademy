@@ -3,15 +3,56 @@ import { prisma } from '@/lib/prisma'
 export const XIAOWENHAO_STAND_ONLY_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2'
 export const XIAOWENHAO_WITH_CAMERA_PRODUCT_ID = 'product-xiaowenhao-ai-tutor-stand-2-with-camera'
 export const XIAOWENHAO_PRODUCT_ID = XIAOWENHAO_STAND_ONLY_PRODUCT_ID
+export const WALKING_IN_AGES_BOOK_PRODUCT_ID = 'product-walking-in-ages-book'
 const LEGACY_XIAOWENHAO_PRODUCT_IDS = [
   'product-xiaowenhao-ai-tutor-stand',
   'product-xiaowenhao-ai-tutor-stand-rainbow',
 ] as const
-export const SHIPPING_METHODS = ['cainiao', 'sf'] as const
+export const SHIPPING_METHODS = ['free', 'cainiao', 'sf'] as const
 export type ShippingMethod = (typeof SHIPPING_METHODS)[number]
 export const shippingMethodDetails: Record<ShippingMethod, { label: string; fee: number }> = {
+  free: { label: '包邮', fee: 0 },
   cainiao: { label: '菜鸟', fee: 8 },
   sf: { label: '顺丰', fee: 18 },
+}
+
+const walkingInAgesBook = {
+  name: '《七岁行欧洲》 Walking in Ages',
+  description: '一本由七岁孩子亲自写下的欧洲探索记录：从历史、艺术到城市与人，用好奇心把行走变成学习。',
+  price: 55,
+  imageUrl: '/about/larry-book.jpg',
+  initialStock: 100,
+} as const
+
+export function isWalkingInAgesBook(productId: string) {
+  return productId === WALKING_IN_AGES_BOOK_PRODUCT_ID
+}
+
+export async function ensureWalkingInAgesBook() {
+  const existing = await prisma.product.findUnique({ where: { id: WALKING_IN_AGES_BOOK_PRODUCT_ID } })
+  return prisma.product.upsert({
+    where: { id: WALKING_IN_AGES_BOOK_PRODUCT_ID },
+    update: {
+      name: walkingInAgesBook.name,
+      description: walkingInAgesBook.description,
+      price: walkingInAgesBook.price,
+      category: 'books',
+      imageUrl: walkingInAgesBook.imageUrl,
+      featured: true,
+      published: true,
+    },
+    create: {
+      id: WALKING_IN_AGES_BOOK_PRODUCT_ID,
+      name: walkingInAgesBook.name,
+      description: walkingInAgesBook.description,
+      price: walkingInAgesBook.price,
+      category: 'books',
+      imageUrl: walkingInAgesBook.imageUrl,
+      stock: existing?.stock ?? walkingInAgesBook.initialStock,
+      featured: true,
+      published: true,
+    },
+  })
 }
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
 export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
@@ -69,6 +110,7 @@ function stockWeekKey(date = new Date()) {
 }
 
 export async function ensureCurrentWeeklyStock(productId: string) {
+  if (isWalkingInAgesBook(productId)) return ensureWalkingInAgesBook()
   if (!isXiaowenhaoStandProduct(productId)) {
     return prisma.product.findUnique({ where: { id: productId } })
   }
@@ -130,7 +172,7 @@ export async function ensureCurrentWeeklyStock(productId: string) {
 }
 
 export async function setProductAvailableStock(productId: string, stock: number) {
-  if (!isXiaowenhaoStandProduct(productId)) {
+  if (!isXiaowenhaoStandProduct(productId) && !isWalkingInAgesBook(productId)) {
     throw new Error('UNSUPPORTED_PRODUCT')
   }
 

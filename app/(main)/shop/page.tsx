@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   ensureCurrentWeeklyStock,
+  ensureWalkingInAgesBook,
   XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
   XIAOWENHAO_WITH_CAMERA_PRODUCT_ID,
 } from '@/lib/shop'
@@ -25,10 +26,11 @@ const legacyProducts = [
 ]
 
 export default async function ShopPage() {
-  const [locale, standOnly, withCamera] = await Promise.all([
+  const [locale, standOnly, withCamera, book] = await Promise.all([
     getServerLocale(),
     ensureCurrentWeeklyStock(XIAOWENHAO_STAND_ONLY_PRODUCT_ID),
     ensureCurrentWeeklyStock(XIAOWENHAO_WITH_CAMERA_PRODUCT_ID),
+    ensureWalkingInAgesBook(),
   ])
 
   const zh = locale === 'zh'
@@ -38,28 +40,51 @@ export default async function ShopPage() {
     <div className="min-h-dvh bg-[#070913] pb-24 pt-28 text-white">
       <section className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-[radial-gradient(circle_at_85%_10%,rgba(96,82,255,0.2),transparent_36%),linear-gradient(145deg,#11152d,#080a13_65%)] px-6 py-12 sm:px-10 lg:px-14">
-          <p className="text-xs font-black uppercase tracking-[0.32em] text-cyan-300">Larry Academy · 3D Models</p>
+          <p className="text-xs font-black uppercase tracking-[0.32em] text-cyan-300">Larry Academy · My Product</p>
           <div className="mt-5 grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <h1 className="max-w-3xl text-4xl font-black leading-tight sm:text-6xl">
-                {zh ? '把好奇心，放在桌面上。' : 'Put curiosity on the desk.'}
+                {zh ? '我的产品，我的探索。' : 'My product. My explorations.'}
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
                 {zh
-                  ? 'Larry Academy 的学生创造型 3D 产品。每一件都从真实学习场景出发，小批量制作。'
-                  : 'Student-created 3D products from Larry Academy, designed for real learning moments and made in small weekly batches.'}
+                  ? '从七岁写下的欧洲故事，到为 AI 学习桌设计的实物工具：这里收藏 Larry 把好奇心变成作品的过程。'
+                  : 'From a Europe story written at seven to physical tools for an AI learning desk, this is where Larry turns curiosity into things you can hold.'}
               </p>
             </div>
             <div className="rounded-3xl border border-amber-300/20 bg-amber-300/10 px-6 py-4 text-amber-100">
-              <p className="text-xs font-bold uppercase tracking-[0.2em]">Weekly drop</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em]">Books · Learning tools</p>
               <p className="mt-1 text-xl font-black sm:text-2xl">
                 {zh
-                  ? `2.0 两个型号分别管理库存`
-                  : 'Separate inventory for each 2.0 model'}
+                  ? '学生亲手创造的作品'
+                  : 'Made by a young creator'}
               </p>
             </div>
           </div>
         </div>
+
+        {book ? (
+          <article className="relative mt-10 grid overflow-hidden rounded-[2.5rem] border border-amber-200/15 bg-[#102b4f] shadow-2xl shadow-blue-950/40 lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="relative min-h-[24rem] overflow-hidden lg:min-h-[36rem]">
+              <Image src={book.imageUrl || '/about/larry-book.jpg'} alt="《七岁行欧洲》 Walking in Ages" fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 54vw" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#102b4f] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#102b4f]" />
+              <span className="absolute left-6 top-6 rounded-full border border-white/20 bg-black/35 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] backdrop-blur-xl">Larry&apos;s first book</span>
+            </div>
+            <div className="relative flex flex-col justify-center p-7 sm:p-10 lg:-ml-12 lg:p-14">
+              <p className="text-sm font-black uppercase tracking-[0.24em] text-amber-200">Walking in Ages</p>
+              <h2 className="mt-4 text-4xl font-black sm:text-6xl">七岁行欧洲</h2>
+              <p className="mt-3 text-lg font-bold text-blue-100">{zh ? '一个七岁孩子眼中的欧洲，一段从行走开始的学习。' : 'Europe through the eyes of a seven-year-old—and a learning journey that began by walking.'}</p>
+              <p className="mt-5 max-w-xl text-base leading-8 text-white/65">{book.description}</p>
+              <div className="mt-8 flex items-end justify-between border-t border-white/12 pt-7">
+                <div><p className="text-xs font-bold uppercase tracking-[0.18em] text-white/40">{zh ? '新书价格' : 'Book price'}</p><p className="mt-1 text-4xl font-black">¥55 <span className="text-base text-emerald-200">{zh ? '包邮' : 'free shipping'}</span></p></div>
+                <p className="text-sm font-black text-emerald-200">{zh ? `现货 ${book.stock} 本` : `${book.stock} in stock`}</p>
+              </div>
+              <Link href="/shop/walking-in-ages" className="mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl bg-amber-100 px-7 text-base font-black text-[#102b4f] transition hover:-translate-y-0.5 hover:bg-white">
+                {zh ? '走进 Larry 的七岁欧洲 →' : "Enter Larry's Europe story →"}
+              </Link>
+            </div>
+          </article>
+        ) : null}
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {legacyProducts.map((legacy) => (
