@@ -67,7 +67,7 @@ export default async function XiaowenhaoProductPage() {
             </div>
 
             <h1 className="mt-7 text-4xl font-black leading-tight sm:text-5xl">小问号 AI Tutor 支架 2.0 · 炫彩款</h1>
-            <p className="mt-5 text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号；两个型号分别计算库存。</p>
+            <p className="mt-5 text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供配备 500 万像素自动对焦摄像头与不带摄像头两种型号；两个型号分别计算库存。</p>
             <blockquote className="mt-6 border-l-2 border-violet-300 pl-5 text-lg font-bold text-white/85">
               让每个问号，成为感叹号。
             </blockquote>
@@ -76,10 +76,10 @@ export default async function XiaowenhaoProductPage() {
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/35">Price</p>
                 <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <p className="text-4xl font-black">¥99 / ¥169</p>
+                  <p className="text-4xl font-black">¥99 / ¥199</p>
                   <p className="text-sm font-bold text-amber-200">+ ¥18 顺丰运费</p>
                 </div>
-                <p className="mt-2 text-sm font-black text-white/70">不带摄像头 ¥117 · 带摄像头 ¥187（含运费）</p>
+                <p className="mt-2 text-sm font-black text-white/70">不带摄像头 ¥117 · 带 500 万像素自动对焦摄像头 ¥217（含运费）</p>
               </div>
               <p className="max-w-[14rem] text-right text-xs leading-5 text-white/40">带摄像头与不带摄像头型号分别管理库存。</p>
             </div>

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 type StandModel = 'stand-only' | 'with-camera'
 
 const models: Array<{ id: StandModel; label: string; price: number; note: string }> = [
-  { id: 'with-camera', label: '带摄像头', price: 169, note: '支架与摄像头完整套装' },
+  { id: 'with-camera', label: '带摄像头', price: 199, note: '含 500 万像素自动对焦摄像头' },
   { id: 'stand-only', label: '不带摄像头', price: 99, note: '仅含小问号支架 2.0' },
 ]
 

@@ -116,7 +116,7 @@ export default async function ShopPage() {
             <div className="flex flex-col justify-center p-7 sm:p-10 lg:p-14">
               <p className="text-sm font-black uppercase tracking-[0.22em] text-violet-300">Xiaowenhao AI Tutor</p>
               <h2 className="mt-4 text-3xl font-black sm:text-5xl">小问号 AI Tutor 支架 2.0 · 炫彩款</h2>
-              <p className="mt-5 max-w-xl text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供带摄像头与不带摄像头两种型号，两个型号分别管理库存。</p>
+              <p className="mt-5 max-w-xl text-base leading-8 text-white/60">升级高度的炫彩桌面 AI 学习支架，提供配备 500 万像素自动对焦摄像头与不带摄像头两种型号，两个型号分别管理库存。</p>
               <p className="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.07] px-5 py-3 text-sm font-bold leading-6 text-fuchsia-100">
                 {zh
                   ? '随机盲盒发货：每一种 Style 都很精美，收到哪一种，都是一份惊喜。'
@@ -124,7 +124,7 @@ export default async function ShopPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-2">
-                {['产品自带摄像头可选', '解决原来的高度问题', '炫彩款', '顺丰配送'].map((label) => (
+                {['500 万像素自动对焦摄像头可选', '解决原来的高度问题', '炫彩款', '顺丰配送'].map((label) => (
                   <span key={label} className="rounded-full border border-white/10 bg-white/[0.05] px-4 py-2 text-sm font-bold text-white/75">
                     {label}
                   </span>
@@ -134,7 +134,7 @@ export default async function ShopPage() {
               <div className="mt-10 flex flex-col gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-sm text-white/45">{zh ? '产品价格' : 'Price'}</p>
-                  <p className="mt-1 text-4xl font-black">¥99 / ¥169 <span className="text-sm text-amber-200">+ ¥18 顺丰运费</span></p>
+                  <p className="mt-1 text-4xl font-black">¥99 / ¥199 <span className="text-sm text-amber-200">+ ¥18 顺丰运费</span></p>
                 </div>
                 <div className="sm:text-right">
                   <p className="text-sm text-white/45">{zh ? '本周剩余' : 'Remaining this week'}</p>
