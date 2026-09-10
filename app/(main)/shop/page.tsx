@@ -66,7 +66,7 @@ export default async function ShopPage() {
         {book ? (
           <article className="relative mt-10 grid overflow-hidden rounded-[2.5rem] border border-amber-200/15 bg-[#102b4f] shadow-2xl shadow-blue-950/40 lg:grid-cols-[1.08fr_0.92fr]">
             <div className="relative min-h-[24rem] overflow-hidden lg:min-h-[36rem]">
-              <Image src={book.imageUrl || '/about/larry-book.jpg'} alt="《七岁行欧洲》 Walking in Ages" fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 54vw" />
+              <Image src={book.imageUrl || '/about/larry-book.jpg'} alt="《七岁行欧洲》 Walking in Ages" fill priority className="bg-[#2a5f9e] object-contain object-center" sizes="(max-width: 1024px) 100vw, 54vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#102b4f] via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#102b4f]" />
               <span className="absolute left-6 top-6 rounded-full border border-white/20 bg-black/35 px-4 py-2 text-xs font-black uppercase tracking-[0.18em] backdrop-blur-xl">Larry&apos;s first book</span>
             </div>
