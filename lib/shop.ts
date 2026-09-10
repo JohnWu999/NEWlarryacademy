@@ -79,8 +79,8 @@ const standProducts = {
     imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
   },
   [XIAOWENHAO_WITH_CAMERA_PRODUCT_ID]: {
-    name: '小问号 AI Tutor 支架 2.0 · 炫彩款（带 500 万像素自动对焦摄像头）',
-    description: '升级高度的炫彩桌面 AI 学习支架，配备 500 万像素自动对焦摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
+    name: '小问号 AI Tutor 支架 2.0 · 炫彩款（带 500 万像素摄像头）',
+    description: '升级高度的炫彩桌面 AI 学习支架，配备 500 万像素摄像头。螺旋造型搭配稳固圆底座，每件成品都有自然变化的炫彩纹理。',
     price: () => productModelDetails['with-camera'].price,
     imageUrl: '/products/xiaowenhao-ai-tutor-stand-2.png',
   },
