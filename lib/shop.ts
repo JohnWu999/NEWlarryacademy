@@ -55,15 +55,18 @@ export async function ensureWalkingInAgesBook() {
   })
 }
 export const XIAOWENHAO_WEEKLY_LIMIT = 10
-export const PRODUCT_COLORS = ['blue', 'purple', 'yellow'] as const
+export const PRODUCT_COLORS = ['glacier-blue', 'neon-pink-blue', 'midnight-blue-black', 'dream-purple', 'rose-sky', 'lava-red-black'] as const
 export type ProductColor = (typeof PRODUCT_COLORS)[number]
 export const PRODUCT_MODELS = ['stand-only', 'with-camera'] as const
 export type ProductModel = (typeof PRODUCT_MODELS)[number]
 
 export const productColorLabels: Record<ProductColor, { zh: string; en: string }> = {
-  blue: { zh: '蓝色', en: 'Blue' },
-  purple: { zh: '紫色', en: 'Purple' },
-  yellow: { zh: '黄色', en: 'Yellow' },
+  'glacier-blue': { zh: '冰川蓝', en: 'Glacier Blue' },
+  'neon-pink-blue': { zh: '霓虹粉蓝', en: 'Neon Pink Blue' },
+  'midnight-blue-black': { zh: '星夜蓝黑', en: 'Midnight Blue Black' },
+  'dream-purple': { zh: '幻境炫紫', en: 'Dream Purple' },
+  'rose-sky': { zh: '晨曦玫红天蓝', en: 'Rose Sky' },
+  'lava-red-black': { zh: '熔岩红黑', en: 'Lava Red Black' },
 }
 
 export const productModelDetails: Record<ProductModel, { zh: string; en: string; price: number; productId: string }> = {

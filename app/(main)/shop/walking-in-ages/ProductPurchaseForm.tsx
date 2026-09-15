@@ -38,6 +38,7 @@ export default function ProductPurchaseForm({ productId, stock }: { productId: s
             addressLine1: data.get('addressLine1'),
             addressLine2: data.get('addressLine2') || undefined,
             postalCode: data.get('postalCode') || undefined,
+            customerNote: data.get('customerNote') || undefined,
           },
         }),
       })
@@ -77,6 +78,7 @@ export default function ProductPurchaseForm({ productId, stock }: { productId: s
           <label className="text-xs font-bold text-white/55">邮政编码<input name="postalCode" autoComplete="postal-code" maxLength={20} className={fieldClass} placeholder="可选" /></label>
           <label className="text-xs font-bold text-white/55 sm:col-span-2">详细地址 *<input name="addressLine1" autoComplete="address-line1" required maxLength={180} className={fieldClass} placeholder="街道、门牌号、小区和楼层" /></label>
           <label className="text-xs font-bold text-white/55 sm:col-span-2">地址补充<input name="addressLine2" autoComplete="address-line2" maxLength={180} className={fieldClass} placeholder="公司、学校或其他说明（可选）" /></label>
+          <label className="text-xs font-bold text-white/55 sm:col-span-2">订单留言 / 特别要求<textarea name="customerNote" maxLength={500} rows={4} className={`${fieldClass} h-auto py-3`} placeholder="需要我们留意的事项（可选）" /></label>
         </div>
       </fieldset>
       <section className="rounded-2xl border border-blue-200/15 bg-blue-200/[0.06] p-5"><h2 className="text-sm font-black text-blue-100">3. 安全付款</h2><p className="mt-2 text-xs leading-6 text-white/50">下一步进入 Stripe 托管支付页，可选择微信支付或银行卡。付款后订单会进入 Larry Academy 后台发货流程。</p></section>

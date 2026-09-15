@@ -12,6 +12,7 @@ type ShippingInfo = {
   addressLine1?: string
   addressLine2?: string
   postalCode?: string
+  customerNote?: string
   deliveryMethod?: 'free' | 'cainiao' | 'sf'
 }
 
@@ -29,14 +30,17 @@ type ProductOrder = {
   customerName: string
   customerEmail: string
   itemsLabel: string
-  productColor: 'blue' | 'purple' | 'yellow' | null
+  productColor: keyof typeof productColorStyles | null
   shipping: ShippingInfo | null
 }
 
 const productColorStyles = {
-  blue: { text: 'text-blue-300', badge: 'border-blue-300/30 bg-blue-300/10 text-blue-200', label: '蓝色' },
-  purple: { text: 'text-violet-300', badge: 'border-violet-300/30 bg-violet-300/10 text-violet-200', label: '紫色' },
-  yellow: { text: 'text-amber-300', badge: 'border-amber-300/30 bg-amber-300/10 text-amber-200', label: '黄色' },
+  'glacier-blue': { text: 'text-cyan-200', badge: 'border-cyan-300/30 bg-cyan-300/10 text-cyan-100', label: '冰川蓝' },
+  'neon-pink-blue': { text: 'text-fuchsia-200', badge: 'border-fuchsia-300/30 bg-fuchsia-300/10 text-fuchsia-100', label: '霓虹粉蓝' },
+  'midnight-blue-black': { text: 'text-blue-200', badge: 'border-blue-300/30 bg-blue-300/10 text-blue-100', label: '星夜蓝黑' },
+  'dream-purple': { text: 'text-violet-200', badge: 'border-violet-300/30 bg-violet-300/10 text-violet-100', label: '幻境炫紫' },
+  'rose-sky': { text: 'text-rose-200', badge: 'border-rose-300/30 bg-rose-300/10 text-rose-100', label: '晨曦玫红天蓝' },
+  'lava-red-black': { text: 'text-orange-200', badge: 'border-orange-300/30 bg-orange-300/10 text-orange-100', label: '熔岩红黑' },
 } as const
 
 function addressLine(shipping: ShippingInfo | null) {
@@ -169,6 +173,7 @@ export default function ProductOrdersTable({ orders }: { orders: ProductOrder[] 
                     <div className="font-bold">{order.shipping?.recipientName || '未填写姓名'}</div>
                     <div className="mt-1 text-xs text-white/55">{order.shipping?.phone || '未填写电话'}</div>
                     <div className="mt-1 max-w-[25rem] text-xs leading-5 text-white/42">{addressLine(order.shipping)}</div>
+                    {order.shipping?.customerNote ? <div className="mt-3 max-w-[25rem] border-l-2 border-amber-300/60 bg-amber-300/[0.07] px-3 py-2 text-xs font-bold leading-5 text-amber-100">留言：{order.shipping.customerNote}</div> : null}
                   </td>
                   <td className="px-4 py-4 align-top">
                     <div className="font-black">{order.status}</div>

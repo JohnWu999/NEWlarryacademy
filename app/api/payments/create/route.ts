@@ -38,6 +38,7 @@ const createPaymentSchema = z.object({
     addressLine1: z.string().trim().min(4).max(180),
     addressLine2: z.string().trim().max(180).optional(),
     postalCode: z.string().trim().max(20).optional(),
+    customerNote: z.string().trim().max(500).optional(),
   }).optional(),
 })
 

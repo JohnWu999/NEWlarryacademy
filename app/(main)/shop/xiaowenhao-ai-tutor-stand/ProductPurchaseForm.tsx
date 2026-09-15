@@ -5,6 +5,16 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 type StandModel = 'stand-only' | 'with-camera'
+type StandColor = 'glacier-blue' | 'neon-pink-blue' | 'midnight-blue-black' | 'dream-purple' | 'rose-sky' | 'lava-red-black'
+
+const colors: Array<{ id: StandColor; label: string; swatch: string }> = [
+  { id: 'glacier-blue', label: '冰川蓝', swatch: 'from-sky-200 via-cyan-400 to-blue-700' },
+  { id: 'neon-pink-blue', label: '霓虹粉蓝', swatch: 'from-fuchsia-400 via-pink-400 to-cyan-400' },
+  { id: 'midnight-blue-black', label: '星夜蓝黑', swatch: 'from-blue-500 via-slate-900 to-black' },
+  { id: 'dream-purple', label: '幻境炫紫', swatch: 'from-violet-300 via-violet-600 to-indigo-950' },
+  { id: 'rose-sky', label: '晨曦玫红天蓝', swatch: 'from-rose-400 via-fuchsia-400 to-sky-400' },
+  { id: 'lava-red-black', label: '熔岩红黑', swatch: 'from-orange-500 via-red-600 to-black' },
+]
 
 const models: Array<{ id: StandModel; label: string; price: number; note: string }> = [
   { id: 'with-camera', label: '带摄像头', price: 199, note: '含 500 万像素摄像头' },
@@ -24,6 +34,7 @@ export default function ProductPurchaseForm({
   const { status } = useSession()
   const router = useRouter()
   const [model, setModel] = useState<StandModel>(withCamera.stock > 0 ? 'with-camera' : 'stand-only')
+  const [color, setColor] = useState<StandColor>('glacier-blue')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const modelInventory = {
@@ -50,7 +61,7 @@ export default function ProductPurchaseForm({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: [{ type: 'product', id: selectedInventory.productId, quantity: 1, model }],
+          items: [{ type: 'product', id: selectedInventory.productId, quantity: 1, model, color }],
           paymentMethod: 'stripe',
           shipping: {
             deliveryMethod: 'sf',
@@ -62,6 +73,7 @@ export default function ProductPurchaseForm({
             addressLine1: data.get('addressLine1'),
             addressLine2: data.get('addressLine2') || undefined,
             postalCode: data.get('postalCode') || undefined,
+            customerNote: data.get('customerNote') || undefined,
           },
         }),
       })
@@ -115,10 +127,26 @@ export default function ProductPurchaseForm({
         </div>
       </fieldset>
 
+      <fieldset>
+        <legend className="text-sm font-black">2. 选择颜色偏好</legend>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {colors.map((option) => (
+            <label key={option.id} className="cursor-pointer">
+              <input type="radio" name="color" value={option.id} checked={color === option.id} onChange={() => setColor(option.id)} className="peer sr-only" />
+              <span className="flex min-h-20 items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] px-3 transition hover:bg-white/[0.06] peer-checked:border-fuchsia-300/70 peer-checked:bg-fuchsia-300/10 peer-checked:ring-2 peer-checked:ring-fuchsia-300/20">
+                <span className={`h-9 w-9 shrink-0 rounded-full bg-gradient-to-br ${option.swatch} shadow-lg`} />
+                <span className="text-xs font-black leading-5 text-white">{option.label}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <p className="mt-4 rounded-xl border border-fuchsia-300/20 bg-fuchsia-300/[0.07] px-4 py-3 text-xs font-bold leading-6 text-fuchsia-100">我们会优先按您选择的颜色制作。炫彩耗材在每次 3D 打印中的色彩过渡与纹理都自然不同，因此实物不会与示意图完全一致，每一件都是独一无二的。</p>
+      </fieldset>
+
       <section className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.07] p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-black text-amber-100">2. 配送方式</h2>
+            <h2 className="text-sm font-black text-amber-100">3. 配送方式</h2>
             <p className="mt-1 text-xs font-bold text-white/45">本产品统一使用顺丰配送</p>
           </div>
           <div className="text-right">
@@ -129,7 +157,7 @@ export default function ProductPurchaseForm({
       </section>
 
       <fieldset>
-        <legend className="text-sm font-black">3. 收货信息</legend>
+        <legend className="text-sm font-black">4. 收货信息</legend>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="text-xs font-bold text-white/55">收货人姓名 *<input name="recipientName" autoComplete="name" required maxLength={80} className={fieldClass} placeholder="请输入姓名" /></label>
           <label className="text-xs font-bold text-white/55">电话号码 *<input name="phone" type="tel" autoComplete="tel" required maxLength={30} className={fieldClass} placeholder="含国家或地区代码" /></label>
@@ -139,11 +167,12 @@ export default function ProductPurchaseForm({
           <label className="text-xs font-bold text-white/55">邮政编码<input name="postalCode" autoComplete="postal-code" maxLength={20} className={fieldClass} placeholder="可选" /></label>
           <label className="text-xs font-bold text-white/55 sm:col-span-2">详细地址 *<input name="addressLine1" autoComplete="address-line1" required maxLength={180} className={fieldClass} placeholder="街道、门牌号、小区和楼层" /></label>
           <label className="text-xs font-bold text-white/55 sm:col-span-2">地址补充<input name="addressLine2" autoComplete="address-line2" maxLength={180} className={fieldClass} placeholder="公司、学校或其他说明（可选）" /></label>
+          <label className="text-xs font-bold text-white/55 sm:col-span-2">订单留言 / 特别要求<textarea name="customerNote" maxLength={500} rows={4} className={`${fieldClass} h-auto py-3`} placeholder="例如颜色倾向、送礼说明或其他需要我们留意的事项（可选）" /></label>
         </div>
       </fieldset>
 
       <section className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.06] p-5">
-        <h2 className="text-sm font-black text-emerald-100">4. 安全付款</h2>
+        <h2 className="text-sm font-black text-emerald-100">5. 安全付款</h2>
         <p className="mt-2 text-xs leading-6 text-white/50">下一步进入 Stripe 托管支付页，可选择微信支付或银行卡。Larry Academy 不会接触或保存您的完整卡号与安全码。</p>
         <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-black">
           <span className="rounded-full bg-[#07c160]/15 px-3 py-1.5 text-[#8af0af]">微信支付 WeChat Pay</span>

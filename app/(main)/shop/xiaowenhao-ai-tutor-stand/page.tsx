@@ -1,7 +1,7 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductPurchaseForm from './ProductPurchaseForm'
+import ProductGallery from './ProductGallery'
 import {
   ensureCurrentWeeklyStock,
   XIAOWENHAO_STAND_ONLY_PRODUCT_ID,
@@ -25,28 +25,9 @@ export default async function XiaowenhaoProductPage() {
 
         <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
           <section className="lg:sticky lg:top-24">
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { src: standOnly.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png', label: 'Style 01' },
-                { src: '/products/xiaowenhao-ai-tutor-stand-2-style-02.png', label: 'Style 02' },
-              ].map((style, index) => (
-                <figure key={style.src} className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#171a3d] shadow-2xl shadow-violet-950/30">
-                  <Image
-                    src={style.src}
-                    alt={`小问号 AI Tutor 支架 2.0 炫彩款 ${style.label}`}
-                    fill
-                    priority={index === 0}
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 23vw"
-                  />
-                  <figcaption className="absolute bottom-3 left-3 rounded-full border border-white/20 bg-black/55 px-3 py-1.5 text-[11px] font-black text-white backdrop-blur-xl">
-                    {style.label}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
+            <ProductGallery />
             <p className="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.07] px-5 py-4 text-center text-xs font-bold leading-6 text-fuchsia-100">
-              随机盲盒发货：每一种 Style 都很精美，收到哪一种，都是一份惊喜。
+              可选择六种颜色偏好；炫彩打印的渐变与纹理每件自然不同，每一件都是独一无二的。
             </p>
             <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs font-bold text-white/60">
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">高度升级</div>

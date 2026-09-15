@@ -62,6 +62,7 @@ function shippingFromMetadata(metadata?: string | null) {
       addressLine1?: string
       addressLine2?: string
       postalCode?: string
+      customerNote?: string
       deliveryMethod?: 'free' | 'cainiao' | 'sf'
     }
     : null
@@ -74,15 +75,13 @@ function productItemsDisplay(itemsJson: string) {
   const productItems = items
     .filter((item) => item && typeof item === 'object' && (item as { type?: string }).type === 'product')
   const firstColor = (productItems[0] as { color?: string } | undefined)?.color?.toLowerCase()
-  const color: 'blue' | 'purple' | 'yellow' | null = firstColor === 'blue' || firstColor === 'purple' || firstColor === 'yellow'
-    ? firstColor
-    : null
-  const colorLabels: Record<string, string> = { blue: '蓝色', purple: '紫色', yellow: '黄色' }
+  const colorLabels = { 'glacier-blue': '冰川蓝', 'neon-pink-blue': '霓虹粉蓝', 'midnight-blue-black': '星夜蓝黑', 'dream-purple': '幻境炫紫', 'rose-sky': '晨曦玫红天蓝', 'lava-red-black': '熔岩红黑' } as const
+  const color = firstColor && firstColor in colorLabels ? firstColor as keyof typeof colorLabels : null
 
   const label = productItems
     .map((item) => {
       const product = item as { name?: string; quantity?: number; color?: string }
-      const itemColor = product.color ? ` · ${colorLabels[product.color] || product.color}` : ''
+      const itemColor = product.color ? ` · ${product.color in colorLabels ? colorLabels[product.color as keyof typeof colorLabels] : product.color}` : ''
       return `${product.name || 'AI Tutor 摄像头架子'}${itemColor} x${product.quantity || 1}`
     })
     .join(' · ') || 'AI Tutor 摄像头架子'
