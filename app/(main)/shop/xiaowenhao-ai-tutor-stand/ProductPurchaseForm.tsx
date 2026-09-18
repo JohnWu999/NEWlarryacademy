@@ -5,10 +5,9 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 type StandModel = 'stand-only' | 'with-camera'
-type StandColor = 'glacier-blue' | 'neon-pink-blue' | 'midnight-blue-black' | 'dream-purple' | 'lava-red-black'
+type StandColor = 'neon-pink-blue' | 'midnight-blue-black' | 'dream-purple' | 'lava-red-black'
 
 const colors: Array<{ id: StandColor; label: string; swatch: string }> = [
-  { id: 'glacier-blue', label: '冰川蓝', swatch: 'from-sky-200 via-cyan-400 to-blue-700' },
   { id: 'neon-pink-blue', label: '霓虹粉蓝', swatch: 'from-fuchsia-400 via-pink-400 to-cyan-400' },
   { id: 'midnight-blue-black', label: '星夜蓝黑', swatch: 'from-blue-500 via-slate-900 to-black' },
   { id: 'dream-purple', label: '幻境炫紫', swatch: 'from-violet-300 via-violet-600 to-indigo-950' },
@@ -33,7 +32,7 @@ export default function ProductPurchaseForm({
   const { status } = useSession()
   const router = useRouter()
   const [model, setModel] = useState<StandModel>(withCamera.stock > 0 ? 'with-camera' : 'stand-only')
-  const [color, setColor] = useState<StandColor>('glacier-blue')
+  const [color, setColor] = useState<StandColor>('neon-pink-blue')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const modelInventory = {
@@ -129,6 +128,13 @@ export default function ProductPurchaseForm({
       <fieldset>
         <legend className="text-sm font-black">2. 选择颜色偏好</legend>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="flex min-h-20 cursor-not-allowed items-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-3 opacity-45" aria-label="冰川蓝暂时缺货">
+            <span className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-sky-200 via-cyan-400 to-blue-700 grayscale-[35%]" />
+            <span>
+              <span className="block text-xs font-black leading-5 text-white">冰川蓝</span>
+              <span className="block text-[10px] font-bold text-white/60">暂时缺货</span>
+            </span>
+          </div>
           {colors.map((option) => (
             <label key={option.id} className="cursor-pointer">
               <input type="radio" name="color" value={option.id} checked={color === option.id} onChange={() => setColor(option.id)} className="peer sr-only" />
