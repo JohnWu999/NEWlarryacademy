@@ -8,7 +8,7 @@ const styles = [
   { src: '/products/xiaowenhao-ai-tutor-stand-2-style-02.png', label: '霓虹粉蓝' },
   { src: '/products/xiaowenhao-midnight-blue-black.png', label: '星夜蓝黑' },
   { src: '/products/xiaowenhao-dream-purple.png', label: '幻境炫紫' },
-  { src: '/products/xiaowenhao-rose-sky.png', label: '晨曦玫红天蓝' },
+  { src: '/products/xiaowenhao-rose-sky.png', label: '霓虹粉蓝' },
   { src: '/products/xiaowenhao-lava-red-black.png', label: '熔岩红黑' },
 ]
 

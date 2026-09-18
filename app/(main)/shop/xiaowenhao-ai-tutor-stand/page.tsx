@@ -27,7 +27,7 @@ export default async function XiaowenhaoProductPage() {
           <section className="lg:sticky lg:top-24">
             <ProductGallery />
             <p className="mt-4 rounded-2xl border border-fuchsia-300/20 bg-fuchsia-300/[0.07] px-5 py-4 text-center text-xs font-bold leading-6 text-fuchsia-100">
-              可选择六种颜色偏好；炫彩打印的渐变与纹理每件自然不同，每一件都是独一无二的。
+              可选择五种颜色偏好；同一配色的渐变与纹理也会自然不同，每一件都是独一无二的。
             </p>
             <div className="mt-4 grid grid-cols-3 gap-3 text-center text-xs font-bold text-white/60">
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-2 py-4">高度升级</div>

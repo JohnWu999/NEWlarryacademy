@@ -5,14 +5,13 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 type StandModel = 'stand-only' | 'with-camera'
-type StandColor = 'glacier-blue' | 'neon-pink-blue' | 'midnight-blue-black' | 'dream-purple' | 'rose-sky' | 'lava-red-black'
+type StandColor = 'glacier-blue' | 'neon-pink-blue' | 'midnight-blue-black' | 'dream-purple' | 'lava-red-black'
 
 const colors: Array<{ id: StandColor; label: string; swatch: string }> = [
   { id: 'glacier-blue', label: '冰川蓝', swatch: 'from-sky-200 via-cyan-400 to-blue-700' },
   { id: 'neon-pink-blue', label: '霓虹粉蓝', swatch: 'from-fuchsia-400 via-pink-400 to-cyan-400' },
   { id: 'midnight-blue-black', label: '星夜蓝黑', swatch: 'from-blue-500 via-slate-900 to-black' },
   { id: 'dream-purple', label: '幻境炫紫', swatch: 'from-violet-300 via-violet-600 to-indigo-950' },
-  { id: 'rose-sky', label: '晨曦玫红天蓝', swatch: 'from-rose-400 via-fuchsia-400 to-sky-400' },
   { id: 'lava-red-black', label: '熔岩红黑', swatch: 'from-orange-500 via-red-600 to-black' },
 ]
 
