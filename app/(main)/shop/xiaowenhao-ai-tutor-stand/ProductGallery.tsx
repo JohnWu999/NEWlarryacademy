@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
 const styles = [
-  { src: '/products/xiaowenhao-ai-tutor-stand-2.png', label: '冰川蓝' },
+  { src: '/products/xiaowenhao-glacier-blue-2.png', label: '冰川蓝' },
   { src: '/products/xiaowenhao-ai-tutor-stand-2-style-02.png', label: '霓虹粉蓝' },
   { src: '/products/xiaowenhao-midnight-blue-black.png', label: '星夜蓝黑' },
   { src: '/products/xiaowenhao-dream-purple.png', label: '幻境炫紫' },

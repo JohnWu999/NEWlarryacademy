@@ -118,7 +118,7 @@ export default async function ShopPage() {
           <article className="mt-10 grid overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-violet-950/30 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="relative grid grid-cols-2 gap-px self-center overflow-hidden bg-white/10">
               {[
-                { src: product.imageUrl || '/products/xiaowenhao-ai-tutor-stand-2.png', label: 'Style 01' },
+                { src: product.imageUrl || '/products/xiaowenhao-glacier-blue-2.png', label: 'Style 01' },
                 { src: '/products/xiaowenhao-ai-tutor-stand-2-style-02.png', label: 'Style 02' },
               ].map((style, index) => (
                 <div key={style.src} className="relative aspect-[4/5] overflow-hidden bg-[#171a3d]">
